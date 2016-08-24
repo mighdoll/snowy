@@ -16,7 +16,6 @@ object WebServer {
     val route =
       pathPrefixTest("sock-client") {
         pathSuffix(Segment) { file =>
-          println(s"matched sock client: $file")
           getFromResource(file)
         }
       } ~

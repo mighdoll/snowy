@@ -14,29 +14,32 @@ import GameClientMessages._
 class Game(implicit system:ActorSystem) {
   val ref = system.actorOf(Props(new Actor{
       def receive:Receive = {
-        case ClientMessage(user, text) => clientMessage(user, text)
-        case Join(user, out)           => join(user, out)
-        case Gone(user)                => gone(user)
+        case ClientMessage(id, text) => clientMessage(id, text)
+        case Join(id, out)           => join(id, out)
+        case Gone(id)                => gone(id)
       }
   }))
 
-  val users = mutable.Map[User, ActorRef]()
+  val connections = mutable.Map[ConnectionId, ActorRef]()
 
-  private def clientMessage(user:User, text:String):Unit = {
-    println(s"message received: $user $text")
+  private def clientMessage(id:ConnectionId, text:String):Unit = {
+    println(s"message received: $id $text")
   }
-  private def join(user:User, out:ActorRef):Unit = {
-    println(s"join received: $user")
-    users += user -> out
+
+  private def join(id:ConnectionId, out:ActorRef):Unit = {
+    println(s"join received: $id")
+    connections += id -> out
     val state = State(Seq(Snake(User("Milo"), Position(50,50))))
     broadcast(state.asJson.spaces2)
   }
-  private def gone(user:User):Unit = {
-    println(s"gone received: $user")
-    users -= user
+
+  private def gone(id:ConnectionId):Unit = {
+    println(s"gone received: $id")
+    connections -= id
   }
+
   def broadcast(msg:String):Unit = {
-    users.foreach { case (_, out) =>
+    connections.foreach { case (_, out) =>
       out ! TextMessage.Strict(msg)
     }
   }
@@ -44,13 +47,13 @@ class Game(implicit system:ActorSystem) {
 
 object GameCommand {
   sealed trait GameCommand
-  case class Join(user:User, out:ActorRef) extends GameCommand
-  case class ClientMessage(user:User, message:String) extends GameCommand
-  case class Gone(user:User) extends GameCommand
+  case class Join(id:ConnectionId, out:ActorRef) extends GameCommand
+  case class ClientMessage(id:ConnectionId, message:String) extends GameCommand
+  case class Gone(id:ConnectionId) extends GameCommand
   case object Turn extends GameCommand
 }
 
-class User {
+class ConnectionId {
   val id = randomAlphaNum(8)
-  override def toString = s"User_$id"
+  override def toString = s"Connection_$id"
 }
