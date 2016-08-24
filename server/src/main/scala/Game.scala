@@ -4,7 +4,6 @@ import io.circe.parser._
 import io.circe.syntax._
 
 import akka.actor._
-import RandomUtil._
 import GameCommand._
 import scala.collection.mutable
 import akka.http.scaladsl.model.ws.TextMessage
@@ -53,7 +52,11 @@ object GameCommand {
   case object Turn extends GameCommand
 }
 
+object ConnectionId {
+  import java.util.concurrent.atomic.AtomicLong
+  val nextId = new AtomicLong
+}
 class ConnectionId {
-  val id = randomAlphaNum(8)
+  val id = ConnectionId.nextId.getAndIncrement()
   override def toString = s"Connection_$id"
 }
