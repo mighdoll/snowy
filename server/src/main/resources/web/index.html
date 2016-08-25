@@ -8,6 +8,18 @@
         width: 100%;
         height: 100%;
         display: block;
+        position: absolute;
+      }
+      .back {
+        height: 0;
+        overflow: hidden;
+      }
+      #login-box {
+        border-radius: 10px;
+        margin: 10vh 10vw;
+        background: #000;
+        height: 80vh;
+        width: 80vw;
       }
     </style>
 
@@ -15,10 +27,10 @@
   <body class="fullscreen">
 
     <div id="start-div" class="front fullscreen">
-      <div id="login-box"></div>
+      <div id="login-box" />
     </div>
     <div id="game-div" class="back fullscreen">
-      <canvas id="game-c"></canvas>
+      <canvas id="game-c" />
     </div>
 
     <!-- <script type="text/javascript" src="sock-client-jsdeps.js"></script> -->
