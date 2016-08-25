@@ -1,5 +1,3 @@
-import scala.io.StdIn
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
@@ -29,10 +27,13 @@ object WebServer {
       }
 
     val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 2345)
-    println(s"Server online at http://localhost:2345/\nPress RETURN to stop...")
-    StdIn.readLine() // run until user presses return
-    bindingFuture
-      .flatMap(_.unbind())
-      .onComplete(_ => system.terminate())
+    println(s"Server online at http://localhost:2345/")
+
+    def shutDown(): Unit = {
+      bindingFuture
+        .flatMap(_.unbind())
+        .onComplete(_ => system.terminate())
+    }
   }
+
 }
