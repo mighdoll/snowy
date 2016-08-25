@@ -12,16 +12,19 @@ import GameServerMessages._
 import GameClientMessages._
 
 object TryMe extends JSApp {
-  def appendPar(targetNode: dom.Node, text: String): Unit = {
-    val parNode = document.createElement("p")
-    val textNode = document.createTextNode(text)
-    parNode.appendChild(textNode)
-    targetNode.appendChild(parNode)
-    document.head
-  }
+  val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
+  val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
   def main(): Unit = {
-    appendPar(document.body, "Hello World")
+
+    gameCanvas.width = window.innerWidth
+    gameCanvas.height = window.innerHeight
+
+    ctx.moveTo(10,10)
+    ctx.lineTo(20,20)
+
+    ctx.stroke()
+
     val socket = new WebSocket("ws://localhost:2345/game")
     val join = Join("Emmett")
     val msg = join.asJson.spaces2
@@ -44,6 +47,7 @@ object TryMe extends JSApp {
     socket.onclose = { event: Event =>
       console.log(s"socket closed ")
     }
+
   }
 
   def receivedState(state:State): Unit = {
