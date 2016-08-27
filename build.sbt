@@ -50,10 +50,8 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file ("shared")).
   settings(commonSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "io.circe" %%% "circe-core",
-      "io.circe" %%% "circe-generic",
-      "io.circe" %%% "circe-parser"
-    ).map(_ % V.circe),
+      "com.lihaoyi" %%% "upickle" % "0.4.1"
+    ),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
 

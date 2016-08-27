@@ -1,15 +1,10 @@
 import scala.scalajs.js.JSApp
 import org.scalajs.dom
 import org.scalajs.dom._
+import upickle.default._
 
-import io.circe._
-import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
-
-
-import GameServerMessages._
-import GameClientMessages._
+import GameServerProtocol._
+import GameClientProtocol._
 
 object TryMe extends JSApp {
   var time = 0
@@ -42,7 +37,7 @@ object TryMe extends JSApp {
     gameCanvas.height = size.height
 
     val join = Join("Emmett")
-    val msg = join.asJson.spaces2
+    val msg = write(join)
 
     socket.onopen = {event:Event =>
       socket.send(msg)
@@ -63,9 +58,9 @@ object TryMe extends JSApp {
   socket.onmessage = { event: MessageEvent =>
     val msg = event.data.toString
     console.log(s"received message: $msg")
-    ClientProtocol.decodeMessage(msg) match {
-      case Some(state:State) => receivedState(state)
-      case None => console.log(s"unexpected message: $msg")
+
+    read[GameClientMessage](msg) match {
+      case state:State => receivedState(state)
     }
   }
 

@@ -1,20 +1,17 @@
-import io.circe._
-import io.circe.generic.auto._
-import io.circe.parser._
-import io.circe.syntax._
-
+import java.util.concurrent.atomic.AtomicLong
 import akka.actor._
 import GameCommand._
 import scala.collection.mutable
 import akka.http.scaladsl.model.ws.TextMessage
+import upickle.default._
 
-import GameClientMessages._
+import GameClientProtocol._
 
 class Game(implicit system:ActorSystem) {
   val ref = system.actorOf(Props(new Actor{
       def receive:Receive = {
         case ClientMessage(id, text) => clientMessage(id, text)
-        case Join(id, out)           => join(id, out)
+        case Open(id, out)           => join(id, out)
         case Gone(id)                => gone(id)
       }
   }))
@@ -28,8 +25,8 @@ class Game(implicit system:ActorSystem) {
   private def join(id:ConnectionId, out:ActorRef):Unit = {
     println(s"join received: $id")
     connections += id -> out
-    val state = State(Seq(Snake(User("Milo"), Position(50,50))))
-    broadcast(state.asJson.spaces2)
+    val state = State(Seq(Sled(User("Milo"), Position(50,50))))
+    broadcast(write(state))
   }
 
   private def gone(id:ConnectionId):Unit = {
@@ -46,14 +43,13 @@ class Game(implicit system:ActorSystem) {
 
 object GameCommand {
   sealed trait GameCommand
-  case class Join(id:ConnectionId, out:ActorRef) extends GameCommand
+  case class Open(id:ConnectionId, out:ActorRef) extends GameCommand
   case class ClientMessage(id:ConnectionId, message:String) extends GameCommand
   case class Gone(id:ConnectionId) extends GameCommand
   case object Turn extends GameCommand
 }
 
 object ConnectionId {
-  import java.util.concurrent.atomic.AtomicLong
   val nextId = new AtomicLong
 }
 class ConnectionId {
