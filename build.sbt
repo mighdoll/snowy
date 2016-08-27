@@ -5,7 +5,8 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   // organization := "com.example",
   version := "0.1.0",
-  scalaVersion := V.scala
+  scalaVersion := V.scala,
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:postfixOps")
 )
 
 lazy val V = new Object {
