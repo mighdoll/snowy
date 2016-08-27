@@ -1,11 +1,12 @@
 import java.util.concurrent.ThreadLocalRandom
-
 import akka.actor._
 import GameCommand._
-
+import scala.concurrent.duration._
 import scala.collection.mutable
 import upickle.default._
 import GameClientProtocol._
+import scala.concurrent.duration.Duration
+import akka.http.scaladsl.model.ws.TextMessage
 
 /** messages to game actor */
 object GameCommand {
@@ -17,13 +18,18 @@ object GameCommand {
 }
 
 class Game(implicit system:ActorSystem) extends GameControl {
-  val ref = system.actorOf(Props(new Actor{
-      def receive:Receive = {
-        case ClientMessage(id, text) => clientMessage(id, text)
-        case Open(id, out)           => join(id, out)
-        case Gone(id)                => gone(id)
-      }
+  import system.dispatcher
+  val gameActorRef = system.actorOf(Props(new Actor {
+    def receive: Receive = {
+      case ClientMessage(id, text) => clientMessage(id, text)
+      case Open(id, out)           => join(id, out)
+      case Gone(id)                => gone(id)
+      case Turn                    => updateClients()
+    }
   }))
+
+  system.scheduler.schedule(initialDelay = 50 milliseconds, interval = 50 milliseconds,
+    receiver = gameActorRef, message = Turn)
 
   val connections = mutable.Map[ConnectionId, ActorRef]()
 
@@ -34,15 +40,18 @@ class Game(implicit system:ActorSystem) extends GameControl {
   private def join(id:ConnectionId, out:ActorRef):Unit = {
     println(s"join received: $id")
     connections += id -> out
-    out ! write(playField)
-    updateClients() // TODO updateClients on a timer
+    send(write(playField), out)
   }
 
   private def updateClients(): Unit = {
-    val state = currentState()
+    val state:String = write(currentState())
     for ((id, out) <- connections) {
-      out ! state
+      send(state, out)
     }
+  }
+
+  private def send(msg:String, out:ActorRef):Unit = {
+    out ! TextMessage.Strict(msg)
   }
 
   private def gone(id:ConnectionId):Unit = {
@@ -60,15 +69,14 @@ trait GameControl {
   val trees = randomTrees()
   val snowballs  = mutable.Map[ConnectionId, Snowball]()
 
-  def randomTrees():mutable.Set[Tree] = {
+  def randomTrees():Set[Tree] = {
+    val random = ThreadLocalRandom.current
     val num = playField.width * playField.height / 10000
-    val set = new mutable.HashSet[Tree]()
-    (0 to num).foreach{ i =>
-      val x = i // TODO use random
-      val y = i
-      set += Tree(5, Position(x,y))
-    }
-    set
+    (0 to num).map{ i =>
+      val x = random.nextInt(playField.width)
+      val y = random.nextInt(playField.height)
+      Tree(5, Position(x,y))
+    }.toSet
   }
 
   def currentState():State = {

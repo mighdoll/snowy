@@ -13,7 +13,7 @@ import scala.io.StdIn
 import GameCommand._
 
 class ProtoFlow(implicit system:ActorSystem) {
-  val game = new Game().ref
+  val game = new Game().gameActorRef
 
   /** a flow for each connection received over the /game websocket */
   def messages(): Flow[Message, Message, NotUsed] = {
