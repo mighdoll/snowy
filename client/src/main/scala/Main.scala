@@ -2,7 +2,6 @@ import scala.scalajs.js.JSApp
 import org.scalajs.dom
 import org.scalajs.dom._
 import upickle.default._
-
 import GameServerProtocol._
 import GameClientProtocol._
 
@@ -61,10 +60,14 @@ object TryMe extends JSApp {
 
     read[GameClientMessage](msg) match {
       case state:State => receivedState(state)
+      case playfield:PlayField => receivedPlayField(playfield)
+      case trees:Trees => receivedTrees(trees)
     }
   }
 
-  def receivedState(state:State): Unit = {
-    console.log(s"received state: $state")
+  def receivedState(state:State): Unit = { console.log(s"received state: $state") }
+  def receivedTrees(trees:Trees): Unit = { console.log(s"received trees: $trees") }
+  def receivedPlayField(playField:PlayField): Unit = {
+    console.log(s"received playField: $playField")
   }
 }
