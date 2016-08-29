@@ -55,12 +55,17 @@ object TryMe extends JSApp {
 
     socket.onmessage = { event: MessageEvent =>
       val msg = event.data.toString
-      console.log(s"received message: $msg")
+      // console.log(s"received message: $msg")
 
-      read[GameClientMessage](msg) match {
-        case state:State => receivedState(state)
-        case playfield:PlayField => receivedPlayField(playfield)
-        case trees:Trees => receivedTrees(trees)
+      try {
+        read[GameClientMessage](msg) match {
+          case state:State => receivedState(state)
+          case playfield:PlayField => receivedPlayField(playfield)
+          case trees:Trees => receivedTrees(trees)
+        }
+      } catch {
+        case e:Exception =>
+          console.log(s"unexpected message: $msg, ($e)")
       }
     }
   }
@@ -141,7 +146,7 @@ object TryMe extends JSApp {
 
   //When the client recieves the state of canvas, draw all sleds
   def receivedState(state:State): Unit = {
-    console.log(s"received state: $state")
+    // console.log(s"received state: $state")
     state.sleds.map { sled =>
       drawSled(sled.user.name,sled.position)
     }
