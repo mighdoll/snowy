@@ -15,7 +15,7 @@ import Vec2dClientPosition._
 
 trait GameControl extends MultiConnect {
 
-  /** a collidable object on the playfield */
+  /** A collidable object on the playfield */
   trait PlayfieldObject {
     def size:Double
     def pos:Vec2d
@@ -82,10 +82,11 @@ trait GameControl extends MultiConnect {
 
   private def turn(id:ConnectionId, direction:Double):Unit = {
     // TODO limit turn rate to 1 turn / 50msec
-    sleds.get(id).map{ sled =>
-      sleds(id) = sled.copy(rotation = sled.rotation + direction)
-    }.getOrElse{
-      println(s"where's the sled to turn for id: $id")
+    sleds.get(id) match {
+      case Some(sled) =>
+        sleds(id) = sled.copy(rotation = sled.rotation + direction)
+      case None =>
+        println(s"where's the sled to turn for connection id: $id")
     }
   }
 
@@ -161,7 +162,7 @@ trait GameControl extends MultiConnect {
   /** package up the state to communicate to the client */
   private def currentState():State = {
     val clientSleds = sleds.map{case (id, sledState) =>
-      val user = users.get(id).getOrElse(User("???"))
+      val user = users.getOrElse(id, User("???"))
       Sled(user, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
     }.toSeq
     val clientSnowballs = snowballs.map{ball =>
