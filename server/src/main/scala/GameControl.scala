@@ -2,18 +2,12 @@ import java.util.concurrent.ThreadLocalRandom
 import scala.collection.mutable
 import GameClientProtocol._
 import GameServerProtocol._
+import socketserve.{AppHostApi, ConnectionId, AppController}
 import upickle.default._
-
-/** convert 2d double vectors to integer client Positions */
-object Vec2dClientPosition {
-  implicit class ConvertVecToPosition(vec:Vec2d) {
-    def toPosition:Position = Position(vec.x.toInt, vec.y.toInt)
-  }
-}
 import Vec2dClientPosition._
+import scala.concurrent.duration._
 
-
-trait GameControl extends MultiConnect {
+class GameControl(api:AppHostApi) extends AppController {
 
   /** A collidable object on the playfield */
   trait PlayfieldObject {
@@ -38,13 +32,15 @@ trait GameControl extends MultiConnect {
   val turnDelta = Math.PI / 20
   val maxSpeed = 200
 
+  api.tick(50 milliseconds) { gameTurn() }
+
   /** a new player has connected */
-  def join(id:ConnectionId):Unit = {
-    send(write(playField), id)
+  def open(id:ConnectionId):Unit = {
+    api.send(write(playField), id)
     val clientTrees = trees.map { treeState =>
       Tree(treeState.size.toInt, treeState.pos.toPosition)
     }.toSeq
-    send(write(Trees(clientTrees)), id)
+    api.send(write(Trees(clientTrees)), id)
     sleds += id -> newRandomSled()
   }
 
@@ -143,11 +139,11 @@ trait GameControl extends MultiConnect {
   }
 
   /** called to update game state on a regular timer */
-  def tick(): Unit = {
+  private def gameTurn(): Unit = {
     applyGravity()
     moveObjects()
     checkCollisions()
-    sendAll(write(currentState()))
+    api.sendAll(write(currentState()))
   }
 
   /** initialize a set of playfield obstacles */

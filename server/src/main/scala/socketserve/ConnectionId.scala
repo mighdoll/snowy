@@ -1,3 +1,5 @@
+package socketserve
+
 import java.util.concurrent.atomic.AtomicLong
 
 object ConnectionId {
