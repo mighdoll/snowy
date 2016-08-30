@@ -1,9 +1,7 @@
-import akka.actor._
-import GameCommand._
-import scala.concurrent.duration._
 import scala.collection.mutable
-import GameClientProtocol._
-
+import scala.concurrent.duration._
+import GameCommand._
+import akka.actor._
 import akka.http.scaladsl.model.ws.TextMessage
 
 /** messages to game actor */

@@ -1,16 +1,9 @@
+import GameCommand._
 import akka.NotUsed
 import akka.actor._
-import akka.http.scaladsl._
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
-import akka.http.scaladsl.server.Directives._
 import akka.stream._
 import akka.stream.scaladsl._
-
-import scala.concurrent.duration._
-import scala.concurrent.Await
-import scala.io.StdIn
-
-import GameCommand._
 
 class ProtoFlow(implicit system:ActorSystem) {
   val game = new Game().gameActorRef

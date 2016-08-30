@@ -1,8 +1,8 @@
-import upickle.default._
 import java.util.concurrent.ThreadLocalRandom
-import GameClientProtocol._
 import scala.collection.mutable
+import GameClientProtocol._
 import GameServerProtocol._
+import upickle.default._
 
 /** convert 2d double vectors to integer client Positions */
 object Vec2dClientPosition {
