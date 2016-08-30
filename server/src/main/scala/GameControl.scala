@@ -24,7 +24,8 @@ trait GameControl extends MultiConnect {
   /* rotation in radians, 0 is down.
    * speed in pixels / second
    */
-  case class SledState(pos:Vec2d, size:Double, speed:Vec2d, rotation:Double) extends PlayfieldObject
+  case class SledState(pos:Vec2d, size:Double, speed:Vec2d,
+                       rotation:Double, turretRotation:Double) extends PlayfieldObject
   case class TreeState(pos:Vec2d, size:Double) extends PlayfieldObject
   case class SnowballState(pos:Vec2d, size:Double, speed:Vec2d) extends PlayfieldObject
 
@@ -58,7 +59,7 @@ trait GameControl extends MultiConnect {
 
   private def newRandomSled():SledState = {
     // TODO what if sled is initialized atop a tree?
-    SledState(randomSpot(), size=30, speed=Vec2d(0,0), rotation=0)
+    SledState(randomSpot(), size=30, speed=Vec2d(0,0), rotation=0, turretRotation=0)
   }
 
   def gone(id:ConnectionId):Unit = {
@@ -161,7 +162,7 @@ trait GameControl extends MultiConnect {
   private def currentState():State = {
     val clientSleds = sleds.map{case (id, sledState) =>
       val user = users.get(id).getOrElse(User("???"))
-      Sled(user, sledState.pos.toPosition, sledState.rotation)
+      Sled(user, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
     }.toSeq
     val clientSnowballs = snowballs.map{ball =>
       Snowball(ball.size.toInt, ball.pos.toPosition)
