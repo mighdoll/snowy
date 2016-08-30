@@ -3,6 +3,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
+/** A web server that hosts static files from the web/ resource directory,
+  * scala js output files from the root resource directory,
+  * and a websocket for -connect json messages.
+  */
 object WebServer {
   def main(args: Array[String]):Unit = {
     implicit val system = ActorSystem()
@@ -11,12 +15,14 @@ object WebServer {
 
     val protoFlow = new ProtoFlow()
 
+    val scalaJsFile =
+      (""".*?-fastopt\.js$""" +
+      """|.*?-fastopt\.js.map$""" +
+      """|.*?-jsdeps\.js$""" +
+      """|.*?-opt\.js$""" +
+      """|.*?-launcher\.js$""").r
+
     val route =
-      pathPrefixTest("sock-client") {
-        pathSuffix(Segment) { file =>
-          getFromResource(file)
-        }
-      } ~
       pathEndOrSingleSlash {
         getFromResource("web/index.html")
       } ~
@@ -24,6 +30,12 @@ object WebServer {
         get {
           handleWebSocketMessages(protoFlow.messages())
         }
+      } ~
+      path(scalaJsFile) { file =>
+        getFromResource(file)
+      } ~
+      pathSuffix(Segment) { file =>
+        getFromResource(s"web/$file")
       }
 
     val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 2345)
@@ -35,5 +47,4 @@ object WebServer {
         .onComplete(_ => system.terminate())
     }
   }
-
 }
