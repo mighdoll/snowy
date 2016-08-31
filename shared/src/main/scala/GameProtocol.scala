@@ -3,6 +3,7 @@
 object GameServerProtocol {
   sealed trait GameServerMessage
   case class Join(userName: String) extends GameServerMessage
+  case class Mouse(pos: GameClientProtocol.Position) extends GameServerMessage
   case object TurnLeft extends GameServerMessage
   case object TurnRight extends GameServerMessage
 }

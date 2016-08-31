@@ -68,6 +68,19 @@ object TryMe extends JSApp {
           console.log(s"unexpected message: $msg, ($e)")
       }
     }
+
+    window.onkeydown = { event: Event =>
+      console.log(event.asInstanceOf[dom.KeyboardEvent].key)
+      event.asInstanceOf[dom.KeyboardEvent].key match {
+        case "ArrowRight" => socket.send(write(TurnRight))
+        case "ArrowLeft" => socket.send(write(TurnLeft))
+        case _ => 
+      }
+    }
+    window.onmousemove = { event: Event =>
+      val e = event.asInstanceOf[dom.MouseEvent]
+      socket.send(write(Mouse(GameClientProtocol.Position(e.clientX.toInt, e.clientY.toInt))))
+    }
   }
 
   //When the users sends the login form, send it as a username to the server
@@ -82,14 +95,6 @@ object TryMe extends JSApp {
     //Stop drawing the snow as a background
     snowLoop.foreach { id => window.clearInterval(id)}
 
-    //Clear screen
-    ctx.fillStyle = "white"
-    ctx.fillRect(0, 0, size.width, size.height)
-    ctx.fill()
-
-    //Create test user
-    drawSled("asd", GameClientProtocol.Position(200, 200))
-
     //Do not redirect
     false
   }
@@ -100,7 +105,7 @@ object TryMe extends JSApp {
   }
 
   //Draw a sled at an x and y
-  def drawSled(name: String, pos: GameClientProtocol.Position): Unit = {
+  def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double): Unit = {
     val x = pos.x
     val y = pos.y
 
@@ -118,14 +123,21 @@ object TryMe extends JSApp {
     ctx.lineTo(x+50, y+125)
     ctx.stroke()
 
+    //Rotate canvas
+    ctx.translate(x+2, y)
+    ctx.rotate(cannonRotation)
+
     //Draw the barrel for snowballs
     ctx.lineWidth = 2.0
     ctx.fillStyle = "rgb(153, 153, 153)"
     ctx.beginPath()
-    ctx.fillRect(x-15, y-97, 30, 100)
-    ctx.strokeRect(x-15, y-97, 30, 100)
+    ctx.fillRect(-15, 0, 30, 100)
+    ctx.strokeRect(-15, 0, 30, 100)
     ctx.fill()
     ctx.stroke()
+
+    //Reset rotation
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
 
     //Draw the main body
     ctx.fillStyle = "rgb(120, 201, 44)"
@@ -144,11 +156,22 @@ object TryMe extends JSApp {
   //Draw a tree on the canvas
   def drawTree(pos: GameClientProtocol.Position): Unit = { }
 
+  def drawSnowball(pos: GameClientProtocol.Position): Unit = { }
+
   //When the client recieves the state of canvas, draw all sleds
   def receivedState(state:State): Unit = {
-    // console.log(s"received state: $state")
+    //Clear screen
+    ctx.fillStyle = "white"
+    ctx.fillRect(0, 0, size.width, size.height)
+    ctx.fill()
+
+    //Draw all snowballs
+    state.snowballs.map { snowball =>
+      drawSnowball(snowball.position)
+    }
+    //Draw all sleds
     state.sleds.map { sled =>
-      drawSled(sled.user.name,sled.position)
+      drawSled(sled.user.name, sled.position, sled.turretRotation, sled.rotation)
     }
   }
 

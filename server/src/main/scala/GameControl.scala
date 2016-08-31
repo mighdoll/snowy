@@ -72,7 +72,16 @@ class GameControl(api:AppHostApi) extends AppController {
       case TurnLeft => turn(id, -turnDelta)
       case TurnRight => turn(id, turnDelta)
       case Join(name) => userJoin(id, name)
+      case Mouse(pos) => rotateCannon(id, pos)
       case x => println(s"received unhandled client message: $x")
+    }
+  }
+
+  private def rotateCannon(id:ConnectionId, pos: Position):Unit = {
+    sleds.get(id).map { sled =>
+      sleds(id) = sled.copy(turretRotation = -Math.atan2(pos.x-sled.pos.x,pos.y-sled.pos.y))
+    }.getOrElse{
+      println(s"where's the sled to rotate cannon for id: $id")
     }
   }
 
