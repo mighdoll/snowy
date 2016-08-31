@@ -7,7 +7,7 @@ import akka.stream._
 import akka.stream.scaladsl._
 import socketserve.AppHost.Protocol._
 
-class SocketFlow(appHost:AppHost)(implicit system:ActorSystem) {
+class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) {
   val app = appHost.appActor
 
   /** a flow for each connection received over the /game websocket */
@@ -16,13 +16,13 @@ class SocketFlow(appHost:AppHost)(implicit system:ActorSystem) {
 
     // create an actor ref to accept and buffer messages sent to the client
     val out =
-      Source.actorRef[TextMessage](4, OverflowStrategy.fail)
-        .mapMaterializedValue{outRef => app ! Open(connectionId, outRef) }
+    Source.actorRef[TextMessage](4, OverflowStrategy.fail)
+      .mapMaterializedValue { outRef => app ! Open(connectionId, outRef) }
 
     // forward messages from the client, and note if the connection drops
     val in = Flow[Message].collect {
-        case TextMessage.Strict(text) => app ! ClientMessage(connectionId, text)
-      }.to(Sink.actorRef[Unit](app, Gone(connectionId)))
+      case TextMessage.Strict(text) => app ! ClientMessage(connectionId, text)
+    }.to(Sink.actorRef[Unit](app, Gone(connectionId)))
 
     Flow.fromSinkAndSource(in, out)
   }

@@ -8,5 +8,6 @@ object ConnectionId {
 
 class ConnectionId {
   val id = ConnectionId.nextId.getAndIncrement()
+
   override def toString = s"Connection_$id"
 }
