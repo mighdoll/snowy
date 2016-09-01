@@ -25,6 +25,8 @@ trait GameState {
 
   case class SnowballState(pos: Vec2d, size: Double, speed: Vec2d) extends PlayfieldObject
 
+  case class User(name: String)
+
   val playField = PlayField(1000, 800)
   var sleds = mutable.Map[ConnectionId, SledState]()
   val trees = randomTrees()
@@ -39,7 +41,7 @@ trait GameState {
   protected def currentState(): State = {
     val clientSleds = sleds.map { case (id, sledState) =>
       val user = users.getOrElse(id, User("???"))
-      Sled(user, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
+      Sled(user.name, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
     }.toSeq
     val clientSnowballs = snowballs.map { ball =>
       Snowball(ball.size.toInt, ball.pos.toPosition)

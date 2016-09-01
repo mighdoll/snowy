@@ -20,10 +20,8 @@ object GameClientProtocol {
   case class Position(x: Int, y: Int)
 
   /** rotations in radians, 0 is down */
-  case class Sled(user: User, position: Position,
+  case class Sled(userName: String, position: Position,
                   rotation: Double, turretRotation: Double)
-
-  case class User(name: String)
 
   case class Tree(size: Int, position: Position)
 

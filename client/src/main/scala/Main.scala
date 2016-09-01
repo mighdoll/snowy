@@ -184,7 +184,7 @@ object TryMe extends JSApp {
     }
     //Draw all sleds
     state.sleds.foreach { sled =>
-      drawSled(sled.user.name, sled.position, sled.turretRotation, sled.rotation)
+      drawSled(sled.userName, sled.position, sled.turretRotation, sled.rotation)
     }
 
     gTrees.trees.foreach { tree =>
