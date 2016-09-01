@@ -107,32 +107,33 @@ object TryMe extends JSApp {
   def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double): Unit = {
     val x = pos.x
     val y = pos.y
+    val turretSize = 50.0
 
     //Global strokeStyle
     ctx.strokeStyle = "rgb(100, 100, 100)"
 
     //Draw two skis
-    ctx.lineWidth = 18.0
     ctx.lineCap = "round"
+    ctx.lineWidth = turretSize * 9 / 55
     ctx.beginPath()
-    ctx.moveTo(x - 50, y - 125)
-    ctx.lineTo(x - 50, y + 125)
+    ctx.moveTo(x - turretSize * 5 / 11, y - turretSize * 25 / 22)
+    ctx.lineTo(x - turretSize * 5 / 11, y + turretSize * 25 / 22)
     ctx.stroke()
     ctx.beginPath()
-    ctx.moveTo(x + 50, y - 125)
-    ctx.lineTo(x + 50, y + 125)
+    ctx.moveTo(x + turretSize * 5 / 11, y - turretSize * 25 / 22)
+    ctx.lineTo(x + turretSize * 5 / 11, y + turretSize * 25 / 22)
     ctx.stroke()
 
     //Rotate canvas
-    ctx.translate(x + 2, y)
+    ctx.translate(x + turretSize / 55, y)
     ctx.rotate(cannonRotation)
 
     //Draw the barrel for snowballs
     ctx.lineWidth = 2.0
     ctx.fillStyle = "rgb(153, 153, 153)"
     ctx.beginPath()
-    ctx.fillRect(-15, 0, 30, 100)
-    ctx.strokeRect(-15, 0, 30, 100)
+    ctx.fillRect(-turretSize * 3 / 22, 0, turretSize * 3 / 11, turretSize * 9 / 10)
+    ctx.strokeRect(-turretSize * 3 / 22, 0, turretSize * 3 / 11, turretSize * 9 / 10)
     ctx.fill()
     ctx.stroke()
 
@@ -142,14 +143,14 @@ object TryMe extends JSApp {
     //Draw the main body
     ctx.fillStyle = "rgb(120, 201, 44)"
     ctx.beginPath()
-    ctx.arc(x, y, 59, 0, 2 * Math.PI)
+    ctx.arc(x, y, turretSize / 2, 0, 2 * Math.PI)
     ctx.fill()
     ctx.stroke()
 
     //Draw the name
-    ctx.font = "30px Arial";
+    ctx.font = (turretSize * 2 / 11) + "px Arial";
     ctx.beginPath()
-    ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - 135)
+    ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - turretSize * 27 / 22)
     ctx.fill()
   }
 
