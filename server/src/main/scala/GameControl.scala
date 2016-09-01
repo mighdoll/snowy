@@ -79,12 +79,14 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = {
     moveStuff(nextTimeSlice())
-    api.sendAll(write(currentState()))
+    currentState() foreach {
+      case (id, state) => api.send(write(state), id)
+    }
   }
 
   /** Advance to the next game simulation state
     *
-    * @return the time in seconds since the last time slice
+    * @return the time since the last time slice, in seconds
     */
   private def nextTimeSlice(): Double = {
     val currentTime = System.currentTimeMillis()

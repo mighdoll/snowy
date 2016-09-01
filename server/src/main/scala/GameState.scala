@@ -38,15 +38,22 @@ trait GameState {
 
 
   /** Package the relevant state to communicate to the client */
-  protected def currentState(): State = {
-    val clientSleds = sleds.map { case (id, sledState) =>
-      val user = users.getOrElse(id, User("???"))
-      Sled(user.name, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
-    }.toSeq
+  protected def currentState(): Iterable[(ConnectionId, State)] = {
+    def clientSled(id:ConnectionId):Sled = {
+      val sledState = sleds(id)
+      val userName = users.get(id).map(_.name).getOrElse("?")
+      Sled(userName, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
+    }
+
     val clientSnowballs = snowballs.map { ball =>
       Snowball(ball.size.toInt, ball.pos.toPosition)
     }
-    State(clientSleds, clientSnowballs)
+
+    sleds.map { case (id, sledState) =>
+      val mySled = sleds.keys.find(_ == id).map(clientSled(_)).get
+      val otherSleds = sleds.keys.filter(_ != id).map(clientSled(_)).toSeq
+      id -> State(mySled, otherSleds, clientSnowballs)
+    }.toSeq
   }
 
   /** Initialize a set of playfield obstacles */

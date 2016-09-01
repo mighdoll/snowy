@@ -182,6 +182,8 @@ object TryMe extends JSApp {
       drawSnowball(snowball.position, 10.0)
     }
     //Draw all sleds
+    drawSled("me", state.mySled.position, state.mySled.turretRotation,
+      state.mySled.rotation)
     state.sleds.foreach { sled =>
       drawSled(sled.userName, sled.position, sled.turretRotation, sled.rotation)
     }
