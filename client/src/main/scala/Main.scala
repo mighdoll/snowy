@@ -12,6 +12,7 @@ object TryMe extends JSApp {
   val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
   var snowLoop: Option[Int] = None
+  var gTrees = Trees(Vector(Tree(20, Position(446, 69))))
 
   object size {
     val width = window.innerWidth
@@ -48,7 +49,7 @@ object TryMe extends JSApp {
       socket.send(msg)
     }
     socket.onerror = { event: ErrorEvent =>
-      console.log(s"Failed: code: ${event}")
+      console.log(s"Failed: code: $event")
     }
     socket.onclose = { event: Event =>
       console.log(s"socket closed ")
@@ -56,8 +57,6 @@ object TryMe extends JSApp {
 
     socket.onmessage = { event: MessageEvent =>
       val msg = event.data.toString
-      // console.log(s"received message: $msg")
-
       try {
         read[GameClientMessage](msg) match {
           case state: State => receivedState(state)
@@ -71,10 +70,9 @@ object TryMe extends JSApp {
     }
 
     window.onkeydown = { event: Event =>
-      console.log(event.asInstanceOf[dom.KeyboardEvent].key)
       event.asInstanceOf[dom.KeyboardEvent].key match {
-        case "ArrowRight" => socket.send(write(TurnRight))
-        case "ArrowLeft" => socket.send(write(TurnLeft))
+        case "ArrowRight" | "d" | "D" => socket.send(write(TurnRight))
+        case "ArrowLeft" | "a" | "A" => socket.send(write(TurnLeft))
         case _ =>
       }
     }
@@ -86,7 +84,7 @@ object TryMe extends JSApp {
 
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = { event: Event =>
-    //Connect to the websocket server
+    //Connect to the WebSocket server
     connect()
 
     //Swap front and back panes
@@ -115,6 +113,7 @@ object TryMe extends JSApp {
 
     //Draw two skis
     ctx.lineWidth = 18.0
+    ctx.lineCap = "round"
     ctx.beginPath()
     ctx.moveTo(x - 50, y - 125)
     ctx.lineTo(x - 50, y + 125)
@@ -155,11 +154,23 @@ object TryMe extends JSApp {
   }
 
   //Draw a tree on the canvas
-  def drawTree(pos: GameClientProtocol.Position): Unit = {}
+  def drawTree(pos: GameClientProtocol.Position): Unit = {
+    ctx.fillStyle = "rgb(30, 184, 22)"
+    ctx.beginPath()
+    ctx.fillRect(pos.x, pos.y, 10, 10)
+    ctx.fill()
+  }
 
-  def drawSnowball(pos: GameClientProtocol.Position): Unit = {}
+  def drawSnowball(pos: GameClientProtocol.Position, size: Double): Unit = {
+    ctx.strokeStyle = "rgb(100, 100, 100)"
+    ctx.fillStyle = "rgb(208, 242, 237)"
+    ctx.beginPath()
+    ctx.arc(pos.x, pos.y, size, 0, 2 * Math.PI)
+    ctx.fill()
+    ctx.stroke()
+  }
 
-  //When the client recieves the state of canvas, draw all sleds
+  //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
     //Clear screen
     ctx.fillStyle = "white"
@@ -167,22 +178,22 @@ object TryMe extends JSApp {
     ctx.fill()
 
     //Draw all snowballs
-    state.snowballs.map { snowball =>
-      drawSnowball(snowball.position)
+    state.snowballs.foreach { snowball =>
+      drawSnowball(snowball.position, 10.0)
     }
     //Draw all sleds
-    state.sleds.map { sled =>
+    state.sleds.foreach { sled =>
       drawSled(sled.user.name, sled.position, sled.turretRotation, sled.rotation)
+    }
+
+    gTrees.trees.foreach { tree =>
+      drawTree(tree.position)
     }
   }
 
-  //When the client recieves all trees, draw them
-  //TODO: Save the trees
+  //When the client receives all trees, draw them
   def receivedTrees(trees: Trees): Unit = {
-    console.log(s"received trees: $trees")
-    trees.trees.map { tree =>
-      drawTree(tree.position)
-    }
+    gTrees = trees
   }
 
   def receivedPlayField(playField: PlayField): Unit = {
