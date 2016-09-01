@@ -18,7 +18,7 @@ lazy val V = new Object {
 lazy val server = (project in file("server")).
   settings(commonSettings: _*).
   settings(
-    name := "hello",
+    name := "server",
     libraryDependencies ++=  Seq(
       "com.typesafe.akka" %% "akka-actor" % V.akka,
       "com.typesafe.akka" %% "akka-stream" % V.akka,
