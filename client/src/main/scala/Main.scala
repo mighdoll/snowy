@@ -115,20 +115,21 @@ object TryMe extends JSApp {
     //Draw two skis
     ctx.lineCap = "round"
     ctx.lineWidth = turretSize * 9 / 55
+    ctx.translate(x, y)
+    ctx.rotate(-rotation)
     ctx.beginPath()
-    ctx.moveTo(x - turretSize * 5 / 11, y - turretSize * 25 / 22)
-    ctx.lineTo(x - turretSize * 5 / 11, y + turretSize * 25 / 22)
+    ctx.moveTo(turretSize * 5 / 11, -turretSize * 25 / 22)
+    ctx.lineTo(turretSize * 5 / 11, turretSize * 25 / 22)
     ctx.stroke()
     ctx.beginPath()
-    ctx.moveTo(x + turretSize * 5 / 11, y - turretSize * 25 / 22)
-    ctx.lineTo(x + turretSize * 5 / 11, y + turretSize * 25 / 22)
+    ctx.moveTo(-turretSize * 5 / 11, -turretSize * 25 / 22)
+    ctx.lineTo(-turretSize * 5 / 11, turretSize * 25 / 22)
     ctx.stroke()
-
-    //Rotate canvas
-    ctx.translate(x + turretSize / 55, y)
-    ctx.rotate(cannonRotation)
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
 
     //Draw the barrel for snowballs
+    ctx.translate(x + turretSize / 55, y)
+    ctx.rotate(cannonRotation)
     ctx.lineWidth = 2.0
     ctx.fillStyle = "rgb(153, 153, 153)"
     ctx.beginPath()
@@ -136,8 +137,6 @@ object TryMe extends JSApp {
     ctx.strokeRect(-turretSize * 3 / 22, 0, turretSize * 3 / 11, turretSize * 9 / 10)
     ctx.fill()
     ctx.stroke()
-
-    //Reset rotation
     ctx.setTransform(1, 0, 0, 1, 0, 0)
 
     //Draw the main body
