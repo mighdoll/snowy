@@ -1,5 +1,3 @@
-import socketserve.ConnectionId
-
 /** Moving objects in each game time slice */
 trait GameMotion {
   self: GameControl =>
@@ -8,27 +6,47 @@ trait GameMotion {
   protected def moveStuff(deltaSeconds: Double): Unit = {
     applyGravity(deltaSeconds)
     skidToRotate(deltaSeconds)
+    frictionSlow(deltaSeconds)
     moveObjects(deltaSeconds)
     checkCollisions()
   }
 
   /** Increase the speed of sleds due to gravity */
   private def applyGravity(deltaSeconds: Double): Unit = {
-    val gravity = 100.0
+    val gravity = 100.0 // pixels / second / second
     val gravityFactor = gravity * deltaSeconds
     mapSleds { sled =>
-      val delta = Vec2d(
-        x = 0,
-        y = math.cos(sled.rotation) * gravityFactor
-      )
-      val newSpeed = (sled.speed + delta).min(maxSpeed)
+      val gravityLength = math.cos(sled.rotation) * gravityFactor // +speed in direction of travel
+      val gravitySpeed = Vec2d.fromRotation(sled.rotation) * gravityLength
+      val newSpeed = (sled.speed + gravitySpeed).min(maxSpeed)
+      sled.copy(speed = newSpeed)
+    }
+  }
+
+  /** Slow sleds based on friction */
+  private def frictionSlow(deltaSeconds:Double): Unit =  {
+    val friction = 100.0 // pixels / second / second
+    val frictionFactor = friction * deltaSeconds
+    mapSleds { sled =>
+      import math._
+      // friction is 0 when skis are aligned with direction, max when skis are at 90 degrees
+      val direction = sled.speed.unit
+      val rotation = Vec2d.fromRotation(sled.rotation)
+      val angleSkiToTravel = direction.angle(rotation)
+      val brakeSteepness = 4  // higher means braking effect curve peaks more narrowly (when skis are near 90 to travel)
+      val rotationFactor = pow(sin(angleSkiToTravel), brakeSteepness)
+      val sledFriction = frictionFactor * rotationFactor // -speed in direction of travel
+
+      val speed = sled.speed.length
+      val adjustedFriction = if (sledFriction < speed) sledFriction else speed
+      val newSpeed = direction * (speed - adjustedFriction)
       sled.copy(speed = newSpeed)
     }
   }
 
   /** Adjust the speed based on the current rotation */
   private def skidToRotate(deltaSeconds: Double): Unit = {
-    val skidSpeed = .75 // seconds to complete a skid
+    val skidSpeed = .4  // seconds to complete a skid
     val skidFactor = math.min(1.0, deltaSeconds * skidSpeed)
     mapSleds { sled =>
       val speed = sled.speed.length
@@ -49,8 +67,6 @@ trait GameMotion {
       id -> fn(sled)
     }
   }
-
-  private def slowFriction(sled: SledState): SledState = ???
 
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
