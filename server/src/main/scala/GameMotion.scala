@@ -84,7 +84,9 @@ trait GameMotion {
         max + value
       else
         value
-    assert(result >= 0 && result < max)
+    if (result < 0 || result >= max) {
+      println(s"wrapBorder error: $value < $max   $result")
+    }
     result
   }
 
