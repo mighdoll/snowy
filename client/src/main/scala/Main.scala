@@ -5,7 +5,7 @@ import upickle.default._
 import GameServerProtocol._
 import GameClientProtocol._
 
-object TryMe extends JSApp {
+object ClientMain extends JSApp {
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   gameCanvas.width = size.width
   gameCanvas.height = size.height
