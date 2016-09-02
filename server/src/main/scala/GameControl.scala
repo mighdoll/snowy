@@ -32,7 +32,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
       case TurnLeft   => turn(id, -turnDelta)
       case TurnRight  => turn(id, turnDelta)
       case Join(name) => userJoin(id, name)
-      case Mouse(pos) => rotateTurret(id, pos)
+      case TurretAngle(angle) => rotateTurret(id, angle)
       case x          => println(s"received unhandled client message: $x")
     }
   }
@@ -48,10 +48,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   /** Rotate the turret on a sled */
-  private def rotateTurret(id: ConnectionId, pos: Position): Unit = {
+  private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
     sleds.get(id) match {
       case Some(sled) =>
-        sleds(id) = sled.copy(turretRotation = -Math.atan2(pos.x - sled.pos.x, pos.y - sled.pos.y))
+        sleds(id) = sled.copy(turretRotation = angle)
       case None       =>
         println(s"where's the sled to rotate turret for id: $id")
     }

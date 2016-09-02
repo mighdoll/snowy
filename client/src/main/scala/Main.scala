@@ -6,6 +6,11 @@ import GameServerProtocol._
 import GameClientProtocol._
 
 object ClientMain extends JSApp {
+
+  case class sizeO(width: Int, height: Int)
+
+  var size = sizeO(window.innerWidth, window.innerHeight)
+
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   gameCanvas.width = size.width
   gameCanvas.height = size.height
@@ -13,11 +18,7 @@ object ClientMain extends JSApp {
 
   var snowLoop: Option[Int] = None
   var gTrees = Trees(Vector(Tree(20, Position(446, 69))))
-
-  object size {
-    val width = window.innerWidth
-    val height = window.innerHeight
-  }
+  var gPlayField = PlayField(0, 0)
 
   var time = 0
 
@@ -40,7 +41,7 @@ object ClientMain extends JSApp {
   }
 
   def connect() = {
-    val socket = new WebSocket("ws://localhost:2345/game")
+    val socket = new WebSocket(s"ws://${window.location.host}/game")
 
     val join = Join(document.getElementById("username").asInstanceOf[html.Input].value)
     val msg = write(join)
@@ -78,7 +79,8 @@ object ClientMain extends JSApp {
     }
     window.onmousemove = { event: Event =>
       val e = event.asInstanceOf[dom.MouseEvent]
-      socket.send(write(Mouse(GameClientProtocol.Position(e.clientX.toInt, e.clientY.toInt))))
+      val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
+      socket.send(write(TurretAngle(angle)))
     }
   }
 
@@ -170,6 +172,20 @@ object ClientMain extends JSApp {
     ctx.stroke()
   }
 
+  def drawBorder(top: GameClientProtocol.Position, bottom: GameClientProtocol.Position): Unit = {
+    ctx.beginPath()
+    ctx.moveTo(top.x, top.y)
+    ctx.lineTo(top.x, bottom.y)
+    ctx.lineTo(bottom.x, bottom.y)
+    ctx.lineTo(bottom.x, top.y)
+    ctx.closePath()
+    ctx.stroke()
+  }
+
+  def centerObject(pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
+    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
+  }
+
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
     //Clear screen
@@ -182,15 +198,16 @@ object ClientMain extends JSApp {
       drawSnowball(snowball.position, 10.0)
     }
     //Draw all sleds
-    drawSled("me", state.mySled.position, state.mySled.turretRotation,
-      state.mySled.rotation)
+    drawSled("me", Position(size.width / 2, size.height / 2), state.mySled.turretRotation, state.mySled.rotation)
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, sled.position, sled.turretRotation, sled.rotation)
+      drawSled(sled.userName, centerObject(sled.position, state.mySled.position), sled.turretRotation, sled.rotation)
     }
 
     gTrees.trees.foreach { tree =>
-      drawTree(tree.position)
+      drawTree(centerObject(tree.position, state.mySled.position))
     }
+
+    drawBorder(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), centerObject(GameClientProtocol.Position(gPlayField.width, gPlayField.height), state.mySled.position))
   }
 
   //When the client receives all trees, draw them
@@ -199,6 +216,8 @@ object ClientMain extends JSApp {
   }
 
   def receivedPlayField(playField: PlayField): Unit = {
-    console.log(s"received playField: $playField")
+    gPlayField = playField
   }
+
+  window.onresize = (_: UIEvent) => (size = sizeO(window.innerWidth, window.innerHeight))
 }

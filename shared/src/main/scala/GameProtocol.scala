@@ -6,7 +6,7 @@ object GameServerProtocol {
 
   case class Join(userName: String) extends GameServerMessage
 
-  case class Mouse(pos: GameClientProtocol.Position) extends GameServerMessage
+  case class TurretAngle(angle: Double) extends GameServerMessage
 
   case object TurnLeft extends GameServerMessage
 
