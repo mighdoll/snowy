@@ -149,7 +149,7 @@ object ClientMain extends JSApp {
     ctx.stroke()
 
     //Draw the name
-    ctx.font = (turretSize * 2 / 11) + "px Arial";
+    ctx.font = (turretSize * 3 / 11) + "px Arial";
     ctx.beginPath()
     ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - turretSize * 27 / 22)
     ctx.fill()
