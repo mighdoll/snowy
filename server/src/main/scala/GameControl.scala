@@ -7,7 +7,7 @@ import upickle.default._
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
 
-  api.tick(50 milliseconds) {
+  api.tick(20 milliseconds) {
     gameTurn()
   }
 
