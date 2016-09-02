@@ -46,8 +46,8 @@ trait GameMotion {
 
   /** Adjust the speed based on the current rotation */
   private def skidToRotate(deltaSeconds: Double): Unit = {
-    val skidSpeed = .4  // seconds to complete a skid
-    val skidFactor = math.min(1.0, deltaSeconds * skidSpeed)
+    val skidSpeed = .3  // seconds to complete a skid
+    val skidFactor = math.min(1.0, deltaSeconds / skidSpeed)
     mapSleds { sled =>
       val speed = sled.speed.length
       val current = sled.speed / speed
@@ -73,16 +73,19 @@ trait GameMotion {
     *
     * @return the wrapped value */
   private def wrapBorder(value: Double, max: Double): Double = {
-    if (value > max * 2.0)
-      max
-    else if (value > max)
-      max - value
-    else if (value < max * -2.0)
-      0
-    else if (value < 0)
-      max - value
-    else
-      value
+    val result =
+      if (value >= max * 2.0)
+        max
+      else if (value >= max)
+        value - max
+      else if (value < max * -2.0)
+        0
+      else if (value < 0)
+        max + value
+      else
+        value
+    assert(result >= 0 && result < max)
+    result
   }
 
   /** constrain a position to be within the playfield */
