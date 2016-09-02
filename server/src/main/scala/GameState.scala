@@ -27,7 +27,7 @@ trait GameState {
 
   case class User(name: String)
 
-  val playField = PlayField(1000, 800)
+  val playField = PlayField(4000, 8000)
   var sleds = mutable.Map[ConnectionId, SledState]()
   val trees = randomTrees()
   val snowballs = mutable.ListBuffer[SnowballState]()
