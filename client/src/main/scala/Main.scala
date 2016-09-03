@@ -221,31 +221,46 @@ object ClientMain extends JSApp {
     Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
+  def addOffset(pos: GameClientProtocol.Position, offset: PlayField): GameClientProtocol.Position = {
+    Position(pos.x + offset.width, pos.y + offset.height)
+  }
+
+  def drawState(state: State, offset: PlayField): Unit = {
+    //Draw all snowballs
+    state.snowballs.foreach { snowball =>
+      drawSnowball(addOffset(centerObject(snowball.position, state.mySled.position), offset), 10.0)
+    }
+    //Draw all sleds
+    drawSled("me", addOffset(Position(size.width / 2, size.height / 2), offset), state.mySled.turretRotation, state.mySled.rotation)
+    state.sleds.foreach { sled =>
+      drawSled(sled.userName, addOffset(centerObject(sled.position, state.mySled.position), offset), sled.turretRotation, sled.rotation)
+    }
+
+    gTrees.trees.foreach { tree =>
+      drawTree(addOffset(centerObject(tree.position, state.mySled.position), offset))
+    }
+
+    drawBorder(addOffset(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), offset), addOffset(centerObject(GameClientProtocol.Position(gPlayField.width, gPlayField.height), state.mySled.position), offset))
+  }
+
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
-    //Clear screen
+    //Clear the screen
     ctx.fillStyle = "white"
     ctx.fillRect(0, 0, size.width, size.height)
     ctx.fill()
 
-    //Draw all snowballs
-    state.snowballs.foreach { snowball =>
-      drawSnowball(snowball.position, 10.0)
-    }
-    //Draw all sleds
-    drawSled("me", Position(size.width / 2, size.height / 2), state.mySled.turretRotation, state.mySled.rotation)
-    state.sleds.foreach { sled =>
-      drawSled(sled.userName, centerObject(sled.position, state.mySled.position), sled.turretRotation, sled.rotation)
-    }
-
-    gTrees.trees.foreach { tree =>
-      drawTree(centerObject(tree.position, state.mySled.position))
-    }
-
-    drawBorder(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), centerObject(GameClientProtocol.Position(gPlayField.width, gPlayField.height), state.mySled.position))
+    drawState(state, PlayField(-gPlayField.width, -gPlayField.height))
+    drawState(state, PlayField(-gPlayField.width, 0))
+    drawState(state, PlayField(-gPlayField.width, gPlayField.height))
+    drawState(state, PlayField(0, -gPlayField.height))
+    drawState(state, PlayField(0, 0))
+    drawState(state, PlayField(0, gPlayField.height))
+    drawState(state, PlayField(gPlayField.width, -gPlayField.height))
+    drawState(state, PlayField(gPlayField.width, 0))
+    drawState(state, PlayField(gPlayField.width, gPlayField.height))
   }
 
-  //When the client receives all trees, draw them
   def receivedTrees(trees: Trees): Unit = {
     gTrees = trees
   }
@@ -254,5 +269,6 @@ object ClientMain extends JSApp {
     gPlayField = playField
   }
 
-  window.onresize = (_: UIEvent) => size = sizeO(window.innerWidth, window.innerHeight)
+  window.onresize = (_: UIEvent) =>
+    size = sizeO(window.innerWidth, window.innerHeight)
 }
