@@ -33,7 +33,7 @@ trait GameState {
   val snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
-  val turnDelta = Math.PI / 100
+  val turnDelta = Math.PI / 50
   val maxSpeed = 350
 
 

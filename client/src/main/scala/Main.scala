@@ -70,21 +70,26 @@ object ClientMain extends JSApp {
       }
     }
 
-    var keyLoop: Option[Int] = None
+    sealed trait Direction
+    object Left extends Direction
+    object Right extends Direction
+    var turning: Option[Direction] = None
+
+    window.setInterval(() =>
+      turning match {
+        case Some(Left) => socket.send(write(TurnLeft))
+        case Some(Right) => socket.send(write(TurnRight))
+        case _ =>
+      }, 20)
+
     window.onkeydown = { event: Event =>
       event.asInstanceOf[dom.KeyboardEvent].key match {
-        case "ArrowRight" | "d" | "D" =>
-          keyLoop.foreach { id => window.clearInterval(id) }
-          keyLoop = Some(window.setInterval(() => socket.send(write(TurnRight)), 10))
-        case "ArrowLeft" | "a" | "A" =>
-          keyLoop.foreach { id => window.clearInterval(id) }
-          keyLoop = Some(window.setInterval(() => socket.send(write(TurnLeft)), 10))
+        case "ArrowRight" | "d" | "D" => turning = Some(Right)
+        case "ArrowLeft" | "a" | "A" => turning = Some(Left)
         case _ =>
       }
     }
-    window.onkeyup = { event: Event =>
-      keyLoop.foreach { id => window.clearInterval(id) }
-    }
+    window.onkeyup = { _: Event => turning = None }
     window.onmousemove = { event: Event =>
       val e = event.asInstanceOf[dom.MouseEvent]
       val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
