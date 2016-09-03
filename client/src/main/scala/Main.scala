@@ -70,12 +70,20 @@ object ClientMain extends JSApp {
       }
     }
 
+    var keyLoop: Option[Int] = None
     window.onkeydown = { event: Event =>
       event.asInstanceOf[dom.KeyboardEvent].key match {
-        case "ArrowRight" | "d" | "D" => socket.send(write(TurnRight))
-        case "ArrowLeft" | "a" | "A" => socket.send(write(TurnLeft))
+        case "ArrowRight" | "d" | "D" =>
+          keyLoop.foreach { id => window.clearInterval(id) }
+          keyLoop = Some(window.setInterval(() => socket.send(write(TurnRight)), 10))
+        case "ArrowLeft" | "a" | "A" =>
+          keyLoop.foreach { id => window.clearInterval(id) }
+          keyLoop = Some(window.setInterval(() => socket.send(write(TurnLeft)), 10))
         case _ =>
       }
+    }
+    window.onkeyup = { event: Event =>
+      keyLoop.foreach { id => window.clearInterval(id) }
     }
     window.onmousemove = { event: Event =>
       val e = event.asInstanceOf[dom.MouseEvent]
