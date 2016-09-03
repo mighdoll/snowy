@@ -183,13 +183,13 @@ object ClientMain extends JSApp {
     ctx.fill()
 
     ctx.translate(x, y - branchSize * 29 / 50)
-    ctx.rotate(Math.PI*13/18)
+    ctx.rotate(Math.PI * 13 / 18)
 
     ctx.beginPath()
     ctx.fillRect(0, 0, branchSize * 1 / 20, branchSize * 43 / 200)
     ctx.fill()
 
-    ctx.rotate(Math.PI*5/9)
+    ctx.rotate(Math.PI * 5 / 9)
     ctx.beginPath()
     ctx.fillRect(0, branchSize * 7 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
     ctx.fillRect(branchSize * -1 / 10, branchSize * -13 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
@@ -254,5 +254,5 @@ object ClientMain extends JSApp {
     gPlayField = playField
   }
 
-  window.onresize = (_: UIEvent) => (size = sizeO(window.innerWidth, window.innerHeight))
+  window.onresize = (_: UIEvent) => size = sizeO(window.innerWidth, window.innerHeight)
 }
