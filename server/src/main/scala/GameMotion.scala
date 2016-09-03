@@ -51,10 +51,7 @@ trait GameMotion {
     mapSleds { sled =>
       val speed = sled.speed.length
       val current = sled.speed / speed
-      val target = Vec2d(
-        x = math.sin(sled.rotation),
-        y = math.cos(sled.rotation)
-      )
+      val target = Vec2d.fromRotation(sled.rotation)
       val skidVector = current + ((target - current) * skidFactor)
       val newSpeed = skidVector * speed
       sled.copy(speed = newSpeed)
