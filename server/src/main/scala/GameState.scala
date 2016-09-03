@@ -34,7 +34,6 @@ trait GameState {
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
   val turnDelta = Math.PI / 50
-  val maxSpeed = 350
 
 
   /** Package the relevant state to communicate to the client */

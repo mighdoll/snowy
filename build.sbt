@@ -6,12 +6,12 @@ lazy val commonSettings = Seq(
   // organization := "com.example",
   version := "0.1.0",
   scalaVersion := V.scala,
-  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:postfixOps")
+  scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:postfixOps"),
+  libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test"
 )
 
 lazy val V = new Object {
   val akka = "2.4.9"
-  val circe = "0.4.1"
   val scala = "2.11.8"
 }
 

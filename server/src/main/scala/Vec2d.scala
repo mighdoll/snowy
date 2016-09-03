@@ -21,8 +21,8 @@ case class Vec2d(x: Double, y: Double) {
 
   def zero: Boolean = (x == 0 && y == 0)
 
-  def angle(other: Vec2d):Double =  // TODO use atan2
-    math.acos((this dot other) / (this.length * other.length))
+  def angle(other: Vec2d):Double =
+    math.atan2(this cross other, this dot other)
 
   def rotate(radians: Double):Vec2d = ???
 
