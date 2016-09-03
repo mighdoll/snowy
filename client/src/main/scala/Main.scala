@@ -269,6 +269,12 @@ object ClientMain extends JSApp {
     gPlayField = playField
   }
 
-  window.onresize = (_: UIEvent) =>
+  window.onresize = (_: UIEvent) => {
     size = sizeO(window.innerWidth, window.innerHeight)
+    gameCanvas.width = size.width
+    gameCanvas.height = size.height
+    ctx.fillStyle = "white"
+    ctx.fillRect(0, 0, size.width, size.height)
+    ctx.fill()
+  }
 }
