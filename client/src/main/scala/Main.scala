@@ -22,24 +22,35 @@ object ClientMain extends JSApp {
   var gTrees = Trees(Vector(Tree(20, Position(446, 69))))
   var gPlayField = PlayField(0, 0)
 
-  var time = 0
+  var snowFlakes = (1 to size.width / 10).map(i => new snow(i))
+
+  class snow(index: Double) {
+    var x = index * 10
+    var y = -Math.random() * size.height
+    val flakeSize = Math.random() * 5 + 5
+
+    def move(): Unit = {
+      y += 1
+      y = y % size.height
+    }
+
+    def draw(): Unit = {
+      ctx.fillStyle = "#b3e5fc"
+      ctx.beginPath()
+      ctx.arc(x, y, flakeSize, 0, 2 * Math.PI)
+      ctx.fill()
+    }
+  }
 
   def draw() = {
-    //Simple drawing with time
-    //TODO: Replace with snow
     ctx.fillStyle = "white"
     ctx.fillRect(0, 0, size.width, size.height)
     ctx.fill()
 
-    ctx.beginPath()
-    ctx.moveTo(10, 10)
-    ctx.lineTo(
-      size.width - (time % size.width),
-      size.height - (time % size.height)
-    )
-    ctx.stroke()
-
-    time += 1
+    snowFlakes.foreach { flake =>
+      flake.move()
+      flake.draw()
+    }
   }
 
   def connect() = {
