@@ -16,7 +16,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) {
 
     // create an actor ref to accept and buffer messages sent to the client
     val out =
-    Source.actorRef[TextMessage](4, OverflowStrategy.fail)
+    Source.actorRef[TextMessage](4, OverflowStrategy.dropTail)
       .mapMaterializedValue { outRef => app ! Open(connectionId, outRef) }
 
     // forward messages from the client, and note if the connection drops

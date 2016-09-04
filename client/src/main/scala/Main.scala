@@ -93,7 +93,7 @@ object ClientMain extends JSApp {
         case Some(Left) => socket.send(write(TurnLeft))
         case Some(Right) => socket.send(write(TurnRight))
         case _ =>
-      }, 20)
+      }, 50)
 
     window.onkeydown = { event: Event =>
       event.asInstanceOf[dom.KeyboardEvent].key match {
