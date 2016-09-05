@@ -2,9 +2,28 @@ import ClientMain.Size
 import GameClientProtocol.{PlayField, Position, State, Trees}
 import org.scalajs.dom
 
-class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
+object ClientDraw {
+
+  class snowFlake(ctx: dom.CanvasRenderingContext2D, index: Double, size: Size) {
+    var x = index * 10
+    var y = -Math.random() * size.height
+    val flakeSize = Math.random() * 5 + 5
+
+    def move(): Unit = {
+      y += 1
+      y = y % size.height
+    }
+
+    def draw(): Unit = {
+      ctx.fillStyle = "#b3e5fc"
+      ctx.beginPath()
+      ctx.arc(x, y, flakeSize, 0, 2 * Math.PI)
+      ctx.fill()
+    }
+  }
+
   //Draw a sled at an x and y
-  def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double): Unit = {
+  def drawSled(ctx: dom.CanvasRenderingContext2D, name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double): Unit = {
     val x = pos.x
     val y = pos.y
     val turretSize = 50.0
@@ -54,7 +73,7 @@ class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
   }
 
   //Draw a tree on the canvas
-  def drawTree(pos: GameClientProtocol.Position): Unit = {
+  def drawTree(ctx: dom.CanvasRenderingContext2D, pos: GameClientProtocol.Position): Unit = {
     val x = pos.x
     val y = pos.y
     val branchSize = 100
@@ -88,7 +107,7 @@ class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
     ctx.setTransform(1, 0, 0, 1, 0, 0)
   }
 
-  def drawSnowball(pos: GameClientProtocol.Position, size: Double): Unit = {
+  def drawSnowball(ctx: dom.CanvasRenderingContext2D, pos: GameClientProtocol.Position, size: Double): Unit = {
     ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.fillStyle = "rgb(208, 242, 237)"
     ctx.beginPath()
@@ -97,7 +116,7 @@ class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
     ctx.stroke()
   }
 
-  def drawBorder(top: GameClientProtocol.Position, bottom: GameClientProtocol.Position): Unit = {
+  def drawBorder(ctx: dom.CanvasRenderingContext2D, top: GameClientProtocol.Position, bottom: GameClientProtocol.Position): Unit = {
     ctx.beginPath()
     ctx.moveTo(top.x, top.y)
     ctx.lineTo(top.x, bottom.y)
@@ -107,7 +126,7 @@ class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
     ctx.stroke()
   }
 
-  def centerObject(pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
+  def centerObject(size: Size, pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
     Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
@@ -115,21 +134,21 @@ class ClientDraw(ctx: dom.CanvasRenderingContext2D, size: Size) {
     Position(pos.x + offset.width, pos.y + offset.height)
   }
 
-  def drawState(state: State, offset: PlayField, trees: Trees, border: PlayField): Unit = {
+  def drawState(size: Size, ctx: dom.CanvasRenderingContext2D, state: State, offset: PlayField, trees: Trees, border: PlayField): Unit = {
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(addOffset(centerObject(snowball.position, state.mySled.position), offset), 10.0)
+      drawSnowball(ctx, addOffset(centerObject(size, snowball.position, state.mySled.position), offset), 10.0)
     }
     //Draw all sleds
-    drawSled("me", addOffset(Position(size.width / 2, size.height / 2), offset), state.mySled.turretRotation, state.mySled.rotation)
+    drawSled(ctx, "me", addOffset(Position(size.width / 2, size.height / 2), offset), state.mySled.turretRotation, state.mySled.rotation)
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, addOffset(centerObject(sled.position, state.mySled.position), offset), sled.turretRotation, sled.rotation)
+      drawSled(ctx, sled.userName, addOffset(centerObject(size, sled.position, state.mySled.position), offset), sled.turretRotation, sled.rotation)
     }
 
     trees.trees.foreach { tree =>
-      drawTree(addOffset(centerObject(tree.position, state.mySled.position), offset))
+      drawTree(ctx, addOffset(centerObject(size, tree.position, state.mySled.position), offset))
     }
 
-    drawBorder(addOffset(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), offset), addOffset(centerObject(GameClientProtocol.Position(border.width, border.height), state.mySled.position), offset))
+    drawBorder(ctx, addOffset(centerObject(size, GameClientProtocol.Position(0, 0), state.mySled.position), offset), addOffset(centerObject(size, GameClientProtocol.Position(border.width, border.height), state.mySled.position), offset))
   }
 }
