@@ -1,10 +1,10 @@
+import ClientDraw._
 import ClientMain.Size
 import GameClientProtocol._
 import GameServerProtocol._
 import org.scalajs.dom
 import org.scalajs.dom._
 import upickle.default._
-import ClientDraw._
 
 class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
   val socket = new WebSocket(s"ws://${window.location.host}/game")
@@ -34,6 +34,25 @@ class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
         console.log(s"unexpected message: $msg, ($e)")
     }
   }
+
+  var gTrees = Trees(Vector())
+  var gPlayField = PlayField(0, 0)
+
+  //When the client receives the state of canvas, draw all sleds
+  def receivedState(state: State): Unit = {
+    clearScreen()
+
+    drawState(state, PlayField(-gPlayField.width, -gPlayField.height), gTrees, gPlayField)
+    drawState(state, PlayField(-gPlayField.width, 0), gTrees, gPlayField)
+    drawState(state, PlayField(-gPlayField.width, gPlayField.height), gTrees, gPlayField)
+    drawState(state, PlayField(0, -gPlayField.height), gTrees, gPlayField)
+    drawState(state, PlayField(0, 0), gTrees, gPlayField)
+    drawState(state, PlayField(0, gPlayField.height), gTrees, gPlayField)
+    drawState(state, PlayField(gPlayField.width, -gPlayField.height), gTrees, gPlayField)
+    drawState(state, PlayField(gPlayField.width, 0), gTrees, gPlayField)
+    drawState(state, PlayField(gPlayField.width, gPlayField.height), gTrees, gPlayField)
+  }
+
 
   sealed trait Direction
 
@@ -71,26 +90,5 @@ class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
     val e = event.asInstanceOf[dom.MouseEvent]
     val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
     socket.send(write(TurretAngle(angle)))
-  }
-
-  var gTrees = Trees(Vector())
-  var gPlayField = PlayField(0, 0)
-
-  //When the client receives the state of canvas, draw all sleds
-  def receivedState(state: State): Unit = {
-    //Clear the screen
-    ctx.fillStyle = "white"
-    ctx.fillRect(0, 0, size.width, size.height)
-    ctx.fill()
-
-    drawState(size, ctx, state, PlayField(-gPlayField.width, -gPlayField.height), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(-gPlayField.width, 0), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(-gPlayField.width, gPlayField.height), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(0, -gPlayField.height), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(0, 0), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(0, gPlayField.height), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(gPlayField.width, -gPlayField.height), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(gPlayField.width, 0), gTrees, gPlayField)
-    drawState(size, ctx, state, PlayField(gPlayField.width, gPlayField.height), gTrees, gPlayField)
   }
 }
