@@ -1,12 +1,12 @@
 import ClientDraw._
-import ClientMain.Size
 import GameClientProtocol._
 import GameServerProtocol._
 import org.scalajs.dom
 import org.scalajs.dom._
 import upickle.default._
 
-class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
+class Connection(name: String) {
+
   val socket = new WebSocket(s"ws://${window.location.host}/game")
 
   val connect = write(Join(name)) //document.getElementById("username").asInstanceOf[html.Input].value

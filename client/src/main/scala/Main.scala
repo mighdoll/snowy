@@ -24,7 +24,7 @@ object ClientMain extends JSApp {
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = { event: Event =>
     //Connect to the WebSocket server
-    new Connection(document.getElementById("username").asInstanceOf[html.Input].value, size, ctx)
+    new Connection(document.getElementById("username").asInstanceOf[html.Input].value)
 
     //Swap front and back panes
     document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
@@ -36,7 +36,4 @@ object ClientMain extends JSApp {
     //Do not redirect
     false
   }
-
-  case class Size(width: Int, height: Int)
-
 }

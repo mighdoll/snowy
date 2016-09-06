@@ -1,9 +1,11 @@
-import ClientMain.Size
 import GameClientProtocol._
 import org.scalajs.dom
 import org.scalajs.dom._
 
 object ClientDraw {
+
+  case class Size(width: Int, height: Int)
+
   var size = Size(window.innerWidth, window.innerHeight)
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
