@@ -1,13 +1,10 @@
 import scala.scalajs.js.JSApp
 import ClientDraw._
-import GameClientProtocol._
 import org.scalajs.dom._
 
 object ClientMain extends JSApp {
 
   var snowLoop: Option[Int] = None
-  var gTrees = Trees(Vector(Tree(20, Position(446, 69))))
-  var gPlayField = PlayField(0, 0)
   var snowFlakes = (1 to size.width / 10).map(i => new snowFlake(i))
 
   def main(): Unit = {
