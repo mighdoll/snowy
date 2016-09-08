@@ -67,7 +67,7 @@ class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
       case Some(Left) => socket.send(write(TurnLeft))
       case Some(Right) => socket.send(write(TurnRight))
       case _ =>
-    }, 50)
+    }, 20)
   window.onkeydown = { event: Event =>
     event.asInstanceOf[dom.KeyboardEvent].key match {
       case "ArrowRight" | "d" | "D" => turning = Some(Right)
