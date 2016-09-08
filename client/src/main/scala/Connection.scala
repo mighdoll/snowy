@@ -42,15 +42,7 @@ class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
   def receivedState(state: State): Unit = {
     clearScreen()
 
-    drawState(state, PlayField(-gPlayField.width, -gPlayField.height), gTrees, gPlayField)
-    drawState(state, PlayField(-gPlayField.width, 0), gTrees, gPlayField)
-    drawState(state, PlayField(-gPlayField.width, gPlayField.height), gTrees, gPlayField)
-    drawState(state, PlayField(0, -gPlayField.height), gTrees, gPlayField)
-    drawState(state, PlayField(0, 0), gTrees, gPlayField)
-    drawState(state, PlayField(0, gPlayField.height), gTrees, gPlayField)
-    drawState(state, PlayField(gPlayField.width, -gPlayField.height), gTrees, gPlayField)
-    drawState(state, PlayField(gPlayField.width, 0), gTrees, gPlayField)
-    drawState(state, PlayField(gPlayField.width, gPlayField.height), gTrees, gPlayField)
+    drawState(state, gTrees, gPlayField)
   }
 
 

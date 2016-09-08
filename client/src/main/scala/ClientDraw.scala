@@ -33,23 +33,23 @@ object ClientDraw {
       ctx.fill()
     }
   }
- 
-  def drawState(state: State, offset: PlayField, trees: Trees, border: PlayField): Unit = {
+
+  def drawState(state: State, trees: Trees, border: PlayField): Unit = {
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(addOffset(centerObject(snowball.position, state.mySled.position), offset), 10.0)
+      drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), 10.0)
     }
     //Draw all sleds
-    drawSled("me", addOffset(Position(size.width / 2, size.height / 2), offset), state.mySled.turretRotation, state.mySled.rotation)
+    drawSled("me", screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.turretRotation, state.mySled.rotation)
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, addOffset(centerObject(sled.position, state.mySled.position), offset), sled.turretRotation, sled.rotation)
+      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation)
     }
 
     trees.trees.foreach { tree =>
-      drawTree(addOffset(centerObject(tree.position, state.mySled.position), offset))
+      drawTree(screenPosition(centerObject(tree.position, state.mySled.position), border))
     }
 
-    drawBorder(addOffset(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), offset), addOffset(centerObject(GameClientProtocol.Position(border.width, border.height), state.mySled.position), offset))
+    drawBorder(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), centerObject(GameClientProtocol.Position(border.width, border.height), state.mySled.position))
   }
 
   //Draw a sled at an x and y
@@ -160,8 +160,22 @@ object ClientDraw {
     Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
-  def addOffset(pos: GameClientProtocol.Position, offset: PlayField): GameClientProtocol.Position = {
-    Position(pos.x + offset.width, pos.y + offset.height)
+  def screenPosition(pos: GameClientProtocol.Position, playField: GameClientProtocol.PlayField): GameClientProtocol.Position = {
+    var x = pos.x
+    var y = pos.y
+
+    if (x > size.width + 200) {
+      x = x - playField.width
+    } else if (x < -200) {
+      x = x + playField.width
+    }
+    if (y > size.height + 200) {
+      y = y - playField.height
+    } else if (y < -200) {
+      y = y + playField.height
+    }
+
+    Position(x, y)
   }
 
   window.onresize = (_: UIEvent) => {
