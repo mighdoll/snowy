@@ -2,7 +2,7 @@
 trait GameMotion {
   self: GameControl =>
 
-  val maxSpeed = 500 // pixels / second
+  val maxSpeed = 1000 // pixels / second
 
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
@@ -28,16 +28,16 @@ trait GameMotion {
   /** Slow sleds based on friction */
   private def frictionSlow(deltaSeconds:Double): Unit =  {
     import math._
-    val friction = 100.0 // pixels / second / second
+    // friction is min when skis are aligned with direction, max when skis are at 90 degrees
+    val friction = 250.0 // pixels / second / second
     val minFriction = 50.0 * deltaSeconds
     val frictionFactor = friction * deltaSeconds
+    val brakeSteepness = .8  // higher means braking effect peaks narrowly when skis are near 90 to travel
     mapSleds { sled =>
-      // friction is min when skis are aligned with direction, max when skis are at 90 degrees
       val direction = sled.speed.unit
       val rotation = Vec2d.fromRotation(sled.rotation)
       val angleSkiToTravel = direction.angle(rotation)
-      val brakeSteepness = 4  // higher means braking effect curve peaks more narrowly (when skis are near 90 to travel)
-      val rotationFactor = pow(sin(angleSkiToTravel), brakeSteepness)
+      val rotationFactor = pow(abs(sin(angleSkiToTravel)), brakeSteepness)
       val sledFriction = minFriction + frictionFactor * rotationFactor // -speed in direction of travel
 
       val speed = sled.speed.length
@@ -53,14 +53,22 @@ trait GameMotion {
   private def skidToRotate(deltaSeconds: Double): Unit = {
     val skidSpeed = .3  // seconds to complete a skid
     val skidFactor = math.min(1.0, deltaSeconds / skidSpeed)
-    mapSleds { sled =>
+
+    /** return a revised sled with the speed adjusted for skidding effect */
+    def skiddingSled(sled:SledState):SledState = {
       val speed = sled.speed.length
-      val current = sled.speed / speed
-      val target = Vec2d.fromRotation(sled.rotation)
-      val skidVector = current + ((target - current) * skidFactor)
-      val newSpeed = skidVector * speed
-      sled.copy(speed = newSpeed)
+      speed match {
+        case 0 => sled
+        case _ =>
+          val current = sled.speed / speed
+          val target = Vec2d.fromRotation(sled.rotation)
+          val skidVector = current + ((target - current) * skidFactor)
+          val newSpeed = skidVector * speed
+          sled.copy(speed = newSpeed)
+      }
     }
+
+    mapSleds (skiddingSled(_))
   }
 
   /** Run a function that replaces each sled */
