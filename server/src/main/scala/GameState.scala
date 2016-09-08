@@ -57,7 +57,7 @@ trait GameState {
 
   /** Initialize a set of playfield obstacles */
   private def randomTrees(): Set[TreeState] = {
-    val sparsity = 100000
+    val sparsity = 170000 // average one tree in this many pixels
     val num = playField.width * playField.height / sparsity
     (0 to num).map { i =>
       TreeState(randomSpot(), 20)
