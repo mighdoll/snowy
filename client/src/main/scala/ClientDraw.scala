@@ -40,7 +40,7 @@ object ClientDraw {
       drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), 10.0)
     }
     //Draw all sleds
-    drawSled("me", screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.turretRotation, state.mySled.rotation)
+    drawSled("me", screenPosition(Position(size.width / 2, size.height / 3), border), state.mySled.turretRotation, state.mySled.rotation)
     state.sleds.foreach { sled =>
       drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation)
     }
@@ -157,7 +157,7 @@ object ClientDraw {
   }
 
   def centerObject(pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
-    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
+    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 3)
   }
 
   def screenPosition(pos: GameClientProtocol.Position, playField: GameClientProtocol.PlayField): GameClientProtocol.Position = {
