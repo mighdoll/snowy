@@ -17,27 +17,35 @@ case class Vec2d(x: Double, y: Double) {
 
   def min(m: Double): Vec2d = Vec2d(math.min(x, m), math.min(y, m))
 
+  def abs: Vec2d = Vec2d(math.abs(x), math.abs(y))
+
   def unit: Vec2d = this / length
 
   def zero: Boolean = (x == 0 && y == 0)
 
-  def angle(other: Vec2d):Double =
+  def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)
 
-  def rotate(radians: Double):Vec2d = ???
+  def rotate(radians: Double): Vec2d = ???
 
-  def dot(other:Vec2d):Double = (x * other.x) + (y * other.y)
+  def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
 
-  def cross(other:Vec2d):Double = (x * other.y) - (y * other.x)
+  def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
 }
 
 object Vec2d {
   /** @return a vector rotated from straight up Vec2d(0,1)
     * @param angle in radians
     */
-  def fromRotation(angle:Double) : Vec2d = Vec2d(math.sin(angle), math.cos(angle))
+  def fromRotation(angle: Double): Vec2d = Vec2d(math.sin(angle), math.cos(angle))
 
-  val unitUp = Vec2d(0,1)
+  val unitUp = Vec2d(0, 1)
 
-  val unitRight = Vec2d(1,0)
+  val unitRight = Vec2d(1, 0)
+
+  val unitDown = Vec2d(0, -1)
+
+  val unitLeft = Vec2d(-1, 0)
+
+  val zero = Vec2d(0, 0)
 }

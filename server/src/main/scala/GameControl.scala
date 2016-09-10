@@ -6,6 +6,8 @@ import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
+  val turnDelta = Math.PI / 30
+  val downhillRotation = math.Pi  // point up on the screen, towards smaller Y values
 
   api.tick(20 milliseconds) {
     gameTurn()
@@ -29,8 +31,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** received a client message */
   def message(id: ConnectionId, msg: String): Unit = {
     read[GameServerMessage](msg) match {
-      case TurnLeft   => turn(id, -turnDelta)
-      case TurnRight  => turn(id, turnDelta)
+      case TurnLeft   => turn(id, turnDelta)
+      case TurnRight  => turn(id, -turnDelta)
       case Join(name) => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
       case x          => println(s"received unhandled client message: $x")
@@ -39,7 +41,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   private def newRandomSled(): SledState = {
     // TODO what if sled is initialized atop a tree?
-    SledState(randomSpot(), size = 30, speed = Vec2d(0, 0), rotation = 0, turretRotation = 0)
+    SledState(randomSpot(), size = 30, speed = Vec2d(0, 0),
+      rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
   /** Called when a user sends her name and starts in the game */
@@ -57,20 +60,20 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  /** Rotate a sled */
-  private def turn(id: ConnectionId, direction: Double): Unit = {
-    // TODO limit turn rate to e.g. 1 turn / 50msec
-    val maxRight = math.Pi / 2
-    val maxLeft = -math.Pi / 2
+  /** Rotate a sled.
+    * @param rotate rotation in radians from current position. */
+  private def turn(id: ConnectionId, rotate: Double): Unit = {
+    // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
+    val max = math.Pi * 2
+    val min = - math.Pi * 2
     sleds.get(id) match {
       case Some(sled) =>
-        val baseRotation = sled.rotation + direction
-        val rotation =
-          if (baseRotation > maxRight) maxRight
-          else if (baseRotation < maxLeft) maxLeft
-          else baseRotation
-
-        sleds(id) = sled.copy(rotation = rotation)
+        val rotation = sled.rotation + rotate
+        val wrappedRotation =
+          if (rotation > max) rotation - max
+          else if (rotation < min) rotation - min
+          else rotation
+        sleds(id) = sled.copy(rotation = wrappedRotation)
       case None       =>
         println(s"where's the sled to turn for connection id: $id")
     }

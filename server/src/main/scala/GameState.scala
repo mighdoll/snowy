@@ -4,28 +4,10 @@ import GameClientProtocol._
 import socketserve.ConnectionId
 import Vec2dClientPosition._
 
+
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState {
   self: GameControl =>
-
-  /** A collidable object on the playfield */
-  trait PlayfieldObject {
-    def size: Double
-
-    def pos: Vec2d
-  }
-
-  /* rotation in radians, 0 is down.
-   * speed in pixels / second
-   */
-  case class SledState(pos: Vec2d, size: Double, speed: Vec2d,
-                       rotation: Double, turretRotation: Double) extends PlayfieldObject
-
-  case class TreeState(pos: Vec2d, size: Double) extends PlayfieldObject
-
-  case class SnowballState(pos: Vec2d, size: Double, speed: Vec2d) extends PlayfieldObject
-
-  case class User(name: String)
 
   val playField = PlayField(4000, 8000)
   var sleds = mutable.Map[ConnectionId, SledState]()
@@ -33,7 +15,6 @@ trait GameState {
   val snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
-  val turnDelta = Math.PI / 30
 
 
   /** Package the relevant state to communicate to the client */
