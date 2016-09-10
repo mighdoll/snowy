@@ -85,6 +85,14 @@ trait GameMotion {
     }
   }
 
+  /** constrain a position to be within the playfield */
+  def wrapInPlayfield(pos: Vec2d): Vec2d = {
+    Vec2d(
+      wrapBorder(pos.x, playField.width),
+      wrapBorder(pos.y, playField.height)
+    )
+  }
+
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
     *
@@ -107,13 +115,6 @@ trait GameMotion {
     result
   }
 
-  /** constrain a position to be within the playfield */
-  private def wrapInPlayfield(pos: Vec2d): Vec2d = {
-    Vec2d(
-      wrapBorder(pos.x, playField.width),
-      wrapBorder(pos.y, playField.height)
-    )
-  }
 
   /** move movable objects to their new location for this time period */
   private def moveObjects(deltaSeconds: Double): Unit = {
