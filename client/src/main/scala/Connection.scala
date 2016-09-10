@@ -80,7 +80,7 @@ class Connection(name: String, size: Size, ctx: dom.CanvasRenderingContext2D) {
   }
   window.onmousemove = { event: Event =>
     val e = event.asInstanceOf[dom.MouseEvent]
-    val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 3)
+    val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height * 2 / 3)
     socket.send(write(TurretAngle(angle)))
   }
 }
