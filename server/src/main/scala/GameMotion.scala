@@ -28,18 +28,13 @@ trait GameMotion {
     val gravity = -250.0 // pixels / second / second
     val gravityFactor = gravity * deltaSeconds
     mapSleds { sled =>
-      val rotation = sled.rotation
-        if (sled.rotation > downhillRotation + math.Pi/2) sled.rotation - math.Pi
-        else if (sled.rotation < downhillRotation - math.Pi/2) sled.rotation + math.Pi
-        else sled.rotation
-      val gravityLength = math.cos(rotation) * gravityFactor // +speed in direction of travel
-      val gravitySpeedV = Vec2d.fromRotation(rotation) * gravityLength
+      val gravityLength = math.cos(sled.rotation) * gravityFactor // +speed in direction of travel
+      val gravitySpeedV = Vec2d.fromRotation(sled.rotation) * gravityLength
       val newSpeedV = sled.speed + gravitySpeedV
       val adjustedSpeedV =
         if (newSpeedV.length <= maxSpeed) newSpeedV
         else newSpeedV.unit * maxSpeed
 
-      // println(s"gravity:  sled.rotation: ${sled.rotation}  rotation: $rotation  speed: ${sled.speed}  adjustedSpeedV: $adjustedSpeedV")
       sled.copy(speed = adjustedSpeedV)
     }
   }
@@ -60,19 +55,11 @@ trait GameMotion {
           val direction = sled.speed.unit
           val rotation = Vec2d.fromRotation(sled.rotation)
           val angleSkiToTravel = direction.angle(rotation)
-          /*
-          val angleSkiToTravel =
-            if (rawAngleSkiToTravel > math.Pi / 2) rawAngleSkiToTravel - math.Pi
-            else if (rawAngleSkiToTravel < -math.Pi / 2) rawAngleSkiToTravel + math.Pi
-            else rawAngleSkiToTravel
-            */
           val rotationFactor = pow(abs(sin(angleSkiToTravel)), brakeSteepness)
           val sledFriction = minFriction + frictionFactor * rotationFactor // -speed in direction of travel
 
           val adjustedFriction = min(sledFriction, speed)
           val newSpeed = direction * (speed - adjustedFriction)
-//          println(s"speed: $speed  direction: $direction  rotation: $rotation")
-//          println(s"angleSkiToTravel: $angleSkiToTravel  rotationFactor:$rotationFactor  sledFriction: $sledFriction  newSpeed: $newSpeed")
           sled.copy(speed = newSpeed)
       }
     }

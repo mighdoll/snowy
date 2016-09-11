@@ -17,7 +17,6 @@ trait GameState {
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
 
-
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
     def clientSled(id: ConnectionId): Sled = {
@@ -69,14 +68,6 @@ trait GameState {
         case Some(t) => nonOverlapping(fn)
         case None    => tree
       }
-    }
-
-    def nonOverlapping2(fn: () => TreeState): TreeState = {
-      var tree = fn()
-      while (forest.find { t => treesOverlap(t, tree) }.isDefined) {
-        tree = fn()
-      }
-      tree
     }
 
     (0 to num).foreach { _ =>
