@@ -1,8 +1,8 @@
+import GameConstants._
+
 /** Moving objects in each game time slice */
 trait GameMotion {
   self: GameControl =>
-
-  val maxSpeed = 1000 // pixels / second
 
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
