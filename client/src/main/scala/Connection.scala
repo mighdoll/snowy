@@ -6,10 +6,12 @@ import org.scalajs.dom._
 import upickle.default._
 
 class Connection(name: String) {
+  document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
+  document.getElementById("start-div").asInstanceOf[html.Div].classList.add("hide")
 
   val socket = new WebSocket(s"ws://${window.location.host}/game")
 
-  val connect = write(Join(name)) //document.getElementById("username").asInstanceOf[html.Input].value
+  val connect = write(Join(name))
 
   socket.onopen = { event: Event =>
     socket.send(connect)
@@ -19,6 +21,9 @@ class Connection(name: String) {
   }
   socket.onclose = { event: Event =>
     console.log(s"socket closed ")
+
+    document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
+    document.getElementById("start-div").asInstanceOf[html.Div].classList.remove("hide")
   }
 
   socket.onmessage = { event: MessageEvent =>

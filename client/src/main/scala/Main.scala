@@ -26,10 +26,6 @@ object ClientMain extends JSApp {
     //Connect to the WebSocket server
     new Connection(document.getElementById("username").asInstanceOf[html.Input].value)
 
-    //Swap front and back panes
-    document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
-    document.getElementById("start-div").asInstanceOf[html.Div].classList.add("back")
-
     //Stop drawing the snow as a background
     snowLoop.foreach { id => window.clearInterval(id) }
 
