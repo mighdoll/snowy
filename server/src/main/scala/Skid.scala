@@ -23,12 +23,11 @@ object Skid {
 
     // the ski direction we'll actually aim for
     // subtract out any extra rotations since the skis go both ways
-    val targetDirection  = {
+    val targetDirection = {
       val delta = rotation - currentDirection
       val baseOffset = math.abs(delta)
       val rotations = math.floor((baseOffset + Pi / 2) / Pi) * Pi
-      val offset = delta.signum * (baseOffset - rotations)
-      currentDirection + offset
+      rotation - delta.signum * rotations
     }
 
     // skidFactor of 1.0 means no more skidding, proceed directly to targetDirection
