@@ -4,6 +4,8 @@ object GameServerProtocol {
 
   sealed trait GameServerMessage
 
+  sealed trait StartStopCommand
+
   case class Join(userName: String) extends GameServerMessage
 
   case class TurretAngle(angle: Double) extends GameServerMessage
@@ -11,6 +13,18 @@ object GameServerProtocol {
   case object TurnLeft extends GameServerMessage
 
   case object TurnRight extends GameServerMessage
+
+  case class Start(cmd: StartStopCommand) extends GameServerMessage
+
+  case class Stop(cmd: StartStopCommand) extends GameServerMessage
+
+  case object Left extends StartStopCommand
+
+  case object Right extends StartStopCommand
+
+  case object Slow extends StartStopCommand
+
+  case object Push extends StartStopCommand
 
 }
 
@@ -29,7 +43,7 @@ object GameClientProtocol {
 
   sealed abstract class GameClientMessage
 
-  case class State(mySled:Sled, sleds: Seq[Sled], snowballs: Seq[Snowball]) extends GameClientMessage
+  case class State(mySled: Sled, sleds: Seq[Sled], snowballs: Seq[Snowball]) extends GameClientMessage
 
   case class PlayField(width: Int, height: Int) extends GameClientMessage
 

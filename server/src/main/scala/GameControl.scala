@@ -4,10 +4,12 @@ import GameServerProtocol._
 import Vec2dClientPosition._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
+import GameConstants.Friction.slowButtonFriction
+import GameConstants.pushForce
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
   val turnDelta = Math.PI / 30
-  val downhillRotation = math.Pi  // point up on the screen, towards smaller Y values
+  val downhillRotation = math.Pi // point up on the screen, towards smaller Y values
 
   api.tick(20 milliseconds) {
     gameTurn()
@@ -26,16 +28,19 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** Called when a connection is dropped */
   def gone(id: ConnectionId): Unit = {
     sleds -= id
+    users -= id
+    commands.commands -= id
   }
 
   /** received a client message */
   def message(id: ConnectionId, msg: String): Unit = {
     read[GameServerMessage](msg) match {
-      case TurnLeft   => turn(id, turnDelta)
-      case TurnRight  => turn(id, -turnDelta)
-      case Join(name) => userJoin(id, name)
+      case TurnLeft           => turn(id, turnDelta)
+      case TurnRight          => turn(id, -turnDelta)
+      case Join(name)         => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
-      case x          => println(s"received unhandled client message: $x")
+      case Start(cmd)         => commands.startCommand(id, cmd)
+      case Stop(cmd)          => commands.stopCommand(id, cmd)
     }
   }
 
@@ -61,11 +66,12 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   /** Rotate a sled.
+    *
     * @param rotate rotation in radians from current position. */
   private def turn(id: ConnectionId, rotate: Double): Unit = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
     val max = math.Pi * 2
-    val min = - math.Pi * 2
+    val min = -math.Pi * 2
     sleds.get(id) match {
       case Some(sled) =>
         val rotation = sled.rotation + rotate
@@ -79,9 +85,30 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
+  /** apply any pending but not yet canelled commands from user actions,
+    * e.g. turning or slowing */
+  def applyCommands(deltaSeconds:Double): Unit = {
+    commands.removeExpired()
+    val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
+    val push = new InlineForce(pushForce * deltaSeconds)
+    commands.foreachCommand { (id, command) =>
+      sleds.get(id).map { sled =>
+        command match {
+          case Left  => turn(id, turnDelta)
+          case Right => turn(id, -turnDelta)
+          case Slow => sled.copy(speed = slow(sled.speed))
+          case Push => sled.copy(speed = push(sled.speed))
+        }
+      }
+    }
+
+  }
+
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = {
-    moveStuff(nextTimeSlice())
+    val deltaSeconds = nextTimeSlice()
+    applyCommands(deltaSeconds)
+    moveStuff(deltaSeconds)
     currentState() foreach {
       case (id, state) => api.send(write(state), id)
     }

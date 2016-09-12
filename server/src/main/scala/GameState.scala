@@ -2,8 +2,8 @@ import java.util.concurrent.ThreadLocalRandom
 import scala.annotation.tailrec
 import scala.collection.mutable
 import GameClientProtocol._
-import socketserve.ConnectionId
 import Vec2dClientPosition._
+import socketserve.ConnectionId
 
 
 /** Records the current state of sleds, trees, snowballs etc. */
@@ -16,6 +16,7 @@ trait GameState {
   val snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
+  val commands = new PendingCommands
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
