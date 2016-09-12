@@ -6,43 +6,29 @@ trait GameMotion {
 
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
-    applyGravity(deltaSeconds)
-    updateSledSpeed(deltaSeconds)
+    updateSledSpeedVector(deltaSeconds)
     moveObjects(deltaSeconds)
     checkCollisions()
   }
 
-  /** rotate the sleds towards the direction of their skis incrementally
-    * to account for skidding */
-  def updateSledSpeed(deltaSeconds: Double):Unit = {
+  /** Update the direction and velocity of all sleds based on gravity and friction
+    */
+  def updateSledSpeedVector(deltaSeconds: Double):Unit = {
+    val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
     mapSleds {sled =>
       import sled.rotation
-      val skidSpeed = skid(sled.speed, rotation)
+      val gravitySpeed = gravity(sled.speed, rotation)
+      val skidSpeed = skid(gravitySpeed, rotation)
       val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)
     }
   }
 
-  /** Increase the speed of sleds due to gravity */
-  private def applyGravity(deltaSeconds: Double): Unit = {
-    val gravityFactor = gravity * deltaSeconds
-    mapSleds { sled =>
-      val gravityLength = math.cos(sled.rotation) * gravityFactor // +speed in direction of travel
-      val gravitySpeedV = Vec2d.fromRotation(sled.rotation) * gravityLength
-      val newSpeedV = sled.speed + gravitySpeedV
-      val adjustedSpeedV =
-        if (newSpeedV.length <= maxSpeed) newSpeedV
-        else newSpeedV.unit * maxSpeed
 
-      sled.copy(speed = adjustedSpeedV)
-    }
-  }
-
-
-  /** Run a function that replaces each sled */
+  /** Run a function that replaces each sled with a transformed copy */
   private def mapSleds(fn: SledState => SledState): Unit = {
     sleds = sleds.map { case (id, sled) =>
       id -> fn(sled)
