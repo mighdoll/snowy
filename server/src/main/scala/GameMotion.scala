@@ -25,7 +25,6 @@ trait GameMotion {
 
   /** Increase the speed of sleds due to gravity */
   private def applyGravity(deltaSeconds: Double): Unit = {
-    val gravity = -250.0 // pixels / second / second
     val gravityFactor = gravity * deltaSeconds
     mapSleds { sled =>
       val gravityLength = math.cos(sled.rotation) * gravityFactor // +speed in direction of travel
@@ -43,10 +42,8 @@ trait GameMotion {
   private def frictionSlow(deltaSeconds:Double): Unit =  {
     import math._
     // friction is min when skis are aligned with direction, max when skis are at 90 degrees
-    val friction = 500.0 // pixels / second / second
-    val minFriction = 50.0 * deltaSeconds
-    val frictionFactor = friction * deltaSeconds
-    val brakeSteepness = .8  // higher means braking effect peaks narrowly when skis are near 90 to travel
+    val minFrictionTime = 50.0 * deltaSeconds
+    val frictionFactor = maxFriction * deltaSeconds
     mapSleds { sled =>
       val speed = sled.speed.length
       speed match {
@@ -56,7 +53,7 @@ trait GameMotion {
           val rotation = Vec2d.fromRotation(sled.rotation)
           val angleSkiToTravel = direction.angle(rotation)
           val rotationFactor = pow(abs(sin(angleSkiToTravel)), brakeSteepness)
-          val sledFriction = minFriction + frictionFactor * rotationFactor // -speed in direction of travel
+          val sledFriction = minFrictionTime + frictionFactor * rotationFactor // -speed in direction of travel
 
           val adjustedFriction = min(sledFriction, speed)
           val newSpeed = direction * (speed - adjustedFriction)
