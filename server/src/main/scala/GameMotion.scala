@@ -16,11 +16,11 @@ trait GameMotion {
     * to account for skidding */
   def updateSledSpeed(deltaSeconds: Double):Unit = {
     val skidTime = Skid.skidTime(deltaSeconds)
-    val frictionForce = Friction.frictionForce(deltaSeconds)
+    val friction = Friction(deltaSeconds)
     mapSleds {sled =>
       import sled.rotation
       val skidSpeed = Skid.skid(sled.speed, rotation, skidTime)
-      val frictionSpeed = Friction.applyFriction(skidSpeed, rotation, frictionForce)
+      val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)
     }
