@@ -7,19 +7,22 @@ trait GameMotion {
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
     applyGravity(deltaSeconds)
-    skidSleds(deltaSeconds)
-    frictionSlow(deltaSeconds)
+    updateSledSpeed(deltaSeconds)
     moveObjects(deltaSeconds)
     checkCollisions()
   }
 
   /** rotate the sleds towards the direction of their skis incrementally
     * to account for skidding */
-  def skidSleds(deltaSeconds: Double):Unit = {
+  def updateSledSpeed(deltaSeconds: Double):Unit = {
     val skidTime = Skid.skidTime(deltaSeconds)
+    val frictionForce = Friction.frictionForce(deltaSeconds)
     mapSleds {sled =>
-      val newSpeed = Skid.skid(sled.speed, sled.rotation, skidTime)
-      sled.copy(speed = newSpeed)
+      import sled.rotation
+      val skidSpeed = Skid.skid(sled.speed, rotation, skidTime)
+      val frictionSpeed = Friction.applyFriction(skidSpeed, rotation, frictionForce)
+
+      sled.copy(speed = frictionSpeed)
     }
   }
 
@@ -38,28 +41,6 @@ trait GameMotion {
     }
   }
 
-  /** Slow sleds based on friction */
-  private def frictionSlow(deltaSeconds:Double): Unit =  {
-    import math._
-    // friction is min when skis are aligned with direction, max when skis are at 90 degrees
-    val minFrictionNow = 50.0 * deltaSeconds
-    val frictionFactor = maxFriction * deltaSeconds
-    mapSleds { sled =>
-      val speed = sled.speed.length
-      speed match {
-        case 0 => sled
-        case _ =>
-          val direction = sled.speed.unit
-          val rotation = Vec2d.fromRotation(sled.rotation)
-          val angleSkiToTravel = direction.angle(rotation)
-          val rotationFactor = pow(abs(sin(angleSkiToTravel)), brakeSteepness)
-          val sledFriction = frictionFactor * rotationFactor // -speed in direction of travel
-          val adjustedFriction = min(speed, max(minFrictionNow, sledFriction))
-          val newSpeed = direction * (speed - adjustedFriction)
-          sled.copy(speed = newSpeed)
-      }
-    }
-  }
 
   /** Run a function that replaces each sled */
   private def mapSleds(fn: SledState => SledState): Unit = {
