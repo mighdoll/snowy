@@ -42,10 +42,10 @@ object ClientDraw {
       drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), 10.0)
     }
     //Draw all sleds
-    drawSled("me", screenPosition(Position(size.width / 2, size.height * 2 / 3), border), state.mySled.turretRotation, state.mySled.rotation)
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation)
+      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
+    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height * 2 / 3), border), state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
       drawTree(screenPosition(centerObject(tree.position, state.mySled.position), border))
@@ -55,7 +55,7 @@ object ClientDraw {
   }
 
   //Draw a sled at an x and y
-  def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double): Unit = {
+  def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double, color: String): Unit = {
     val x = pos.x
     val y = pos.y
     val turretSize = 50.0
@@ -90,8 +90,10 @@ object ClientDraw {
     ctx.stroke()
     ctx.setTransform(1, 0, 0, 1, 0, 0)
 
+    //Set the color for you vs other players
+    ctx.fillStyle = color
+
     //Draw the main body
-    ctx.fillStyle = "rgb(120, 201, 44)"
     ctx.beginPath()
     ctx.arc(x, y, turretSize / 2, 0, 2 * Math.PI)
     ctx.fill()
