@@ -42,7 +42,7 @@ trait GameMotion {
   private def frictionSlow(deltaSeconds:Double): Unit =  {
     import math._
     // friction is min when skis are aligned with direction, max when skis are at 90 degrees
-    val minFrictionTime = 50.0 * deltaSeconds
+    val minFrictionNow = 50.0 * deltaSeconds
     val frictionFactor = maxFriction * deltaSeconds
     mapSleds { sled =>
       val speed = sled.speed.length
@@ -53,9 +53,8 @@ trait GameMotion {
           val rotation = Vec2d.fromRotation(sled.rotation)
           val angleSkiToTravel = direction.angle(rotation)
           val rotationFactor = pow(abs(sin(angleSkiToTravel)), brakeSteepness)
-          val sledFriction = minFrictionTime + frictionFactor * rotationFactor // -speed in direction of travel
-
-          val adjustedFriction = min(sledFriction, speed)
+          val sledFriction = frictionFactor * rotationFactor // -speed in direction of travel
+          val adjustedFriction = min(speed, max(minFrictionNow, sledFriction))
           val newSpeed = direction * (speed - adjustedFriction)
           sled.copy(speed = newSpeed)
       }
