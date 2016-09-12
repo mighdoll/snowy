@@ -31,6 +31,15 @@ case class Vec2d(x: Double, y: Double) {
   def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
 
   def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
+
+  /** Apply a partial function to transform this vector.
+    * 
+    * @return the result of the partial function, or this vector if the function is not defined
+    */
+  def transform(pFn: PartialFunction[Vec2d, Vec2d]): Vec2d = {
+    if (pFn.isDefinedAt(this)) pFn(this)
+    else this
+  }
 }
 
 object Vec2d {
