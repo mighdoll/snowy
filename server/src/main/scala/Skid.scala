@@ -2,14 +2,20 @@ import GameConstants._
 import math.Pi
 
 object Skid {
-  def skidTime(deltaSeconds: Double): Double = deltaSeconds * maxSkidTime
+  def apply(deltaSeconds: Double): Skid =
+    new Skid(deltaSeconds * maxSkidTime)
+}
+
+/** Rotate speed vectors to take into account skidding effect
+  *
+  * @param skidTime time since last game turn as a % of the maximum skid time */
+class Skid(skidTime: Double) {
 
   /** Return a rotated speed vector adjusted for skidding effect for a sled.
     * Quickly moving sleds continue in the same direction (as if they had momentum),
     * slower sleds change direction more swiftly.
-    *
-    * @param skidTime time since last game turn as a % of the maximum skid time */
-  def skid(current:Vec2d, rotation:Double, skidTime: Double): Vec2d =
+    */
+  def apply(current:Vec2d, rotation:Double): Vec2d =
     current.transform { case _ if !current.zero =>
       val speed = current.length
       val currentDirection = current.angle(Vec2d.unitUp)

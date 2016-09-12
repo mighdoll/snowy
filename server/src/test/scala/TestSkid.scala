@@ -21,59 +21,55 @@ object RichTestVec2d {
 import RichTestVec2d._
 
 object TestSkid extends Properties("Skid") {
-  val skidTime = .1
+  val skid100 = new Skid(1.0)
+  val skid10 = new Skid(.1)
+  val skid50 = new Skid(.5)
 
   property("up the screen, no rotation => up the screen") = {
-    Skid.skid(Vec2d.unitDown, Pi, skidTime) approxEquals (Vec2d.unitDown)
+    skid10(Vec2d.unitDown, Pi) approxEquals (Vec2d.unitDown)
   }
   property("up the screen, 180 rotation => up the screen") = {
-    Skid.skid(Vec2d.unitDown, 0, skidTime) approxEquals (Vec2d.unitDown)
+    skid10(Vec2d.unitDown, 0) approxEquals (Vec2d.unitDown)
   }
   property("down the screen, 180 rotation => down the screen") = {
-    Skid.skid(Vec2d.unitUp, Pi, skidTime) approxEquals (Vec2d.unitUp)
+    skid10(Vec2d.unitUp, Pi) approxEquals (Vec2d.unitUp)
   }
   property("down the screen, no rotation => down the screen") = {
-    Skid.skid(Vec2d.unitUp, 0, skidTime) approxEquals (Vec2d.unitUp)
+    skid10(Vec2d.unitUp, 0) approxEquals (Vec2d.unitUp)
   }
   property("right, no rotation => right") = {
-    Skid.skid(Vec2d.unitRight, Pi / 2, skidTime) approxEquals (Vec2d.unitRight)
+    skid10(Vec2d.unitRight, Pi / 2) approxEquals (Vec2d.unitRight)
   }
-  property("down at max speed, skis rotated at 45, 100% of skid => 45") = {
-    val result = Skid.skid(Vec2d.unitUp * maxSpeed, rotation = Pi / 4, skidTime = 1)
+  property("downscreen at max speed, skis rotated at 45, 100% of skid => 45") = {
+    val result = skid100(Vec2d.unitUp * maxSpeed, rotation = Pi / 4)
     result approxEquals Vec2d.fromRotation(Pi / 4) * maxSpeed
   }
-  property("down at max speed, skis rotated at 45, 50% of skid => 22.5") = {
-    val result = Skid.skid(Vec2d.unitUp * maxSpeed, rotation = Pi / 4, skidTime = .5)
+  property("downscreen at max speed, skis rotated at 45, 50% of skid => 22.5") = {
+    val result = skid50(Vec2d.unitUp * maxSpeed, rotation = Pi / 4)
     result.unit approxEquals Vec2d.fromRotation(Pi / 4 / 2)
   }
-  property("down at max speed, skis rotated at 45, 10% of skid => 4.5") = {
-    val percent = .1
-    val result = Skid.skid(Vec2d.unitUp * maxSpeed, rotation = Pi / 4, skidTime = percent)
-    result.unit approxEquals Vec2d.fromRotation(percent * Pi / 4)
+  property("downscreen at max speed, skis rotated at 45, 10% of skid => 4.5") = {
+    val result = skid10(Vec2d.unitUp * maxSpeed, rotation = Pi / 4)
+    result.unit approxEquals Vec2d.fromRotation(.1 * Pi / 4)
   }
-  property("down at max speed, skis rotated at 45+180, 10% of skid => 4.5") = {
-    val percent = .1
-    val result = Skid.skid(Vec2d.unitUp * maxSpeed, rotation = Pi + Pi / 4, skidTime = percent)
-    result.unit approxEquals Vec2d.fromRotation(percent * Pi / 4)
+  property("downscreen at max speed, skis rotated at 45+180, 10% of skid => 4.5") = {
+    val result = skid10(Vec2d.unitUp * maxSpeed, rotation = Pi + Pi / 4)
+    result.unit approxEquals Vec2d.fromRotation(.1 * Pi / 4)
   }
-  property("up 45 at max speed, skis rotated straight up, 100% of skid => up") = {
-    val percent = 1
+  property("upscreen 45 at max speed, skis rotated straight up, 100% of skid => up") = {
     val initialAngle = Pi / 2 + Pi / 4
-    val result = Skid.skid(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, skidTime = percent)
+    val result = skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi)
     result.unit approxEquals Vec2d.unitDown
   }
-  property("up 45 at max speed, skis rotated straight up, 10% of skid => 4.5") = {
-    val percent = .1
+  property("upscreen 45 at max speed, skis rotated straight up, 10% of skid => 4.5") = {
     val initialAngle = Pi * 3 / 4
-    val result = Skid.skid(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, skidTime = percent)
-    val expectedAngle = initialAngle + (Pi - initialAngle) * percent
+    val result = skid10(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi)
+    val expectedAngle = initialAngle + (Pi - initialAngle) *  .1
     result.unit approxEquals Vec2d.fromRotation(expectedAngle)
   }
-
-  property("up -45 at max speed, skis rotated straight up, 100% of skid => up") = {
-    val percent = 1
+  property("upscreen -45 at max speed, skis rotated straight up, 100% of skid => up") = {
     val initialAngle = Pi + Pi / 4
-    val result = Skid.skid(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, skidTime = percent)
+    val result = skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi)
     result.unit approxEquals Vec2d.unitDown
   }
 

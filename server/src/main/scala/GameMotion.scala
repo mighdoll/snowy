@@ -15,11 +15,11 @@ trait GameMotion {
   /** rotate the sleds towards the direction of their skis incrementally
     * to account for skidding */
   def updateSledSpeed(deltaSeconds: Double):Unit = {
-    val skidTime = Skid.skidTime(deltaSeconds)
+    val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
     mapSleds {sled =>
       import sled.rotation
-      val skidSpeed = Skid.skid(sled.speed, rotation, skidTime)
+      val skidSpeed = skid(sled.speed, rotation)
       val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)
