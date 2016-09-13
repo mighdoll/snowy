@@ -96,12 +96,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
         command match {
           case Left  => turn(id, turnDelta)
           case Right => turn(id, -turnDelta)
-          case _ =>
-        }
-        command match {
           case Slow => sleds(id) = sled.copy(speed = slow(sled.speed))
           case Push => sleds(id) = sled.copy(speed = push(sled.speed))
-          case _ =>
         }
       }
     }
