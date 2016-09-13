@@ -45,7 +45,7 @@ object ClientDraw {
     state.sleds.foreach { sled =>
       drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height * 2 / 3), border), state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
+    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
       drawTree(screenPosition(centerObject(tree.position, state.mySled.position), border))
@@ -58,7 +58,7 @@ object ClientDraw {
   def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double, color: String): Unit = {
     val x = pos.x
     val y = pos.y
-    val turretSize = 50.0
+    val turretSize = 35.0
 
     //Global strokeStyle
     ctx.strokeStyle = "rgb(100, 100, 100)"
@@ -81,7 +81,7 @@ object ClientDraw {
     //Draw the barrel for snowballs
     ctx.translate(x + turretSize / 55, y)
     ctx.rotate(cannonRotation)
-    ctx.lineWidth = 2.0
+    ctx.lineWidth = 2.5
     ctx.fillStyle = "rgb(153, 153, 153)"
     ctx.beginPath()
     ctx.fillRect(-turretSize * 3 / 22, 0, turretSize * 3 / 11, turretSize * 9 / 10)
@@ -161,7 +161,7 @@ object ClientDraw {
   }
 
   def centerObject(pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
-    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height * 2 / 3)
+    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
   def screenPosition(pos: GameClientProtocol.Position, playField: GameClientProtocol.PlayField): GameClientProtocol.Position = {

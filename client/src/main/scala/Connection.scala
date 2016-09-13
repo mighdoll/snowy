@@ -85,7 +85,7 @@ class Connection(name: String) {
   }
   window.onmousemove = { event: Event =>
     val e = event.asInstanceOf[dom.MouseEvent]
-    val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height * 2 / 3)
+    val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
     socket.send(write(TurretAngle(angle)))
   }
 }

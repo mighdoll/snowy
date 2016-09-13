@@ -1,9 +1,11 @@
 import java.util.concurrent.ThreadLocalRandom
-import scala.annotation.tailrec
-import scala.collection.mutable
+
 import GameClientProtocol._
 import Vec2dClientPosition._
 import socketserve.ConnectionId
+
+import scala.annotation.tailrec
+import scala.collection.mutable
 
 
 /** Records the current state of sleds, trees, snowballs etc. */
@@ -48,11 +50,16 @@ trait GameState {
   /** Initialize a set of playfield obstacles */
   private def randomTrees(): Set[TreeState] = {
     val random = ThreadLocalRandom.current
-    val sparsity = 80000 // average one tree in this many pixels
-    val num = playField.width * playField.height / sparsity
+
+    val clumpAmount = 80000 // average one clump in this many pixels
+    val numClumps = playField.width * playField.height / clumpAmount
     val inClump = .75 // chance a tree is in an existing clump
-    val clumpSize = 400 // in the range pixels away
-    val forest = mutable.Buffer[TreeState]()
+    val clumpSize = 200 // in the range pixels away
+
+    val treeAmount = 200000
+    val numTrees = playField.width * playField.height / treeAmount
+
+    val forest = mutable.Buffer[mutable.Buffer[TreeState]]()
     def treeSize = 20
 
     def nearbyTree(pos: Vec2d): TreeState = {
@@ -65,22 +72,31 @@ trait GameState {
     @tailrec
     def nonOverlapping(fn: => TreeState): TreeState = {
       val tree = fn
-      forest.find(treesOverlap(_, tree)) match {
+      forest.flatten.find(treesOverlap(_, tree)) match {
         case Some(t) => nonOverlapping(fn)
-        case None    => tree
+        case None => tree
       }
     }
 
-    (0 to num).foreach { _ =>
-      if (random.nextDouble < inClump && !forest.isEmpty) {
-        val near = forest(random.nextInt(forest.length)).pos
-        val tree = nonOverlapping { nearbyTree(near) }
-        forest += tree
+    (0 to numClumps).foreach { _ =>
+      if (random.nextDouble < inClump && forest.nonEmpty) {
+        val clump = random.nextInt(forest.length)
+        val near = forest(clump)(random.nextInt(forest(clump).length)).pos
+        val tree = nonOverlapping(nearbyTree(near))
+
+        forest(clump) += tree
       } else {
-        forest += nonOverlapping { TreeState(randomSpot(), 20) }
+        forest += mutable.Buffer(nonOverlapping {
+          TreeState(randomSpot(), 20)
+        })
       }
     }
-    forest.toSet
+    (0 to numTrees).foreach { _ =>
+      forest += mutable.Buffer(nonOverlapping {
+        TreeState(randomSpot(), 20)
+      })
+    }
+    forest.flatten.toSet
   }
 
   /** pick a random spot on the playfield */
