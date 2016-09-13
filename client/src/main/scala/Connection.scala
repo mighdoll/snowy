@@ -53,34 +53,73 @@ class Connection(name: String) {
 
   sealed trait Direction
 
-  object Left extends Direction
+  object GoLeft extends Direction
 
-  object Right extends Direction
+  object GoRight extends Direction
+
+  sealed trait Speed
+
+  object SpeedUp extends Speed
+
+  object SlowDown extends Speed
 
   var turning: Option[Direction] = None
+  var speeding: Option[Speed] = None
 
-  window.setInterval(() =>
+  window.setInterval(() => {
     turning match {
-      case Some(Left) => socket.send(write(TurnLeft))
-      case Some(Right) => socket.send(write(TurnRight))
+      case Some(GoLeft) => socket.send(write(Start(Left)))
+      case Some(GoRight) => socket.send(write(Start(Right)))
       case _ =>
-    }, 20)
+    }
+    speeding match {
+      case Some(SlowDown) => socket.send(write(Start(Slow)))
+      case Some(SpeedUp) => socket.send(write(Start(Push)))
+      case _ =>
+    }
+  }, 10000)
   window.onkeydown = { event: Event =>
     event.asInstanceOf[dom.KeyboardEvent].key match {
-      case "ArrowRight" | "d" | "D" => turning = Some(Right)
-      case "ArrowLeft" | "a" | "A" => turning = Some(Left)
+      case "ArrowRight" | "d" | "D" =>
+        socket.send(write(Stop(Left)))
+        socket.send(write(Start(Right)))
+        turning = Some(GoRight)
+      case "ArrowLeft" | "a" | "A" =>
+        socket.send(write(Stop(Right)))
+        socket.send(write(Start(Left)))
+        turning = Some(GoLeft)
+      case "ArrowDown" | "s" | "S" =>
+        socket.send(write(Stop(Push)))
+        socket.send(write(Start(Slow)))
+        speeding = Some(SlowDown)
+      case "ArrowUp" | "w" | "W" =>
+        socket.send(write(Stop(Slow)))
+        socket.send(write(Start(Push)))
+        speeding = Some(SpeedUp)
       case _ =>
     }
   }
   window.onkeyup = { event: Event =>
     val keyEvent = event.asInstanceOf[dom.KeyboardEvent].key
-    if (turning.contains(Right) &&
+    if (turning.contains(GoRight) &&
       (keyEvent == "ArrowRight" || keyEvent == "d" || keyEvent == "D")) {
+      socket.send(write(Stop(Right)))
       turning = None
     }
-    if (turning.contains(Left) &&
+    if (turning.contains(GoLeft) &&
       (keyEvent == "ArrowLeft" || keyEvent == "a" || keyEvent == "A")) {
+      socket.send(write(Stop(Left)))
       turning = None
+    }
+    if (turning.contains(SpeedUp) &&
+      (keyEvent == "ArrowUp" || keyEvent == "w" || keyEvent == "W")) {
+      socket.send(write(Stop(Push)))
+      speeding = None
+    }
+    if (turning.contains(SlowDown) &&
+      (keyEvent == "ArrowDown" || keyEvent == "s" || keyEvent == "S")) {
+      socket.send(write(Stop(Slow)))
+      speeding = None
     }
   }
   window.onmousemove = { event: Event =>

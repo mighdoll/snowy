@@ -34,7 +34,7 @@ class PendingCommands {
   def removeExpired(): Unit = {
     val now = System.currentTimeMillis()
     filterRemove{ (_, command) =>
-      command.start.time + commandDuration > now
+      command.start.time + commandDuration < now
     }
   }
 

@@ -39,7 +39,7 @@ trait GameState {
     }.toSeq
   }
 
-  /** @return true if tthe two trees overlap visually on the screen */
+  /** @return true if the two trees overlap visually on the screen */
   private def treesOverlap(a: TreeState, b: TreeState): Boolean = {
     import math.abs
     val xDist = abs(a.pos.x - b.pos.x)
