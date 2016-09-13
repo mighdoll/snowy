@@ -31,7 +31,6 @@ class Friction(frictionMin: Double, frictionMax: Double) {
 /** a force applied directly in the current direction of travel */
 class InlineForce(force: Double) {
   def apply(current: Vec2d): Vec2d = {
-  // TODO push doesn't work when you're stopped
     current.transform { case _ if !current.zero =>
       val speed = min(max(current.length + force, 0), maxSpeed)
       current.unit * speed

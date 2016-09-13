@@ -87,22 +87,31 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   /** apply any pending but not yet canelled commands from user actions,
     * e.g. turning or slowing */
-  def applyCommands(deltaSeconds:Double): Unit = {
+  def applyCommands(deltaSeconds: Double): Unit = {
     commands.removeExpired()
     val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
-    val push = new InlineForce(pushForce * deltaSeconds)
+    val pushForceNow = pushForce * deltaSeconds
+    val push = new InlineForce(pushForceNow)
     commands.foreachCommand { (id, command) =>
       sleds.get(id).map { sled =>
         command match {
           case Left  => turn(id, turnDelta)
           case Right => turn(id, -turnDelta)
-          case Slow => sleds(id) = sled.copy(speed = slow(sled.speed))
-          case Push => sleds(id) = sled.copy(speed = push(sled.speed))
+          case Slow  => sleds(id) = sled.copy(speed = slow(sled.speed))
+          case Push  => sleds(id) = pushSled(sled, pushForceNow, push)
         }
       }
     }
-
   }
+
+  /** apply a push to a sled */
+  private def pushSled(sled: SledState, pushForceNow: Double, push: InlineForce): SledState = {
+    val newSpeed =
+      if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
+      else push(sled.speed)
+    sled.copy(speed = newSpeed)
+  }
+
 
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = {
