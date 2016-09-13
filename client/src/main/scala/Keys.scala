@@ -2,37 +2,37 @@
 object Keys {
 
   object Up {
-    def unapply(keyEvent: String): Option[Unit] = {
+    def unapply(keyEvent: String): Boolean = {
       keyEvent match {
-        case "ArrowUp" | "w" | "W" => Some(Unit)
-        case _                     => None
+        case "ArrowUp" | "w" | "W" => true
+        case _                     => false
       }
     }
   }
 
   object Down {
-    def unapply(keyEvent: String): Option[Unit] = {
+    def unapply(keyEvent: String): Boolean = {
       keyEvent match {
-        case "ArrowDown" | "s" | "S" => Some(Unit)
-        case _                       => None
+        case "ArrowDown" | "s" | "S" => true
+        case _                       => false
       }
     }
   }
 
   object Right {
-    def unapply(keyEvent: String): Option[Unit] = {
+    def unapply(keyEvent: String): Boolean = {
       keyEvent match {
-        case "ArrowRight" | "d" | "D" => Some(Unit)
-        case _                        => None
+        case "ArrowRight" | "d" | "D" => true
+        case _                        => false
       }
     }
   }
 
   object Left {
-    def unapply(keyEvent: String): Option[Unit] = {
+    def unapply(keyEvent: String): Boolean = {
       keyEvent match {
-        case "ArrowLeft" | "a" | "A" => Some(Unit)
-        case _                       => None
+        case "ArrowLeft" | "a" | "A" => true
+        case _                       => false
       }
     }
   }

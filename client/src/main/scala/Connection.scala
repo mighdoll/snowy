@@ -81,19 +81,19 @@ class Connection(name: String) {
 
   window.onkeydown = { event: Event =>
     event.asInstanceOf[dom.KeyboardEvent].key match {
-      case Keys.Right(_) if turning != Some(GoRight) =>
+      case Keys.Right() if turning != Some(GoRight) =>
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
         turning = Some(GoRight)
-      case Keys.Left(_) if turning != Some(GoLeft)  =>
+      case Keys.Left() if turning != Some(GoLeft)  =>
         socket.send(write(Stop(Right)))
         socket.send(write(Start(Left)))
         turning = Some(GoLeft)
-      case Keys.Down(_) if speeding != Some(SlowDown) =>
+      case Keys.Down() if speeding != Some(SlowDown) =>
         socket.send(write(Stop(Push)))
         socket.send(write(Start(Slow)))
         speeding = Some(SlowDown)
-      case Keys.Up(_) if speeding != Some(SpeedUp) =>
+      case Keys.Up() if speeding != Some(SpeedUp) =>
         socket.send(write(Stop(Slow)))
         socket.send(write(Start(Push)))
         speeding = Some(SpeedUp)
@@ -104,19 +104,19 @@ class Connection(name: String) {
   window.onkeyup = { event: Event =>
     val keyEvent = event.asInstanceOf[dom.KeyboardEvent].key
     (keyEvent, turning) match {
-      case (Keys.Right(_), Some(GoRight)) =>
+      case (Keys.Right(), Some(GoRight)) =>
         socket.send(write(Stop(Right)))
         turning = None
-      case (Keys.Left(_), Some(GoLeft)) =>
+      case (Keys.Left(), Some(GoLeft)) =>
         socket.send(write(Stop(Left)))
         turning = None
       case _ =>
     }
     (keyEvent, speeding) match {
-      case (Keys.Up(_), Some(SpeedUp)) =>
+      case (Keys.Up(), Some(SpeedUp)) =>
         socket.send(write(Stop(Push)))
         speeding = None
-      case (Keys.Down(_), Some(SlowDown)) =>
+      case (Keys.Down(), Some(SlowDown)) =>
         socket.send(write(Stop(Slow)))
         speeding = None
       case _ =>
