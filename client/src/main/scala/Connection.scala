@@ -77,22 +77,22 @@ class Connection(name: String) {
       case Some(SpeedUp) => socket.send(write(Start(Push)))
       case _ =>
     }
-  }, 10000)
+  }, 500)
   window.onkeydown = { event: Event =>
     event.asInstanceOf[dom.KeyboardEvent].key match {
-      case "ArrowRight" | "d" | "D" =>
+      case "ArrowRight" | "d" | "D" if turning != Some(GoRight) =>
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
         turning = Some(GoRight)
-      case "ArrowLeft" | "a" | "A" =>
+      case "ArrowLeft" | "a" | "A" if turning != Some(GoLeft)  =>
         socket.send(write(Stop(Right)))
         socket.send(write(Start(Left)))
         turning = Some(GoLeft)
-      case "ArrowDown" | "s" | "S" =>
+      case "ArrowDown" | "s" | "S" if speeding != Some(SlowDown) =>
         socket.send(write(Stop(Push)))
         socket.send(write(Start(Slow)))
         speeding = Some(SlowDown)
-      case "ArrowUp" | "w" | "W" =>
+      case "ArrowUp" | "w" | "W" if speeding != Some(SpeedUp) =>
         socket.send(write(Stop(Slow)))
         socket.send(write(Start(Push)))
         speeding = Some(SpeedUp)
@@ -100,6 +100,7 @@ class Connection(name: String) {
     }
   }
 
+  // TODO DRY with key tests above
   def upKey(keyEvent:String):Boolean = {
     keyEvent == "ArrowUp" || keyEvent == "w" || keyEvent == "W"
   }
