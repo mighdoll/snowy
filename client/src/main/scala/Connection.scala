@@ -78,21 +78,22 @@ class Connection(name: String) {
       case _ =>
     }
   }, 500)
+
   window.onkeydown = { event: Event =>
     event.asInstanceOf[dom.KeyboardEvent].key match {
-      case "ArrowRight" | "d" | "D" if turning != Some(GoRight) =>
+      case Keys.Right(_) if turning != Some(GoRight) =>
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
         turning = Some(GoRight)
-      case "ArrowLeft" | "a" | "A" if turning != Some(GoLeft)  =>
+      case Keys.Left(_) if turning != Some(GoLeft)  =>
         socket.send(write(Stop(Right)))
         socket.send(write(Start(Left)))
         turning = Some(GoLeft)
-      case "ArrowDown" | "s" | "S" if speeding != Some(SlowDown) =>
+      case Keys.Down(_) if speeding != Some(SlowDown) =>
         socket.send(write(Stop(Push)))
         socket.send(write(Start(Slow)))
         speeding = Some(SlowDown)
-      case "ArrowUp" | "w" | "W" if speeding != Some(SpeedUp) =>
+      case Keys.Up(_) if speeding != Some(SpeedUp) =>
         socket.send(write(Stop(Slow)))
         socket.send(write(Start(Push)))
         speeding = Some(SpeedUp)
@@ -100,41 +101,26 @@ class Connection(name: String) {
     }
   }
 
-  // TODO DRY with key tests above
-  def upKey(keyEvent:String):Boolean = {
-    keyEvent == "ArrowUp" || keyEvent == "w" || keyEvent == "W"
-  }
-  def downKey(keyEvent:String):Boolean = {
-    keyEvent == "ArrowDown" || keyEvent == "s" || keyEvent == "S"
-  }
-  def rightKey(keyEvent:String):Boolean = {
-    keyEvent == "ArrowRight" || keyEvent == "d" || keyEvent == "D"
-  }
-  def leftKey(keyEvent:String):Boolean = {
-    keyEvent == "ArrowLeft" || keyEvent == "a" || keyEvent == "A"
-  }
-
   window.onkeyup = { event: Event =>
     val keyEvent = event.asInstanceOf[dom.KeyboardEvent].key
-    turning match {
-      case Some(GoRight) if rightKey(keyEvent) =>
+    (keyEvent, turning) match {
+      case (Keys.Right(_), Some(GoRight)) =>
         socket.send(write(Stop(Right)))
         turning = None
-      case Some(GoLeft) if leftKey(keyEvent)   =>
+      case (Keys.Left(_), Some(GoLeft)) =>
         socket.send(write(Stop(Left)))
         turning = None
-      case None =>
+      case _ =>
     }
-    speeding match {
-      case Some(SpeedUp) if upKey(keyEvent) =>
+    (keyEvent, speeding) match {
+      case (Keys.Up(_), Some(SpeedUp)) =>
         socket.send(write(Stop(Push)))
         speeding = None
-      case Some(SlowDown) if downKey(keyEvent) =>
+      case (Keys.Down(_), Some(SlowDown)) =>
         socket.send(write(Stop(Slow)))
         speeding = None
-      case None =>
+      case _ =>
     }
-
   }
   window.onmousemove = { event: Event =>
     val e = event.asInstanceOf[dom.MouseEvent]
