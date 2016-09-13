@@ -1,41 +1,18 @@
 /** scala extractor objects to identify game keys in with pattern matching */
 object Keys {
 
-  object Up {
-    def unapply(keyEvent: String): Boolean = {
-      keyEvent match {
-        case "ArrowUp" | "w" | "W" => true
-        case _                     => false
-      }
-    }
+  class KeyMatch(keys: String*) {
+    def unapply(keyEvent: String): Boolean =
+      keys.contains(keyEvent)
   }
 
-  object Down {
-    def unapply(keyEvent: String): Boolean = {
-      keyEvent match {
-        case "ArrowDown" | "s" | "S" => true
-        case _                       => false
-      }
-    }
-  }
+  object Up extends KeyMatch("ArrowUp", "w", "W")
 
-  object Right {
-    def unapply(keyEvent: String): Boolean = {
-      keyEvent match {
-        case "ArrowRight" | "d" | "D" => true
-        case _                        => false
-      }
-    }
-  }
+  object Down extends KeyMatch("ArrowDown", "s", "S")
 
-  object Left {
-    def unapply(keyEvent: String): Boolean = {
-      keyEvent match {
-        case "ArrowLeft" | "a" | "A" => true
-        case _                       => false
-      }
-    }
-  }
+  object Right extends KeyMatch("ArrowRight", "d", "D")
+
+  object Left extends KeyMatch("ArrowLeft", "a", "A")
 
 }
 
