@@ -85,7 +85,7 @@ class Connection(name: String) {
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
         turning = Some(GoRight)
-      case Keys.Left() if turning != Some(GoLeft)  =>
+      case Keys.Left() if turning != Some(GoLeft) =>
         socket.send(write(Stop(Right)))
         socket.send(write(Start(Left)))
         turning = Some(GoLeft)
@@ -125,5 +125,9 @@ class Connection(name: String) {
   window.onmousemove = { e: MouseEvent =>
     val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
     socket.send(write(TurretAngle(angle)))
+  }
+
+  window.onmousedown = { _: Event =>
+    socket.send(write(Shoot))
   }
 }

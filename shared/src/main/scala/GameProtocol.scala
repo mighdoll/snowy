@@ -10,6 +10,8 @@ object GameServerProtocol {
 
   case class TurretAngle(angle: Double) extends GameServerMessage
 
+  case object Shoot extends GameServerMessage
+
   case class Start(cmd: StartStopCommand) extends GameServerMessage
 
   case class Stop(cmd: StartStopCommand) extends GameServerMessage

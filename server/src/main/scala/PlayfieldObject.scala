@@ -21,6 +21,6 @@ case class PushState(pushed: Double)
 
 case class TreeState(pos: Vec2d, size: Double) extends PlayfieldObject
 
-case class SnowballState(pos: Vec2d, size: Double, speed: Vec2d) extends PlayfieldObject
+case class SnowballState(pos: Vec2d, size: Double, speed: Vec2d, spawned: Double) extends PlayfieldObject
 
 case class User(name: String)

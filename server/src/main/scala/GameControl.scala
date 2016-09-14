@@ -38,6 +38,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     read[GameServerMessage](msg) match {
       case Join(name)         => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
+      case Shoot              => createSnowball(id)
       case Start(cmd)         => commands.startCommand(id, cmd)
       case Stop(cmd)          => commands.stopCommand(id, cmd)
     }
@@ -45,7 +46,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   private def newRandomSled(): SledState = {
     // TODO what if sled is initialized atop a tree?
-    SledState(randomSpot(), size = 30, speed = Vec2d(0, 0),
+    SledState(randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
@@ -57,6 +58,16 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
     sleds.modify(id)(_.copy(turretRotation = angle))
+  }
+
+  private def createSnowball(id: ConnectionId): Unit = {
+    sleds.forOneSled(id) {sled =>
+      val direction = Vec2d.fromRotation(-sled.turretRotation)
+      snowballs += SnowballState(
+        sled.pos + direction * 35, 10,
+        (sled.speed / 50) + (direction * 3),
+        System.currentTimeMillis())
+    }
   }
 
   /** Rotate a sled.

@@ -39,7 +39,7 @@ object ClientDraw {
   def drawState(state: State, trees: Trees, border: PlayField): Unit = {
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), 10.0)
+      drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), snowball.size/2)
     }
     //Draw all sleds
     state.sleds.foreach { sled =>

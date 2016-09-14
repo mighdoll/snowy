@@ -65,6 +65,9 @@ trait GameMotion {
       val wrapped = wrapInPlayfield(moved)
       sled.copy(pos = wrapped)
     }
+    snowballs = snowballs.map { snowball =>
+      snowball.copy(pos = snowball.pos + snowball.speed)
+    }
   }
 
   private def checkCollisions(): Unit = {

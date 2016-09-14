@@ -47,6 +47,13 @@ class SledStore(size: Vec2d, gridSpacing: Double) {
     sleds.map { case (id, sled) => fn(id, sled) }
   }
 
+  def forOneSled[A](id:ConnectionId) (fn: SledState => Unit): Unit = {
+    sleds.get(id) match {
+      case Some(sled) => fn(sled)
+      case None       => println(s"forOneSled. sled not found for id: $id")
+    }
+  }
+
   def filter(fn: (ConnectionId, SledState) => Boolean): Traversable[(ConnectionId, SledState)] = {
     sleds.filter { case (id, sled) => fn(id, sled) }
   }
