@@ -43,7 +43,10 @@ lazy val client = (project in file("client")).
     persistLauncher in Compile := true,
     persistLauncher in Test := false,
     scalaJSUseRhino in Global := false,
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.0"
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "0.9.0",
+      "org.singlespaced" %%% "scalajs-d3" % "0.3.3"
+      )
   ).
   dependsOn(shared.js)
 
