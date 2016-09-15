@@ -79,8 +79,8 @@ class Connection(name: String) {
     }
   }, 500)
 
-  window.onkeydown = { event: Event =>
-    event.asInstanceOf[dom.KeyboardEvent].key match {
+  window.onkeydown = { event: KeyboardEvent =>
+    event.key match {
       case Keys.Right() if turning != Some(GoRight) =>
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
@@ -101,9 +101,8 @@ class Connection(name: String) {
     }
   }
 
-  window.onkeyup = { event: Event =>
-    val keyEvent = event.asInstanceOf[dom.KeyboardEvent].key
-    (keyEvent, turning) match {
+  window.onkeyup = { event: KeyboardEvent =>
+    (event.key, turning) match {
       case (Keys.Right(), Some(GoRight)) =>
         socket.send(write(Stop(Right)))
         turning = None
@@ -112,7 +111,7 @@ class Connection(name: String) {
         turning = None
       case _ =>
     }
-    (keyEvent, speeding) match {
+    (event.key, speeding) match {
       case (Keys.Up(), Some(SpeedUp)) =>
         socket.send(write(Stop(Push)))
         speeding = None
@@ -122,8 +121,8 @@ class Connection(name: String) {
       case _ =>
     }
   }
-  window.onmousemove = { event: Event =>
-    val e = event.asInstanceOf[dom.MouseEvent]
+  
+  window.onmousemove = { e: MouseEvent =>
     val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
     socket.send(write(TurretAngle(angle)))
   }
