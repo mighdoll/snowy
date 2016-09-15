@@ -2,7 +2,7 @@ import GameConstants._
 
 /** Moving objects in each game time slice */
 trait GameMotion {
-  self: GameControl =>
+  self: GameState =>
 
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
@@ -24,14 +24,6 @@ trait GameMotion {
       val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)
-    }
-  }
-
-
-  /** Run a function that replaces each sled with a transformed copy */
-  private def mapSleds(fn: SledState => SledState): Unit = {
-    sleds = sleds.map { case (id, sled) =>
-      id -> fn(sled)
     }
   }
 

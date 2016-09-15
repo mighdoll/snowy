@@ -107,4 +107,12 @@ trait GameState {
       random.nextInt(playField.height)
     )
   }
+
+  /** Run a function that replaces each sled with a transformed copy */
+  protected def mapSleds(fn: SledState => SledState): Unit = {
+    sleds = sleds.map { case (id, sled) =>
+      id -> fn(sled)
+    }
+  }
+
 }

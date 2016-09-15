@@ -6,6 +6,7 @@ import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import GameConstants.Friction.slowButtonFriction
 import GameConstants._
+import math.min
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
   val tickDelta = 20 milliseconds
@@ -90,7 +91,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   def applyCommands(deltaSeconds: Double): Unit = {
     commands.removeExpired()
     val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
-    val pushForceNow = PushTime.force * deltaSeconds
+    val pushForceNow = PushEnergy.force * deltaSeconds
+    val pushEffort = deltaSeconds / PushEnergy.maxTime
     val push = new InlineForce(pushForceNow)
     commands.foreachCommand { (id, command) =>
       sleds.get(id).map { sled =>
@@ -98,24 +100,50 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
           case Left  => turn(id, turnDelta)
           case Right => turn(id, -turnDelta)
           case Slow  => sleds(id) = sled.copy(speed = slow(sled.speed))
-          case Push  => sleds(id) = pushSled(sled, pushForceNow, push)
+          case Push  => sleds(id) = pushSled(sled, pushForceNow, push, pushEffort)
         }
       }
     }
   }
 
   /** apply a push to a sled */
-  private def pushSled(sled: SledState, pushForceNow: Double, push: InlineForce): SledState = {
-    val newSpeed =
-      if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
-      else push(sled.speed)
-    sled.copy(speed = newSpeed)
+  private def pushSled(sled: SledState, pushForceNow: Double, push: InlineForce, effort: Double)
+      : SledState = {
+    if (effort < sled.pushEnergy) {
+      val speed =
+        if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
+        else push(sled.speed)
+      val energy = sled.pushEnergy - effort
+      sled.copy(speed = speed, pushEnergy = energy)
+    } else {
+      sled
+    }
+  }
+
+  /** slowly recover some health points */
+  private def recoverHealth(deltaSeconds: Double): Unit = {
+    val deltaHealth = deltaSeconds / Health.recoveryTime
+    mapSleds { sled =>
+      val newHealth = min(1.0, sled.health + deltaHealth)
+      sled.copy(health = newHealth)
+    }
+  }
+
+  /** slowly recover some push energy */
+  private def recoverPushEnergy(deltaSeconds: Double): Unit = {
+    val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
+    mapSleds { sled =>
+      val energy = min(1.0, sled.pushEnergy + deltaEnergy)
+      sled.copy(pushEnergy = energy)
+    }
   }
 
 
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = {
     val deltaSeconds = nextTimeSlice()
+    recoverHealth(deltaSeconds)
+    recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     moveStuff(deltaSeconds)
     currentState() foreach {

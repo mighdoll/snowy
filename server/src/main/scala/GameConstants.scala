@@ -17,15 +17,20 @@ object GameConstants {
   /** Time to turn 180 degrees in seconds */
   val turnTime = .75
 
-  object PushTime {
+  object PushEnergy {
     /** speedup from the push button. in pixels / second / second */
-    val force = 200
+    val force = 200.0
 
-    /** time to recover push */
-    val recoveryTime = 30
+    /** time in seconds to recover from using up all push energy */
+    val recoveryTime = 30.0
 
-    /** max seconds of push force available */
+    /** max seconds of push energy available */
     val maxTime = 5
+  }
+
+  object Health {
+    /** time in seconds to recover from using up all push energy */
+    val recoveryTime = 100.0
   }
 
   object Friction {

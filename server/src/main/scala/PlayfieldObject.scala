@@ -14,7 +14,7 @@ case class SledState(pos: Vec2d,
                      rotation: Double,
                      turretRotation: Double,
                      health: Double = 1,
-                     pushed: Double = 0
+                     pushEnergy: Double = 1
                     ) extends PlayfieldObject
 
 case class PushState(pushed: Double)
