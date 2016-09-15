@@ -11,8 +11,22 @@ object GameConstants {
   /** stop pending commands after this many milliseconds */
   val commandDuration = 2000
 
-  /** speedup from the push button. in pixels / second / second */
-  val pushForce = 200
+  /** point up on the screen, towards smaller Y values */
+  val downhillRotation = math.Pi
+
+  /** Time to turn 180 degrees in seconds */
+  val turnTime = .75
+
+  object PushTime {
+    /** speedup from the push button. in pixels / second / second */
+    val force = 200
+
+    /** time to recover push */
+    val recoveryTime = 30
+
+    /** max seconds of push force available */
+    val maxTime = 5
+  }
 
   object Friction {
     /** friction from the slowdown button. in pixels / second / second */

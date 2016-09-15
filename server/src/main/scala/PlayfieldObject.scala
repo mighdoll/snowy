@@ -8,8 +8,16 @@ trait PlayfieldObject {
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
-case class SledState(pos: Vec2d, size: Double, speed: Vec2d,
-                     rotation: Double, turretRotation: Double) extends PlayfieldObject
+case class SledState(pos: Vec2d,
+                     size: Double,
+                     speed: Vec2d,
+                     rotation: Double,
+                     turretRotation: Double,
+                     health: Double = 1,
+                     pushed: Double = 0
+                    ) extends PlayfieldObject
+
+case class PushState(pushed: Double)
 
 case class TreeState(pos: Vec2d, size: Double) extends PlayfieldObject
 

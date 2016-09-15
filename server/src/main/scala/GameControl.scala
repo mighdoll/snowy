@@ -5,13 +5,13 @@ import Vec2dClientPosition._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import GameConstants.Friction.slowButtonFriction
-import GameConstants.pushForce
+import GameConstants._
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
-  val turnDelta = Math.PI / 30
-  val downhillRotation = math.Pi // point up on the screen, towards smaller Y values
+  val tickDelta = 20 milliseconds
+  val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
 
-  api.tick(20 milliseconds) {
+  api.tick(tickDelta) {
     gameTurn()
   }
 
@@ -90,7 +90,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   def applyCommands(deltaSeconds: Double): Unit = {
     commands.removeExpired()
     val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
-    val pushForceNow = pushForce * deltaSeconds
+    val pushForceNow = PushTime.force * deltaSeconds
     val push = new InlineForce(pushForceNow)
     commands.foreachCommand { (id, command) =>
       sleds.get(id).map { sled =>
