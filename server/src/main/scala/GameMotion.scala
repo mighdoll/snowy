@@ -65,13 +65,25 @@ trait GameMotion {
       val wrapped = wrapInPlayfield(moved)
       sled.copy(pos = wrapped)
     }
-    snowballs = snowballs.map { snowball =>
+    snowballs = snowballs.filter { snowball =>
+      snowball.spawned + 10000 > System.currentTimeMillis()
+    }
+    snowballs = snowballs.map { snowball    =>
       snowball.copy(pos = snowball.pos + snowball.speed)
     }
   }
 
   private def checkCollisions(): Unit = {
     // TODO
+    sleds.mapSleds { sled =>
+      var result = sled
+      snowballs.foreach { snowball =>
+        if((sled.pos - snowball.pos).length < sled.size/2 + snowball.size/2) {
+          result = result.copy(speed = Vec2d(0,0))
+        }
+      }
+      result
+    }
   }
 
 }
