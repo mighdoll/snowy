@@ -86,7 +86,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  /** apply any pending but not yet canelled commands from user actions,
+  /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   def applyCommands(deltaSeconds: Double): Unit = {
     commands.removeExpired()
