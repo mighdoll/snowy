@@ -17,7 +17,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   /** a new player has connected */
-  def open(id: ConnectionId): Unit = {
+  override def open(id: ConnectionId): Unit = {
     api.send(write(playField), id)
     val clientTrees = trees.map { treeState =>
       Tree(treeState.size.toInt, treeState.pos.toPosition)
@@ -27,14 +27,14 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   /** Called when a connection is dropped */
-  def gone(id: ConnectionId): Unit = {
+  override def gone(id: ConnectionId): Unit = {
     sleds.remove(id)
     users.remove(id)
     commands.commands.remove(id)
   }
 
   /** received a client message */
-  def message(id: ConnectionId, msg: String): Unit = {
+  override def message(id: ConnectionId, msg: String): Unit = {
     read[GameServerMessage](msg) match {
       case Join(name)         => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
