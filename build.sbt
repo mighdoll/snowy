@@ -61,3 +61,6 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file ("shared")).
 
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
+
+// loads the server project at sbt startup
+onLoad in Global := (Command.process("project server", _: State)) compose (onLoad in Global).value
