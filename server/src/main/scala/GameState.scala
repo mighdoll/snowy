@@ -13,7 +13,8 @@ trait GameState {
   self: GameControl =>
 
   val playField = PlayField(4000, 8000)
-  var sleds = mutable.Map[ConnectionId, SledState]()
+  val gridSpacing = 100.0
+  val sleds = new SledStore(Vec2d(playField.width, playField.height), gridSpacing)
   val trees = randomTrees()
   val snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
@@ -22,20 +23,22 @@ trait GameState {
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
-    def clientSled(id: ConnectionId): Sled = {
-      val sledState = sleds(id)
+    def clientSled(sled:SledState, id:ConnectionId): Sled = {
       val userName = users.get(id).map(_.name).getOrElse("?")
-      Sled(userName, sledState.pos.toPosition, sledState.rotation, sledState.turretRotation)
+      Sled(userName, sled.pos.toPosition, sled.rotation, sled.turretRotation)
     }
 
     val clientSnowballs = snowballs.map { ball =>
       Snowball(ball.size.toInt, ball.pos.toPosition)
     }
 
-    sleds.map { case (id, sledState) =>
-      val mySled = sleds.keys.find(_ == id).map(clientSled(_)).get
-      val otherSleds = sleds.keys.filter(_ != id).map(clientSled(_)).toSeq
-      id -> State(mySled, otherSleds, clientSnowballs)
+    sleds.map{ (myId, mySledState) =>
+      val mySled = clientSled(mySledState, myId)
+      val otherSleds = sleds.collect{
+        case (otherId, sled) if otherId != myId =>
+          clientSled(sled, otherId)
+      }.toSeq
+      myId -> State(mySled, otherSleds, clientSnowballs)
     }.toSeq
   }
 
@@ -106,13 +109,6 @@ trait GameState {
       random.nextInt(playField.width),
       random.nextInt(playField.height)
     )
-  }
-
-  /** Run a function that replaces each sled with a transformed copy */
-  protected def mapSleds(fn: SledState => SledState): Unit = {
-    sleds = sleds.map { case (id, sled) =>
-      id -> fn(sled)
-    }
   }
 
 }

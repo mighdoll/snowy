@@ -23,21 +23,19 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
       Tree(treeState.size.toInt, treeState.pos.toPosition)
     }.toSeq
     api.send(write(Trees(clientTrees)), id)
-    sleds += id -> newRandomSled()
+    sleds.add(id, newRandomSled())
   }
 
   /** Called when a connection is dropped */
   def gone(id: ConnectionId): Unit = {
-    sleds -= id
-    users -= id
-    commands.commands -= id
+    sleds.remove(id)
+    users.remove(id)
+    commands.commands.remove(id)
   }
 
   /** received a client message */
   def message(id: ConnectionId, msg: String): Unit = {
     read[GameServerMessage](msg) match {
-      case TurnLeft           => turn(id, turnDelta)
-      case TurnRight          => turn(id, -turnDelta)
       case Join(name)         => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
       case Start(cmd)         => commands.startCommand(id, cmd)
@@ -58,32 +56,22 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
-    sleds.get(id) match {
-      case Some(sled) =>
-        sleds(id) = sled.copy(turretRotation = angle)
-      case None       =>
-        println(s"where's the sled to rotate turret for id: $id")
-    }
+    sleds.modify(id)(_.copy(turretRotation = angle))
   }
 
   /** Rotate a sled.
     *
     * @param rotate rotation in radians from current position. */
-  private def turn(id: ConnectionId, rotate: Double): Unit = {
+  private def turnSled(sled:SledState, rotate: Double): SledState = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
     val max = math.Pi * 2
     val min = -math.Pi * 2
-    sleds.get(id) match {
-      case Some(sled) =>
-        val rotation = sled.rotation + rotate
-        val wrappedRotation =
-          if (rotation > max) rotation - max
-          else if (rotation < min) rotation - min
-          else rotation
-        sleds(id) = sled.copy(rotation = wrappedRotation)
-      case None       =>
-        println(s"where's the sled to turn for connection id: $id")
-    }
+    val rotation = sled.rotation + rotate
+    val wrappedRotation =
+      if (rotation > max) rotation - max
+      else if (rotation < min) rotation - min
+      else rotation
+    sled.copy(rotation = wrappedRotation)
   }
 
   /** apply any pending but not yet cancelled commands from user actions,
@@ -95,12 +83,12 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     val pushEffort = deltaSeconds / PushEnergy.maxTime
     val push = new InlineForce(pushForceNow)
     commands.foreachCommand { (id, command) =>
-      sleds.get(id).map { sled =>
+      sleds.modify(id) { sled =>
         command match {
-          case Left  => turn(id, turnDelta)
-          case Right => turn(id, -turnDelta)
-          case Slow  => sleds(id) = sled.copy(speed = slow(sled.speed))
-          case Push  => sleds(id) = pushSled(sled, pushForceNow, push, pushEffort)
+          case Left  => turnSled(sled, turnDelta)
+          case Right => turnSled(sled, -turnDelta)
+          case Slow  => sled.copy(speed = slow(sled.speed))
+          case Push  => pushSled(sled, pushForceNow, push, pushEffort)
         }
       }
     }
@@ -108,7 +96,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   /** apply a push to a sled */
   private def pushSled(sled: SledState, pushForceNow: Double, push: InlineForce, effort: Double)
-      : SledState = {
+  : SledState = {
     if (effort < sled.pushEnergy) {
       val speed =
         if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
@@ -123,7 +111,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some health points */
   private def recoverHealth(deltaSeconds: Double): Unit = {
     val deltaHealth = deltaSeconds / Health.recoveryTime
-    mapSleds { sled =>
+    sleds.mapSleds { sled =>
       val newHealth = min(1.0, sled.health + deltaHealth)
       sled.copy(health = newHealth)
     }
@@ -132,7 +120,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some push energy */
   private def recoverPushEnergy(deltaSeconds: Double): Unit = {
     val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
-    mapSleds { sled =>
+    sleds.mapSleds { sled =>
       val energy = min(1.0, sled.pushEnergy + deltaEnergy)
       sled.copy(pushEnergy = energy)
     }

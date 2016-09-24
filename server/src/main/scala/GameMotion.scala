@@ -17,7 +17,7 @@ trait GameMotion {
     val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
-    mapSleds {sled =>
+    sleds.mapSleds {sled =>
       import sled.rotation
       val gravitySpeed = gravity(sled.speed, rotation)
       val skidSpeed = skid(gravitySpeed, rotation)
@@ -60,7 +60,7 @@ trait GameMotion {
 
   /** move movable objects to their new location for this time period */
   private def moveObjects(deltaSeconds: Double): Unit = {
-    mapSleds { sled =>
+    sleds.mapSleds { sled =>
       val moved = sled.pos + (sled.speed * deltaSeconds)
       val wrapped = wrapInPlayfield(moved)
       sled.copy(pos = wrapped)
