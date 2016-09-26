@@ -1,7 +1,5 @@
 import scala.collection.mutable.HashSet
 import math.{ceil, round}
-import scala.collection.mutable
-import socketserve.ConnectionId
 
 class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
   val columns = ceil(size.x / spacing).toInt
@@ -32,55 +30,4 @@ class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
 
 }
 
-class SledStore(size: Vec2d, gridSpacing: Double) {
-  private val grid = new Grid[SledState](size, gridSpacing)
-  private var sleds = mutable.Map[ConnectionId, SledState]()
 
-  /** Run a function that replaces each sled with a transformed copy */
-  def mapSleds(fn: SledState => SledState): Unit = {
-    sleds = sleds.map { case (id, sled) =>
-      id -> fn(sled)
-    }
-  }
-
-  def map[A](fn: (ConnectionId, SledState) => A): Traversable[A] = {
-    sleds.map { case (id, sled) => fn(id, sled) }
-  }
-
-  def forOneSled[A](id:ConnectionId) (fn: SledState => Unit): Unit = {
-    sleds.get(id) match {
-      case Some(sled) => fn(sled)
-      case None       => println(s"forOneSled. sled not found for id: $id")
-    }
-  }
-
-  def filter(fn: (ConnectionId, SledState) => Boolean): Traversable[(ConnectionId, SledState)] = {
-    sleds.filter { case (id, sled) => fn(id, sled) }
-  }
-
-  def collect[A](fn: PartialFunction[(ConnectionId, SledState), A]): Traversable[A] = {
-    sleds.collect(fn)
-  }
-
-  def add(id: ConnectionId, sled: SledState): Unit = {
-    sleds(id) = sled
-    grid.add(sled)
-  }
-
-  def modify(id: ConnectionId)(fn: SledState => SledState): Unit = {
-    sleds.get(id) match {
-      case Some(sled) => sleds(id) = fn(sled)
-      case None       => println(s"modify. sled not found for id: $id")
-    }
-  }
-
-  def remove(id: ConnectionId): Unit = {
-    sleds -= id
-  }
-
-  def get(id: ConnectionId): Option[SledState] = sleds.get(id)
-
-  def inBox(topLeft: Vec2d, bottomRight: Vec2d): Set[SledState] =
-    grid.inBox(topLeft, bottomRight)
-
-}
