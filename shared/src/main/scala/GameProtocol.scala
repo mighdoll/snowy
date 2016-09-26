@@ -33,7 +33,8 @@ object GameClientProtocol {
 
   /** rotations in radians, 0 is down */
   case class Sled(userName: String, position: Position,
-                  rotation: Double, turretRotation: Double)
+                  rotation: Double, turretRotation: Double,
+                  health: Double, pushEnergy: Double)
 
   case class Tree(size: Int, position: Position)
 

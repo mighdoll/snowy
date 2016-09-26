@@ -25,7 +25,8 @@ trait GameState {
   protected def currentState(): Iterable[(ConnectionId, State)] = {
     def clientSled(sled:SledState, id:ConnectionId): Sled = {
       val userName = users.get(id).map(_.name).getOrElse("?")
-      Sled(userName, sled.pos.toPosition, sled.rotation, sled.turretRotation)
+      Sled(userName, sled.pos.toPosition, sled.rotation, sled.turretRotation,
+        sled.health, sled.pushEnergy)
     }
 
     val clientSnowballs = snowballs.map { ball =>
