@@ -20,7 +20,7 @@ class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
     cell(elem).remove(elem)
   }
 
-  def inBox(topLeft: Vec2d, bottomRight: Vec2d): Set[A] = ???
+  def inBox(box:Rect): Set[A] = ???
 
   private def cell(obj: A): HashSet[A] = {
     val column = round(obj.pos.x / spacing).toInt

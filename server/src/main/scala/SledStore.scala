@@ -56,7 +56,7 @@ class SledStore(size: Vec2d, gridSpacing: Double) {
   def get(id: ConnectionId): Option[SledState] = sleds.get(id)
 
   /** return all sleds in a given area */
-  def inBox(topLeft: Vec2d, bottomRight: Vec2d): Set[SledState] =
-    grid.inBox(topLeft, bottomRight)
+  def inBox(box:Rect): Set[SledState] =
+    grid.inBox(box)
 
 }

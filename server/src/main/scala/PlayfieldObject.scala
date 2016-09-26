@@ -5,6 +5,11 @@ trait PlayfieldObject {
   def pos: Vec2d
 }
 
+case class Rect(pos: Vec2d, size: Vec2d)
+
+case class Circle(pos: Vec2d, radius: Double)
+
+
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
