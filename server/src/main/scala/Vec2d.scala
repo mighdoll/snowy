@@ -9,6 +9,8 @@ case class Vec2d(x: Double, y: Double) {
 
   def length: Double = math.sqrt(x * x + y * y)
 
+  def lengthSquared: Double = x * x + y * y
+
   def max(other: Vec2d): Vec2d = Vec2d(math.max(x, other.x), math.max(y, other.y))
 
   def max(m: Double): Vec2d = Vec2d(math.max(x, m), math.max(y, m))
@@ -31,6 +33,14 @@ case class Vec2d(x: Double, y: Double) {
   def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
 
   def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
+
+  /** Make sure Vec2d is within max & min */
+  def clamp(min: Vec2d, max: Vec2d): Vec2d = {
+    def clampNum(num: Double, min: Double, max: Double): Double = {
+      Math.min(Math.max(num, min), max)
+    }
+    Vec2d(clampNum(x, min.x, max.y), clampNum(y, min.y, max.y))
+  }
 
   /** Apply a partial function to transform this vector.
     * 
