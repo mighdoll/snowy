@@ -39,7 +39,7 @@ case class Vec2d(x: Double, y: Double) {
     def clampNum(num: Double, min: Double, max: Double): Double = {
       Math.min(Math.max(num, min), max)
     }
-    Vec2d(clampNum(x, min.x, max.y), clampNum(y, min.y, max.y))
+    Vec2d(clampNum(x, min.x, max.x), clampNum(y, min.y, max.y))
   }
 
   /** Apply a partial function to transform this vector.
