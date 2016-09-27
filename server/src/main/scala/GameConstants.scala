@@ -47,4 +47,9 @@ object GameConstants {
     val brakeSteepness = .8
   }
 
+  /** health cost from colliding into a tree */
+  val treeCollisionCost = .25
+
+  /** health cost from being hit with a snowball */
+  val snowballCollisionCost = .08
 }

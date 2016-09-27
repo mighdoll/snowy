@@ -13,11 +13,11 @@ trait GameMotion {
 
   /** Update the direction and velocity of all sleds based on gravity and friction
     */
-  def updateSledSpeedVector(deltaSeconds: Double):Unit = {
+  def updateSledSpeedVector(deltaSeconds: Double): Unit = {
     val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
-    sleds.mapSleds {sled =>
+    sleds.mapSleds { sled =>
       import sled.rotation
       val gravitySpeed = gravity(sled.speed, rotation)
       val skidSpeed = skid(gravitySpeed, rotation)
@@ -68,22 +68,21 @@ trait GameMotion {
     snowballs = snowballs.filter { snowball =>
       snowball.spawned + 10000 > System.currentTimeMillis()
     }
-    snowballs = snowballs.map { snowball    =>
+    snowballs = snowballs.map { snowball =>
       snowball.copy(pos = snowball.pos + snowball.speed)
     }
   }
 
+  /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Unit = {
-    // TODO
     sleds.mapSleds { sled =>
-      var result = sled
-      snowballs.foreach { snowball =>
-        if((sled.pos - snowball.pos).length < sled.size/2 + snowball.size/2) {
-          result = result.copy(speed = Vec2d(0,0))
-        }
-      }
-      result
+      val collide = new SledCollide(sled, snowballs, trees)
+
+      collide.tree()
+        .orElse(collide.snowball())
+        .getOrElse(sled)
     }
   }
 
 }
+
