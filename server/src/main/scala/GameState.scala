@@ -15,7 +15,7 @@ trait GameState {
   val playField = PlayField(4000, 8000)
   val gridSpacing = 100.0
   val sleds = new SledStore(Vec2d(playField.width, playField.height), gridSpacing)
-  val trees = randomTrees()
+  val trees: Set[TreeState] = randomTrees()
   var snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
@@ -23,7 +23,7 @@ trait GameState {
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
-    def clientSled(sled:SledState, id:ConnectionId): Sled = {
+    def clientSled(sled: SledState, id: ConnectionId): Sled = {
       val userName = users.get(id).map(_.name).getOrElse("?")
       Sled(userName, sled.pos.toPosition, sled.rotation, sled.turretRotation,
         sled.health, sled.pushEnergy)
@@ -33,9 +33,9 @@ trait GameState {
       Snowball(ball.size.toInt, ball.pos.toPosition)
     }
 
-    sleds.map{ (myId, mySledState) =>
+    sleds.map { (myId, mySledState) =>
       val mySled = clientSled(mySledState, myId)
-      val otherSleds = sleds.collect{
+      val otherSleds = sleds.collect {
         case (otherId, sled) if otherId != myId =>
           clientSled(sled, otherId)
       }.toSeq
@@ -78,7 +78,7 @@ trait GameState {
       val tree = fn
       forest.flatten.find(treesOverlap(_, tree)) match {
         case Some(t) => nonOverlapping(fn)
-        case None => tree
+        case None    => tree
       }
     }
 
