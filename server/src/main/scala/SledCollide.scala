@@ -48,14 +48,14 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
   /** return a damaged version of the sled after impacting with a tree */
   private def treeDamaged(): SledState = {
     val health = math.max(sled.health - treeCollisionCost, 0)
-    val stopped = Vec2d(0, 0)
+    val stopped = sled.speed * -1
     sled.copy(health = health, speed = stopped)
   }
 
   /** return a damaged version of the sled after impacting with a snowball */
   private def snowballDamaged(): SledState = {
     val health = math.max(sled.health - snowballCollisionCost, 0)
-    val stopped = Vec2d(0, 0)
+    val stopped = sled.speed * -1
     sled.copy(health = health, speed = stopped)
   }
 

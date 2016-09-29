@@ -43,9 +43,9 @@ object ClientDraw {
     }
     //Draw all sleds
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
+    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
       drawTree(screenPosition(centerObject(tree.position, state.mySled.position), border))
@@ -55,7 +55,7 @@ object ClientDraw {
   }
 
   //Draw a sled at an x and y
-  def drawSled(name: String, pos: GameClientProtocol.Position, cannonRotation: Double, rotation: Double, color: String): Unit = {
+  def drawSled(name: String, pos: GameClientProtocol.Position, health: Double, cannonRotation: Double, rotation: Double, color: String): Unit = {
     val x = pos.x
     val y = pos.y
     val turretSize = 35.0
@@ -104,6 +104,22 @@ object ClientDraw {
     ctx.beginPath()
     ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - turretSize * 27 / 22)
     ctx.fill()
+
+    if(health < 1) {
+      ctx.lineWidth = turretSize * 3 / 25
+      ctx.strokeStyle = "rgb(85, 85, 85)"
+      ctx.beginPath()
+      ctx.moveTo(x - turretSize * 2 / 5, y + turretSize * 5 / 5)
+      ctx.lineTo(x + turretSize * 2 / 5, y + turretSize * 5 / 5)
+      ctx.stroke()
+
+      ctx.lineWidth = turretSize * 2 / 25
+      ctx.strokeStyle = "rgb(134, 198, 128)"
+      ctx.beginPath()
+      ctx.moveTo(x - turretSize * 2 / 5, y + turretSize * 5 / 5)
+      ctx.lineTo(x - turretSize * 2 / 5 + turretSize * 4 / 5 * health, y + turretSize * 5 / 5)
+      ctx.stroke()
+    }
   }
 
   //Draw a tree on the canvas
@@ -151,6 +167,7 @@ object ClientDraw {
   }
 
   def drawBorder(top: GameClientProtocol.Position, bottom: GameClientProtocol.Position): Unit = {
+    ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.beginPath()
     ctx.moveTo(top.x, top.y)
     ctx.lineTo(top.x, bottom.y)

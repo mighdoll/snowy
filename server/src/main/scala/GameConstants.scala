@@ -29,8 +29,8 @@ object GameConstants {
   }
 
   object Health {
-    /** time in seconds to recover from using up all push energy */
-    val recoveryTime = 100.0
+    /** time in seconds to recover from almost 0 */
+    val recoveryTime = 30.0
   }
 
   object Friction {
