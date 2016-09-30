@@ -15,7 +15,7 @@ trait GameState {
   val playField = PlayField(4000, 8000)
   val gridSpacing = 100.0
   val sleds = new SledStore(Vec2d(playField.width, playField.height), gridSpacing)
-  var trees: Set[TreeState] = randomTrees()
+  val trees: Set[TreeState] = randomTrees()
   var snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()

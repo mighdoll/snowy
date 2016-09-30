@@ -145,13 +145,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     moveStuff(deltaSeconds)
-    val clientTrees = trees.map { treeState =>
-      Tree(treeState.size.toInt, treeState.pos.toPosition)
-    }.toSeq
     currentState() foreach {
-      case (id, state) =>
-        api.send(write(state), id)
-        api.send(write(Trees(clientTrees)), id)
+      case (id, state) => api.send(write(state), id)
     }
   }
 
