@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
+import util.Properties
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
@@ -39,8 +40,9 @@ class WebServer(implicit system: ActorSystem) {
         getFromResource(s"web/$file")
       }
 
-  val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", 2345)
-  println(s"Server online at http://localhost:2345/")
+  val port = Properties.envOrElse("PORT", "8080").toInt
+  val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
+  println(s"Server online at http://localhost:$port/")
 
   def shutDown(): Unit = {
     bindingFuture
