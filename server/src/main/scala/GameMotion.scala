@@ -75,6 +75,7 @@ trait GameMotion {
 
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Unit = {
+    import GameCollide.snowballTrees
     sleds.mapSleds { sled =>
       val collide = new SledCollide(sled, snowballs, trees)
 
@@ -82,6 +83,8 @@ trait GameMotion {
         .orElse(collide.snowball())
         .getOrElse(sled)
     }
+
+    snowballs = snowballs.filter { ! snowballTrees(_, trees) }
   }
 
 }

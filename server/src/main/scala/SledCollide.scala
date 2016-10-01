@@ -1,12 +1,10 @@
 import scala.collection.mutable
-import Collisions.circleRectCollide
 import GameConstants.{snowballCollisionCost, treeCollisionCost}
-import GameObjects.treeSize
+import GameCollideHelper._
 
 /** Collide a sled with trees and snowballs via the snowball() and tree() routines. */
 class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState], trees: Set[TreeState]) {
   val sledBody = Circle(sled.pos, sled.size / 2)
-  private val toTreeTopLeft = Vec2d(treeSize.x / 2, treeSize.y)
 
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
     * If a snowball collides with the sled, remove the snowball from the playfield
@@ -24,9 +22,8 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
     *
     * @return a damaged sled if it overlaps with a tree */
   def tree(): Option[SledState] = {
-    val sledBody = Circle(sled.pos, sled.size / 2)
     trees.collectFirst {
-      case tree if treeCollide(tree) =>
+      case tree if treeCollide(tree, sledBody) =>
         treeDamaged()
     }
   }
@@ -36,13 +33,6 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
     val centerDistance = (sled.pos - snowball.pos).length
     val radiiSum = sled.size / 2 + snowball.size / 2
     centerDistance < radiiSum
-  }
-
-  /** return true if the tree trunk intersects the sled body */
-  private def treeCollide(tree: TreeState): Boolean = {
-    val topLeft = tree.pos - toTreeTopLeft
-    val treeTrunk = Rect(topLeft, treeSize)
-    circleRectCollide(sledBody, treeTrunk)
   }
 
   /** return a damaged version of the sled after impacting with a tree */
