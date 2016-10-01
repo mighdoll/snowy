@@ -1,3 +1,5 @@
+enablePlugins(JavaAppPackaging)
+
 lazy val root = (project in file(".")).
   aggregate(server, client).
   settings(commonSettings: _*)
@@ -33,7 +35,8 @@ lazy val server = (project in file("server")).
     }.taskValue,
     watchSources ++= (watchSources in client).value
   ).
-  dependsOn(sharedJvm)
+  dependsOn(sharedJvm).
+  enablePlugins(JavaAppPackaging)
 
 lazy val client = (project in file("client")).
   enablePlugins(ScalaJSPlugin).
