@@ -1,3 +1,5 @@
+import coursier._
+
 enablePlugins(JavaAppPackaging)
 
 lazy val root = (project in file(".")).
@@ -22,6 +24,8 @@ lazy val server = (project in file("server")).
   settings(
     name := "server",
     libraryDependencies ++=  Seq(
+      "io.get-coursier" %% "coursier" % "1.0.0-M14",
+      "io.get-coursier" %% "coursier-cache" % "1.0.0-M14",
       "com.typesafe.akka" %% "akka-actor" % V.akka,
       "com.typesafe.akka" %% "akka-stream" % V.akka,
       "com.typesafe.akka" %% "akka-http-experimental" % V.akka
