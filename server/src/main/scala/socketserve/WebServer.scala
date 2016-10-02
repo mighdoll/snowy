@@ -40,7 +40,7 @@ class WebServer(implicit system: ActorSystem) {
         getFromResource(s"web/$file")
       }
 
-  val port = Properties.envOrElse("PORT", "8080").toInt
+  val port = Properties.envOrElse("PORT", "9000").toInt
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
   println(s"Server online at http://localhost:$port/")
 

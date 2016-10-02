@@ -1,5 +1,3 @@
-import coursier._
-
 enablePlugins(JavaAppPackaging)
 
 lazy val root = (project in file(".")).
@@ -11,7 +9,8 @@ lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := V.scala,
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:postfixOps"),
-  libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test"
+  libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test",
+  test in assembly := {}
 )
 
 lazy val V = new Object {
@@ -22,6 +21,7 @@ lazy val V = new Object {
 lazy val server = (project in file("server")).
   settings(commonSettings: _*).
   settings(
+    assemblyJarName in assembly := "full.jar",
     name := "server",
     libraryDependencies ++=  Seq(
       "io.get-coursier" %% "coursier" % "1.0.0-M14",
@@ -31,7 +31,7 @@ lazy val server = (project in file("server")).
       "com.typesafe.akka" %% "akka-http-experimental" % V.akka
     ),
     (resourceGenerators in Compile) += Def.task {
-      val f1 = (fastOptJS in Compile in client).value.data
+      val f1 = (fullOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
       val f2 = (packageScalaJSLauncher in Compile in client).value.data
       val f3 = (packageJSDependencies in Compile in client).value
