@@ -69,7 +69,7 @@ trait GameMotion {
       snowball.spawned + 10000 > System.currentTimeMillis()
     }
     snowballs = snowballs.map { snowball =>
-      snowball.copy(pos = snowball.pos + snowball.speed)
+      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
     }
   }
 

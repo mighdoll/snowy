@@ -14,7 +14,7 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
     snowballs.collectFirst {
       case snowball if snowballCollide(snowball) =>
         snowballs.remove(snowballs.indexOf(snowball))
-        snowballDamaged()
+        snowballDamaged(snowball)
     }
   }
 
@@ -43,9 +43,9 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
   }
 
   /** return a damaged version of the sled after impacting with a snowball */
-  private def snowballDamaged(): SledState = {
+  private def snowballDamaged(snowball: SnowballState): SledState = {
     val health = math.max(sled.health - snowballCollisionCost, 0)
-    val stopped = sled.speed * -1
+    val stopped = sled.speed + snowball.speed * 30
     sled.copy(health = health, speed = stopped)
   }
 
