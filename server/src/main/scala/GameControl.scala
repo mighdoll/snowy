@@ -65,7 +65,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       snowballs += SnowballState(
         sled.pos + direction * 35, 10,
-        (sled.speed / 50) + (direction * -10),
+        (sled.speed / 50) + (direction * 10),
         System.currentTimeMillis())
     }
   }
