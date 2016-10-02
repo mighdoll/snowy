@@ -31,7 +31,7 @@ lazy val server = (project in file("server")).
       "com.typesafe.akka" %% "akka-http-experimental" % V.akka
     ),
     (resourceGenerators in Compile) += Def.task {
-      val f1 = (fullOptJS in Compile in client).value.data
+      val f1 = (fastOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
       val f2 = (packageScalaJSLauncher in Compile in client).value.data
       val f3 = (packageJSDependencies in Compile in client).value

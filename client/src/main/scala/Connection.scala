@@ -9,7 +9,7 @@ class Connection(name: String) {
   document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
   document.getElementById("start-div").asInstanceOf[html.Div].classList.add("hide")
 
-  val socket = new WebSocket(s"wss://${window.location.host}/game")
+  val socket = new WebSocket(s"ws://${window.location.host}/game")
 
   val connect = write(Join(name))
 
