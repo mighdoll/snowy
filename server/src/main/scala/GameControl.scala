@@ -61,7 +61,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   private def createSnowball(id: ConnectionId): Unit = {
-    sleds.forOneSled(id) { sled =>
+    sleds.forOneItem(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       snowballs += SnowballState(
         sled.pos + direction * 35, 10,
@@ -122,7 +122,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some health points */
   private def recoverHealth(deltaSeconds: Double): Unit = {
     val deltaHealth = deltaSeconds / Health.recoveryTime
-    sleds.mapSleds { sled =>
+    sleds.replaceItems{ sled =>
       val newHealth = min(1.0, sled.health + deltaHealth)
       sled.copy(health = newHealth)
     }
@@ -131,7 +131,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some push energy */
   private def recoverPushEnergy(deltaSeconds: Double): Unit = {
     val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
-    sleds.mapSleds { sled =>
+    sleds.replaceItems{ sled =>
       val energy = min(1.0, sled.pushEnergy + deltaEnergy)
       sled.copy(pushEnergy = energy)
     }

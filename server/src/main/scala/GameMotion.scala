@@ -17,7 +17,7 @@ trait GameMotion {
     val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
-    sleds.mapSleds { sled =>
+    sleds.replaceItems{ sled =>
       import sled.rotation
       val gravitySpeed = gravity(sled.speed, rotation)
       val skidSpeed = skid(gravitySpeed, rotation)
@@ -73,7 +73,7 @@ trait GameMotion {
 
   /** move the sleds to their new location for this time period */
   private def moveSleds(deltaSeconds: Double): Unit = {
-    sleds.mapSleds { sled =>
+    sleds.replaceItems { sled =>
       val positionChange = sled.speed * deltaSeconds
       val moved = sled.pos + positionChange
       val wrapped = wrapInPlayfield(moved)
@@ -85,7 +85,7 @@ trait GameMotion {
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Unit = {
     import GameCollide.snowballTrees
-    sleds.mapSleds { sled =>
+    sleds.replaceItems { sled =>
       val collide = new SledCollide(sled, snowballs, trees)
 
       collide.tree()
