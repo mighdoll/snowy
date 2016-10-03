@@ -33,6 +33,7 @@ class Connection(name: String) {
         case state: State => receivedState(state)
         case playfield: PlayField => gPlayField = playfield
         case trees: Trees => gTrees = trees
+        case Died => console.log("ToDo: sled's dead, deal with it.")
       }
     } catch {
       case e: Exception =>

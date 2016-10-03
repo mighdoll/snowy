@@ -145,9 +145,21 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     moveStuff(deltaSeconds)
+    reapDead()
     currentState() foreach {
       case (id, state) => api.send(write(state), id)
     }
+  }
+
+  /** Notify clients whose sleds have been killed, and remove them from the game */
+  private def reapDead():Unit = {
+    val reap = sleds.collect{
+      case (id, sled) if (sled.health <= 0) =>
+        println("sled died")
+        api.send(write(Died), id)
+        id
+    }
+    reap.foreach(sleds.remove(_))
   }
 
   /** Advance to the next game simulation state

@@ -48,4 +48,6 @@ object GameClientProtocol {
 
   case class Trees(trees: Seq[Tree]) extends GameClientMessage
 
+  case object Died extends GameClientMessage
+
 }
