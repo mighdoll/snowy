@@ -57,19 +57,28 @@ trait GameMotion {
     result
   }
 
-
   /** move movable objects to their new location for this time period */
   private def moveObjects(deltaSeconds: Double): Unit = {
+    moveSleds(deltaSeconds)
+    moveSnowballs(deltaSeconds)
+  }
+
+  private def moveSnowballs(deltaSeconds: Double): Unit = {
+    val now = System.currentTimeMillis()
+    snowballs = snowballs.collect {
+      case snowball if snowball.spawned + snowballLifetime > now =>
+        snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
+    }
+  }
+
+  /** move the sleds to their new location for this time period */
+  private def moveSleds(deltaSeconds: Double): Unit = {
     sleds.mapSleds { sled =>
-      val moved = sled.pos + (sled.speed * deltaSeconds)
+      val positionChange = sled.speed * deltaSeconds
+      val moved = sled.pos + positionChange
       val wrapped = wrapInPlayfield(moved)
-      sled.copy(pos = wrapped)
-    }
-    snowballs = snowballs.filter { snowball =>
-      snowball.spawned + 10000 > System.currentTimeMillis()
-    }
-    snowballs = snowballs.map { snowball =>
-      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
+      val distance = positionChange.length
+      sled.copy(pos = wrapped, distanceTraveled = distance)
     }
   }
 
@@ -84,7 +93,9 @@ trait GameMotion {
         .getOrElse(sled)
     }
 
-    snowballs = snowballs.filter { ! snowballTrees(_, trees) }
+    snowballs = snowballs.filter {
+      !snowballTrees(_, trees)
+    }
   }
 
 }

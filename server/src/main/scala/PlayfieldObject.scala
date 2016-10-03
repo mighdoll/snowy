@@ -18,6 +18,7 @@ case class SledState(pos: Vec2d,
                      speed: Vec2d,
                      rotation: Double,
                      turretRotation: Double,
+                     distanceTraveled: Double = 0,
                      health: Double = 1,
                      pushEnergy: Double = 1
                     ) extends PlayfieldObject
@@ -28,4 +29,4 @@ case class TreeState(pos: Vec2d, size: Double) extends PlayfieldObject
 
 case class SnowballState(pos: Vec2d, size: Double, speed: Vec2d, spawned: Double) extends PlayfieldObject
 
-case class User(name: String)
+case class User(name: String, score: Double = 0)

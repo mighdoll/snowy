@@ -34,6 +34,7 @@ class Connection(name: String) {
         case playfield: PlayField => gPlayField = playfield
         case trees: Trees => gTrees = trees
         case Died => console.log("ToDo: sled's dead, deal with it.")
+        case scoreboard:Scoreboard => console.log(s"scoreboard: $scoreboard")
       }
     } catch {
       case e: Exception =>

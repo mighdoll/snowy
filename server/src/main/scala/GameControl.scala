@@ -61,7 +61,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   private def createSnowball(id: ConnectionId): Unit = {
-    sleds.forOneSled(id) {sled =>
+    sleds.forOneSled(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       snowballs += SnowballState(
         sled.pos + direction * 35, 10,
@@ -73,7 +73,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** Rotate a sled.
     *
     * @param rotate rotation in radians from current position. */
-  private def turnSled(sled:SledState, rotate: Double): SledState = {
+  private def turnSled(sled: SledState, rotate: Double): SledState = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
     val max = math.Pi * 2
     val min = -math.Pi * 2
@@ -146,20 +146,40 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     applyCommands(deltaSeconds)
     moveStuff(deltaSeconds)
     reapDead()
+    updateScore()
     currentState() foreach {
       case (id, state) => api.send(write(state), id)
+    }
+    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
+    users.foreach {
+      case (id, user) =>
+        val scoreboard = Scoreboard(user.score, scores)
+        api.send(write[GameClientMessage](scoreboard), id)
     }
   }
 
   /** Notify clients whose sleds have been killed, and remove them from the game */
-  private def reapDead():Unit = {
-    val reap = sleds.collect{
+  private def reapDead(): Unit = {
+    val reap = sleds.collect {
       case (id, sled) if (sled.health <= 0) =>
         println("sled died")
         api.send(write(Died), id)
         id
     }
     reap.foreach(sleds.remove(_))
+  }
+
+  /** update the score based on sled travel distance */
+  private def updateScore(): Unit = {
+    sleds.foreach { (id, sled) =>
+      users.get(id) match {
+        case Some(user) =>
+          val travelPoints = sled.distanceTraveled * Points.travel
+          users(id) = user.copy(score = user.score + travelPoints)
+        case None       =>
+          println(s"updateScore. no user found for id: $id")
+      }
+    }
   }
 
   /** Advance to the next game simulation state

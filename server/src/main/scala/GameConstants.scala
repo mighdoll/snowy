@@ -17,6 +17,21 @@ object GameConstants {
   /** Time to turn 180 degrees in seconds */
   val turnTime = .75
 
+  /** snowballs disappear after this many milliseconds */
+  val snowballLifetime = 10000
+
+  object Points {
+    /** points earned per pixel travelled */
+    val travel = .0002
+
+    /** % of the other users points earned from killing a sled */
+    val sledKill = .5
+
+    /** % of points lost if the sled is killed */
+    val sledLoss = .5
+  }
+
+
   object PushEnergy {
     /** speedup from the push button. in pixels / second / second */
     val force = 200.0

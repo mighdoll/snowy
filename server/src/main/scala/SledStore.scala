@@ -19,6 +19,11 @@ class SledStore(size: Vec2d, gridSpacing: Double) {
     sleds.map { case (id, sled) => fn(id, sled) }
   }
 
+  /** run a function over all the connection,sled pairs in the store */
+  def foreach(fn: (ConnectionId, SledState) => Unit): Unit = {
+    sleds.map { case (id, sled) => fn(id, sled) }
+  }
+
   /** run a side effecting function over one sled, identified by its connection */
   def forOneSled[A](id:ConnectionId) (fn: SledState => Unit): Unit = {
     sleds.get(id) match {
