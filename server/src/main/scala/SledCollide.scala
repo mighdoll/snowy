@@ -1,4 +1,5 @@
-import GameConstants.Collision.{snowballCost, treeCost, treeMinHealth}
+import GameConstants.Collision._
+import GameConstants.maxSpeed
 import GameCollideHelper._
 import socketserve.ConnectionId
 
@@ -49,7 +50,8 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap
 
   /** return a damaged version of the sled after impacting with a tree */
   private def treeDamaged(): SledState = {
-    val health = math.max(sled.health - treeCost, treeMinHealth)
+    val damage = maxTreeCost * (sled.speed.length / maxSpeed)
+    val health = math.max(sled.health - damage, treeMinHealth)
     val stopped = sled.speed * -1
     sled.copy(health = health, speed = stopped)
   }

@@ -71,6 +71,9 @@ object GameConstants {
     /** health cost from colliding into a tree */
     val treeCost = .25
 
+    /** health cost from colliding into a tree at maximum speed */
+    val maxTreeCost = .66
+
     /** minimum health after a tree collision */
     val treeMinHealth = .05
 
