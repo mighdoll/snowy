@@ -1,9 +1,9 @@
-import scala.collection.mutable
 import GameConstants.{snowballCollisionCost, treeCollisionCost}
 import GameCollideHelper._
+import socketserve.ConnectionId
 
 /** Collide a sled with trees and snowballs via the snowball() and tree() routines. */
-class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState], trees: Set[TreeState]) {
+class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap[SnowballState], trees: Set[TreeState]) {
   val sledBody = Circle(sled.pos, sled.size / 2)
 
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
@@ -11,10 +11,22 @@ class SledCollide(sled: SledState, snowballs: mutable.ListBuffer[SnowballState],
     *
     * @return a damaged sled if it intersects with a snowball */
   def snowball(): Option[SledState] = {
-    snowballs.collectFirst {
-      case snowball if snowballCollide(snowball) =>
-        snowballs.remove(snowballs.indexOf(snowball))
-        snowballDamaged(snowball)
+    val collisions =
+      snowballs.map{(ballId, snowball) =>
+        if (ballId != id && snowballCollide(snowball)) {
+          // TODO award points to user with ballId
+          Some(ballId, snowball)
+        } else {
+          None
+        }
+      }.flatten
+
+    collisions.foreach {case (ballId, snowball) =>
+      snowballs.remove(ballId, snowball)
+    }
+
+    collisions.headOption.map { case (_, snowball) =>
+      snowballDamaged(snowball)
     }
   }
 

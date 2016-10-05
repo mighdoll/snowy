@@ -14,9 +14,10 @@ trait GameState {
 
   val playField = PlayField(4000, 8000)
   val gridSpacing = 100.0
-  val sleds = new PlayfieldStore[SledState](Vec2d(playField.width, playField.height), gridSpacing)
+  val playfieldSize = Vec2d(playField.width, playField.height)
+  val sleds = new PlayfieldStore[SledState](playfieldSize, gridSpacing)
+  var snowballs = new PlayfieldMultiMap[SnowballState](playfieldSize, gridSpacing)
   val trees: Set[TreeState] = randomTrees()
-  var snowballs = mutable.ListBuffer[SnowballState]()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
   val commands = new PendingCommands
@@ -29,9 +30,9 @@ trait GameState {
         sled.health, sled.pushEnergy)
     }
 
-    val clientSnowballs = snowballs.map { ball =>
+    val clientSnowballs = snowballs.map { (_, ball) =>
       Snowball(ball.size.toInt, ball.pos.toPosition)
-    }
+    }.toSeq
 
     sleds.map { (myId, mySledState) =>
       val mySled = clientSled(mySledState, myId)

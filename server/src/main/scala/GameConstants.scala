@@ -17,8 +17,13 @@ object GameConstants {
   /** Time to turn 180 degrees in seconds */
   val turnTime = .75
 
-  /** snowballs disappear after this many milliseconds */
-  val snowballLifetime = 10000
+  object Bullet {
+    /** snowballs disappear after this many milliseconds */
+    val lifetime = 10000
+
+    /** radius in pixels */
+    val size = 10
+  }
 
   object Points {
     /** points earned per pixel travelled */

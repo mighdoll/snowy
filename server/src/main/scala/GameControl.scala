@@ -5,7 +5,7 @@ import Vec2dClientPosition._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import GameConstants.Friction.slowButtonFriction
-import GameConstants._
+import GameConstants.{Bullet, _}
 import math.min
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
@@ -60,13 +60,20 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     sleds.modify(id)(_.copy(turretRotation = angle))
   }
 
+  var debugId = 0
   private def createSnowball(id: ConnectionId): Unit = {
     sleds.forOneItem(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
-      snowballs += SnowballState(
-        sled.pos + direction * 35, 10,
-        (sled.speed / 50) + (direction * 10),
-        System.currentTimeMillis())
+      debugId = debugId + 1
+      // TODO use GameConstants for these magic numbers
+      val ball = SnowballState(
+        debugId = debugId,
+        pos = sled.pos + direction * 35,
+        size = GameConstants.Bullet.size,
+        speed = (sled.speed / 50) + (direction * 10),
+        spawned = System.currentTimeMillis()
+      )
+      snowballs.add(id, ball)
     }
   }
 
@@ -88,7 +95,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   def applyCommands(deltaSeconds: Double): Unit = {
-    commands.removeExpired()
     val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
     val pushForceNow = PushEnergy.force * deltaSeconds
     val pushEffort = deltaSeconds / PushEnergy.maxTime
@@ -144,6 +150,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     recoverHealth(deltaSeconds)
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
+    expireSnowballs()
     moveStuff(deltaSeconds)
     reapDead()
     updateScore()
@@ -158,11 +165,17 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
+  def expireSnowballs(): Unit = {
+    val now = System.currentTimeMillis()
+    snowballs.removeMatchingItems{snowball =>
+      now > snowball.spawned + Bullet.lifetime
+    }
+  }
+
   /** Notify clients whose sleds have been killed, and remove them from the game */
   private def reapDead(): Unit = {
     val reap = sleds.collect {
       case (id, sled) if (sled.health <= 0) =>
-        println("sled died")
         api.send(write(Died), id)
         id
     }
@@ -192,6 +205,4 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     lastTime = currentTime
     deltaSeconds
   }
-
-
 }

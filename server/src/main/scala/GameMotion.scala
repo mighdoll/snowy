@@ -64,10 +64,8 @@ trait GameMotion {
   }
 
   private def moveSnowballs(deltaSeconds: Double): Unit = {
-    val now = System.currentTimeMillis()
-    snowballs = snowballs.collect {
-      case snowball if snowball.spawned + snowballLifetime > now =>
-        snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
+    snowballs.replaceItems{snowball =>
+      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
     }
   }
 
@@ -85,17 +83,18 @@ trait GameMotion {
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Unit = {
     import GameCollide.snowballTrees
-    sleds.replaceItems { sled =>
-      val collide = new SledCollide(sled, snowballs, trees)
-
-      collide.tree()
-        .orElse(collide.snowball())
-        .getOrElse(sled)
+    val collisions = sleds.map{(id, sled) =>
+      val collide = new SledCollide(id, sled, snowballs, trees)
+      val optSled = collide.tree().orElse(collide.snowball())
+      optSled.map{newSled => (id, newSled)}
     }
 
-    snowballs = snowballs.filter {
-      !snowballTrees(_, trees)
+    collisions.flatten.foreach { case (id, newSled) =>
+      sleds.remove(id)
+      sleds.add(id, newSled)
     }
+
+    snowballs.removeMatchingItems(snowballTrees(_, trees))
   }
 
 }
