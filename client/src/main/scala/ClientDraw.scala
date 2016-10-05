@@ -39,23 +39,23 @@ object ClientDraw {
   def drawState(state: State, trees: Trees, border: PlayField): Unit = {
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(screenPosition(centerObject(snowball.position, state.mySled.position), border), snowball.size/2)
+      drawSnowball(screenPosition(centerObject(snowball.pos, state.mySled.pos), border), snowball.size/2)
     }
     //Draw all sleds
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, screenPosition(centerObject(sled.position, state.mySled.position), border), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      drawSled(sled.userName, screenPosition(centerObject(sled.pos, state.mySled.pos), border), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(state.mySled.userName, screenPosition(Position(size.width / 2, size.height / 2), border), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
+    drawSled(state.mySled.userName, screenPosition(Vec2d(size.width / 2, size.height / 2), border), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
-      drawTree(screenPosition(centerObject(tree.position, state.mySled.position), border))
+      drawTree(screenPosition(centerObject(tree.pos, state.mySled.pos), border))
     }
 
-    drawBorder(centerObject(GameClientProtocol.Position(0, 0), state.mySled.position), centerObject(GameClientProtocol.Position(border.width, border.height), state.mySled.position))
+    drawBorder(centerObject(Vec2d(0, 0), state.mySled.pos), centerObject(Vec2d(border.width, border.height), state.mySled.pos))
   }
 
   //Draw a sled at an x and y
-  def drawSled(name: String, pos: GameClientProtocol.Position, health: Double, cannonRotation: Double, rotation: Double, color: String): Unit = {
+  def drawSled(name: String, pos: Vec2d, health: Double, cannonRotation: Double, rotation: Double, color: String): Unit = {
     val x = pos.x
     val y = pos.y
     val turretSize = 35.0
@@ -123,7 +123,7 @@ object ClientDraw {
   }
 
   //Draw a tree on the canvas
-  def drawTree(pos: GameClientProtocol.Position): Unit = {
+  def drawTree(pos: Vec2d): Unit = {
     val x = pos.x
     val y = pos.y
     val branchSize = 100
@@ -157,7 +157,7 @@ object ClientDraw {
     ctx.setTransform(1, 0, 0, 1, 0, 0)
   }
 
-  def drawSnowball(pos: GameClientProtocol.Position, size: Double): Unit = {
+  def drawSnowball(pos: Vec2d, size: Double): Unit = {
     ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.fillStyle = "rgb(208, 242, 237)"
     ctx.beginPath()
@@ -166,7 +166,7 @@ object ClientDraw {
     ctx.stroke()
   }
 
-  def drawBorder(top: GameClientProtocol.Position, bottom: GameClientProtocol.Position): Unit = {
+  def drawBorder(top: Vec2d, bottom: Vec2d): Unit = {
     ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.beginPath()
     ctx.moveTo(top.x, top.y)
@@ -177,11 +177,11 @@ object ClientDraw {
     ctx.stroke()
   }
 
-  def centerObject(pos: GameClientProtocol.Position, me: GameClientProtocol.Position): GameClientProtocol.Position = {
-    Position(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
+  def centerObject(pos: Vec2d, me: Vec2d): Vec2d = {
+    Vec2d(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
-  def screenPosition(pos: GameClientProtocol.Position, playField: GameClientProtocol.PlayField): GameClientProtocol.Position = {
+  def screenPosition(pos: Vec2d, playField: GameClientProtocol.PlayField): Vec2d = {
     var x = pos.x
     var y = pos.y
 
@@ -196,7 +196,7 @@ object ClientDraw {
       y = y + playField.height
     }
 
-    Position(x, y)
+    Vec2d(x, y)
   }
 
   window.onresize = (_: UIEvent) => {

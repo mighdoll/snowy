@@ -7,7 +7,7 @@ object Gravity {
 
 /** adjust speed based on acceleration from the force of gravity */
 class Gravity(gravityForce: Double) {
-  import  math.cos
+  import math.cos
 
   /** adjust speed based on acceleration from the force of gravity */
   def apply(speed:Vec2d, rotation:Double):Vec2d = {

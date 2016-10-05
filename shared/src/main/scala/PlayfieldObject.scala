@@ -13,7 +13,8 @@ case class Circle(pos: Vec2d, radius: Double)
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
-case class SledState(pos: Vec2d,
+case class SledState(userName: String,
+                     pos: Vec2d,
                      size: Double,
                      speed: Vec2d,
                      rotation: Double,

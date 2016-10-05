@@ -1,7 +1,6 @@
 import java.util.concurrent.ThreadLocalRandom
 
 import GameClientProtocol._
-import Vec2dClientPosition._
 import socketserve.ConnectionId
 
 import scala.annotation.tailrec
@@ -24,21 +23,12 @@ trait GameState {
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
-    def clientSled(sled: SledState, id: ConnectionId): Sled = {
-      val userName = users.get(id).map(_.name).getOrElse("?")
-      Sled(userName, sled.pos.toPosition, sled.rotation, sled.turretRotation,
-        sled.health, sled.pushEnergy)
-    }
+    val clientSnowballs = snowballs.map{(_, ball) => ball}.toSeq
 
-    val clientSnowballs = snowballs.map { (_, ball) =>
-      Snowball(ball.size.toInt, ball.pos.toPosition)
-    }.toSeq
-
-    sleds.map { (myId, mySledState) =>
-      val mySled = clientSled(mySledState, myId)
+    sleds.map { (myId, mySled) =>
       val otherSleds = sleds.collect {
         case (otherId, sled) if otherId != myId =>
-          clientSled(sled, otherId)
+          sled
       }.toSeq
       myId -> State(mySled, otherSleds, clientSnowballs)
     }.toSeq

@@ -1,7 +1,6 @@
 import scala.concurrent.duration._
 import GameClientProtocol._
 import GameServerProtocol._
-import Vec2dClientPosition._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import GameConstants.Friction.slowButtonFriction
@@ -19,11 +18,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
     api.send(write(playField), id)
-    val clientTrees = trees.map { treeState =>
-      Tree(treeState.size.toInt, treeState.pos.toPosition)
-    }.toSeq
-    api.send(write(Trees(clientTrees)), id)
-    sleds.add(id, newRandomSled())
+    api.send(write(Trees(trees.toSeq)), id)
   }
 
   /** Called when a connection is dropped */
@@ -44,15 +39,16 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  private def newRandomSled(): SledState = {
+  private def newRandomSled(userName:String): SledState = {
     // TODO what if sled is initialized atop a tree?
-    SledState(randomSpot(), size = 35, speed = Vec2d(0, 0),
+    SledState(userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
   /** Called when a user sends her name and starts in the game */
   private def userJoin(id: ConnectionId, userName: String): Unit = {
     users(id) = User(userName)
+    sleds.add(id, newRandomSled(userName))
   }
 
   /** Rotate the turret on a sled */

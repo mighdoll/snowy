@@ -1,6 +1,6 @@
+import scala.math._
 import GameConstants.Friction._
 import GameConstants.maxSpeed
-import math.{pow, abs, sin, max, min}
 
 object Friction {
   def apply(deltaSeconds: Double): Friction =
