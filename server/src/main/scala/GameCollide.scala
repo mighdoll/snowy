@@ -1,6 +1,4 @@
-import scala.collection.mutable
 import Collisions.circleRectCollide
-import GameConstants.{snowballCollisionCost, treeCollisionCost}
 import GameObjects.treeSize
 
 object GameCollideHelper {
