@@ -38,7 +38,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
-    api.send(write(playField), id)
+    val clientPlayfield = Playfield(playfield.x.toInt, playfield.y.toInt)
+    api.send(write(clientPlayfield), id)
     api.send(write(Trees(trees.toSeq)), id)
   }
 

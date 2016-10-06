@@ -30,8 +30,8 @@ trait GameMotion {
   /** constrain a position to be within the playfield */
   def wrapInPlayfield(pos: Vec2d): Vec2d = {
     Vec2d(
-      wrapBorder(pos.x, playField.width),
-      wrapBorder(pos.y, playField.height)
+      wrapBorder(pos.x, playfield.x),
+      wrapBorder(pos.y, playfield.y)
     )
   }
 

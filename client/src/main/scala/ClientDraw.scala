@@ -36,7 +36,7 @@ object ClientDraw {
     }
   }
 
-  def drawState(state: State, trees: Trees, border: PlayField): Unit = {
+  def drawState(state: State, trees: Trees, border: Playfield): Unit = {
     clearScreen()
 
     drawBorder(centerObject(Vec2d(0, 0), state.mySled.pos), centerObject(Vec2d(border.width, border.height), state.mySled.pos), state.mySled.pos)
@@ -199,7 +199,7 @@ object ClientDraw {
     Vec2d(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
-  def screenPosition(pos: Vec2d, playField: GameClientProtocol.PlayField): Vec2d = {
+  def screenPosition(pos: Vec2d, playField: GameClientProtocol.Playfield): Vec2d = {
     var x = pos.x
     var y = pos.y
 

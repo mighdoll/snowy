@@ -5,17 +5,16 @@ import socketserve.ConnectionId
 
 import scala.annotation.tailrec
 import scala.collection.mutable
+import GameConstants.playfield
 
 
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState {
   self: GameControl =>
 
-  val playField = PlayField(4000, 8000)
   val gridSpacing = 100.0
-  val playfieldSize = Vec2d(playField.width, playField.height)
-  val sleds = new PlayfieldStore[SledState](playfieldSize, gridSpacing)
-  var snowballs = new PlayfieldMultiMap[SnowballState](playfieldSize, gridSpacing)
+  val sleds = new PlayfieldStore[SledState](playfield, gridSpacing)
+  var snowballs = new PlayfieldMultiMap[SnowballState](playfield, gridSpacing)
   val trees: Set[TreeState] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
   var lastTime = System.currentTimeMillis()
@@ -47,12 +46,14 @@ trait GameState {
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
-    val numClumps = playField.width * playField.height / clumpAmount
+    val width = playfield.x.toInt
+    val height = playfield.y.toInt
+    val numClumps = width * height / clumpAmount
     val inClump = .75 // chance a tree is in an existing clump
     val clumpSize = 200 // in the range pixels away
 
     val treeAmount = 200000
-    val numTrees = playField.width * playField.height / treeAmount
+    val numTrees = width * height / treeAmount
 
     val forest = mutable.Buffer[mutable.Buffer[TreeState]]()
     def treeSize = 20
@@ -98,8 +99,8 @@ trait GameState {
   protected def randomSpot(): Vec2d = {
     val random = ThreadLocalRandom.current
     Vec2d(
-      random.nextInt(playField.width),
-      random.nextInt(playField.height)
+      random.nextInt(playfield.x.toInt),
+      random.nextInt(playfield.y.toInt)
     )
   }
 

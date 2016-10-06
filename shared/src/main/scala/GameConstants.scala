@@ -1,4 +1,6 @@
 object GameConstants {
+  val playfield = Vec2d(1000, 2000)
+
   /** max speed of sled in pixels per second */
   val maxSpeed = 1000
 

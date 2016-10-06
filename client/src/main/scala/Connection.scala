@@ -30,10 +30,10 @@ class Connection(name: String) {
     val msg = event.data.toString
     try {
       read[GameClientMessage](msg) match {
-        case state: State => receivedState(state)
-        case playfield: PlayField => gPlayField = playfield
-        case trees: Trees => gTrees = trees
-        case Died => console.log("ToDo: sled's dead, deal with it.")
+        case state: State          => receivedState(state)
+        case playfield: Playfield  => gPlayField = playfield
+        case trees: Trees          => gTrees = trees
+        case Died                  => console.log("ToDo: sled's dead, deal with it.")
         case scoreboard:Scoreboard => console.log(s"scoreboard: $scoreboard")
       }
     } catch {
@@ -43,7 +43,7 @@ class Connection(name: String) {
   }
 
   var gTrees = Trees(Vector())
-  var gPlayField = PlayField(0, 0)
+  var gPlayField = Playfield(0, 0)
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {

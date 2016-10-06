@@ -33,7 +33,7 @@ object GameClientProtocol {
 
   case class State(mySled: SledState, sleds: Seq[SledState], snowballs: Seq[SnowballState]) extends GameClientMessage
 
-  case class PlayField(width: Int, height: Int) extends GameClientMessage
+  case class Playfield(width: Int, height: Int) extends GameClientMessage
 
   case class Trees(trees: Seq[TreeState]) extends GameClientMessage
 
