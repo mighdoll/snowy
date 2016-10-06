@@ -1,7 +1,7 @@
 import GameConstants.Collision._
 import GameConstants.maxSpeed
-import GameCollideHelper._
 import socketserve.ConnectionId
+import GameCollide._
 
 /** Collide a sled with trees and snowballs via the snowball() and tree() routines. */
 class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap[SnowballState], trees: Set[TreeState]) {
@@ -37,7 +37,7 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap
   def tree(): Option[SledState] = {
     trees.collectFirst {
       case tree if treeCollide(tree, sledBody) =>
-        treeDamaged()
+        treeDamaged(tree)
     }
   }
 
@@ -49,11 +49,39 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap
   }
 
   /** return a damaged version of the sled after impacting with a tree */
-  private def treeDamaged(): SledState = {
-    val damage = maxTreeCost * (sled.speed.length / maxSpeed)
-    val health = math.max(sled.health - damage, treeMinHealth)
-    val stopped = sled.speed * -1
-    sled.copy(health = health, speed = stopped)
+  private def treeDamaged(tree:TreeState): SledState = {
+    // take damage proportional to speed
+    val health = {
+      val damage = maxTreeCost * (sled.speed.length / maxSpeed)
+      math.max(sled.health - damage, treeMinHealth)
+    }
+
+    // rebound slower downhill
+    val rebound = {
+      val leftRight = -math.signum(sled.speed.x)
+      val x = math.max(math.abs(sled.speed.x) / 2, 10)
+      Vec2d(leftRight * x, sled.speed.y / 5)
+    }
+
+    // force sled position to the edge of the tree
+    val newPos = {
+      val trunk = treeTrunk(tree)
+      val edge = Collisions.rectClosestPerimeterPoint(trunk, sledBody)
+      val edgeToSled = sled.pos - edge
+      val edgeToSledLength = edgeToSled.length
+      val result =
+        if (edgeToSledLength < sledBody.radius) {
+          val adjust = edgeToSled.unit * (sledBody.radius + treePadding - edgeToSledLength)
+//          println(s"edgeToSledLength:$edgeToSledLength  sledBody.radius: ${sledBody.radius}  adjust.length: ${adjust.length}")
+//          println(s"  sled.pos: ${sled.pos}  adjust: $adjust")
+          sled.pos + adjust
+        } else {
+          sled.pos
+        }
+      result
+    }
+
+    sled.copy(health = health, speed = rebound, pos = newPos)
   }
 
   /** return a damaged version of the sled after impacting with a snowball */

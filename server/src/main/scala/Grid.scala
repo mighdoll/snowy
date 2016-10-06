@@ -4,7 +4,7 @@ import math.{ceil, round}
 class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
   val columns = ceil(size.x / spacing).toInt
   val cells: Array[HashSet[A]] = {
-    val cellCount = columns * ceil(size.y / spacing).toInt
+    val cellCount = cellIndex(size.x, size.y)
     val array = new Array[HashSet[A]](cellCount)
     (0 until cellCount).foreach { index =>
       array(index) = HashSet[A]()
@@ -22,10 +22,22 @@ class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
 
   def inBox(box:Rect): Set[A] = ???
 
+  private def cellIndex(x:Double, y:Double):Int = {
+    val column = round(x % spacing).toInt
+    val row = round(y / spacing).toInt
+    row * columns + column
+  }
+
   private def cell(obj: A): HashSet[A] = {
-    val column = round(obj.pos.x / spacing).toInt
-    val row = round(obj.pos.y / spacing).toInt
-    cells(row * columns + column)
+    val index = cellIndex(obj.pos.x, obj.pos.y)
+    if (index >= cells.length) {
+      // TODO fixme
+      println(s"Grid.cell bug.  index: $index  cells.length: ${cells.length}")
+      println(s"   x: ${obj.pos.x}  y: ${obj.pos.y}")
+      new HashSet()
+    } else {
+      cells(index)
+    }
   }
 
 }

@@ -17,6 +17,9 @@ object GameConstants {
   /** Time to turn 180 degrees in seconds */
   val turnTime = .75
 
+  /** size of the tree trunk in pixels */
+  val treeSize = Vec2d(10, 40)
+
   object Bullet {
     /** snowballs disappear after this many milliseconds */
     val lifetime = 10000
@@ -70,6 +73,9 @@ object GameConstants {
   object Collision {
     /** health cost from colliding into a tree */
     val treeCost = .25
+
+    /** space in pixels to teleport away from tree after colliding */
+    val treePadding = 2
 
     /** health cost from colliding into a tree at maximum speed */
     val maxTreeCost = .66
