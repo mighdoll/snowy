@@ -15,6 +15,27 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     gameTurn()
   }
 
+  /** Called to update game state on a regular timer */
+  private def gameTurn(): Unit = {
+    val deltaSeconds = nextTimeSlice()
+    recoverHealth(deltaSeconds)
+    recoverPushEnergy(deltaSeconds)
+    applyCommands(deltaSeconds)
+    expireSnowballs()
+    moveStuff(deltaSeconds)
+    reapDead()
+    updateScore()
+    currentState() foreach {
+      case (id, state) => api.send(write(state), id)
+    }
+    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
+    users.foreach {
+      case (id, user) =>
+        val scoreboard = Scoreboard(user.score, scores)
+        api.send(write[GameClientMessage](scoreboard), id)
+    }
+  }
+
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
     api.send(write(playField), id)
@@ -144,26 +165,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
 
-  /** Called to update game state on a regular timer */
-  private def gameTurn(): Unit = {
-    val deltaSeconds = nextTimeSlice()
-    recoverHealth(deltaSeconds)
-    recoverPushEnergy(deltaSeconds)
-    applyCommands(deltaSeconds)
-    expireSnowballs()
-    moveStuff(deltaSeconds)
-    reapDead()
-    updateScore()
-    currentState() foreach {
-      case (id, state) => api.send(write(state), id)
-    }
-    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
-    users.foreach {
-      case (id, user) =>
-        val scoreboard = Scoreboard(user.score, scores)
-        api.send(write[GameClientMessage](scoreboard), id)
-    }
-  }
 
   def expireSnowballs(): Unit = {
     val now = System.currentTimeMillis()
