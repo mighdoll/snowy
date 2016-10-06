@@ -37,9 +37,13 @@ object ClientDraw {
   }
 
   def drawState(state: State, trees: Trees, border: PlayField): Unit = {
+    clearScreen()
+
+    drawBorder(centerObject(Vec2d(0, 0), state.mySled.pos), centerObject(Vec2d(border.width, border.height), state.mySled.pos), state.mySled.pos)
+
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(screenPosition(centerObject(snowball.pos, state.mySled.pos), border), snowball.size/2)
+      drawSnowball(screenPosition(centerObject(snowball.pos, state.mySled.pos), border), snowball.size / 2)
     }
     //Draw all sleds
     state.sleds.foreach { sled =>
@@ -50,8 +54,6 @@ object ClientDraw {
     trees.trees.foreach { tree =>
       drawTree(screenPosition(centerObject(tree.pos, state.mySled.pos), border))
     }
-
-    drawBorder(centerObject(Vec2d(0, 0), state.mySled.pos), centerObject(Vec2d(border.width, border.height), state.mySled.pos))
   }
 
   //Draw a sled at an x and y
@@ -105,7 +107,7 @@ object ClientDraw {
     ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - turretSize * 27 / 22)
     ctx.fill()
 
-    if(health < 1) {
+    if (health < 1) {
       ctx.lineWidth = turretSize * 3 / 25
       ctx.strokeStyle = "rgb(85, 85, 85)"
       ctx.beginPath()
@@ -160,13 +162,14 @@ object ClientDraw {
   def drawSnowball(pos: Vec2d, size: Double): Unit = {
     ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.fillStyle = "rgb(208, 242, 237)"
+    ctx.lineWidth = 2.5
     ctx.beginPath()
     ctx.arc(pos.x, pos.y, size, 0, 2 * Math.PI)
     ctx.fill()
     ctx.stroke()
   }
 
-  def drawBorder(top: Vec2d, bottom: Vec2d): Unit = {
+  def drawBorder(top: Vec2d, bottom: Vec2d, sled: Vec2d): Unit = {
     ctx.strokeStyle = "rgb(100, 100, 100)"
     ctx.beginPath()
     ctx.moveTo(top.x, top.y)
@@ -175,6 +178,21 @@ object ClientDraw {
     ctx.lineTo(bottom.x, top.y)
     ctx.closePath()
     ctx.stroke()
+
+    val lineGap = 10
+    ctx.lineWidth = .1
+    for (i <- 0 to size.width / lineGap) {
+      ctx.beginPath()
+      ctx.moveTo(i * lineGap - sled.x % lineGap, 0)
+      ctx.lineTo(i * lineGap - sled.x % lineGap, size.height)
+      ctx.stroke()
+    }
+    for (i <- 0 to size.height / lineGap) {
+      ctx.beginPath()
+      ctx.moveTo(0, i * lineGap - sled.y % lineGap)
+      ctx.lineTo(size.width, i * lineGap - sled.y % lineGap)
+      ctx.stroke()
+    }
   }
 
   def centerObject(pos: Vec2d, me: Vec2d): Vec2d = {
