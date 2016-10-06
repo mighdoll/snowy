@@ -26,6 +26,9 @@ object GameConstants {
 
     /** radius in pixels */
     val size = 10
+
+    /** acceleration due to recoil in pixels/sec/sec */
+    val recoil = 30
   }
 
   object Points {
@@ -53,7 +56,7 @@ object GameConstants {
 
   object Health {
     /** time in seconds to recover from almost 0 */
-    val recoveryTime = 30.0
+    val recoveryTime = 25.0
   }
 
   object Friction {
@@ -84,6 +87,9 @@ object GameConstants {
     val treeMinHealth = .05
 
     /** health cost from being hit with a snowball */
-    val snowballCost = .08
+    val snowballCost = .2
+
+    /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
+    val safeSpeed = 50
   }
 }

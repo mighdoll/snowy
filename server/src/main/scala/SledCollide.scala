@@ -52,8 +52,13 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap
   private def treeDamaged(tree:TreeState): SledState = {
     // take damage proportional to speed
     val health = {
-      val damage = maxTreeCost * (sled.speed.length / maxSpeed)
-      math.max(sled.health - damage, treeMinHealth)
+      val speed = sled.speed.length
+      if (speed <= safeSpeed) {
+        sled.health
+      } else {
+        val damage = maxTreeCost * (speed / maxSpeed)
+        math.max(sled.health - damage, treeMinHealth)
+      }
     }
 
     // rebound slower downhill

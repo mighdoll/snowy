@@ -33,7 +33,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     read[GameServerMessage](msg) match {
       case Join(name)         => userJoin(id, name)
       case TurretAngle(angle) => rotateTurret(id, angle)
-      case Shoot              => createSnowball(id)
+      case Shoot              => shootSnowball(id)
       case Start(cmd)         => commands.startCommand(id, cmd)
       case Stop(cmd)          => commands.stopCommand(id, cmd)
     }
@@ -57,8 +57,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   var debugId = 0
-  private def createSnowball(id: ConnectionId): Unit = {
-    sleds.forOneItem(id) { sled =>
+  private def shootSnowball(id: ConnectionId): Unit = {
+    sleds.modify(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       debugId = debugId + 1
       // TODO use GameConstants for these magic numbers
@@ -70,6 +70,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
         spawned = System.currentTimeMillis()
       )
       snowballs.add(id, ball)
+
+      val recoilForce = direction * -Bullet.recoil
+      val speed = sled.speed + recoilForce
+      sled.copy(speed = speed)
     }
   }
 
