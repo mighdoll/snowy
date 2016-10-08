@@ -6,8 +6,10 @@ import upickle.default._
 import GameConstants.Friction.slowButtonFriction
 import GameConstants.{Bullet, _}
 import math.min
+import scala.collection.mutable
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
+  val connections = mutable.Map[ConnectionId, ClientConnection]()
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
 
@@ -32,12 +34,13 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     users.foreach {
       case (id, user) =>
         val scoreboard = Scoreboard(user.score, scores)
-        api.send(write[GameClientMessage](scoreboard), id)
+        // api.send(write[GameClientMessage](scoreboard), id)
     }
   }
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
+    connections(id) = new ClientConnection(id, api)
     val clientPlayfield = Playfield(playfield.x.toInt, playfield.y.toInt)
     api.send(write(clientPlayfield), id)
     api.send(write(Trees(trees.toSeq)), id)
@@ -58,6 +61,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
       case Shoot              => shootSnowball(id)
       case Start(cmd)         => commands.startCommand(id, cmd)
       case Stop(cmd)          => commands.stopCommand(id, cmd)
+      case Pong               => connections(id).pongReceived()
     }
   }
 

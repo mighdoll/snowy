@@ -24,6 +24,8 @@ object GameServerProtocol {
 
   case object Push extends StartStopCommand
 
+  case object Pong extends GameServerMessage
+
 }
 
 /** messages sent to the web client */
@@ -42,5 +44,9 @@ object GameClientProtocol {
   case class Score(userName: String, score: Double)
 
   case class Scoreboard(myScore: Double, scores: Seq[Score]) extends GameClientMessage
+
+  case object Ping extends GameClientMessage
+
+  case class GameTime(millis:Long, oneWayDelay:Int) extends GameClientMessage
 
 }
