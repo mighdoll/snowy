@@ -9,7 +9,11 @@ lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := V.scala,
   scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xfatal-warnings", "-language:postfixOps"),
-  libraryDependencies += "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test",
+  libraryDependencies ++= Seq(
+    "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test",
+    "org.scalactic" %%% "scalactic" % "3.0.0" % "test",
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+  ),
   test in assembly := {}
 )
 
