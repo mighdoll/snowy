@@ -14,6 +14,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
 
   api.tick(tickDelta) {
+    connections.values.foreach(_.refreshTiming())
     gameTurn()
   }
 
