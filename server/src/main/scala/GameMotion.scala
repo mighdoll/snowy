@@ -7,12 +7,12 @@ trait GameMotion {
   /** update sleds and snowballs speeds and positions */
   protected def moveStuff(deltaSeconds: Double): Unit = {
     updateSledSpeedVector(deltaSeconds)
-    moveObjects(deltaSeconds)
+    moveSleds(deltaSeconds)
+    moveSnowballs(deltaSeconds)
     checkCollisions()
   }
 
-  /** Update the direction and velocity of all sleds based on gravity and friction
-    */
+  /** Update the direction and velocity of all sleds based on gravity and friction */
   def updateSledSpeedVector(deltaSeconds: Double): Unit = {
     val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
@@ -57,12 +57,7 @@ trait GameMotion {
     result
   }
 
-  /** move movable objects to their new location for this time period */
-  private def moveObjects(deltaSeconds: Double): Unit = {
-    moveSleds(deltaSeconds)
-    moveSnowballs(deltaSeconds)
-  }
-
+  /** move snowballs to their new location for this time period */
   private def moveSnowballs(deltaSeconds: Double): Unit = {
     snowballs.replaceItems{snowball =>
       snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
