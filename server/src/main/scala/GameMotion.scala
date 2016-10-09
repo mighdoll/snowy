@@ -1,5 +1,31 @@
 import GameConstants._
 
+object GameMotion {
+  /** Constrain a value between 0 and a max value.
+    * values past one border of the range are wrapped to the other side
+    *
+    * @return the wrapped value */
+  def wrapBorder(value: Double, max: Double): Double = {
+    val result =
+      if (value >= max * 2.0)
+        max
+      else if (value >= max)
+        value - max
+      else if (value < -max)
+        0
+      else if (value < 0)
+        max + value
+      else
+        value
+    if (result < 0 || result > max) {
+      println(s"wrapBorder error: wrap $value  between (0 < $max) = $result")
+    }
+    result
+  }
+}
+
+import GameMotion._
+
 /** Moving objects in each game time slice */
 trait GameMotion {
   self: GameState =>
@@ -33,28 +59,6 @@ trait GameMotion {
       wrapBorder(pos.x, playfield.x),
       wrapBorder(pos.y, playfield.y)
     )
-  }
-
-  /** Constrain a value between 0 and a max value.
-    * values past one border of the range are wrapped to the other side
-    *
-    * @return the wrapped value */
-  private def wrapBorder(value: Double, max: Double): Double = {
-    val result =
-      if (value >= max * 2.0)
-        max
-      else if (value >= max)
-        value - max
-      else if (value < max * -2.0)
-        0
-      else if (value < 0)
-        max + value
-      else
-        value
-    if (result < 0 || result >= max) {
-      println(s"wrapBorder error: $value < $max   $result")
-    }
-    result
   }
 
   /** move snowballs to their new location for this time period */

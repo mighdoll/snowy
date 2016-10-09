@@ -30,7 +30,13 @@ class Grid[A <: PlayfieldObject](size: Vec2d, spacing: Double) {
 
   private def cell(obj: A): HashSet[A] = {
     val index = cellIndex(obj.pos.x, obj.pos.y)
-    cells(index)
+    if (index < 0 || index >= cells.length) {
+      println(s"Grid.bug  x:${obj.pos.x}  y:${obj.pos.y}  ")
+      println(s"  index: $index  length:${cells.length}")
+      HashSet()
+    } else {
+      cells(index)
+    }
   }
 
 }
