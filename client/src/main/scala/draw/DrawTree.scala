@@ -2,10 +2,10 @@ package draw
 import org.scalajs.dom.{CanvasRenderingContext2D => Canvas}
 import vector.Vec2d
 
-class DrawTrees(ctx:Canvas) {
+class DrawTree(ctx:Canvas) {
 
   //Draw a tree on the canvas
-  def drawTree(pos: Vec2d): Unit = {
+  def apply(pos: Vec2d): Unit = {
     val x = pos.x
     val y = pos.y
     val branchSize = 100
