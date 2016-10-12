@@ -1,6 +1,7 @@
 import GameClientProtocol._
 import org.scalajs.dom
 import org.scalajs.dom._
+import vector.Vec2d
 
 object ClientDraw {
 

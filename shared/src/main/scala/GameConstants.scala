@@ -1,3 +1,5 @@
+import vector.Vec2d
+
 object GameConstants {
   val playfield = Vec2d(1000, 2000)
 

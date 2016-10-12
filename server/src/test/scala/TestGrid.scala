@@ -2,6 +2,7 @@ import org.scalatest._
 import org.scalatest.prop._
 import GameConstants.playfield
 import org.scalacheck._
+import vector.Vec2d
 
 class TestGrid extends PropSpec with PropertyChecks {
   val playfieldX = Gen.choose(0.0, playfield.x)

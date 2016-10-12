@@ -1,6 +1,7 @@
 import scala.math._
 import GameConstants.Friction._
 import GameConstants.maxSpeed
+import vector.Vec2d
 
 object Friction {
   def apply(deltaSeconds: Double): Friction =

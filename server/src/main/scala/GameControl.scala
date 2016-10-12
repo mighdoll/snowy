@@ -8,6 +8,7 @@ import GameConstants.{Bullet, _}
 import math.min
 import scala.collection.mutable
 import GameMotion.{moveSleds, moveSnowballs}
+import vector.Vec2d
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds

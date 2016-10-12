@@ -1,5 +1,6 @@
 import Collisions.circleRectCollide
 import GameConstants.treeSize
+import vector.Vec2d
 
 object GameCollide {
   val toTreeTopLeft = Vec2d(treeSize.x / 2, treeSize.y)

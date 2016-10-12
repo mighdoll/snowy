@@ -1,6 +1,7 @@
 import Collisions._
 import org.scalacheck.Prop._
 import org.scalacheck._
+import vector.Vec2d
 
 
 object TestCollisions extends Properties("Collisions") {

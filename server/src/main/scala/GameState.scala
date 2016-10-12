@@ -5,6 +5,7 @@ import GameClientProtocol._
 import GameConstants.playfield
 import GameMotion.wrapInPlayfield
 import socketserve.ConnectionId
+import vector.Vec2d
 
 
 /** Records the current state of sleds, trees, snowballs etc. */

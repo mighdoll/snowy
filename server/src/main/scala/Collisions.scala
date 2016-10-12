@@ -1,3 +1,5 @@
+import vector.Vec2d
+
 object Collisions {
   /** @return true if a circle and rect are overlapping */
   def circleRectCollide(circle: Circle, rect: Rect): Boolean = {

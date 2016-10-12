@@ -1,3 +1,5 @@
+package vector
+
 case class Vec2d(x: Double, y: Double) {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)
 
@@ -34,7 +36,7 @@ case class Vec2d(x: Double, y: Double) {
 
   def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
 
-  /** Make sure Vec2d is within max & min */
+  /** Make sure vector.Vec2d is within max & min */
   def clamp(min: Vec2d, max: Vec2d): Vec2d = {
     def clampNum(num: Double, min: Double, max: Double): Double = {
       Math.min(Math.max(num, min), max)
@@ -53,7 +55,7 @@ case class Vec2d(x: Double, y: Double) {
 }
 
 object Vec2d {
-  /** @return a vector rotated from straight up Vec2d(0,1)
+  /** @return a vector rotated from straight up vector.Vec2d(0,1)
     * @param angle in radians
     */
   def fromRotation(angle: Double): Vec2d = Vec2d(math.sin(angle), math.cos(angle))

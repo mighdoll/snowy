@@ -1,4 +1,5 @@
 import GameConstants._
+import vector.Vec2d
 
 /** Moving objects in each game time slice */
 object GameMotion {

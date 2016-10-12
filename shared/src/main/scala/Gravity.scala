@@ -1,4 +1,5 @@
 import GameConstants.{gravity, maxSpeed}
+import vector.Vec2d
 
 object Gravity {
   def apply(deltaSeconds: Double): Gravity =

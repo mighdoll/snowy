@@ -1,5 +1,6 @@
 import GameConstants._
 import math.Pi
+import vector.Vec2d
 
 object Skid {
   def apply(deltaSeconds: Double): Skid =

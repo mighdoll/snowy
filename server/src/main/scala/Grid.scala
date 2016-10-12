@@ -1,4 +1,5 @@
-import math.{ceil, round, floor}
+import math.{ceil, floor, round}
+import vector.Vec2d
 
 object Grid {
   def apply[A <: PlayfieldObject](size: Vec2d, spacing: Double, items: TraversableOnce[A]): Grid[A] = {

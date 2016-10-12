@@ -1,4 +1,5 @@
 import java.util.concurrent.atomic.AtomicInteger
+import vector.Vec2d
 
 /** A collidable object on the playfield */
 trait PlayfieldObject {
