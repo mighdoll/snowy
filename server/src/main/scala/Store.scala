@@ -1,3 +1,4 @@
+/** collection for a set of playfield objects and grid to locate them efficiently on the playfield */
 case class Store[A <: PlayfieldObject](items: Set[A], grid: Grid[A]) {
 
   /** @return a copy of the store, with all items replaced */
