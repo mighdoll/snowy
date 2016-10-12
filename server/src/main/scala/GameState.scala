@@ -1,11 +1,10 @@
 import java.util.concurrent.ThreadLocalRandom
-
-import GameClientProtocol._
-import socketserve.ConnectionId
-
 import scala.annotation.tailrec
 import scala.collection.mutable
+import GameClientProtocol._
 import GameConstants.playfield
+import GameMotion.wrapInPlayfield
+import socketserve.ConnectionId
 
 
 /** Records the current state of sleds, trees, snowballs etc. */

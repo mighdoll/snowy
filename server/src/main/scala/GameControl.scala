@@ -7,8 +7,9 @@ import GameConstants.Friction.slowButtonFriction
 import GameConstants.{Bullet, _}
 import math.min
 import scala.collection.mutable
+import GameMotion.{moveSleds, moveSnowballs}
 
-class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
+class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
@@ -25,7 +26,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     expireSnowballs()
-    moveStuff(deltaSeconds)
+    sleds = moveSleds(sleds, deltaSeconds)
+    snowballs = moveSnowballs(snowballs, deltaSeconds)
     checkCollisions()
     reapDead()
     updateScore()

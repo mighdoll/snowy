@@ -1,5 +1,6 @@
 import GameConstants._
 
+/** Moving objects in each game time slice */
 object GameMotion {
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
@@ -22,35 +23,6 @@ object GameMotion {
     }
     result
   }
-}
-
-import GameMotion._
-
-/** Moving objects in each game time slice */
-trait GameMotion {
-  self: GameState =>
-
-  /** update sleds and snowballs speeds and positions */
-  protected def moveStuff(deltaSeconds: Double): Unit = {
-    updateSledSpeedVector(deltaSeconds)
-    moveSleds(deltaSeconds)
-    moveSnowballs(deltaSeconds)
-  }
-
-  /** Update the direction and velocity of all sleds based on gravity and friction */
-  def updateSledSpeedVector(deltaSeconds: Double): Unit = {
-    val gravity = Gravity(deltaSeconds)
-    val skid = Skid(deltaSeconds)
-    val friction = Friction(deltaSeconds)
-    sleds = sleds.replaceItems{ sled =>
-      import sled.rotation
-      val gravitySpeed = gravity(sled.speed, rotation)
-      val skidSpeed = skid(gravitySpeed, rotation)
-      val frictionSpeed = friction(skidSpeed, rotation)
-
-      sled.copy(speed = frictionSpeed)
-    }
-  }
 
   /** constrain a position to be within the playfield */
   def wrapInPlayfield(pos: Vec2d): Vec2d = {
@@ -60,16 +32,37 @@ trait GameMotion {
     )
   }
 
+  /** update sleds and snowballs speeds and positions */
+  def moveSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
+    val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
+    repositionSleds(newSleds, deltaSeconds)
+  }
+
   /** move snowballs to their new location for this time period */
-  private def moveSnowballs(deltaSeconds: Double): Unit = {
-    snowballs = snowballs.replaceItems{snowball =>
+  def moveSnowballs(snowballs:Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
+    snowballs.replaceItems{snowball =>
       snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
     }
   }
 
+  /** Update the direction and velocity of all sleds based on gravity and friction */
+  private def updateSledSpeedVector(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
+    val gravity = Gravity(deltaSeconds)
+    val skid = Skid(deltaSeconds)
+    val friction = Friction(deltaSeconds)
+    sleds.replaceItems{ sled =>
+      import sled.rotation
+      val gravitySpeed = gravity(sled.speed, rotation)
+      val skidSpeed = skid(gravitySpeed, rotation)
+      val frictionSpeed = friction(skidSpeed, rotation)
+
+      sled.copy(speed = frictionSpeed)
+    }
+  }
+
   /** move the sleds to their new location for this time period */
-  private def moveSleds(deltaSeconds: Double): Unit = {
-    sleds = sleds.replaceItems { sled =>
+  private def repositionSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
+    sleds.replaceItems { sled =>
       val positionChange = sled.speed * deltaSeconds
       val moved = sled.pos + positionChange
       val wrapped = wrapInPlayfield(moved)
