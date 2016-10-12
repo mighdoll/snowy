@@ -44,7 +44,7 @@ class Connection(name: String) {
       read[GameClientMessage](msg) match {
         case state: State                => receivedState(state)
         case playfield: Playfield        => gPlayField = playfield
-        case trees: Trees                => gTrees = trees
+        case trees: Trees                => gTrees = trees; updateTrees(trees.trees)
         case Died                        => console.log("ToDo: sled's dead, deal with it.")
         case Ping                        => socket.send(write(Pong))
         case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
@@ -58,13 +58,30 @@ class Connection(name: String) {
 
   var gTrees = Trees(Vector())
   var gPlayField = Playfield(0, 0)
+
+  // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees = Store[Tree]()
   var serverSnowballs = Store[Snowball]()
   var serverSleds = Store[Sled]()
+  var serverMySled = Sled.dummy
+
+  private def updateTrees(trees: Seq[Tree]): Unit = {
+    serverTrees = updateStore(serverTrees, trees)
+  }
+
+  private def updateStore[A <: PlayfieldObject](store: Store[A], items: Seq[A]): Store[A] = {
+    items.foldLeft(store) { (newStore, item) =>
+      newStore.insertById(item)
+    }
+  }
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
     clearScreen()
+    serverSnowballs = Store[Snowball](items = state.snowballs.toSet, grid = Grid(items = state.snowballs))
+    serverSleds = Store[Sled](items = state.sleds.toSet, grid = Grid(items = state.sleds))
+    serverMySled = state.mySled
+    // TODO draw based on Store items
 
     drawState(state, gTrees, gPlayField)
   }

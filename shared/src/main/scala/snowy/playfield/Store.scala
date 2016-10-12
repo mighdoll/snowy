@@ -28,7 +28,8 @@ case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](), grid: Grid[A] =
     Store(items - item, grid.remove(item))
   }
 
-  /** @return a copy of the store with one item replaced with a new version */
+  /** @return a copy of the store with one item replaced with a new version.
+    * If the item id is not present, the original store is returned unchanged. */
   def replaceById(id: PlayId[A])(fn: A => A): Store[A] = {
     items.find { item => item.id == id } match {
       case Some(item) =>
@@ -36,6 +37,17 @@ case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](), grid: Grid[A] =
         Store(items - item + newItem, grid.remove(item).add(newItem))
       case None       =>
         this
+    }
+  }
+
+  /** @return a copy of the store with one item replaced with a new version, or
+    *         inserted if an item's with a matching id isn't in the store */
+  def insertById(newItem:A):Store[A] = {
+    items.find(_.id == newItem.id) match {
+      case Some(oldItem) =>
+        Store(items - oldItem + newItem, grid.remove(oldItem).add(newItem))
+      case None          =>
+        add(newItem)
     }
   }
 

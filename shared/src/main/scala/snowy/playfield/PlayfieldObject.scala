@@ -26,6 +26,10 @@ case class Rect(pos: Vec2d, size: Vec2d)
 case class Circle(pos: Vec2d, radius: Double)
 
 
+object Sled {
+  val dummy = Sled(PlayId(-1), "dummy", Vec2d.zero, 0, Vec2d.zero, 0, 0)
+}
+
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
