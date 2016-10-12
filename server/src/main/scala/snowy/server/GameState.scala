@@ -63,7 +63,7 @@ trait GameState {
       val x = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val y = pos.y + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val newPos = wrapInPlayfield(Vec2d(x, y))
-      Tree(PlayfieldObject.nextId(), newPos, treeSize)
+      Tree(pos = newPos, size = treeSize)
     }
 
     @tailrec
@@ -84,13 +84,13 @@ trait GameState {
         forest(clump) += tree
       } else {
         forest += mutable.Buffer(nonOverlapping {
-          Tree(PlayfieldObject.nextId(), randomSpot(), 20)
+          Tree(pos = randomSpot(), size = 20)
         })
       }
     }
     (0 to numTrees).foreach { _ =>
       forest += mutable.Buffer(nonOverlapping {
-        Tree(PlayfieldObject.nextId(), randomSpot(), 20)
+        Tree(pos = randomSpot(), size = 20)
       })
     }
     forest.flatten.toSet

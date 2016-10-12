@@ -80,7 +80,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   private def newRandomSled(userName: String): Sled = {
     // TODO what if sled is initialized atop a tree?
-    Sled(PlayfieldObject.nextId(), userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
+    Sled(userName = userName, pos=randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
@@ -112,7 +112,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       // TODO use GameConstants for these magic numbers
       val ball = Snowball(
-        id = PlayfieldObject.nextId(),
         ownerId = sled.id,
         pos = sled.pos + direction * 35,
         size = GameConstants.Bullet.size,

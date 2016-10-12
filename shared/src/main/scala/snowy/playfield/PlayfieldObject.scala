@@ -29,7 +29,7 @@ case class Circle(pos: Vec2d, radius: Double)
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
-case class Sled(id: PlayId[Sled],
+case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 userName: String,
                 pos: Vec2d,
                 size: Double,
@@ -43,14 +43,14 @@ case class Sled(id: PlayId[Sled],
   type MyType = Sled
 }
 
-case class Tree(id: PlayId[Tree],
+case class Tree(id: PlayId[Tree] = PlayfieldObject.nextId(),
                 pos: Vec2d,
                 size: Double
                ) extends PlayfieldObject {
   type MyType = Tree
 }
 
-case class Snowball(id: PlayId[Snowball],
+case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
                     ownerId: PlayId[Sled],
                     pos: Vec2d,
                     size: Double,
