@@ -1,5 +1,7 @@
+package snowy.playfield
+
+import scala.math.Pi
 import snowy.GameConstants._
-import math.Pi
 import vector.Vec2d
 
 object Skid {

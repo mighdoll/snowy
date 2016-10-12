@@ -3,6 +3,7 @@ import org.scalacheck._
 import org.scalacheck.Gen._
 import snowy.GameConstants._
 import math.Pi
+import snowy.playfield.Skid
 import vector.Vec2d
 
 object RichTestVec2d {
