@@ -17,7 +17,7 @@ trait GameState {
   var snowballs = Store[Snowball](Set(), Grid(playfield, gridSpacing, Set()))
   val trees: Set[Tree] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
-  val sledMap = mutable.Map[ConnectionId, PlayId]()
+  val sledMap = mutable.Map[ConnectionId, PlayId[Sled]]()
   var lastTime = System.currentTimeMillis()
   val commands = new PendingCommands
 
@@ -102,7 +102,7 @@ trait GameState {
     )
   }
 
-  implicit class SledIdOps(id: PlayId) {
+  implicit class SledIdOps(id: PlayId[Sled]) {
     def sled: Sled = {
       sleds.items.find(_.id == id).get
     }

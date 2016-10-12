@@ -26,7 +26,7 @@ case class Store[A <: PlayfieldObject](items: Set[A], grid: Grid[A]) {
   }
 
   /** @return a copy of the store with one item replaced with a new version */
-  def replaceById(id: PlayId)(fn: A => A): Store[A] = {
+  def replaceById(id: PlayId[A])(fn: A => A): Store[A] = {
     items.find { item => item.id == id } match {
       case Some(item) =>
         val newItem = fn(item)
