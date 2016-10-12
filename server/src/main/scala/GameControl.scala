@@ -9,6 +9,7 @@ import math.min
 import scala.collection.mutable
 import GameMotion.{moveSleds, moveSnowballs}
 import snowy.GameConstants
+import snowy.collision.{SledSnowball, SledTree}
 import snowy.playfield._
 import vector.Vec2d
 
@@ -226,7 +227,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Unit = {
-    import GameCollide.snowballTrees
+    import snowy.collision.GameCollide.snowballTrees
     val collisions = sleds.items.map { sled =>
       val sledPostSnowballs =
         SledSnowball.collide(sled, snowballs).map {case (newSled, newBalls) =>

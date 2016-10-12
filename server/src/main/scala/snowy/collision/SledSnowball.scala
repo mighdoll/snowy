@@ -1,3 +1,5 @@
+package snowy.collision
+
 import snowy.GameConstants.Collision.snowballCost
 import snowy.playfield.{Sled, Snowball, Store}
 

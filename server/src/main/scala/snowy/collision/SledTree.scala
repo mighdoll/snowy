@@ -1,6 +1,8 @@
-import GameCollide.{treeCollide, treeTrunk}
+package snowy.collision
+
 import snowy.GameConstants.Collision._
 import snowy.GameConstants.maxSpeed
+import snowy.collision.GameCollide._
 import snowy.playfield.{Circle, Sled, Tree}
 import vector.Vec2d
 

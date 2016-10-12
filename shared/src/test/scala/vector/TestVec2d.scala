@@ -1,7 +1,8 @@
+package vector
+
 import org.scalacheck.Gen._
 import org.scalacheck.Prop._
 import org.scalacheck._
-import vector.Vec2d
 
 object TestVec2d extends Properties("vector.Vec2d") {
   def angleZero(d:Double):Prop = {

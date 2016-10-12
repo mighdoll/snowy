@@ -1,4 +1,4 @@
-import Collisions._
+import snowy.collision.Collisions._
 import org.scalacheck.Prop._
 import org.scalacheck._
 import snowy.playfield.{Circle, Rect}
