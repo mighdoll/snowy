@@ -23,7 +23,7 @@ class Grid[A <: PlayfieldObject](val size: Vec2d, val spacing: Double) {
 
   protected def initialCells(): Array[Option[Set[A]]] = blankCells()
 
-  protected def blankCells():Array[Option[Set[A]]] = {
+  protected def blankCells(): Array[Option[Set[A]]] = {
     val cellCount = rawIndex(size.x, size.y) + 1
     val array = new Array[Option[Set[A]]](cellCount)
     (0 until cellCount).foreach { index =>
