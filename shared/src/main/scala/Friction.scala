@@ -1,6 +1,6 @@
 import scala.math._
-import GameConstants.Friction._
-import GameConstants.maxSpeed
+import snowy.GameConstants.Friction._
+import snowy.GameConstants.maxSpeed
 import vector.Vec2d
 
 object Friction {

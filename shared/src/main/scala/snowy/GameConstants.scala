@@ -1,3 +1,5 @@
+package snowy
+
 import vector.Vec2d
 
 object GameConstants {

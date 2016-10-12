@@ -1,5 +1,5 @@
 import Collisions.circleRectCollide
-import GameConstants.treeSize
+import snowy.GameConstants.treeSize
 import vector.Vec2d
 
 object GameCollide {

@@ -1,4 +1,4 @@
-import GameConstants.{gravity, maxSpeed}
+import snowy.GameConstants.{gravity, maxSpeed}
 import vector.Vec2d
 
 object Gravity {

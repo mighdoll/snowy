@@ -1,6 +1,6 @@
 import GameCollide.{treeCollide, treeTrunk}
-import GameConstants.Collision._
-import GameConstants.maxSpeed
+import snowy.GameConstants.Collision._
+import snowy.GameConstants.maxSpeed
 import vector.Vec2d
 
 object SledTree {

@@ -1,7 +1,7 @@
 import scala.collection.mutable
 import GameServerProtocol.StartStopCommand
 import socketserve.ConnectionId
-import GameConstants.commandDuration
+import snowy.GameConstants.commandDuration
 
 
 case class PendingCommand(start: Millis, command: StartStopCommand)

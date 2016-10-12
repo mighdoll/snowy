@@ -3,11 +3,12 @@ import GameClientProtocol._
 import GameServerProtocol._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
-import GameConstants.Friction.slowButtonFriction
-import GameConstants.{Bullet, _}
+import snowy.GameConstants.Friction.slowButtonFriction
+import snowy.GameConstants.{Bullet, _}
 import math.min
 import scala.collection.mutable
 import GameMotion.{moveSleds, moveSnowballs}
+import snowy.GameConstants
 import vector.Vec2d
 
 class GameControl(api: AppHostApi) extends AppController with GameState {

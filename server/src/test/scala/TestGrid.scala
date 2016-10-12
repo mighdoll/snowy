@@ -1,6 +1,6 @@
 import org.scalatest._
 import org.scalatest.prop._
-import GameConstants.playfield
+import snowy.GameConstants.playfield
 import org.scalacheck._
 import vector.Vec2d
 

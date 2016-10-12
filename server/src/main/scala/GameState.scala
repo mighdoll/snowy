@@ -2,7 +2,7 @@ import java.util.concurrent.ThreadLocalRandom
 import scala.annotation.tailrec
 import scala.collection.mutable
 import GameClientProtocol._
-import GameConstants.playfield
+import snowy.GameConstants.playfield
 import GameMotion.wrapInPlayfield
 import socketserve.ConnectionId
 import vector.Vec2d

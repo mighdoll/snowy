@@ -1,7 +1,7 @@
 import org.scalacheck.Prop._
 import org.scalacheck._
 import org.scalacheck.Gen._
-import GameConstants._
+import snowy.GameConstants._
 import math.Pi
 import vector.Vec2d
 
