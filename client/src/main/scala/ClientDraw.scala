@@ -42,29 +42,41 @@ object ClientDraw {
 
   def drawState(state: State, trees: Trees, border: Playfield): Unit = {
     clearScreen()
+    val center = new Center(state.mySled.pos, border)
 
-    drawBorder(centerObject(Vec2d(0, 0), state.mySled.pos), centerObject(Vec2d(border.width, border.height), state.mySled.pos), state.mySled.pos)
+    drawBorder(screenPosition(Vec2d(0, 0), state.mySled.pos), screenPosition(Vec2d(border.width, border.height), state.mySled.pos), state.mySled.pos)
 
     //Draw all snowballs
     state.snowballs.foreach { snowball =>
-      drawSnowball(screenPosition(centerObject(snowball.pos, state.mySled.pos), border), snowball.size / 2)
+      drawSnowball(center(snowball.pos), snowball.size / 2)
     }
     //Draw all sleds
     state.sleds.foreach { sled =>
-      drawSled(sled.userName, screenPosition(centerObject(sled.pos, state.mySled.pos), border), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      drawSled(sled.userName, center(sled.pos), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(state.mySled.userName, screenPosition(Vec2d(size.width / 2, size.height / 2), border), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
+    drawSled(state.mySled.userName, Vec2d(size.width / 2, size.height / 2), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
-      drawTree(screenPosition(centerObject(tree.pos, state.mySled.pos), border))
+      drawTree(center(tree.pos))
     }
   }
 
-  def centerObject(pos: Vec2d, me: Vec2d): Vec2d = {
+  class Center(sled: Vec2d, border: Playfield) {
+    def apply(pos: Vec2d): Vec2d  = {
+      fancyBorderWrap(screenPosition(pos, sled), border)
+    }
+  }
+
+  /** @param pos position of an object in game coordinates
+    * @return screen position of given object
+    * taking into account sled being centered on the screen
+    */
+  def screenPosition(pos: Vec2d, me: Vec2d): Vec2d = {
     Vec2d(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
-  def screenPosition(pos: Vec2d, playField: GameClientProtocol.Playfield): Vec2d = {
+  /** @return object wrapped over border */
+  def fancyBorderWrap(pos: Vec2d, playField: Playfield): Vec2d = {
     var x = pos.x
     var y = pos.y
 
