@@ -1,7 +1,7 @@
 package snowy.playfield
 
 /** collection for a set of playfield objects and grid to locate them efficiently on the playfield */
-case class Store[A <: PlayfieldObject](items: Set[A], grid: Grid[A]) {
+case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](), grid: Grid[A] = Grid[A]()) {
 
   /** @return a copy of the store, with all items replaced */
   def replaceItems(fn: A => A): Store[A] = {

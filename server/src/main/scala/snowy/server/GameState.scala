@@ -16,8 +16,8 @@ trait GameState {
   self: GameControl =>
 
   val gridSpacing = 100.0
-  var sleds = Store[Sled](Set(), Grid(playfield, gridSpacing, Set()))
-  var snowballs = Store[Snowball](Set(), Grid(playfield, gridSpacing, Set()))
+  var sleds = Store[Sled]()
+  var snowballs = Store[Snowball]()
   val trees: Set[Tree] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
   val sledMap = mutable.Map[ConnectionId, PlayId[Sled]]()

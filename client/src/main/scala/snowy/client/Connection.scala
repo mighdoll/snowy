@@ -4,8 +4,10 @@ import scala.concurrent.duration._
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
+import snowy.GameConstants
 import snowy.GameServerProtocol._
 import snowy.client.ClientDraw._
+import snowy.playfield._
 import upickle.default._
 
 class Connection(name: String) {
@@ -56,6 +58,9 @@ class Connection(name: String) {
 
   var gTrees = Trees(Vector())
   var gPlayField = Playfield(0, 0)
+  var serverTrees = Store[Tree]()
+  var serverSnowballs = Store[Snowball]()
+  var serverSleds = Store[Sled]()
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {

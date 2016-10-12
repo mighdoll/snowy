@@ -1,10 +1,12 @@
 package snowy.playfield
 
 import scala.math.{ceil, floor}
+import snowy.GameConstants
 import vector.Vec2d
 
 object Grid {
-  def apply[A <: PlayfieldObject](size: Vec2d, spacing: Double, items: TraversableOnce[A]): Grid[A] = {
+  val defaultSpacing = 100
+  def apply[A <: PlayfieldObject](size: Vec2d = GameConstants.playfield, spacing: Double = defaultSpacing, items: TraversableOnce[A] = Set()): Grid[A] = {
     new Grid[A](size, spacing) {
       override def initialCells() = {
         val array = blankCells()
