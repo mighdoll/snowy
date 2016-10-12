@@ -1,6 +1,6 @@
 import scala.concurrent.duration._
-import GameClientProtocol._
-import GameServerProtocol._
+import snowy.GameClientProtocol._
+import snowy.GameServerProtocol._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import snowy.GameConstants.Friction.slowButtonFriction

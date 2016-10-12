@@ -1,7 +1,7 @@
 import scala.concurrent.duration._
 import ClientDraw._
-import GameClientProtocol._
-import GameServerProtocol._
+import snowy.GameClientProtocol._
+import snowy.GameServerProtocol._
 import org.scalajs.dom._
 import upickle.default._
 

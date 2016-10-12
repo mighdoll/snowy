@@ -1,4 +1,4 @@
-import GameClientProtocol.Ping
+import snowy.GameClientProtocol.Ping
 import socketserve.{AppHostApi, ConnectionId}
 import upickle.default._
 import scala.concurrent.duration._

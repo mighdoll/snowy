@@ -1,4 +1,4 @@
-import GameClientProtocol._
+import snowy.GameClientProtocol._
 import draw._
 import org.scalajs.dom
 import org.scalajs.dom._

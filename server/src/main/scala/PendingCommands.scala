@@ -1,5 +1,5 @@
 import scala.collection.mutable
-import GameServerProtocol.StartStopCommand
+import snowy.GameServerProtocol.StartStopCommand
 import socketserve.ConnectionId
 import snowy.GameConstants.commandDuration
 

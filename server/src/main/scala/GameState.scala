@@ -1,7 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom
 import scala.annotation.tailrec
 import scala.collection.mutable
-import GameClientProtocol._
+import snowy.GameClientProtocol._
 import snowy.GameConstants.playfield
 import GameMotion.wrapInPlayfield
 import snowy.playfield._
