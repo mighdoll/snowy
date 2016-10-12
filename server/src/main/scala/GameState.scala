@@ -13,23 +13,21 @@ trait GameState {
   self: GameControl =>
 
   val gridSpacing = 100.0
-  val sleds = new PlayfieldStore[SledState](playfield, gridSpacing)
-  var snowballs = new PlayfieldMultiMap[SnowballState](playfield, gridSpacing)
+  var sleds = Store[SledState](Set(), Grid(playfield, gridSpacing, Set()))
+  var snowballs = Store[SnowballState](Set(), Grid(playfield, gridSpacing, Set()))
   val trees: Set[TreeState] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
+  val sledMap = mutable.Map[ConnectionId, PlayId]()
   var lastTime = System.currentTimeMillis()
   val commands = new PendingCommands
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
-    val clientSnowballs = snowballs.map{(_, ball) => ball}.toSeq
+    val clientSnowballs = snowballs.items.toSeq
 
-    sleds.map { (myId, mySled) =>
-      val otherSleds = sleds.collect {
-        case (otherId, sled) if otherId != myId =>
-          sled
-      }.toSeq
-      myId -> State(mySled, otherSleds, clientSnowballs)
+    sleds.items.map { mySled =>
+      val otherSleds = sleds.items.filter(_.id != mySled.id).toSeq
+      mySled.connectionId -> State(mySled, otherSleds, clientSnowballs)
     }.toSeq
   }
 
@@ -62,7 +60,7 @@ trait GameState {
       val x = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val y = pos.y + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val newPos = wrapInPlayfield(Vec2d(x, y))
-      TreeState(newPos, treeSize)
+      TreeState(PlayfieldObject.nextId(), newPos, treeSize)
     }
 
     @tailrec
@@ -83,13 +81,13 @@ trait GameState {
         forest(clump) += tree
       } else {
         forest += mutable.Buffer(nonOverlapping {
-          TreeState(randomSpot(), 20)
+          TreeState(PlayfieldObject.nextId(), randomSpot(), 20)
         })
       }
     }
     (0 to numTrees).foreach { _ =>
       forest += mutable.Buffer(nonOverlapping {
-        TreeState(randomSpot(), 20)
+        TreeState(PlayfieldObject.nextId(), randomSpot(), 20)
       })
     }
     forest.flatten.toSet
@@ -104,4 +102,26 @@ trait GameState {
     )
   }
 
+  implicit class SledIdOps(id: PlayId) {
+    def sled: SledState = {
+      sleds.items.find(_.id == id).get
+    }
+  }
+
+  implicit class SledIndices(sled: SledState) {
+    def connectionId: ConnectionId = {
+      sledMap.collectFirst {
+        case (connectionId, sledId) if sled.id == sledId =>
+          connectionId
+      }.get
+    }
+
+    def remove(): Unit = {
+      sledMap.collectFirst {
+        case (connectionId, sledId) if sled.id == sledId =>
+          sledMap.remove(connectionId)
+          sleds = sleds.remove(sled)
+      }
+    }
+  }
 }

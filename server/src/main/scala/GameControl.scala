@@ -9,9 +9,9 @@ import math.min
 import scala.collection.mutable
 
 class GameControl(api: AppHostApi) extends AppController with GameState with GameMotion {
-  val connections = mutable.Map[ConnectionId, ClientConnection]()
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
+  val connections = mutable.Map[ConnectionId, ClientConnection]()
 
   api.tick(tickDelta) {
     connections.values.foreach(_.refreshTiming())
@@ -26,6 +26,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     applyCommands(deltaSeconds)
     expireSnowballs()
     moveStuff(deltaSeconds)
+    checkCollisions()
     reapDead()
     updateScore()
     currentState() foreach {
@@ -35,7 +36,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     users.foreach {
       case (id, user) =>
         val scoreboard = Scoreboard(user.score, scores)
-        // api.send(write[GameClientMessage](scoreboard), id)
+      // api.send(write[GameClientMessage](scoreboard), id)
     }
   }
 
@@ -49,9 +50,12 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
 
   /** Called when a connection is dropped */
   override def gone(id: ConnectionId): Unit = {
-    sleds.remove(id)
+    sledMap.get(id).foreach { sledId =>
+      sledId.sled.remove()
+    }
     users.remove(id)
     commands.commands.remove(id)
+    connections.remove(id)
   }
 
   /** received a client message */
@@ -66,37 +70,48 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  private def newRandomSled(userName:String): SledState = {
+  private def newRandomSled(userName: String): SledState = {
     // TODO what if sled is initialized atop a tree?
-    SledState(userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
+    SledState(PlayfieldObject.nextId(), userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
   /** Called when a user sends her name and starts in the game */
   private def userJoin(id: ConnectionId, userName: String): Unit = {
     users(id) = User(userName)
-    sleds.add(id, newRandomSled(userName))
+    val sled = newRandomSled(userName)
+    sleds = sleds.add(sled)
+    sledMap(id) = sled.id
   }
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
-    sleds.modify(id)(_.copy(turretRotation = angle))
+    modifySled(id) { sled =>
+      sled.copy(turretRotation = angle)
+    }
   }
 
-  var debugId = 0
+  private def modifySled(id: ConnectionId)(fn: SledState => SledState): Unit = {
+    sledMap.get(id).foreach { sledId =>
+      sleds = sleds.replaceById(sledId) { sled =>
+        fn(sled)
+      }
+    }
+  }
+
   private def shootSnowball(id: ConnectionId): Unit = {
-    sleds.modify(id) { sled =>
+    modifySled(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
-      debugId = debugId + 1
       // TODO use GameConstants for these magic numbers
       val ball = SnowballState(
-        debugId = debugId,
+        id = PlayfieldObject.nextId(),
+        ownerId = sled.id,
         pos = sled.pos + direction * 35,
         size = GameConstants.Bullet.size,
         speed = (sled.speed / 50) + (direction * 10),
         spawned = System.currentTimeMillis()
       )
-      snowballs.add(id, ball)
+      snowballs = snowballs.add(ball)
 
       val recoilForce = direction * -Bullet.recoil
       val speed = sled.speed + recoilForce
@@ -127,7 +142,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     val pushEffort = deltaSeconds / PushEnergy.maxTime
     val push = new InlineForce(pushForceNow)
     commands.foreachCommand { (id, command) =>
-      sleds.modify(id) { sled =>
+      modifySled(id) { sled =>
         command match {
           case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
@@ -155,7 +170,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some health points */
   private def recoverHealth(deltaSeconds: Double): Unit = {
     val deltaHealth = deltaSeconds / Health.recoveryTime
-    sleds.replaceItems{ sled =>
+    sleds = sleds.replaceItems { sled =>
       val newHealth = min(1.0, sled.health + deltaHealth)
       sled.copy(health = newHealth)
     }
@@ -164,34 +179,36 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** slowly recover some push energy */
   private def recoverPushEnergy(deltaSeconds: Double): Unit = {
     val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
-    sleds.replaceItems{ sled =>
+    sleds = sleds.replaceItems { sled =>
       val energy = min(1.0, sled.pushEnergy + deltaEnergy)
       sled.copy(pushEnergy = energy)
     }
   }
 
 
-
   def expireSnowballs(): Unit = {
     val now = System.currentTimeMillis()
-    snowballs.removeMatchingItems{snowball =>
+    snowballs = snowballs.removeMatchingItems { snowball =>
       now > snowball.spawned + Bullet.lifetime
     }
   }
 
   /** Notify clients whose sleds have been killed, and remove them from the game */
   private def reapDead(): Unit = {
-    val reap = sleds.collect {
-      case (id, sled) if (sled.health <= 0) =>
-        api.send(write(Died), id)
-        id
+    val reap = sleds.items.collect {
+      case sled if (sled.health <= 0) => sled.connectionId -> sled
     }
-    reap.foreach(sleds.remove(_))
+    reap.foreach { case (connectionId, sled) =>
+      api.send(write(Died), connectionId)
+      sleds = sleds.remove(sled)
+    }
   }
+
 
   /** update the score based on sled travel distance */
   private def updateScore(): Unit = {
-    sleds.foreach { (id, sled) =>
+    sleds.items.foreach { sled =>
+      val id = sled.connectionId
       users.get(id) match {
         case Some(user) =>
           val travelPoints = sled.distanceTraveled * Points.travel
@@ -200,6 +217,27 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
           println(s"updateScore. no user found for id: $id")
       }
     }
+  }
+
+  /** check for collisions between the sled and trees or snowballs */
+  private def checkCollisions(): Unit = {
+    import GameCollide.snowballTrees
+    val collisions = sleds.items.map { sled =>
+      val sledPostSnowballs =
+        SledSnowball.collide(sled, snowballs).map {case (newSled, newBalls) =>
+          snowballs = newBalls
+          newSled
+        }.getOrElse(sled)
+
+      val sledPostTrees = SledTree.collide(sledPostSnowballs, trees)
+      sledPostTrees.map{newSled => (sled, newSled)}
+    }
+
+    collisions.flatten.foreach { case (oldSled, newSled) =>
+      sleds = sleds.remove(oldSled).add(newSled)
+    }
+
+    snowballs = snowballs.removeMatchingItems(snowballTrees(_, trees))
   }
 
   /** Advance to the next game simulation state
@@ -212,4 +250,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     lastTime = currentTime
     deltaSeconds
   }
+
+
 }

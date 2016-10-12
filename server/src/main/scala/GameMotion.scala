@@ -35,7 +35,6 @@ trait GameMotion {
     updateSledSpeedVector(deltaSeconds)
     moveSleds(deltaSeconds)
     moveSnowballs(deltaSeconds)
-    checkCollisions()
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
@@ -43,7 +42,7 @@ trait GameMotion {
     val gravity = Gravity(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
-    sleds.replaceItems{ sled =>
+    sleds = sleds.replaceItems{ sled =>
       import sled.rotation
       val gravitySpeed = gravity(sled.speed, rotation)
       val skidSpeed = skid(gravitySpeed, rotation)
@@ -63,14 +62,14 @@ trait GameMotion {
 
   /** move snowballs to their new location for this time period */
   private def moveSnowballs(deltaSeconds: Double): Unit = {
-    snowballs.replaceItems{snowball =>
+    snowballs = snowballs.replaceItems{snowball =>
       snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
     }
   }
 
   /** move the sleds to their new location for this time period */
   private def moveSleds(deltaSeconds: Double): Unit = {
-    sleds.replaceItems { sled =>
+    sleds = sleds.replaceItems { sled =>
       val positionChange = sled.speed * deltaSeconds
       val moved = sled.pos + positionChange
       val wrapped = wrapInPlayfield(moved)
@@ -79,22 +78,6 @@ trait GameMotion {
     }
   }
 
-  /** check for collisions between the sled and trees or snowballs */
-  private def checkCollisions(): Unit = {
-    import GameCollide.snowballTrees
-    val collisions = sleds.map{(id, sled) =>
-      val collide = new SledCollide(id, sled, snowballs, trees)
-      val optSled = collide.tree().orElse(collide.snowball())
-      optSled.map{newSled => (id, newSled)}
-    }
-
-    collisions.flatten.foreach { case (id, newSled) =>
-      sleds.remove(id)
-      sleds.add(id, newSled)
-    }
-
-    snowballs.removeMatchingItems(snowballTrees(_, trees))
-  }
 
 }
 

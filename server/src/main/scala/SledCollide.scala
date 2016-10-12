@@ -4,30 +4,25 @@ import socketserve.ConnectionId
 import GameCollide._
 
 /** Collide a sled with trees and snowballs via the snowball() and tree() routines. */
-class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap[SnowballState], trees: Set[TreeState]) {
+class SledCollide(id:ConnectionId, sled: SledState, snowballs: Store[SnowballState], trees: Set[TreeState]) {
   val sledBody = Circle(sled.pos, sled.size / 2)
 
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
     * If a snowball collides with the sled, remove the snowball from the playfield
     *
     * @return a damaged sled if it intersects with a snowball */
-  def snowball(): Option[SledState] = {
+  def snowball(): Option[(SledState, Store[SnowballState])] = {
     val collisions =
-      snowballs.map{(ballId, snowball) =>
-        if (ballId != id && snowballCollide(snowball)) {
-          // TODO award points to user with ballId
-          Some(ballId, snowball)
-        } else {
-          None
-        }
-      }.flatten
+      snowballs.items.filter{snowball =>
+        snowball.ownerId != sled.id && snowballCollide(snowball)
+      }
 
-    collisions.foreach {case (ballId, snowball) =>
-      snowballs.remove(ballId, snowball)
+    val newBalls = collisions.foldLeft(snowballs){(balls, snowball) =>
+      balls.remove(snowball)
     }
 
-    collisions.headOption.map { case (_, snowball) =>
-      snowballDamaged(snowball)
+    collisions.headOption.map { snowball =>
+      (snowballDamaged(snowball), newBalls)
     }
   }
 
@@ -77,8 +72,6 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: PlayfieldMultiMap
       val result =
         if (edgeToSledLength < sledBody.radius) {
           val adjust = edgeToSled.unit * (sledBody.radius + treePadding - edgeToSledLength)
-//          println(s"edgeToSledLength:$edgeToSledLength  sledBody.radius: ${sledBody.radius}  adjust.length: ${adjust.length}")
-//          println(s"  sled.pos: ${sled.pos}  adjust: $adjust")
           sled.pos + adjust
         } else {
           sled.pos

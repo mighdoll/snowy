@@ -30,7 +30,7 @@ class ClientConnection(id: ConnectionId, api: AppHostApi) {
     if (initializing) {
       sendPing()
     } else {
-      println(s"ClientConnection.minPingTime: ${minPingTime.get}  pingTime:$pingTime")
+      println(s"ClientConnection pingTime:$pingTime minPingTime: ${minPingTime.get}")
     }
   }
 
@@ -40,7 +40,6 @@ class ClientConnection(id: ConnectionId, api: AppHostApi) {
   def refreshTiming():Unit = {
     val now = System.currentTimeMillis()
     if (!initializing && now > lastPingSent + pingFrequency.toMillis) {
-//      println(s"sending ping $now")
       sendPing()
     }
   }
