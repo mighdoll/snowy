@@ -1,3 +1,4 @@
+import snowy.playfield.{Sled, Snowball, Tree}
 
 /** messages sent to the server */
 object GameServerProtocol {

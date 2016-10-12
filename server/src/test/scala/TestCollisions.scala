@@ -1,6 +1,7 @@
 import Collisions._
 import org.scalacheck.Prop._
 import org.scalacheck._
+import snowy.playfield.{Circle, Rect}
 import vector.Vec2d
 
 

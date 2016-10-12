@@ -9,6 +9,7 @@ import math.min
 import scala.collection.mutable
 import GameMotion.{moveSleds, moveSnowballs}
 import snowy.GameConstants
+import snowy.playfield.{PlayfieldObject, Sled, Snowball, User}
 import vector.Vec2d
 
 class GameControl(api: AppHostApi) extends AppController with GameState {

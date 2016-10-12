@@ -1,3 +1,5 @@
+package snowy.playfield
+
 import java.util.concurrent.atomic.AtomicInteger
 import vector.Vec2d
 

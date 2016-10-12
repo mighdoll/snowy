@@ -4,6 +4,7 @@ import scala.collection.mutable
 import GameClientProtocol._
 import snowy.GameConstants.playfield
 import GameMotion.wrapInPlayfield
+import snowy.playfield._
 import socketserve.ConnectionId
 import vector.Vec2d
 

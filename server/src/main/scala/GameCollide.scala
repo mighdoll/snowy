@@ -1,5 +1,6 @@
 import Collisions.circleRectCollide
 import snowy.GameConstants.treeSize
+import snowy.playfield.{Circle, Rect, Snowball, Tree}
 import vector.Vec2d
 
 object GameCollide {

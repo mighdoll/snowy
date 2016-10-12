@@ -1,4 +1,5 @@
 import math.{ceil, floor, round}
+import snowy.playfield.{PlayfieldObject, Rect}
 import vector.Vec2d
 
 object Grid {

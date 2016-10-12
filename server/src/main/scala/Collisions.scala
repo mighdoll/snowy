@@ -1,3 +1,4 @@
+import snowy.playfield.{Circle, Rect}
 import vector.Vec2d
 
 object Collisions {
