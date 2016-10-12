@@ -1,5 +1,5 @@
 import snowy.GameConstants._
-import snowy.playfield.{Sled, Snowball}
+import snowy.playfield.{Sled, Snowball, Friction}
 import vector.Vec2d
 
 /** Moving objects in each game time slice */

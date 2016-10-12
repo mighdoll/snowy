@@ -1,3 +1,5 @@
+package snowy.playfield
+
 import scala.math._
 import snowy.GameConstants.Friction._
 import snowy.GameConstants.maxSpeed
