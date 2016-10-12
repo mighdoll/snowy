@@ -1,4 +1,5 @@
 import GameClientProtocol._
+import draw.DrawTrees
 import org.scalajs.dom
 import org.scalajs.dom._
 import vector.Vec2d
@@ -37,6 +38,8 @@ object ClientDraw {
     }
   }
 
+  val drawTrees = new DrawTrees(ctx)
+
   def drawState(state: State, trees: Trees, border: Playfield): Unit = {
     clearScreen()
 
@@ -53,7 +56,7 @@ object ClientDraw {
     drawSled(state.mySled.userName, screenPosition(Vec2d(size.width / 2, size.height / 2), border), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
-      drawTree(screenPosition(centerObject(tree.pos, state.mySled.pos), border))
+      drawTrees.drawTree(screenPosition(centerObject(tree.pos, state.mySled.pos), border))
     }
   }
 
@@ -123,41 +126,6 @@ object ClientDraw {
       ctx.lineTo(x - turretSize * 2 / 5 + turretSize * 4 / 5 * health, y + turretSize * 5 / 5)
       ctx.stroke()
     }
-  }
-
-  //Draw a tree on the canvas
-  def drawTree(pos: Vec2d): Unit = {
-    val x = pos.x
-    val y = pos.y
-    val branchSize = 100
-
-    ctx.fillStyle = "rgb(94, 153, 105)"
-    ctx.beginPath()
-    ctx.moveTo(x, y - branchSize * 2)
-    ctx.lineTo(x - branchSize * 1 / 2, y - branchSize * 1 / 2)
-    ctx.lineTo(x + branchSize * 1 / 2, y - branchSize * 1 / 2)
-    ctx.closePath()
-    ctx.fill()
-
-    ctx.fillStyle = "rgb(56, 85, 58)"
-    ctx.beginPath()
-    ctx.fillRect(x - branchSize * 1 / 16, y - branchSize * 3 / 4, branchSize * 1 / 8, branchSize * 3 / 4)
-    ctx.fill()
-
-    ctx.translate(x, y - branchSize * 29 / 50)
-    ctx.rotate(Math.PI * 13 / 18)
-
-    ctx.beginPath()
-    ctx.fillRect(0, 0, branchSize * 1 / 20, branchSize * 43 / 200)
-    ctx.fill()
-
-    ctx.rotate(Math.PI * 5 / 9)
-    ctx.beginPath()
-    ctx.fillRect(0, branchSize * 7 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
-    ctx.fillRect(branchSize * -1 / 10, branchSize * -13 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
-    ctx.fill()
-
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
   }
 
   def drawSnowball(pos: Vec2d, size: Double): Unit = {
