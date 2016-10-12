@@ -1,5 +1,6 @@
-import math.{ceil, floor, round}
-import snowy.playfield.{PlayfieldObject, Rect}
+package snowy.playfield
+
+import scala.math.{ceil, floor}
 import vector.Vec2d
 
 object Grid {
