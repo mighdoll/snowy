@@ -1,3 +1,5 @@
+package snowy.playfield
+
 import snowy.GameConstants.{gravity, maxSpeed}
 import vector.Vec2d
 
