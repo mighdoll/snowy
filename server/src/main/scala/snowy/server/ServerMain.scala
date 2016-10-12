@@ -1,3 +1,5 @@
+package snowy.server
+
 import socketserve.WebServer.socketApplication
 
 object ServerMain {

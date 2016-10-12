@@ -1,13 +1,15 @@
+package snowy.server
+
+import scala.concurrent.duration._
 import snowy.GameClientProtocol.Ping
 import socketserve.{AppHostApi, ConnectionId}
 import upickle.default._
-import scala.concurrent.duration._
 
 object ClientConnection {
   val pingMessage = write(Ping)
 }
 
-import ClientConnection._
+import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
 class ClientConnection(id: ConnectionId, api: AppHostApi) {

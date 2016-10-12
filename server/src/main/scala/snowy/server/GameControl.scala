@@ -1,16 +1,18 @@
+package snowy.server
+
+import scala.collection.mutable
 import scala.concurrent.duration._
+import scala.math.min
 import snowy.GameClientProtocol._
-import snowy.GameServerProtocol._
-import socketserve.{AppController, AppHostApi, ConnectionId}
-import upickle.default._
+import snowy.GameConstants
 import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants.{Bullet, _}
-import math.min
-import scala.collection.mutable
-import GameMotion.{moveSleds, moveSnowballs}
-import snowy.GameConstants
+import snowy.GameServerProtocol._
 import snowy.collision.{SledSnowball, SledTree}
+import snowy.playfield.GameMotion.{moveSleds, moveSnowballs}
 import snowy.playfield._
+import socketserve.{AppController, AppHostApi, ConnectionId}
+import upickle.default._
 import vector.Vec2d
 
 class GameControl(api: AppHostApi) extends AppController with GameState {

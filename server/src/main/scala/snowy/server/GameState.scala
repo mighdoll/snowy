@@ -1,9 +1,11 @@
+package snowy.server
+
 import java.util.concurrent.ThreadLocalRandom
 import scala.annotation.tailrec
 import scala.collection.mutable
 import snowy.GameClientProtocol._
 import snowy.GameConstants.playfield
-import GameMotion.wrapInPlayfield
+import snowy.playfield.GameMotion.wrapInPlayfield
 import snowy.playfield._
 import socketserve.ConnectionId
 import vector.Vec2d
