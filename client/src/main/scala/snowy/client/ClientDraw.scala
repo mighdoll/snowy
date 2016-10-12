@@ -1,7 +1,10 @@
-import snowy.GameClientProtocol._
-import draw._
+package snowy.client
+
+import snowy.draw._
 import org.scalajs.dom
 import org.scalajs.dom._
+import snowy.GameClientProtocol._
+import snowy.draw.DrawSled
 import vector.Vec2d
 
 object ClientDraw {

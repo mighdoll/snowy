@@ -1,9 +1,11 @@
+package snowy.client
+
 import scala.concurrent.duration._
-import ClientDraw._
 import network.NetworkSocket
+import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import org.scalajs.dom._
+import snowy.client.ClientDraw._
 import upickle.default._
 
 class Connection(name: String) {

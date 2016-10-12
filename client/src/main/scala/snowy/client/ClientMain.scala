@@ -1,6 +1,8 @@
+package snowy.client
+
 import scala.scalajs.js.JSApp
-import ClientDraw._
 import org.scalajs.dom._
+import snowy.client.ClientDraw.{snowFlake, _}
 
 object ClientMain extends JSApp {
 

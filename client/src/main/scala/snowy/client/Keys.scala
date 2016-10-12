@@ -1,3 +1,5 @@
+package snowy.client
+
 /** scala extractor objects to identify game keys in with pattern matching */
 object Keys {
 

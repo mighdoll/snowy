@@ -1,4 +1,5 @@
-package draw
+package snowy.draw
+
 import org.scalajs.dom.{CanvasRenderingContext2D => Canvas}
 import vector.Vec2d
 
