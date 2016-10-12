@@ -1,4 +1,4 @@
-import snowy.playfield.{Grid, PlayId, PlayfieldObject}
+package snowy.playfield
 
 /** collection for a set of playfield objects and grid to locate them efficiently on the playfield */
 case class Store[A <: PlayfieldObject](items: Set[A], grid: Grid[A]) {

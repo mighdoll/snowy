@@ -1,5 +1,5 @@
 import snowy.GameConstants.Collision.snowballCost
-import snowy.playfield.{Sled, Snowball}
+import snowy.playfield.{Sled, Snowball, Store}
 
 object SledSnowball {
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
