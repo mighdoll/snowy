@@ -3,6 +3,20 @@ import vector.Vec2d
 
 /** Moving objects in each game time slice */
 object GameMotion {
+
+  /** update sleds and snowballs speeds and positions */
+  def moveSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
+    val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
+    repositionSleds(newSleds, deltaSeconds)
+  }
+
+  /** move snowballs to their new location for this time period */
+  def moveSnowballs(snowballs:Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
+    snowballs.replaceItems{snowball =>
+      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
+    }
+  }
+
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
     *
@@ -33,19 +47,6 @@ object GameMotion {
     )
   }
 
-  /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
-    val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
-    repositionSleds(newSleds, deltaSeconds)
-  }
-
-  /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs:Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
-    snowballs.replaceItems{snowball =>
-      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
-    }
-  }
-
   /** Update the direction and velocity of all sleds based on gravity and friction */
   private def updateSledSpeedVector(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
     val gravity = Gravity(deltaSeconds)
@@ -71,7 +72,5 @@ object GameMotion {
       sled.copy(pos = wrapped, distanceTraveled = distance)
     }
   }
-
-
 }
 
