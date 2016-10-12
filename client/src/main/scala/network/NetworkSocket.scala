@@ -1,3 +1,5 @@
+package network
+
 import scala.concurrent.duration.FiniteDuration
 import org.scalajs.dom._
 

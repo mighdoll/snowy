@@ -1,5 +1,6 @@
 import scala.concurrent.duration._
 import ClientDraw._
+import network.NetworkSocket
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import org.scalajs.dom._
