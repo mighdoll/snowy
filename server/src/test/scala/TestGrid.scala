@@ -9,10 +9,10 @@ class TestGrid extends PropSpec with PropertyChecks {
 
   property("add/remove an element anywhere on the grid") {
     val spacing = 100.0
-    val grid = new Grid[SnowballState](playfield, spacing)
+    val grid = new Grid[Snowball](playfield, spacing)
     val ownerId = PlayfieldObject.nextId()
     forAll(playfieldX, playfieldY, minSuccessful(200)) { (x, y) =>
-      val ball = SnowballState(PlayfieldObject.nextId(), ownerId, Vec2d(x, y), 0, Vec2d.zero, 0)
+      val ball = Snowball(PlayfieldObject.nextId(), ownerId, Vec2d(x, y), 0, Vec2d.zero, 0)
       grid.add(ball)
       grid.remove(ball)
       grid.itemCount === 0

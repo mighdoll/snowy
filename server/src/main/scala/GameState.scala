@@ -13,9 +13,9 @@ trait GameState {
   self: GameControl =>
 
   val gridSpacing = 100.0
-  var sleds = Store[SledState](Set(), Grid(playfield, gridSpacing, Set()))
-  var snowballs = Store[SnowballState](Set(), Grid(playfield, gridSpacing, Set()))
-  val trees: Set[TreeState] = randomTrees()
+  var sleds = Store[Sled](Set(), Grid(playfield, gridSpacing, Set()))
+  var snowballs = Store[Snowball](Set(), Grid(playfield, gridSpacing, Set()))
+  val trees: Set[Tree] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
   val sledMap = mutable.Map[ConnectionId, PlayId]()
   var lastTime = System.currentTimeMillis()
@@ -32,7 +32,7 @@ trait GameState {
   }
 
   /** @return true if the two trees overlap visually on the screen */
-  private def treesOverlap(a: TreeState, b: TreeState): Boolean = {
+  private def treesOverlap(a: Tree, b: Tree): Boolean = {
     import math.abs
     val xDist = abs(a.pos.x - b.pos.x)
     val yDist = abs(a.pos.y - b.pos.y)
@@ -40,7 +40,7 @@ trait GameState {
   }
 
   /** Initialize a set of playfield obstacles */
-  private def randomTrees(): Set[TreeState] = {
+  private def randomTrees(): Set[Tree] = {
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
@@ -53,18 +53,18 @@ trait GameState {
     val treeAmount = 200000
     val numTrees = width * height / treeAmount
 
-    val forest = mutable.Buffer[mutable.Buffer[TreeState]]()
+    val forest = mutable.Buffer[mutable.Buffer[Tree]]()
     def treeSize = 20
 
-    def nearbyTree(pos: Vec2d): TreeState = {
+    def nearbyTree(pos: Vec2d): Tree = {
       val x = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val y = pos.y + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val newPos = wrapInPlayfield(Vec2d(x, y))
-      TreeState(PlayfieldObject.nextId(), newPos, treeSize)
+      Tree(PlayfieldObject.nextId(), newPos, treeSize)
     }
 
     @tailrec
-    def nonOverlapping(fn: => TreeState): TreeState = {
+    def nonOverlapping(fn: => Tree): Tree = {
       val tree = fn
       forest.flatten.find(treesOverlap(_, tree)) match {
         case Some(t) => nonOverlapping(fn)
@@ -81,13 +81,13 @@ trait GameState {
         forest(clump) += tree
       } else {
         forest += mutable.Buffer(nonOverlapping {
-          TreeState(PlayfieldObject.nextId(), randomSpot(), 20)
+          Tree(PlayfieldObject.nextId(), randomSpot(), 20)
         })
       }
     }
     (0 to numTrees).foreach { _ =>
       forest += mutable.Buffer(nonOverlapping {
-        TreeState(PlayfieldObject.nextId(), randomSpot(), 20)
+        Tree(PlayfieldObject.nextId(), randomSpot(), 20)
       })
     }
     forest.flatten.toSet
@@ -103,12 +103,12 @@ trait GameState {
   }
 
   implicit class SledIdOps(id: PlayId) {
-    def sled: SledState = {
+    def sled: Sled = {
       sleds.items.find(_.id == id).get
     }
   }
 
-  implicit class SledIndices(sled: SledState) {
+  implicit class SledIndices(sled: Sled) {
     def connectionId: ConnectionId = {
       sledMap.collectFirst {
         case (connectionId, sledId) if sled.id == sledId =>

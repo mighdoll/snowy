@@ -4,14 +4,14 @@ import socketserve.ConnectionId
 import GameCollide._
 
 /** Collide a sled with trees and snowballs via the snowball() and tree() routines. */
-class SledCollide(id:ConnectionId, sled: SledState, snowballs: Store[SnowballState], trees: Set[TreeState]) {
+class SledCollide(id:ConnectionId, sled: Sled, snowballs: Store[Snowball], trees: Set[Tree]) {
   val sledBody = Circle(sled.pos, sled.size / 2)
 
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
     * If a snowball collides with the sled, remove the snowball from the playfield
     *
     * @return a damaged sled if it intersects with a snowball */
-  def snowball(): Option[(SledState, Store[SnowballState])] = {
+  def snowball(): Option[(Sled, Store[Snowball])] = {
     val collisions =
       snowballs.items.filter{snowball =>
         snowball.ownerId != sled.id && snowballCollide(snowball)
@@ -29,7 +29,7 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: Store[SnowballSta
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
     * @return a damaged sled if it overlaps with a tree */
-  def tree(): Option[SledState] = {
+  def tree(): Option[Sled] = {
     trees.collectFirst {
       case tree if treeCollide(tree, sledBody) =>
         treeDamaged(tree)
@@ -37,14 +37,14 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: Store[SnowballSta
   }
 
   /** return true if the snowball intersects the sled body */
-  private def snowballCollide(snowball: SnowballState): Boolean = {
+  private def snowballCollide(snowball: Snowball): Boolean = {
     val centerDistance = (sled.pos - snowball.pos).length
     val radiiSum = sled.size / 2 + snowball.size / 2
     centerDistance < radiiSum
   }
 
   /** return a damaged version of the sled after impacting with a tree */
-  private def treeDamaged(tree:TreeState): SledState = {
+  private def treeDamaged(tree:Tree): Sled = {
     // take damage proportional to speed
     val health = {
       val speed = sled.speed.length
@@ -83,7 +83,7 @@ class SledCollide(id:ConnectionId, sled: SledState, snowballs: Store[SnowballSta
   }
 
   /** return a damaged version of the sled after impacting with a snowball */
-  private def snowballDamaged(snowball: SnowballState): SledState = {
+  private def snowballDamaged(snowball: Snowball): Sled = {
     val health = math.max(sled.health - snowballCost, 0)
     val stopped = sled.speed + snowball.speed * 30
     sled.copy(health = health, speed = stopped)

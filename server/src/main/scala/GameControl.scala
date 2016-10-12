@@ -70,9 +70,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  private def newRandomSled(userName: String): SledState = {
+  private def newRandomSled(userName: String): Sled = {
     // TODO what if sled is initialized atop a tree?
-    SledState(PlayfieldObject.nextId(), userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
+    Sled(PlayfieldObject.nextId(), userName, randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
@@ -91,7 +91,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     }
   }
 
-  private def modifySled(id: ConnectionId)(fn: SledState => SledState): Unit = {
+  private def modifySled(id: ConnectionId)(fn: Sled => Sled): Unit = {
     sledMap.get(id).foreach { sledId =>
       sleds = sleds.replaceById(sledId) { sled =>
         fn(sled)
@@ -103,7 +103,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
     modifySled(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
       // TODO use GameConstants for these magic numbers
-      val ball = SnowballState(
+      val ball = Snowball(
         id = PlayfieldObject.nextId(),
         ownerId = sled.id,
         pos = sled.pos + direction * 35,
@@ -122,7 +122,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   /** Rotate a sled.
     *
     * @param rotate rotation in radians from current position. */
-  private def turnSled(sled: SledState, rotate: Double): SledState = {
+  private def turnSled(sled: Sled, rotate: Double): Sled = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
     val max = math.Pi * 2
     val min = -math.Pi * 2
@@ -154,8 +154,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Gam
   }
 
   /** apply a push to a sled */
-  private def pushSled(sled: SledState, pushForceNow: Double, push: InlineForce, effort: Double)
-  : SledState = {
+  private def pushSled(sled: Sled, pushForceNow: Double, push: InlineForce, effort: Double)
+  : Sled = {
     if (effort < sled.pushEnergy) {
       val speed =
         if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
