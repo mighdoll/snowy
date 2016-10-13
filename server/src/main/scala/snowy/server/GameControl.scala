@@ -3,19 +3,19 @@ package snowy.server
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
+import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants
 import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants.{Bullet, _}
 import snowy.GameServerProtocol._
 import snowy.collision.{SledSnowball, SledTree}
-import snowy.playfield.GameMotion.{moveSleds, moveSnowballs}
+import snowy.playfield.GameMotion.{moveSleds, moveSnowballs, wrapInPlayfield}
 import snowy.playfield._
-import snowy.Awards._
+import snowy.server.GameSeeding.randomSpot
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
-import GameSeeding.randomSpot
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -113,7 +113,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       // TODO use GameConstants for these magic numbers
       val ball = Snowball(
         ownerId = sled.id,
-        pos = sled.pos + direction * 35,
+        pos = wrapInPlayfield(sled.pos + direction * 35),
         size = GameConstants.Bullet.size,
         speed = (sled.speed / 50) + (direction * 10),
         spawned = System.currentTimeMillis()
