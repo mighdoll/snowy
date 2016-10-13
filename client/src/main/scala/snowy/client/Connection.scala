@@ -14,8 +14,8 @@ class Connection(name: String) {
   document.getElementById("start-div").asInstanceOf[html.Div].classList.add("hide")
 
   val socket = {
-    val inDelay = 50 milliseconds
-    val outDelay = 50 milliseconds
+    val inDelay = 0 milliseconds
+    val outDelay = 0 milliseconds
     val url = s"ws://${window.location.host}/game"
     new NetworkSocket(url, inDelay, outDelay)
   }
