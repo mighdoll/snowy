@@ -26,6 +26,7 @@ object PlayId {
   type BallId = PlayId[Snowball]
   type TreeId = PlayId[Tree]
 }
+import PlayId._
 
 case class Rect(pos: Vec2d, size: Vec2d)
 
@@ -39,7 +40,7 @@ object Sled {
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
-case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
+case class Sled(id: SledId = PlayfieldObject.nextId(),
                 userName: String,
                 pos: Vec2d,
                 size: Double,
@@ -52,15 +53,15 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   type MyType = Sled
 }
 
-case class Tree(id: PlayId[Tree] = PlayfieldObject.nextId(),
+case class Tree(id: TreeId = PlayfieldObject.nextId(),
                 pos: Vec2d,
                 size: Double
                ) extends PlayfieldObject {
   type MyType = Tree
 }
 
-case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
-                    ownerId: PlayId[Sled],
+case class Snowball(id: BallId = PlayfieldObject.nextId(),
+                    ownerId: SledId,
                     pos: Vec2d,
                     size: Double,
                     speed: Vec2d,

@@ -5,6 +5,7 @@ import snowy.GameClientProtocol._
 import snowy.playfield._
 import socketserve.ConnectionId
 import GameSeeding.randomTrees
+import snowy.playfield.PlayId.SledId
 
 
 /** Records the current state of sleds, trees, snowballs etc. */
@@ -16,7 +17,7 @@ trait GameState {
   var snowballs = Store[Snowball]()
   val trees: Set[Tree] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
-  val sledMap = mutable.Map[ConnectionId, PlayId[Sled]]()
+  val sledMap = mutable.Map[ConnectionId, SledId]()
   var lastTime = System.currentTimeMillis()
   val commands = new PendingCommands
 
@@ -30,7 +31,7 @@ trait GameState {
     }.toSeq
   }
 
-  implicit class SledIdOps(id: PlayId[Sled]) {
+  implicit class SledIdOps(id: SledId) {
     def sled: Sled = {
       sleds.items.find(_.id == id).get
     }
