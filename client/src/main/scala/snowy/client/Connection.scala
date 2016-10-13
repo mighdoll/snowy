@@ -4,7 +4,6 @@ import scala.concurrent.duration._
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
-import snowy.GameConstants
 import snowy.GameServerProtocol._
 import snowy.client.ClientDraw._
 import snowy.playfield._
@@ -81,9 +80,8 @@ class Connection(name: String) {
     serverSnowballs = Store[Snowball](items = state.snowballs.toSet, grid = Grid(items = state.snowballs))
     serverSleds = Store[Sled](items = state.sleds.toSet, grid = Grid(items = state.sleds))
     serverMySled = state.mySled
-    // TODO draw based on Store items
 
-    drawState(state, gTrees, gPlayField)
+    drawState(serverSnowballs, serverSleds, serverMySled, gTrees, gPlayField)
   }
 
 

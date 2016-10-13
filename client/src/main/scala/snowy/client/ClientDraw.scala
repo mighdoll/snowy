@@ -1,11 +1,11 @@
 package snowy.client
 
-import snowy.draw._
 import org.scalajs.dom
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
-import snowy.draw.DrawSled
+import snowy.playfield._
 import vector.Vec2d
+import snowy.draw._
 
 object ClientDraw {
   var size = Size(window.innerWidth, window.innerHeight)
@@ -43,21 +43,21 @@ object ClientDraw {
     }
   }
 
-  def drawState(state: State, trees: Trees, border: Playfield): Unit = {
+  def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Trees, border: Playfield): Unit = {
     clearScreen()
-    val center = new Center(state.mySled.pos, border)
+    val center = new Center(mySled.pos, border)
 
-    drawBorder(screenPosition(Vec2d(0, 0), state.mySled.pos), screenPosition(Vec2d(border.width, border.height), state.mySled.pos), state.mySled.pos)
+    drawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos)
 
     //Draw all snowballs
-    state.snowballs.foreach { snowball =>
+    snowballs.items.foreach { snowball =>
       drawSnowball(center(snowball.pos), snowball.size / 2)
     }
     //Draw all sleds
-    state.sleds.foreach { sled =>
+    sleds.items.foreach { sled =>
       drawSled(sled.userName, center(sled.pos), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(state.mySled.userName, Vec2d(size.width / 2, size.height / 2), state.mySled.health, state.mySled.turretRotation, state.mySled.rotation, "rgb(120, 201, 44)")
+    drawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
       drawTree(center(tree.pos))
