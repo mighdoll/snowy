@@ -21,6 +21,12 @@ object PlayfieldObject {
 
 case class PlayId[A](val id: Int) extends AnyVal
 
+object PlayId {
+  type SledId = PlayId[Sled]
+  type BallId = PlayId[Snowball]
+  type TreeId = PlayId[Tree]
+}
+
 case class Rect(pos: Vec2d, size: Vec2d)
 
 case class Circle(pos: Vec2d, radius: Double)
@@ -40,7 +46,6 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 speed: Vec2d,
                 rotation: Double,
                 turretRotation: Double,
-                distanceTraveled: Double = 0,
                 health: Double = 1,
                 pushEnergy: Double = 1
                ) extends PlayfieldObject {

@@ -11,9 +11,11 @@ import snowy.GameServerProtocol._
 import snowy.collision.{SledSnowball, SledTree}
 import snowy.playfield.GameMotion.{moveSleds, moveSnowballs}
 import snowy.playfield._
+import snowy.Awards._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
+import GameSeeding.randomSpot
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -32,20 +34,18 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     expireSnowballs()
-    sleds = moveSleds(sleds, deltaSeconds)
     snowballs = moveSnowballs(snowballs, deltaSeconds)
-    checkCollisions()
-    reapDead()
-    updateScore()
+
+    val (newSleds, moveAwards) = moveSleds(sleds, deltaSeconds)
+    sleds = newSleds
+    val collisionAwards = checkCollisions()
+    val died = collectDead()
+    updateScore(moveAwards ++ collisionAwards ++ died)
+    reapDead(died)
     currentState() foreach {
       case (id, state) => api.send(write(state), id)
     }
-    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
-    users.foreach {
-      case (id, user) =>
-        val scoreboard = Scoreboard(user.score, scores)
-      // api.send(write[GameClientMessage](scoreboard), id)
-    }
+    sendScore()
   }
 
   /** a new player has connected */
@@ -80,7 +80,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   private def newRandomSled(userName: String): Sled = {
     // TODO what if sled is initialized atop a tree?
-    Sled(userName = userName, pos=randomSpot(), size = 35, speed = Vec2d(0, 0),
+    Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation)
   }
 
@@ -200,52 +200,114 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     }
   }
 
-  /** Notify clients whose sleds have been killed, and remove them from the game */
-  private def reapDead(): Unit = {
-    val reap = sleds.items.collect {
-      case sled if (sled.health <= 0) => sled.connectionId -> sled
-    }
-    reap.foreach { case (connectionId, sled) =>
-      api.send(write(Died), connectionId)
-      sleds = sleds.remove(sled)
+  /** @return the sleds with no health left */
+  def collectDead(): Traversable[SledDied] = {
+    sleds.items.find(_.health <= 0).map{sled =>
+      SledDied(sled.id)
     }
   }
 
+  /** Notify clients whose sleds have been killed, remove sleds from the game */
+  def reapDead(dead:Traversable[SledDied]): Unit = {
+    dead.foreach { case SledDied(sledId) =>
+      val connectionId = sledId.connectionId
+      api.send(write(Died), connectionId)
+      sledId.sled.remove()
+    }
+  }
 
   /** update the score based on sled travel distance */
-  private def updateScore(): Unit = {
-    sleds.items.foreach { sled =>
-      val id = sled.connectionId
-      users.get(id) match {
-        case Some(user) =>
-          val travelPoints = sled.distanceTraveled * Points.travel
-          users(id) = user.copy(score = user.score + travelPoints)
-        case None       =>
-          println(s"updateScore. no user found for id: $id")
+  private def updateScore(awards: Seq[Award]): Unit = {
+    awards.foreach { award =>
+      award match {
+        case SledKill(winnerId, loserId) =>
+          val userId = winnerId.connectionId
+          val user = users(userId)
+          val points = loserId.user.score / 2
+          users(userId) = user.copy(score = user.score + points)
+        case Travel(winnerId, distance)  =>
+          val userId = winnerId.connectionId
+          val user = users(userId)
+          val points = distance * Points.travel
+          users(userId) = user.copy(score = user.score + points)
+        case SnowballHit(winnerId)       =>
+        case SledDied(loserId) =>
+          val connectionId = loserId.connectionId
+          val user = users(connectionId)
+          users(connectionId) = user.copy(score = user.score / 2)
       }
     }
   }
 
   /** check for collisions between the sled and trees or snowballs */
-  private def checkCollisions(): Unit = {
+  private def checkCollisions(): Seq[SledKill] = {
     import snowy.collision.GameCollide.snowballTrees
-    val collisions = sleds.items.map { sled =>
-      val sledPostSnowballs =
-        SledSnowball.collide(sled, snowballs).map {case (newSled, newBalls) =>
-          snowballs = newBalls
-          newSled
-        }.getOrElse(sled)
+    case class SledReplace(oldSled: Sled, newSled: Sled)
+    val awards = mutable.ListBuffer[SledKill]()
 
-      val sledPostTrees = SledTree.collide(sledPostSnowballs, trees)
-      sledPostTrees.map{newSled => (sled, newSled)}
+    def updateGlobalSleds(replace: Traversable[SledReplace]): Unit = {
+      sleds = replace.foldLeft(sleds) { case (newSleds, SledReplace(oldSled, newSled)) =>
+        newSleds.remove(oldSled).add(newSled)
+      }
     }
 
-    collisions.flatten.foreach { case (oldSled, newSled) =>
-      sleds = sleds.remove(oldSled).add(newSled)
+    // collide snowballs with each sled
+    // . update global snowballs to remove collisions after each iteration
+    // . update local awards table from any sleds that were killed
+    // . return the revised sleds after damage taken from snowballs
+    val ballSleds =
+    sleds.items.flatMap { sled =>
+      collideBalls(sled, snowballs).map { case (newSled, newBalls, newAwards) =>
+        snowballs = newBalls
+        awards ++= newAwards
+        SledReplace(sled, newSled)
+      }
     }
+    updateGlobalSleds(ballSleds)
+
+    val treeSleds =
+      sleds.items.flatMap { sled =>
+        SledTree.collide(sled, trees).map { newSled =>
+          SledReplace(sled, newSled)
+        }
+      }
+    updateGlobalSleds(treeSleds)
 
     snowballs = snowballs.removeMatchingItems(snowballTrees(_, trees))
+
+    awards.toList
   }
+
+  /** Collide a sled with a set of snowballs
+    *
+    * @return if there's a collision, returns:
+    *         the damaged sled,
+    *         the snowball set with the colliding ball removed,
+    *         awards to the shooters if the sled was killed
+    */
+  private def collideBalls(sled: Sled, balls: Store[Snowball])
+  : Option[(Sled, Store[Snowball], Traversable[SledKill])] = {
+    SledSnowball.collide(sled, snowballs).map { case (newSled, newBalls, awards) =>
+      val killAwards =
+        if (newSled.health <= 0) {
+          awards.map { winner => SledKill(winner.sledId, newSled.id) }
+        } else {
+          Nil
+        }
+      (newSled, newBalls, killAwards)
+    }
+  }
+
+  /** Send the current score to the clients */
+  private def sendScore(): Unit = {
+    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
+    users.foreach {
+      case (id, user) =>
+        val scoreboard = Scoreboard(user.score, scores)
+        api.send(write[GameClientMessage](scoreboard), id)
+    }
+  }
+
 
   /** Advance to the next game simulation state
     *

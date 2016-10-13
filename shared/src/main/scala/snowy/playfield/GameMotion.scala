@@ -1,13 +1,16 @@
 package snowy.playfield
 
+import scala.collection.mutable
 import snowy.GameConstants.playfield
 import vector.Vec2d
+import snowy.Awards.Travel
 
 /** Moving objects in each game time slice */
 object GameMotion {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
+  def moveSleds(sleds:Store[Sled], deltaSeconds: Double)
+      : (Store[Sled], Seq[Travel]) = {
     val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
     repositionSleds(newSleds, deltaSeconds)
   }
@@ -65,14 +68,19 @@ object GameMotion {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
-    sleds.replaceItems { sled =>
-      val positionChange = sled.speed * deltaSeconds
-      val moved = sled.pos + positionChange
-      val wrapped = wrapInPlayfield(moved)
-      val distance = positionChange.length
-      sled.copy(pos = wrapped, distanceTraveled = distance)
-    }
+  private def repositionSleds(sleds:Store[Sled], deltaSeconds: Double)
+     : (Store[Sled], Seq[Travel]) = {
+    val awards = mutable.ListBuffer[Travel]()
+    val newSleds =
+      sleds.replaceItems { sled =>
+        val positionChange = sled.speed * deltaSeconds
+        val moved = sled.pos + positionChange
+        val wrapped = wrapInPlayfield(moved)
+        val distance = positionChange.length
+        if (distance > 0) awards += Travel(sled.id, distance)
+        sled.copy(pos = wrapped)
+      }
+    (newSleds, awards.toList)
   }
 }
 
