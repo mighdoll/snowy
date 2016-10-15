@@ -2,25 +2,13 @@ package snowy.client
 
 import scala.scalajs.js.JSApp
 import org.scalajs.dom._
-import snowy.client.ClientDraw.{snowFlake, _}
+import snowy.draw.SnowFlakes
 
 object ClientMain extends JSApp {
-
-  var snowLoop: Option[Int] = None
-  var snowFlakes = (1 to size.width / 10).map(i => new snowFlake(i))
+  val snowFlakes = new SnowFlakes()
 
   def main(): Unit = {
-    //Start the background loop
-    snowLoop = Some(window.setInterval(draw _, 10))
-  }
-
-  def draw() = {
-    clearScreen()
-
-    snowFlakes.foreach { flake =>
-      flake.move()
-      flake.draw()
-    }
+    snowFlakes.setup()
   }
 
   //When the users sends the login form, send it as a username to the server
@@ -29,7 +17,7 @@ object ClientMain extends JSApp {
     new Connection(document.getElementById("username").asInstanceOf[html.Input].value)
 
     //Stop drawing the snow as a background
-    snowLoop.foreach { id => window.clearInterval(id) }
+    snowFlakes.stop()
 
     //Do not redirect
     false

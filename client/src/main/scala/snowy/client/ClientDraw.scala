@@ -8,16 +8,12 @@ import vector.Vec2d
 import snowy.draw._
 
 object ClientDraw {
+  case class Size(width: Int, height: Int)
   var size = Size(window.innerWidth, window.innerHeight)
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
   gameCanvas.width = size.width
   gameCanvas.height = size.height
-
-  val drawTree = new DrawTree(ctx)
-  val drawSled = new DrawSled(ctx)
-  val drawSnowball = new DrawSnowball(ctx)
-  val drawBorder = new DrawBorder(ctx, size)
 
   def clearScreen(): Unit = {
     ctx.fillStyle = "white"
@@ -25,42 +21,25 @@ object ClientDraw {
     ctx.fill()
   }
 
-  class snowFlake(index: Double) {
-    val flakeSize = Math.random() * 5 + 5
-    var x = index * 10
-    var y = -Math.random() * size.height
-
-    def move(): Unit = {
-      y += 1
-      y = y % size.height
-    }
-
-    def draw(): Unit = {
-      ctx.fillStyle = "#b3e5fc"
-      ctx.beginPath()
-      ctx.arc(x, y, flakeSize, 0, 2 * Math.PI)
-      ctx.fill()
-    }
-  }
-
   def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Trees, border: Playfield): Unit = {
     clearScreen()
     val center = new Center(mySled.pos, border)
 
-    drawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos)
+    new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos)
 
     //Draw all snowballs
     snowballs.items.foreach { snowball =>
-      drawSnowball(center(snowball.pos), snowball.size / 2)
+      new DrawSnowball(center(snowball.pos), snowball.size / 2)
     }
+
     //Draw all sleds
     sleds.items.foreach { sled =>
-      drawSled(sled.userName, center(sled.pos), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      new DrawSled(sled.userName, center(sled.pos), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    drawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
+    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
-      drawTree(center(tree.pos))
+      new DrawTree(center(tree.pos))
     }
   }
 
@@ -101,6 +80,7 @@ object ClientDraw {
     size = Size(window.innerWidth, window.innerHeight)
     gameCanvas.width = size.width
     gameCanvas.height = size.height
+
     clearScreen()
   }
 }

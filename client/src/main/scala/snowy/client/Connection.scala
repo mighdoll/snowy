@@ -115,23 +115,23 @@ class Connection(name: String) {
 
   window.onkeydown = { event: KeyboardEvent =>
     event.key match {
-      case Keys.Right() if turning != Some(GoRight)  =>
+      case Keys.Right() if !turning.contains(GoRight)  =>
         socket.send(write(Stop(Left)))
         socket.send(write(Start(Right)))
         turning = Some(GoRight)
-      case Keys.Left() if turning != Some(GoLeft)    =>
+      case Keys.Left() if !turning.contains(GoLeft)    =>
         socket.send(write(Stop(Right)))
         socket.send(write(Start(Left)))
         turning = Some(GoLeft)
-      case Keys.Down() if speeding != Some(SlowDown) =>
+      case Keys.Down() if !speeding.contains(SlowDown) =>
         socket.send(write(Stop(Push)))
         socket.send(write(Start(Slow)))
         speeding = Some(SlowDown)
-      case Keys.Up() if speeding != Some(SpeedUp)    =>
+      case Keys.Up() if !speeding.contains(SpeedUp)    =>
         socket.send(write(Stop(Slow)))
         socket.send(write(Start(Push)))
         speeding = Some(SpeedUp)
-      case _                                         =>
+      case _                                           =>
     }
   }
 
