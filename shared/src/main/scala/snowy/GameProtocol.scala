@@ -11,6 +11,8 @@ object GameServerProtocol {
 
   case class Join(userName: String) extends GameServerMessage
 
+  case object ReJoin extends GameServerMessage
+
   case class TurretAngle(angle: Double) extends GameServerMessage
 
   case object Shoot extends GameServerMessage
@@ -28,6 +30,8 @@ object GameServerProtocol {
   case object Push extends StartStopCommand
 
   case object Pong extends GameServerMessage
+
+  case object TestDie extends GameServerMessage
 
 }
 

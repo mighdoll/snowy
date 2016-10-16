@@ -10,9 +10,11 @@ import util.Properties
   * scala js output files from the root resource directory,
   * and a websocket for -connect json messages.
   */
-class WebServer(implicit system: ActorSystem) {
+class WebServer(forcePort:Option[Int] = None)
+               (implicit system: ActorSystem) {
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
+  val defaultPort = 9000
 
   val appHost = new AppHost
   val socketFlow = new SocketFlow(appHost)
@@ -40,7 +42,9 @@ class WebServer(implicit system: ActorSystem) {
         getFromResource(s"web/$file")
       }
 
-  val port = Properties.envOrElse("PORT", "9000").toInt
+  val port = forcePort.orElse(Properties.envOrNone("Port").map(_.toInt))
+      .getOrElse(defaultPort)
+
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
   println(s"Server online at http://localhost:$port/")
 
@@ -53,12 +57,14 @@ class WebServer(implicit system: ActorSystem) {
 
 object WebServer {
   /** create a web server hosting the given websocket app controller */
-  def socketApplication(makeController: AppHostApi => AppController): Unit = {
+  def socketApplication(makeController: AppHostApi => AppController,
+                        forcePort:Option[Int] = None): WebServer = {
     implicit val system = ActorSystem()
-    val server = new WebServer
+    val server = new WebServer(forcePort)
     val appHost = server.appHost
     val controller = makeController(appHost)
     appHost.registerApp(controller)
+    server
   }
 }
 

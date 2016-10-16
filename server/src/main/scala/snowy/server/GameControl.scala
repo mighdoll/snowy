@@ -11,6 +11,7 @@ import snowy.GameConstants.{Bullet, _}
 import snowy.GameServerProtocol._
 import snowy.collision.{SledSnowball, SledTree}
 import snowy.playfield.GameMotion.{moveSleds, moveSnowballs, wrapInPlayfield}
+import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
 import socketserve.{AppController, AppHostApi, ConnectionId}
@@ -75,6 +76,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       case Start(cmd)         => commands.startCommand(id, cmd)
       case Stop(cmd)          => commands.stopCommand(id, cmd)
       case Pong               => connections(id).pongReceived()
+      case ReJoin             => rejoin(id)
+      case TestDie            => reapSled(sledMap(id))
     }
   }
 
@@ -86,11 +89,28 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** Called when a user sends her name and starts in the game */
   private def userJoin(id: ConnectionId, userName: String): Unit = {
-    users(id) = User(userName)
-    val sled = newRandomSled(userName)
-    sleds = sleds.add(sled)
-    sledMap(id) = sled.id
+    println(s"user joined: $userName")
+    val user = User(userName)
+    users(id) = user
+    createSled(id, user)
   }
+
+  private def rejoin(id: ConnectionId): Unit = {
+    users.get(id) match {
+      case Some(user) =>
+        println(s"user rejoined: ${user.name}")
+        createSled(id, user)
+      case None =>
+        println("user not found to rejoin: $id")
+    }
+  }
+
+  private def createSled(connctionId:ConnectionId, user:User): Unit = {
+    val sled = newRandomSled(user.name)
+    sleds = sleds.add(sled)
+    sledMap(connctionId) = sled.id
+  }
+
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
@@ -143,7 +163,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
-  def applyCommands(deltaSeconds: Double): Unit = {
+  private def applyCommands(deltaSeconds: Double): Unit = {
     val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
     val pushForceNow = PushEnergy.force * deltaSeconds
     val pushEffort = deltaSeconds / PushEnergy.maxTime
@@ -193,7 +213,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
 
-  def expireSnowballs(): Unit = {
+  private def expireSnowballs(): Unit = {
     val now = System.currentTimeMillis()
     snowballs = snowballs.removeMatchingItems { snowball =>
       now > snowball.spawned + Bullet.lifetime
@@ -201,20 +221,26 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** @return the sleds with no health left */
-  def collectDead(): Traversable[SledDied] = {
+  private def collectDead(): Traversable[SledDied] = {
     sleds.items.find(_.health <= 0).map{sled =>
       SledDied(sled.id)
     }
   }
 
   /** Notify clients whose sleds have been killed, remove sleds from the game */
-  def reapDead(dead:Traversable[SledDied]): Unit = {
+  private def reapDead(dead:Traversable[SledDied]): Unit = {
     dead.foreach { case SledDied(sledId) =>
-      val connectionId = sledId.connectionId
-      api.send(write(Died), connectionId)
-      sledId.sled.remove()
+      reapSled(sledId)
     }
   }
+
+  private def reapSled(sledId:SledId):Unit ={
+    val connectionId = sledId.connectionId
+    api.send(write(Died), connectionId)
+    sledId.sled.remove()
+  }
+
+
 
   /** update the score based on sled travel distance */
   private def updateScore(awards: Seq[Award]): Unit = {

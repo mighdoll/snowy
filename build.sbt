@@ -12,9 +12,19 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test",
     "org.scalactic" %%% "scalactic" % "3.0.0" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+    "org.scalatest" %%% "scalatest" % "3.0.0" % "test"
   ),
   test in assembly := {}
+)
+
+lazy val itSettings = Defaults.itSettings ++ Seq(
+  libraryDependencies ++= Seq(
+    "org.scalacheck" %% "scalacheck" % "1.13.2" % "it",
+    "org.scalactic" %% "scalactic" % "3.0.0" % "it",
+    "org.scalatest" %% "scalatest" % "3.0.0" % "it",
+    "com.typesafe.akka" %% "akka-testkit" % V.akka % "it",
+    "com.typesafe.akka" %% "akka-stream-testkit" % V.akka % "it"
+  )
 )
 
 lazy val V = new Object {
@@ -23,7 +33,9 @@ lazy val V = new Object {
 }
 
 lazy val server = (project in file("server")).
+  configs(IntegrationTest).
   settings(commonSettings: _*).
+  settings(itSettings: _*).
   settings(
     assemblyJarName in assembly := "full.jar",
     name := "server",
