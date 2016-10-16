@@ -38,7 +38,7 @@ object SnowyServerFixture {
       * @return result of partial function
       */
     def skipToMessage[A](pFn: PartialFunction[GameClientMessage, A],
-                        timeout: FiniteDuration = 100 milliseconds): A = {
+                        timeout: FiniteDuration = 500 milliseconds): A = {
       val messages = Iterator.continually(probe.requestNext(timeout))
       messages.collectFirst(pFn).get
     }
