@@ -8,7 +8,7 @@ import snowy.GameServerProtocol.{Join, ReJoin, TestDie}
 import snowy.server.SnowyServerFixture.withServer
 
 class TestReJoin extends PropSpec with PropertyChecks {
-  property("test ReJoin") {
+  property("ReJoin registers user with a new sled") {
     withServer { testApi =>
       import testApi.{send, skipToMessage}
 
