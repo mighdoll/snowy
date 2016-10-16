@@ -6,6 +6,8 @@ import snowy.GameClientProtocol._
 import snowy.playfield._
 import vector.Vec2d
 import snowy.draw._
+import snowy.draw.GameColors.Sled._
+import snowy.draw.GameColors.clearColor
 
 object ClientDraw {
   case class Size(width: Int, height: Int)
@@ -16,7 +18,7 @@ object ClientDraw {
   gameCanvas.height = size.height
 
   def clearScreen(): Unit = {
-    ctx.fillStyle = "white"
+    ctx.fillStyle = clearColor
     ctx.fillRect(0, 0, size.width, size.height)
     ctx.fill()
   }
@@ -34,9 +36,9 @@ object ClientDraw {
 
     //Draw all sleds
     sleds.items.foreach { sled =>
-      new DrawSled(sled.userName, center(sled.pos), 35, sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      new DrawSled(sled.userName, center(sled.pos), 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
-    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35, mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
+    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
 
     trees.trees.foreach { tree =>
       new DrawTree(center(tree.pos))

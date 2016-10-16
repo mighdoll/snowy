@@ -1,5 +1,6 @@
 package snowy.draw
 
+import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw.ctx
 import vector.Vec2d
 
@@ -9,7 +10,7 @@ class DrawSled(name: String, pos: Vec2d, size: Double, health: Double, cannonRot
   //val size = 35.0
 
   //Global strokeStyle
-  ctx.strokeStyle = "rgb(100, 100, 100)"
+  ctx.strokeStyle = lineColors
 
   //Draw two skis
   ctx.lineCap = "round"

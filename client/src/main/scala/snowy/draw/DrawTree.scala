@@ -1,5 +1,6 @@
 package snowy.draw
 
+import snowy.draw.GameColors.Tree._
 import snowy.client.ClientDraw.ctx
 import vector.Vec2d
 
@@ -8,7 +9,7 @@ class DrawTree(pos: Vec2d) {
   val y = pos.y
   val branchSize = 100
 
-  ctx.fillStyle = "rgb(94, 153, 105)"
+  ctx.fillStyle = leaves
   ctx.beginPath()
   ctx.moveTo(x, y - branchSize * 2)
   ctx.lineTo(x - branchSize * 1 / 2, y - branchSize * 1 / 2)
@@ -16,7 +17,7 @@ class DrawTree(pos: Vec2d) {
   ctx.closePath()
   ctx.fill()
 
-  ctx.fillStyle = "rgb(56, 85, 58)"
+  ctx.fillStyle = trunk
   ctx.beginPath()
   ctx.fillRect(x - branchSize * 1 / 16, y - branchSize * 3 / 4, branchSize * 1 / 8, branchSize * 3 / 4)
   ctx.fill()

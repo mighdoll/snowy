@@ -1,11 +1,12 @@
 package snowy.draw
 
+import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw._
 import vector.Vec2d
 
 
 class DrawBorder(top: Vec2d, bottom: Vec2d, sled: Vec2d) {
-  ctx.strokeStyle = "rgb(100, 100, 100)"
+  ctx.strokeStyle = lineColors
   ctx.beginPath()
   ctx.moveTo(top.x, top.y)
   ctx.lineTo(top.x, bottom.y)
