@@ -1,20 +1,18 @@
 package snowy.server
 
 import scala.concurrent.Future
-import akka.NotUsed
+import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.ws._
-import akka.stream.Attributes.InputBuffer
 import akka.stream.scaladsl._
-import akka.stream.{ActorMaterializer, Attributes, OverflowStrategy}
-import snowy.server.FutureAwaiting._
-import socketserve.WebServer.socketApplication
-import scala.concurrent.duration._
 import akka.stream.testkit.TestSubscriber.Probe
 import akka.stream.testkit.scaladsl.TestSink
+import akka.stream.{ActorMaterializer, OverflowStrategy}
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
+import snowy.server.FutureAwaiting._
+import socketserve.WebServer.socketApplication
 import upickle.default._
 
 object SnowyServerFixture {
@@ -41,11 +39,10 @@ object SnowyServerFixture {
       */
     def skipToMessage[A](pFn: PartialFunction[GameClientMessage, A],
                         timeout: FiniteDuration = 100 milliseconds): A = {
-      val messages = Stream.continually(probe.requestNext(timeout))
+      val messages = Iterator.continually(probe.requestNext(timeout))
       messages.collectFirst(pFn).get
     }
   }
-
 
   /** Start a new snowy server and run tests against it.
     *
@@ -59,10 +56,13 @@ object SnowyServerFixture {
     val server = socketApplication(new GameControl(_), Some(testPort))
     try {
       connect(s"ws://localhost:${server.port}/game").flatMap { api =>
-        fn(api)
+        fn(api).flatMap{_ =>
+          api.sendQueue.complete()
+          api.sendQueue.watchCompletion()
+        }
       }.await(timeout)
     } finally {
-      server.shutDown()
+      Http().shutdownAllConnectionPools() andThen {case _ => server.shutDown()}
     }
   }
 

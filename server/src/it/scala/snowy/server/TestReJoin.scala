@@ -1,19 +1,11 @@
 package snowy.server
 
+import scala.concurrent.Future
 import org.scalatest._
 import org.scalatest.prop._
-import SnowyServerFixture.withServer
-import upickle.default._
+import snowy.GameClientProtocol.{Died, State}
 import snowy.GameServerProtocol.{Join, ReJoin, TestDie}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import akka.NotUsed
-import akka.http.scaladsl.model.ws.TextMessage
-import akka.stream.scaladsl.{Flow, Sink, Source}
-import akka.stream.testkit.TestSubscriber.Probe
-import akka.stream.testkit.scaladsl.TestSink
-import snowy.GameClientProtocol.{Died, GameClientMessage, Scoreboard, State}
-import scala.concurrent.duration._
+import snowy.server.SnowyServerFixture.withServer
 
 class TestReJoin extends PropSpec with PropertyChecks {
   property("test ReJoin") {
