@@ -34,9 +34,9 @@ object ClientDraw {
 
     //Draw all sleds
     sleds.items.foreach { sled =>
-      new DrawSled(sled.userName, center(sled.pos), sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
+      new DrawSled(sled.userName, center(sled.pos), 35, sled.health, sled.turretRotation, sled.rotation, "rgb(241, 78, 84)")
     }
-    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
+    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35, mySled.health, mySled.turretRotation, mySled.rotation, "rgb(120, 201, 44)")
 
     trees.trees.foreach { tree =>
       new DrawTree(center(tree.pos))

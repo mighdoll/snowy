@@ -11,7 +11,7 @@ import upickle.default._
 
 class Connection(name: String) {
   document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
-  document.getElementById("start-div").asInstanceOf[html.Div].classList.add("hide")
+  document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
 
   val socket = {
     val inDelay = 0 milliseconds
@@ -34,7 +34,7 @@ class Connection(name: String) {
     console.log(s"socket closed ")
 
     document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
-    document.getElementById("start-div").asInstanceOf[html.Div].classList.remove("hide")
+    document.getElementById("login-form").asInstanceOf[html.Div].classList.remove("hide")
   }
 
   socket.onMessage { event =>

@@ -2,13 +2,13 @@ package snowy.client
 
 import scala.scalajs.js.JSApp
 import org.scalajs.dom._
-import snowy.draw.SnowFlakes
+import snowy.draw.LoginScreen
 
 object ClientMain extends JSApp {
-  val snowFlakes = new SnowFlakes()
+  val loginScreen = new LoginScreen()
 
   def main(): Unit = {
-    snowFlakes.setup()
+    loginScreen.setup()
   }
 
   //When the users sends the login form, send it as a username to the server
@@ -17,7 +17,7 @@ object ClientMain extends JSApp {
     new Connection(document.getElementById("username").asInstanceOf[html.Input].value)
 
     //Stop drawing the snow as a background
-    snowFlakes.stop()
+    loginScreen.stop()
 
     //Do not redirect
     false

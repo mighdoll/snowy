@@ -1,48 +1,63 @@
 <html class="fullscreen">
-  <head>
-    <title>Snowy Day</title>
-    <style>
-      .fullscreen {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        display: block;
-        position: absolute;
-      }
-      #login-box {
-        border-radius: 10px;
-        margin: 10vh 10vw;
-        background: #000;
-        height: 80vh;
-        width: 80vw;
-      }
-      .game-div {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-      .back {
-        z-index: -1;
-      }
-      .hide {
-        display: none;
-      }
-    </style>
 
-  </head>
-  <body class="fullscreen">
+<head>
+  <title>Snowy Day</title>
+  <style>
+    #username {
+      width: 20vw;
+      height: 3vw;
+      top: calc( 50vh - 3vw / 2);
+      left: calc( 50vw - 10vw);
+      position: absolute;
+      border-radius: 10px;
+      background: white;
+      border: 0;
+      font-size: 2vw;
+    }
 
-    <div id="start-div" class="fullscreen">
-      <div id="login-box">
-        <form id="login-form">
-          <input maxlength="10" id="username">
-          <button>Play</button>
-        </form>
-      </div>
-    </div>
-    <div id="game-div" class="back fullscreen">
-      <canvas id="game-c"></div>
+    #play {
+      position: absolute;
+      left: 68vw;
+      top: calc(50vh - 1vw);
+      height: 2vw;
+      width: 10vw;
+      border-radius: 10px;
+      background: white;
+      border: 0;
+      font-size: 1vw;
+    }
+
+    #login-form {
+      position: absolute;
+    }
+
+    #game-div {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+    }
+
+    .back {
+      z-index: -1;
+    }
+
+    .hide {
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body class="fullscreen">
+
+  <form id="login-form">
+    <input maxlength="10" id="username">
+    <button id="play">Join Game</button>
+  </form>
+  <div id="game-div" class="back fullscreen">
+    <canvas id="game-c"></div>
     </div>
 
     <!-- <script type="text/javascript" src="sock-client-jsdeps.js"></script> -->
