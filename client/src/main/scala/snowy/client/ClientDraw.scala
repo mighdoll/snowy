@@ -23,7 +23,7 @@ object ClientDraw {
     ctx.fill()
   }
 
-  def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Trees, border: Playfield): Unit = {
+  def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Store[Tree], border: Playfield): Unit = {
     clearScreen()
     val center = new Center(mySled.pos, border)
 
@@ -40,7 +40,7 @@ object ClientDraw {
     }
     new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
 
-    trees.trees.foreach { tree =>
+    trees.items.foreach { tree =>
       new DrawTree(center(tree.pos))
     }
   }
