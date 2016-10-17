@@ -42,7 +42,7 @@ class WebServer(forcePort:Option[Int] = None)
         getFromResource(s"web/$file")
       }
 
-  val port = forcePort.orElse(Properties.envOrNone("Port").map(_.toInt))
+  val port = forcePort.orElse(Properties.envOrNone("PORT").map(_.toInt))
       .getOrElse(defaultPort)
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
