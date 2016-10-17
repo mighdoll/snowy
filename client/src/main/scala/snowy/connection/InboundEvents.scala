@@ -1,5 +1,6 @@
 package snowy.connection
 
+import snowy.playfield.Store
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
@@ -31,7 +32,7 @@ class InboundEvents(socket: NetworkSocket, name: String) {
       read[GameClientMessage](msg) match {
         case state: State                => receivedState(state)
         case playfield: Playfield        => gPlayField = playfield
-        case trees: Trees                => serverTrees = createStore(trees.trees)
+        case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
         case Died                        => console.log("ToDo: sled's dead, deal with it.")
         case Ping                        => socket.send(write(Pong))
         case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")

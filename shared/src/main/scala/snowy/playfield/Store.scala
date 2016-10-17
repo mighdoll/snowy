@@ -3,6 +3,12 @@ package snowy.playfield
 /** collection for a set of playfield objects and grid to locate them efficiently on the playfield */
 case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](), grid: Grid[A] = Grid[A]()) {
 
+  def addItems(items: Seq[A]): Store[A] = {
+    items.foldLeft(this) { (newStore, item) =>
+      newStore.insertById(item)
+    }
+  }
+
   /** @return a copy of the store, with all items replaced */
   def replaceItems(fn: A => A): Store[A] = {
     val newItems = items.map(fn)
@@ -56,5 +62,13 @@ case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](), grid: Grid[A] =
     items.foreach{item =>
       println(s"  $item")
     }
+  }
+}
+
+object Store {
+  /** @param items a seq of any plafield object
+    * @return a store with grid an items given a seq of playfield objects */
+  def apply[A <: PlayfieldObject](items: Seq[A]): Store[A] ={
+    Store[A](items = items.toSet, grid = Grid(items = items))
   }
 }
