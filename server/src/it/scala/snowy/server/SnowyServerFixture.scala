@@ -55,7 +55,7 @@ object SnowyServerFixture {
     testPort = testPort + 1
     val server = socketApplication(new GameControl(_), Some(testPort))
     try {
-      connect(s"ws://localhost:${server.port}/game").flatMap { api =>
+      connectToServer(s"ws://localhost:${server.port}/game").flatMap { api =>
         fn(api).flatMap{_ =>
           api.sendQueue.complete()
           api.sendQueue.watchCompletion()
@@ -71,14 +71,22 @@ object SnowyServerFixture {
     * @param wsUrl
     * @return a test api to send/receive messages against the snowy server
     */
-  private def connect(wsUrl: String): Future[ServerTestApi] = {
+  def connectToServer[M](wsUrl: String) : Future[ServerTestApi] = {
+    connectSinkToServer(wsUrl, TestSink.probe[GameClientMessage]).map {
+      case ((sendQueue, testProbe)) =>
+        ServerTestApi(sendQueue, testProbe)
+    }
+  }
+
+  def connectSinkToServer[M](wsUrl: String, sink:Sink[GameClientMessage, M])
+      : Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
     implicit val _ = ActorMaterializer()
     val outputBufferSize = 100
 
-    val testSinkFromServer = {
+    val sinkFromServer = {
       val messageToString = Flow[Message]
         .collect { case orig@TextMessage.Strict(msg) => read[GameClientMessage](msg) }
-      messageToString.toMat(TestSink.probe[GameClientMessage])(Keep.right)
+      messageToString.toMat(sink)(Keep.right)
     }
 
     val sourceToServer = {
@@ -91,13 +99,13 @@ object SnowyServerFixture {
       sourceQueue.via(gameMessageToTextMessage)
     }
 
-    val flow = Flow.fromSinkAndSourceMat(testSinkFromServer, sourceToServer)(Keep.both)
+    val flow = Flow.fromSinkAndSourceMat(sinkFromServer, sourceToServer)(Keep.both)
 
-    val (upgradeResponse, (testProbe, sendQueue)) =
+    val (upgradeResponse, (materializedSink, sendQueue)) =
       Http().singleWebSocketRequest(WebSocketRequest(wsUrl), flow)
 
-    upgradeResponse.map { upgradeResponse =>
-      ServerTestApi(sendQueue, testProbe)
+    upgradeResponse.map { _ =>
+      (sendQueue, materializedSink)
     }
   }
 }
