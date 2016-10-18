@@ -25,15 +25,18 @@ trait GameState {
   protected def currentState(): Iterable[(ConnectionId, State)] = {
     val clientSnowballs = snowballs.items.toSeq
 
-    sleds.items.map { mySled =>
+    (for {
+      mySled <- sleds.items
+      connectionId <- mySled.connectionId
+    } yield {
       val otherSleds = sleds.items.filter(_.id != mySled.id).toSeq
-      mySled.connectionId -> State(mySled, otherSleds, clientSnowballs)
-    }.toSeq
+      connectionId -> State(mySled, otherSleds, clientSnowballs)
+    }).toSeq
   }
 
   implicit class SledIdOps(id: SledId) {
-    def sled: Sled = {
-      sleds.items.find(_.id == id).get
+    def sled: Option[Sled] = {
+      sleds.items.find(_.id == id)
     }
 
     def user: Option[User] = id.connectionId.map(users(_))
@@ -47,18 +50,17 @@ trait GameState {
   }
 
   implicit class SledIndices(sled: Sled) {
-    def connectionId: ConnectionId = {
+    def connectionId: Option[ConnectionId] = {
       sledMap.collectFirst {
         case (connectionId, sledId) if sled.id == sledId =>
           connectionId
-      }.get
+      }
     }
 
     def remove(): Unit = {
       sled.id.connectionId.foreach(sledMap.remove(_))
       sleds = sleds.remove(sled)
     }
-
   }
 
 }

@@ -58,13 +58,16 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** Called when a connection is dropped */
-  override def gone(id: ConnectionId): Unit = {
-    sledMap.get(id).foreach { sledId =>
-      sledId.sled.remove()
+  override def gone(connectionId: ConnectionId): Unit = {
+    for {
+      sledId <- sledMap.get(connectionId)
+      sled <- sledId.sled
+    } {
+      sled.remove()
     }
-    users.remove(id)
-    commands.commands.remove(id)
-    connections.remove(id)
+    users.remove(connectionId)
+    commands.commands.remove(connectionId)
+    connections.remove(connectionId)
   }
 
   /** received a client message */
@@ -89,7 +92,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** Called when a user sends her name and starts in the game */
   private def userJoin(id: ConnectionId, userName: String): Unit = {
-    println(s"user joined: $userName")
+    println(s"user joined: $userName  userCount:${users.size}")
     val user = User(userName)
     users(id) = user
     createSled(id, user)
@@ -100,12 +103,12 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       case Some(user) =>
         println(s"user rejoined: ${user.name}")
         createSled(id, user)
-      case None =>
+      case None       =>
         println("user not found to rejoin: $id")
     }
   }
 
-  private def createSled(connctionId:ConnectionId, user:User): Unit = {
+  private def createSled(connctionId: ConnectionId, user: User): Unit = {
     val sled = newRandomSled(user.name)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id
@@ -222,25 +225,24 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** @return the sleds with no health left */
   private def collectDead(): Traversable[SledDied] = {
-    sleds.items.find(_.health <= 0).map{sled =>
+    sleds.items.find(_.health <= 0).map { sled =>
       SledDied(sled.id)
     }
   }
 
   /** Notify clients whose sleds have been killed, remove sleds from the game */
-  private def reapDead(dead:Traversable[SledDied]): Unit = {
+  private def reapDead(dead: Traversable[SledDied]): Unit = {
     dead.foreach { case SledDied(sledId) =>
       reapSled(sledId)
     }
   }
 
-  private def reapSled(sledId:SledId):Unit ={
+  private def reapSled(sledId: SledId): Unit = {
     val connectionId = sledId.connectionId
     connectionId.foreach(api.send(write(Died), _))
-    sledId.sled.remove()
+    sledId.sled.foreach(_.remove())
+    println(s"sled killed: sledCount:${sledMap.size}")
   }
-
-
 
   /** update the score based on sled travel distance */
   private def updateScore(awards: Seq[Award]): Unit = {
@@ -255,7 +257,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             val points = loser.score / 2
             users(winnerConnectionId) = winner.copy(score = winner.score + points)
           }
-        case Travel(sledId, distance)  =>
+        case Travel(sledId, distance)    =>
           for {
             connectionId <- sledId.connectionId
             user <- sledId.user
@@ -264,7 +266,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             users(connectionId) = user.copy(score = user.score + points)
           }
         case SnowballHit(winnerId)       =>
-        case SledDied(loserId) =>
+        case SledDied(loserId)           =>
           for {
             connectionId <- loserId.connectionId
             user <- loserId.user
