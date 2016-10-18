@@ -236,7 +236,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   private def reapSled(sledId:SledId):Unit ={
     val connectionId = sledId.connectionId
-    api.send(write(Died), connectionId)
+    connectionId.foreach(api.send(write(Died), _))
     sledId.sled.remove()
   }
 
@@ -247,20 +247,30 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     awards.foreach { award =>
       award match {
         case SledKill(winnerId, loserId) =>
-          val userId = winnerId.connectionId
-          val user = users(userId)
-          val points = loserId.user.score / 2
-          users(userId) = user.copy(score = user.score + points)
-        case Travel(winnerId, distance)  =>
-          val userId = winnerId.connectionId
-          val user = users(userId)
-          val points = distance * Points.travel
-          users(userId) = user.copy(score = user.score + points)
+          for {
+            winnerConnectionId <- winnerId.connectionId
+            winner <- winnerId.user
+            loser <- loserId.user
+          } {
+            val points = loser.score / 2
+            users(winnerConnectionId) = winner.copy(score = winner.score + points)
+          }
+        case Travel(sledId, distance)  =>
+          for {
+            connectionId <- sledId.connectionId
+            user <- sledId.user
+          } {
+            val points = distance * Points.travel
+            users(connectionId) = user.copy(score = user.score + points)
+          }
         case SnowballHit(winnerId)       =>
         case SledDied(loserId) =>
-          val connectionId = loserId.connectionId
-          val user = users(connectionId)
-          users(connectionId) = user.copy(score = user.score / 2)
+          for {
+            connectionId <- loserId.connectionId
+            user <- loserId.user
+          } {
+            users(connectionId) = user.copy(score = user.score / 2)
+          }
       }
     }
   }
@@ -345,6 +355,4 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     lastTime = currentTime
     deltaSeconds
   }
-
-
 }

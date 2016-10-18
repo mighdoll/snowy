@@ -36,13 +36,13 @@ trait GameState {
       sleds.items.find(_.id == id).get
     }
 
-    def user: User = users(id.connectionId)
+    def user: Option[User] = id.connectionId.map(users(_))
 
-    def connectionId: ConnectionId = {
+    def connectionId: Option[ConnectionId] = {
       sledMap.collectFirst {
         case (connectionId, sledId) if id == sledId =>
           connectionId
-      }.get
+      }
     }
   }
 
@@ -55,7 +55,7 @@ trait GameState {
     }
 
     def remove(): Unit = {
-      sledMap.remove(sled.id.connectionId)
+      sled.id.connectionId.foreach(sledMap.remove(_))
       sleds = sleds.remove(sled)
     }
 
