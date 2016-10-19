@@ -4,35 +4,34 @@ import snowy.draw.GameColors.Tree._
 import snowy.client.ClientDraw.ctx
 import vector.Vec2d
 
-class DrawTree(pos: Vec2d) {
+class DrawTree(pos: Vec2d, size: Double) {
   val x = pos.x
   val y = pos.y
-  val branchSize = 100
 
   ctx.fillStyle = leaves
   ctx.beginPath()
-  ctx.moveTo(x, y - branchSize * 2)
-  ctx.lineTo(x - branchSize * 1 / 2, y - branchSize * 1 / 2)
-  ctx.lineTo(x + branchSize * 1 / 2, y - branchSize * 1 / 2)
+  ctx.moveTo(x, y - size * 2)
+  ctx.lineTo(x - size * 1 / 2, y - size * 1 / 2)
+  ctx.lineTo(x + size * 1 / 2, y - size * 1 / 2)
   ctx.closePath()
   ctx.fill()
 
   ctx.fillStyle = trunk
   ctx.beginPath()
-  ctx.fillRect(x - branchSize * 1 / 16, y - branchSize * 3 / 4, branchSize * 1 / 8, branchSize * 3 / 4)
+  ctx.fillRect(x - size * 1 / 16, y - size * 3 / 4, size * 1 / 8, size * 3 / 4)
   ctx.fill()
 
-  ctx.translate(x, y - branchSize * 29 / 50)
+  ctx.translate(x, y - size * 29 / 50)
   ctx.rotate(Math.PI * 13 / 18)
 
   ctx.beginPath()
-  ctx.fillRect(0, 0, branchSize * 1 / 20, branchSize * 43 / 200)
+  ctx.fillRect(0, 0, size * 1 / 20, size * 43 / 200)
   ctx.fill()
 
   ctx.rotate(Math.PI * 5 / 9)
   ctx.beginPath()
-  ctx.fillRect(0, branchSize * 7 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
-  ctx.fillRect(branchSize * -1 / 10, branchSize * -13 / 200, branchSize * 1 / 20, branchSize * 1 / 4)
+  ctx.fillRect(0, size * 7 / 200, size * 1 / 20, size * 1 / 4)
+  ctx.fillRect(size * -1 / 10, size * -13 / 200, size * 1 / 20, size * 1 / 4)
   ctx.fill()
 
   ctx.setTransform(1, 0, 0, 1, 0, 0)

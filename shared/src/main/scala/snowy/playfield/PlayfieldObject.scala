@@ -11,6 +11,8 @@ trait PlayfieldObject {
   def size: Double
 
   def pos: Vec2d
+
+  def updatePos(newPos: Vec2d): MyType
 }
 
 object PlayfieldObject {
@@ -50,6 +52,9 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 health: Double = 1,
                 pushEnergy: Double = 1
                ) extends PlayfieldObject {
+  override def updatePos(newPos: Vec2d): Sled = {
+    this.copy(pos = newPos)
+  }
   type MyType = Sled
 }
 
@@ -58,6 +63,10 @@ case class Tree(id: TreeId = PlayfieldObject.nextId(),
                 size: Double
                ) extends PlayfieldObject {
   type MyType = Tree
+
+  override def updatePos(newPos: Vec2d): Tree = {
+    this.copy(pos = newPos)
+  }
 }
 
 case class Snowball(id: BallId = PlayfieldObject.nextId(),
@@ -68,6 +77,9 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
                     spawned: Long
                    ) extends PlayfieldObject {
   type MyType = Snowball
+  override def updatePos(newPos: Vec2d): Snowball = {
+    this.copy(pos = newPos)
+  }
 }
 
 case class User(name: String, score: Double = 0)

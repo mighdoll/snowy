@@ -25,35 +25,47 @@ object ClientDraw {
 
   def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Store[Tree], border: Playfield): Unit = {
     clearScreen()
-    val center = new Center(mySled.pos, border)
 
-    new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos)
+    var portal = new Portal(
+      Rect(
+        mySled.pos,
+        Vec2d(2000, 1000)
+      )
+    )(sleds.items, snowballs.items, trees.items)
 
-    //Draw all snowballs
+    portal = portal.
+      translateToScreen().
+      resizeToScreen(size.width, size.height)
+
+    new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos, portal.scale)
+
+
+    portal.snowballs.foreach { snowball =>
+      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
+    }
     snowballs.items.foreach { snowball =>
-      new DrawSnowball(center(snowball.pos), snowball.size / 2)
+      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
     }
 
-    //Draw all sleds
-    sleds.items.foreach { sled =>
-      new DrawSled(sled.userName, center(sled.pos), 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
-    }
-    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
 
+    portal.sleds.foreach { sled =>
+      new DrawSled(sled.userName, sled.pos, portal.scale * 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+    }
+    new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35 * portal.scale, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
+
+
+    portal.trees.foreach { tree =>
+      new DrawTree(tree.pos, portal.scale * 100)
+    }
     trees.items.foreach { tree =>
-      new DrawTree(center(tree.pos))
+      new DrawTree(fancyBorderWrap(screenPosition(tree.pos, mySled.pos), border), 100 * portal.scale)
     }
-  }
 
-  class Center(sled: Vec2d, border: Playfield) {
-    def apply(pos: Vec2d): Vec2d  = {
-      fancyBorderWrap(screenPosition(pos, sled), border)
-    }
   }
 
   /** @param pos position of an object in game coordinates
     * @return screen position of given object
-    * taking into account sled being centered on the screen
+    *         taking into account sled being centered on the screen
     */
   def screenPosition(pos: Vec2d, me: Vec2d): Vec2d = {
     Vec2d(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)

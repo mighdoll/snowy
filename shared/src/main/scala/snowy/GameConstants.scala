@@ -3,7 +3,7 @@ package snowy
 import vector.Vec2d
 
 object GameConstants {
-  val playfield = Vec2d(1000, 2000)
+  val playfield = Vec2d(2000, 1000)
 
   /** max speed of sled in pixels per second */
   val maxSpeed = 1000

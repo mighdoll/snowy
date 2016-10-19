@@ -5,17 +5,17 @@ import snowy.client.ClientDraw._
 import vector.Vec2d
 
 
-class DrawBorder(top: Vec2d, bottom: Vec2d, sled: Vec2d) {
+class DrawBorder(top: Vec2d, bottom: Vec2d, sled: Vec2d, scale: Double) {
   ctx.strokeStyle = lineColors
   ctx.beginPath()
   ctx.moveTo(top.x, top.y)
-  ctx.lineTo(top.x, bottom.y)
-  ctx.lineTo(bottom.x, bottom.y)
+  ctx.lineTo(top.x, bottom.y )
+  ctx.lineTo(bottom.x, bottom.y )
   ctx.lineTo(bottom.x, top.y)
   ctx.closePath()
   ctx.stroke()
 
-  val lineGap = 10
+  val lineGap = (10 * scale).toInt
   ctx.lineWidth = .1
   for (i <- 0 to size.width / lineGap) {
     ctx.beginPath()
