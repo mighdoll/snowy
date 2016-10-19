@@ -35,7 +35,7 @@ object ClientDraw {
       )
     )(sleds.items, snowballs.items, trees.items)
 
-    portal = portal.convertToScreen(Vec2d(size.width, size.height))
+    portal = portal.convertToScreen(Vec2d(size.width, size.height), border)
     new DrawGrid(mySled.pos * portal.scale, portal.scale)
 
     portal.snowballs.foreach { snowball =>

@@ -1,8 +1,8 @@
 package snowy.client
 
+import snowy.GameClientProtocol._
 import snowy.playfield._
 import vector.Vec2d
-
 
 class Portal(portalRect: Rect) {
   var sleds = Seq[Sled]()
@@ -18,7 +18,7 @@ class Portal(portalRect: Rect) {
   }
 
 
-  def convertToScreen(screenSize: Vec2d): Portal = {
+  def convertToScreen(screenSize: Vec2d, border: Playfield): Portal = {
     val scaleX = screenSize.x / portalRect.size.x
     val scaleY = screenSize.y / portalRect.size.y
     scale = math.max(scaleX, scaleY)
@@ -30,14 +30,40 @@ class Portal(portalRect: Rect) {
       screenCenter - portalCenterScaled
     }
 
-    def transformToScreen[A <: PlayfieldObject](playfieldObject: A): playfieldObject.MyType = {
-      val translateToPortal = playfieldObject.pos - portalRect.pos
-      val newPos = (translateToPortal * scale) + portalToScreenOffset
-      playfieldObject.updatePos(newPos)
+    def borderWrap(pos: Vec2d): Vec2d = {
+      var x = pos.x
+      var y = pos.y
+
+      val playfield = Vec2d(border.width, border.height)
+      if (x > portalRect.size.x + 200) {
+        x = x - playfield.x
+      } else if (x < -200) {
+        x = x + playfield.x
+      }
+      if (y > portalRect.size.x + 200) {
+        y = y - playfield.y
+      } else if (y < -200) {
+        y = y + playfield.y
+      }
+      Vec2d(x, y)
     }
-    sleds = sleds.map(transformToScreen(_))
-    snowballs = snowballs.map(transformToScreen(_))
-    trees = trees.map(transformToScreen(_))
+
+    def transformToScreen(playfieldObject: Vec2d): Vec2d = {
+      val translateToPortal = playfieldObject - portalRect.pos
+      val wrapped = borderWrap(translateToPortal)
+      (wrapped * scale) + portalToScreenOffset
+    }
+
+
+    sleds = sleds.map { sled =>
+      sled.copy(pos = transformToScreen(sled.pos))
+    }
+    snowballs = snowballs.map { snowball =>
+      snowball.copy(pos = transformToScreen(snowball.pos))
+    }
+    trees = trees.map { tree =>
+      tree.copy(pos = transformToScreen(tree.pos))
+    }
 
     def filterOut[A <: PlayfieldObject](size: Vec2d) = (playfieldObject: A) => {
       val treeSize = 200 // Don't clip any partially off trees
@@ -48,7 +74,7 @@ class Portal(portalRect: Rect) {
     trees = trees.filter(filterOut(portalRect.size))
     snowballs = snowballs.filter(filterOut(portalRect.size))
     sleds = sleds.filter(filterOut(portalRect.size))
-    
+
 
     this
   }
