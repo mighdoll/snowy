@@ -3,14 +3,16 @@ package snowy.client
 import org.scalajs.dom
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
-import snowy.playfield._
-import vector.Vec2d
-import snowy.draw._
 import snowy.draw.GameColors.Sled._
 import snowy.draw.GameColors.clearColor
+import snowy.draw._
+import snowy.playfield._
+import vector.Vec2d
 
 object ClientDraw {
+
   case class Size(width: Int, height: Int)
+
   var size = Size(window.innerWidth, window.innerHeight)
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
@@ -37,7 +39,7 @@ object ClientDraw {
       translateToPortal().
       portalToScreen(size.width, size.height)
 
-    new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos, portal.scale)
+    new DrawGrid(screenPosition(Vec2d(0, 0), mySled.pos * portal.scale), screenPosition(Vec2d(border.width, border.height), mySled.pos * portal.scale), mySled.pos * portal.scale, portal.scale)
 
     portal.snowballs.foreach { snowball =>
       new DrawSnowball(snowball.pos, portal.scale * snowball.size / 2)

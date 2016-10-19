@@ -5,7 +5,7 @@ import snowy.client.ClientDraw._
 import vector.Vec2d
 
 
-class DrawBorder(top: Vec2d, bottom: Vec2d, sled: Vec2d, scale: Double) {
+class DrawGrid(top: Vec2d, bottom: Vec2d, sled: Vec2d, scale: Double) {
   ctx.strokeStyle = lineColors
   ctx.beginPath()
   ctx.moveTo(top.x, top.y)
