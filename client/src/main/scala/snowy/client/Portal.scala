@@ -18,8 +18,6 @@ class Portal(portalRect: Rect) {
   }
 
 
-  val halfRect = portalRect.size * .5
-
   def translateToPortal(): Portal = {
     def translateToPortal[A <: PlayfieldObject](playfieldObject: A): playfieldObject.MyType = {
       val sledMoved = playfieldObject.pos - portalRect.pos
@@ -43,16 +41,21 @@ class Portal(portalRect: Rect) {
     this
   }
 
-  // Todo: Fix offset bug
-  def portalToScreen(x: Double, y: Double): Portal = {
-    val scaleX = x / portalRect.size.x
-    val scaleY = y / portalRect.size.y
+  def portalToScreen(screenWidth: Double, screenHeight: Double): Portal = {
+    val scaleX = screenWidth / portalRect.size.x
+    val scaleY = screenHeight / portalRect.size.y
     scale = math.max(scaleX, scaleY)
 
-    val antiParallax = (portalRect.pos + halfRect) - ((portalRect.pos + halfRect) * scale)
+    val portalToScreenOffset = {
+      val screenCenter = Vec2d(screenWidth, screenHeight) / 2
+      val portalCenter = portalRect.size / 2
+      val portalCenterScaled = portalCenter * scale
+      screenCenter - portalCenterScaled
+    }
+
     def scaleObjectPos[A <: PlayfieldObject](playfieldObject: A): playfieldObject.MyType = {
-      val sledScale = playfieldObject.pos * scale - antiParallax
-      playfieldObject.updatePos(sledScale)
+      val newPos = (playfieldObject.pos * scale) + portalToScreenOffset
+      playfieldObject.updatePos(newPos)
     }
     sleds = sleds.map(scaleObjectPos(_))
     snowballs = snowballs.map(scaleObjectPos(_))

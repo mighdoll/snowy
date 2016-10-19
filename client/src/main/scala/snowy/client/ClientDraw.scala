@@ -40,9 +40,8 @@ object ClientDraw {
     new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos, portal.scale)
 
     portal.snowballs.foreach { snowball =>
-      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
+      new DrawSnowball(snowball.pos, portal.scale * snowball.size / 2)
     }
-
     portal.sleds.foreach { sled =>
       new DrawSled(sled.userName, sled.pos, portal.scale * 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
@@ -51,17 +50,6 @@ object ClientDraw {
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, portal.scale * 100)
     }
-
-
-    trees.items.foreach { tree =>
-      new DrawTree(fancyBorderWrap(screenPosition(tree.pos, mySled.pos), border), 50 * portal.scale)
-    }
-    /*
-    snowballs.items.foreach { snowball =>
-      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
-    }
-    */
-
   }
 
   /** @param pos position of an object in game coordinates
