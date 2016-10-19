@@ -28,38 +28,39 @@ object ClientDraw {
 
     var portal = new Portal(
       Rect(
-        mySled.pos,
+        mySled.pos - Vec2d(1000, 500),
         Vec2d(2000, 1000)
       )
     )(sleds.items, snowballs.items, trees.items)
 
     portal = portal.
-      translateToScreen().
-      resizeToScreen(size.width, size.height)
+      translateToPortal().
+      portalToScreen(size.width, size.height)
 
     new DrawBorder(screenPosition(Vec2d(0, 0), mySled.pos), screenPosition(Vec2d(border.width, border.height), mySled.pos), mySled.pos, portal.scale)
-
 
     portal.snowballs.foreach { snowball =>
       new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
     }
-    snowballs.items.foreach { snowball =>
-      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
-    }
-
 
     portal.sleds.foreach { sled =>
       new DrawSled(sled.userName, sled.pos, portal.scale * 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
     new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35 * portal.scale, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
 
-
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, portal.scale * 100)
     }
+
+
     trees.items.foreach { tree =>
-      new DrawTree(fancyBorderWrap(screenPosition(tree.pos, mySled.pos), border), 100 * portal.scale)
+      new DrawTree(fancyBorderWrap(screenPosition(tree.pos, mySled.pos), border), 50 * portal.scale)
     }
+    /*
+    snowballs.items.foreach { snowball =>
+      new DrawSnowball(fancyBorderWrap(screenPosition(snowball.pos, mySled.pos), border), portal.scale * snowball.size / 2)
+    }
+    */
 
   }
 
