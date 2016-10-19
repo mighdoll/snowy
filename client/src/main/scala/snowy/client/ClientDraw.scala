@@ -35,31 +35,20 @@ object ClientDraw {
       )
     )(sleds.items, snowballs.items, trees.items)
 
-    portal = portal.
-      translateToPortal().
-      portalToScreen(size.width, size.height)
-
-    new DrawGrid(screenPosition(Vec2d(0, 0), mySled.pos * portal.scale), screenPosition(Vec2d(border.width, border.height), mySled.pos * portal.scale), mySled.pos * portal.scale, portal.scale)
+    portal = portal.convertToScreen(Vec2d(size.width, size.height))
+    new DrawGrid(mySled.pos * portal.scale, portal.scale)
 
     portal.snowballs.foreach { snowball =>
-      new DrawSnowball(snowball.pos, portal.scale * snowball.size / 2)
+      new DrawSnowball(snowball.pos, snowball.size / 2 * portal.scale)
     }
     portal.sleds.foreach { sled =>
-      new DrawSled(sled.userName, sled.pos, portal.scale * 35, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+      new DrawSled(sled.userName, sled.pos, 35 * portal.scale, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
     new DrawSled(mySled.userName, Vec2d(size.width / 2, size.height / 2), 35 * portal.scale, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
 
     portal.trees.foreach { tree =>
-      new DrawTree(tree.pos, portal.scale * 100)
+      new DrawTree(tree.pos, 100 * portal.scale)
     }
-  }
-
-  /** @param pos position of an object in game coordinates
-    * @return screen position of given object
-    *         taking into account sled being centered on the screen
-    */
-  def screenPosition(pos: Vec2d, me: Vec2d): Vec2d = {
-    Vec2d(pos.x - me.x + size.width / 2, pos.y - me.y + size.height / 2)
   }
 
   /** @return object wrapped over border */
