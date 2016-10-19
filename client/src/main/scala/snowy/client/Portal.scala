@@ -56,13 +56,13 @@ class Portal(portalRect: Rect) {
 
 
     sleds = sleds.map { sled =>
-      sled.copy(pos = transformToScreen(sled.pos))
+      sled.updatePos(transformToScreen(sled.pos))
     }
     snowballs = snowballs.map { snowball =>
-      snowball.copy(pos = transformToScreen(snowball.pos))
+      snowball.updatePos(transformToScreen(snowball.pos))
     }
     trees = trees.map { tree =>
-      tree.copy(pos = transformToScreen(tree.pos))
+      tree.updatePos(transformToScreen(tree.pos))
     }
 
     def filterOut[A <: PlayfieldObject](size: Vec2d) = (playfieldObject: A) => {
