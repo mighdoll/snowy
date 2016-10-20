@@ -23,58 +23,48 @@ class Portal(portalRect: Rect) {
     val scaleY = screenSize.y / portalRect.size.y
     scale = math.max(scaleX, scaleY)
 
+    val treeSize = 200 * scale // Don't clip any partially off trees
+
     val portalToScreenOffset = {
-      val screenCenter = Vec2d(screenSize.x, screenSize.y) / 2
-      val portalCenter = portalRect.size / 2
-      val portalCenterScaled = portalCenter * scale
-      screenCenter - portalCenterScaled
+      val portalScaled = portalRect.size * scale
+      (screenSize - portalScaled) / 2
     }
 
-    def borderWrap(pos: Vec2d): Vec2d = {
-      var x = pos.x
-      var y = pos.y
-
-      val playfield = Vec2d(border.width, border.height)
-      if (x > portalRect.size.x + 200) {
-        x = x - playfield.x
-      } else if (x < -200) {
-        x = x + playfield.x
+    def wrap2d(pos: Double, size: Double, border: Double): Option[Double] = {
+      var p = pos
+      p match {
+        case i if i > size + treeSize => p = p - border
+        case i if i < -treeSize       => p = p + border
+        case _                        =>
       }
-      if (y > portalRect.size.x + 200) {
-        y = y - playfield.y
-      } else if (y < -200) {
-        y = y + playfield.y
+      // Doesn't do anything yet
+      p match {
+        case i if i > size + treeSize => None
+        case i if i < -treeSize       => None
+        case _                        => Some(p)
       }
-      Vec2d(x, y)
     }
 
-    def transformToScreen(playfieldObject: Vec2d): Vec2d = {
-      val translateToPortal = playfieldObject - portalRect.pos
-      val wrapped = borderWrap(translateToPortal)
-      (wrapped * scale) + portalToScreenOffset
+    /** @param playfieldObject a sled snowball or tree
+      * @return playfieldObject translated, wrapped, and filtered */
+    def transformToScreenFilter[A <: PlayfieldObject](playfieldObject: A): Option[playfieldObject.MyType] = {
+      val translateToPortal = playfieldObject.pos - portalRect.pos
+
+      val wrappedX = wrap2d(translateToPortal.x, portalRect.size.x, border.width)
+      val wrappedY = wrap2d(translateToPortal.y, portalRect.size.y, border.height)
+
+      if (wrappedX.isDefined && wrappedY.isDefined) {
+        val wrapped = Vec2d(wrappedX.get, wrappedY.get)
+        val last = wrapped * scale + portalToScreenOffset
+        Some(playfieldObject.updatePos(last))
+      } else {
+        None
+      }
     }
 
-
-    sleds = sleds.map { sled =>
-      sled.updatePos(transformToScreen(sled.pos))
-    }
-    snowballs = snowballs.map { snowball =>
-      snowball.updatePos(transformToScreen(snowball.pos))
-    }
-    trees = trees.map { tree =>
-      tree.updatePos(transformToScreen(tree.pos))
-    }
-
-    def filterOut[A <: PlayfieldObject](size: Vec2d) = (playfieldObject: A) => {
-      val treeSize = 200 // Don't clip any partially off trees
-
-      (playfieldObject.pos.x > -treeSize && playfieldObject.pos.y > -treeSize) &&
-        (playfieldObject.pos.x < size.x + treeSize && playfieldObject.pos.y < size.y + treeSize)
-    }
-    trees = trees.filter(filterOut(portalRect.size))
-    snowballs = snowballs.filter(filterOut(portalRect.size))
-    sleds = sleds.filter(filterOut(portalRect.size))
-
+    sleds = sleds.flatMap(transformToScreenFilter(_))
+    snowballs = snowballs.flatMap(transformToScreenFilter(_))
+    trees = trees.flatMap(transformToScreenFilter(_))
 
     this
   }
