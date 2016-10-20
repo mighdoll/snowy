@@ -1,7 +1,9 @@
 package snowy.server
 
 import java.io.File
+import java.util.logging.Level
 import kamon.Kamon
+import org.apache.logging.log4j.LogManager
 import socketserve.WebServer.socketApplication
 
 object ServerMain {
@@ -22,6 +24,7 @@ object ServerMain {
   }
 
   def main(args: Array[String]): Unit = {
+    System.setProperty("java.util.logging.manager","org.apache.logging.log4j.jul.LogManager")
     cmdLineParser.parse(args, CmdlineArgs()).foreach { config =>
       run(config)
     }

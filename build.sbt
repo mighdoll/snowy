@@ -31,6 +31,8 @@ lazy val V = new Object {
   val akka = "2.4.9"
   val scala = "2.11.8"
   val kamon = "0.6.3"
+  val log4j = "2.7"
+  val jackson = "2.8.4"
 }
 
 lazy val server = (project in file("server")).
@@ -42,9 +44,17 @@ lazy val server = (project in file("server")).
     name := "server",
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0",
+//      "org.apache.logging.log4j" % "log4j-api" % V.log4j,
+      "org.apache.logging.log4j" % "log4j-core" % V.log4j,
+      "org.apache.logging.log4j" % "log4j-slf4j-impl" % V.log4j,
+      "org.apache.logging.log4j" % "log4j-jul" % V.log4j,
+      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
+      "com.fasterxml.jackson.core" % "jackson-databind" % V.jackson,
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
       "com.typesafe.akka" %% "akka-actor" % V.akka,
       "com.typesafe.akka" %% "akka-stream" % V.akka,
       "com.typesafe.akka" %% "akka-http-experimental" % V.akka,
+      "com.typesafe.akka" %% "akka-slf4j" % V.akka,
       "io.kamon" %% "kamon-core" % V.kamon,
       "io.kamon" %% "kamon-system-metrics" % V.kamon,
       "io.kamon" %% "kamon-influxdb" % V.kamon
