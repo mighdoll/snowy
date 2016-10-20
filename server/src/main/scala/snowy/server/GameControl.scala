@@ -3,6 +3,7 @@ package snowy.server
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
+import kamon.util.Latency
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants
@@ -17,6 +18,7 @@ import snowy.server.GameSeeding.randomSpot
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
+import snowy.util.Perf.time
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -29,7 +31,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** Called to update game state on a regular timer */
-  private def gameTurn(): Unit = {
+  private def gameTurn(): Unit = time("gameTurn") {
     val deltaSeconds = nextTimeSlice()
     recoverHealth(deltaSeconds)
     recoverPushEnergy(deltaSeconds)

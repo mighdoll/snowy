@@ -30,6 +30,7 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 lazy val V = new Object {
   val akka = "2.4.9"
   val scala = "2.11.8"
+  val kamon = "0.6.3"
 }
 
 lazy val server = (project in file("server")).
@@ -39,12 +40,14 @@ lazy val server = (project in file("server")).
   settings(
     assemblyJarName in assembly := "full.jar",
     name := "server",
-    libraryDependencies ++=  Seq(
-      "io.get-coursier" %% "coursier" % "1.0.0-M14",
-      "io.get-coursier" %% "coursier-cache" % "1.0.0-M14",
+    libraryDependencies ++= Seq(
+      "com.github.scopt" %% "scopt" % "3.5.0",
       "com.typesafe.akka" %% "akka-actor" % V.akka,
       "com.typesafe.akka" %% "akka-stream" % V.akka,
-      "com.typesafe.akka" %% "akka-http-experimental" % V.akka
+      "com.typesafe.akka" %% "akka-http-experimental" % V.akka,
+      "io.kamon" %% "kamon-core" % V.kamon,
+      "io.kamon" %% "kamon-system-metrics" % V.kamon,
+      "io.kamon" %% "kamon-influxdb" % V.kamon
     ),
     (resourceGenerators in Compile) += Def.task {
       val f1 = (fastOptJS in Compile in client).value.data
@@ -69,11 +72,11 @@ lazy val client = (project in file("client")).
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.0",
       "org.singlespaced" %%% "scalajs-d3" % "0.3.3"
-      )
+    )
   ).
   dependsOn(shared.js)
 
-lazy val shared = (crossProject.crossType(CrossType.Pure) in file ("shared")).
+lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(commonSettings: _*).
   settings(
     libraryDependencies ++= Seq(
