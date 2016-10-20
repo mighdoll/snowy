@@ -31,17 +31,16 @@ class Portal(portalRect: Rect) {
     }
 
     def wrap2d(pos: Double, size: Double, border: Double): Option[Double] = {
-      var p = pos
-      p match {
-        case i if i > size + treeSize => p = p - border
-        case i if i < -treeSize       => p = p + border
-        case _                        =>
+      val wrap = pos match {
+        case i if i > size + treeSize => pos - border
+        case i if i < -treeSize       => pos + border
+        case _                        => pos
       }
       // Doesn't do anything yet
-      p match {
+      wrap match {
         case i if i > size + treeSize => None
         case i if i < -treeSize       => None
-        case _                        => Some(p)
+        case _                        => Some(wrap)
       }
     }
 
