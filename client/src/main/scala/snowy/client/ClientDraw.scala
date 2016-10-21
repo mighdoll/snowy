@@ -55,15 +55,19 @@ object ClientDraw {
         Vec2d(0, 0),
         Vec2d(border.width, border.height)
       )
-    )(Set(mySled), snowballs.items, trees.items)
-    minimap = minimap.convertToScreen(Vec2d(border.width/50, border.height/50), Vec2d(border.width, border.height))
+    )(Set(mySled), Set(), trees.items)
+    val scale = Math.max(border.width.toDouble / size.width, border.height.toDouble / size.height) * 2
+    minimap = minimap.convertToScreen(Vec2d(border.width / scale, border.height / scale), Vec2d(border.width, border.height))
     minimap.trees.foreach { tree =>
-      new DrawTree(tree.pos, 1)
+      val newPos = tree.pos + Vec2d(size.width, size.height) * .95 - Vec2d(border.width / scale, border.height / scale)
+      new DrawTree(newPos, 50 * minimap.scale)
     }
     minimap.sleds.foreach { sled =>
-      new DrawSled(sled.userName, sled.pos, 3, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+      val newPos = sled.pos + Vec2d(size.width, size.height) * .95 - Vec2d(border.width / scale, border.height / scale)
+      new DrawSled(sled.userName, newPos, 70 * minimap.scale, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
   }
+
   window.onresize = (_: UIEvent) => {
     size = Size(window.innerWidth, window.innerHeight)
     gameCanvas.width = size.width

@@ -30,7 +30,6 @@ class Portal(portalRect: Rect) {
       if (wrapped > -pad && wrapped < pad + max)
         Some(wrapped)
       else {
-        //println(s"wrapInPlayfield. filtering: $value   max:$max   pad:$pad   wrapSize:$wrapSize")
         None
       }
     }
