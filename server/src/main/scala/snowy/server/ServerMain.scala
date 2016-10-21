@@ -31,10 +31,8 @@ object ServerMain {
   }
 
   def run(cmdLine: CmdlineArgs): Unit = {
-    val config = ConfigUtil.configFromFilesAndResources(cmdLine.conf)
-    ConfigUtil.writeConfig(config)
+    cmdLine.conf.foreach(GlobalConfig.addConfigFiles(_))
 
-    KamonConfig.setConfig(config)
     Kamon.start()
     socketApplication(new GameControl(_))
   }
