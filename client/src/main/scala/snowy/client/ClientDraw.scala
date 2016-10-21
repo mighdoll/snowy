@@ -35,7 +35,7 @@ object ClientDraw {
       )
     )(sleds.items, snowballs.items, trees.items)
 
-    portal = portal.convertToScreen(Vec2d(size.width, size.height), border)
+    portal = portal.convertToScreen(Vec2d(size.width, size.height), Vec2d(border.width,border.height))
     new DrawGrid(mySled.pos * portal.scale, portal.scale)
 
     portal.snowballs.foreach { snowball =>
@@ -49,25 +49,6 @@ object ClientDraw {
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, 100 * portal.scale)
     }
-  }
-
-  /** @return object wrapped over border */
-  def fancyBorderWrap(pos: Vec2d, playField: Playfield): Vec2d = {
-    var x = pos.x
-    var y = pos.y
-
-    if (x > size.width + 200) {
-      x = x - playField.width
-    } else if (x < -200) {
-      x = x + playField.width
-    }
-    if (y > size.height + 200) {
-      y = y - playField.height
-    } else if (y < -200) {
-      y = y + playField.height
-    }
-
-    Vec2d(x, y)
   }
 
   window.onresize = (_: UIEvent) => {

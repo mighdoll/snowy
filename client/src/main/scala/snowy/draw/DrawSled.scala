@@ -30,7 +30,7 @@ class DrawSled(name: String, pos: Vec2d, size: Double, health: Double, cannonRot
   //Draw the barrel for snowballs
   ctx.translate(x + size / 55, y)
   ctx.rotate(cannonRotation)
-  ctx.lineWidth = 2.5
+  ctx.lineWidth = size / 20
   ctx.fillStyle = "rgb(153, 153, 153)"
   ctx.beginPath()
   ctx.fillRect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
