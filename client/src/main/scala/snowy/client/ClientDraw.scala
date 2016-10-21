@@ -35,7 +35,7 @@ object ClientDraw {
       )
     )(sleds.items, snowballs.items, trees.items)
 
-    portal = portal.convertToScreen(Vec2d(size.width, size.height), Vec2d(border.width,border.height))
+    portal = portal.convertToScreen(Vec2d(size.width, size.height), Vec2d(border.width, border.height))
     new DrawGrid(mySled.pos * portal.scale, portal.scale)
 
     portal.snowballs.foreach { snowball =>
@@ -49,8 +49,21 @@ object ClientDraw {
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, 100 * portal.scale)
     }
-  }
 
+    var minimap = new Portal(
+      Rect(
+        Vec2d(0, 0),
+        Vec2d(border.width, border.height)
+      )
+    )(Set(mySled), snowballs.items, trees.items)
+    minimap = minimap.convertToScreen(Vec2d(border.width/50, border.height/50), Vec2d(border.width, border.height))
+    minimap.trees.foreach { tree =>
+      new DrawTree(tree.pos, 1)
+    }
+    minimap.sleds.foreach { sled =>
+      new DrawSled(sled.userName, sled.pos, 3, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+    }
+  }
   window.onresize = (_: UIEvent) => {
     size = Size(window.innerWidth, window.innerHeight)
     gameCanvas.width = size.width
