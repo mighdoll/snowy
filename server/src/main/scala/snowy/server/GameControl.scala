@@ -15,6 +15,7 @@ import snowy.playfield.GameMotion.{moveSleds, moveSnowballs, wrapInPlayfield}
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
+import snowy.util.Perf
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
@@ -33,6 +34,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = time("gameTurn") {
     val deltaSeconds = nextTimeSlice()
+    Perf.record("turnJitter", (deltaSeconds * 1000000).toLong - tickDelta.toMicros)
     recoverHealth(deltaSeconds)
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)

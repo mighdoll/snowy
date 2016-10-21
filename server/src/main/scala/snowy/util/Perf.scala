@@ -14,4 +14,9 @@ object Perf {
     }
   }
 
+  /** record a single value in a histogram */
+  def record(name: String, value: Long): Unit = {
+    histogram(name).record(value)
+  }
+
 }
