@@ -68,7 +68,6 @@ object ClientDraw {
   def clearScreen(): Unit = {
     ctx.fillStyle = clearColor
     ctx.fillRect(0, 0, size.x, size.y)
-    ctx.fill()
   }
 
   case class Size(width: Int, height: Int)

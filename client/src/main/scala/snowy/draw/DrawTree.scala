@@ -17,22 +17,12 @@ class DrawTree(pos: Vec2d, size: Double) {
   ctx.fill()
 
   ctx.fillStyle = trunk
-  ctx.beginPath()
   ctx.fillRect(x - size * 1 / 16, y - size * 3 / 4, size * 1 / 8, size * 3 / 4)
-  ctx.fill()
-
   ctx.translate(x, y - size * 29 / 50)
   ctx.rotate(Math.PI * 13 / 18)
-
-  ctx.beginPath()
   ctx.fillRect(0, 0, size * 1 / 20, size * 43 / 200)
-  ctx.fill()
-
   ctx.rotate(Math.PI * 5 / 9)
-  ctx.beginPath()
   ctx.fillRect(0, size * 7 / 200, size * 1 / 20, size * 1 / 4)
   ctx.fillRect(size * -1 / 10, size * -13 / 200, size * 1 / 20, size * 1 / 4)
-  ctx.fill()
-
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 }
