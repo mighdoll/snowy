@@ -31,7 +31,7 @@ object GameConstants {
     val lifetime = 10000
 
     /** radius in pixels */
-    val size = 10
+    val size = 20
 
     /** acceleration due to recoil in pixels/sec/sec */
     val recoil = 30
@@ -93,7 +93,7 @@ object GameConstants {
     val treeMinHealth = .05
 
     /** health cost from being hit with a snowball */
-    val snowballCost = .2
+    val snowballCost = .5
 
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50
