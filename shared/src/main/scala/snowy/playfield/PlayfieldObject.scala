@@ -50,7 +50,8 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 rotation: Double,
                 turretRotation: Double,
                 health: Double = 1,
-                pushEnergy: Double = 1
+                pushEnergy: Double = 1,
+                lastShotTime: Long = 0
                ) extends PlayfieldObject {
   override def updatePos(newPos: Vec2d): Sled = {
     this.copy(pos = newPos)

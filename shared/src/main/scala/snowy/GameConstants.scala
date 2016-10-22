@@ -41,6 +41,9 @@ object GameConstants {
 
     /** speed of bullet in pixels/sec */
     val speed = 300
+
+    /** minimum time between shots, in milliseconds */
+    val minRechargeTime = 300
   }
 
   object Points {

@@ -18,7 +18,7 @@ trait GameState {
   val trees: Set[Tree] = randomTrees()
   val users = mutable.Map[ConnectionId, User]()
   val sledMap = mutable.Map[ConnectionId, SledId]()
-  var lastTime = System.currentTimeMillis()
+  var gameTime = System.currentTimeMillis()
   val commands = new PendingCommands
 
   /** Package the relevant state to communicate to the client */

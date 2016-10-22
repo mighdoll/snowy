@@ -136,19 +136,23 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   private def shootSnowball(id: ConnectionId): Unit = {
     modifySled(id) { sled =>
-      val direction = Vec2d.fromRotation(-sled.turretRotation)
-      val ball = Snowball(
-        ownerId = sled.id,
-        pos = wrapInPlayfield(sled.pos + direction * Bullet.launchDistance),
-        size = Bullet.size,
-        speed = sled.speed + (direction * Bullet.speed),
-        spawned = System.currentTimeMillis()
-      )
-      snowballs = snowballs.add(ball)
+      if (sled.lastShotTime + Bullet.minRechargeTime > gameTime) {
+        sled
+      } else {
+        val direction = Vec2d.fromRotation(-sled.turretRotation)
+        val ball = Snowball(
+          ownerId = sled.id,
+          pos = wrapInPlayfield(sled.pos + direction * Bullet.launchDistance),
+          size = Bullet.size,
+          speed = sled.speed + (direction * Bullet.speed),
+          spawned = gameTime
+        )
+        snowballs = snowballs.add(ball)
 
-      val recoilForce = direction * -Bullet.recoil
-      val speed = sled.speed + recoilForce
-      sled.copy(speed = speed)
+        val recoilForce = direction * -Bullet.recoil
+        val speed = sled.speed + recoilForce
+        sled.copy(speed = speed, lastShotTime = gameTime)
+      }
     }
   }
 
@@ -356,8 +360,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     */
   private def nextTimeSlice(): Double = {
     val currentTime = System.currentTimeMillis()
-    val deltaSeconds = (currentTime - lastTime) / 1000.0
-    lastTime = currentTime
+    val deltaSeconds = (currentTime - gameTime) / 1000.0
+    gameTime = currentTime
     deltaSeconds
   }
 }
