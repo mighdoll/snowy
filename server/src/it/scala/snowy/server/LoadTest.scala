@@ -20,9 +20,9 @@ object LoadTest {
 
     val testDuration = 1 hour
 
-    val port = 2345
+    val port = 9000
     val wsUrl = s"ws://localhost:${port}/game"
-    val numClients = 20
+    val numClients = 5
     (1 to numClients).foreach {_ =>
       new SimulatedClient(wsUrl)
     }
@@ -62,7 +62,13 @@ class SimulatedClient(url: String)(implicit executionContext: ExecutionContext) 
     val random = ThreadLocalRandom.current.nextDouble()
     if (alive) {
       random match {
-        case _ if random < .005 => send.offer(Shoot)
+        case _ if random < .005 => send.offer(Start(Left))
+        case _ if random < .010 => send.offer(Start(Right))
+        case _ if random < .030 => send.offer(Stop(Right)); send.offer(Stop(Right))
+        case _ if random < .040 => send.offer(Start(Push))
+        case _ if random < .060 => send.offer(Stop(Push))
+        case _ if random < .080 => send.offer(Shoot)
+        case _ if random < .090 => send.offer(TurretAngle(ThreadLocalRandom.current.nextDouble()*math.Pi*2))
         case _ =>
       }
     }
