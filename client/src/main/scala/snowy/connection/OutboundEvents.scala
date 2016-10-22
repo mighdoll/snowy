@@ -81,7 +81,7 @@ class OutboundEvents(socket: NetworkSocket) {
   }
 
   window.onmousemove = { e: MouseEvent =>
-    val angle = -Math.atan2(e.clientX - size.width / 2, e.clientY - size.height / 2)
+    val angle = -Math.atan2(e.clientX - size.x / 2, e.clientY - size.y / 2)
     socket.send(write(TurretAngle(angle)))
   }
 

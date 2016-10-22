@@ -9,16 +9,16 @@ class DrawGrid(sled: Vec2d, scale: Double) {
   ctx.strokeStyle = lineColors
   val lineGap = (10 * scale).toInt
   ctx.lineWidth = .1
-  for (i <- 0 to size.width / lineGap) {
+  for (i <- 0 to size.x.toInt / lineGap) {
     ctx.beginPath()
     ctx.moveTo(i * lineGap - sled.x % lineGap, 0)
-    ctx.lineTo(i * lineGap - sled.x % lineGap, size.height)
+    ctx.lineTo(i * lineGap - sled.x % lineGap, size.y)
     ctx.stroke()
   }
-  for (i <- 0 to size.height / lineGap) {
+  for (i <- 0 to size.y.toInt / lineGap) {
     ctx.beginPath()
     ctx.moveTo(0, i * lineGap - sled.y % lineGap)
-    ctx.lineTo(size.width, i * lineGap - sled.y % lineGap)
+    ctx.lineTo(size.x, i * lineGap - sled.y % lineGap)
     ctx.stroke()
   }
 }

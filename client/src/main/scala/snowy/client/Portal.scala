@@ -46,7 +46,7 @@ class Portal(portalRect: Rect) {
     val scaleY = screenSize.y / portalRect.size.y
     scale = math.max(scaleX, scaleY)
 
-    val treeBox = Vec2d(200, 200)
+    val treeBBox = Vec2d(100, 200)
 
     val portalToScreenOffset = {
       val portalScaled = portalRect.size * scale
@@ -60,7 +60,7 @@ class Portal(portalRect: Rect) {
       val portalPos = playfieldObject.pos - portalRect.pos
 
       for {
-        portalPosition <- wrapInPlayfield(portalPos, treeBox, border)
+        portalPosition <- wrapInPlayfield(portalPos, treeBBox, border)
       } yield {
         val newPos = portalPosition * scale + portalToScreenOffset
         playfieldObject.updatePos(newPos)

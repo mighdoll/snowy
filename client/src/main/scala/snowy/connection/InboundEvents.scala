@@ -1,12 +1,12 @@
 package snowy.connection
 
-import snowy.playfield.Store
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import GameState._
 import upickle.default._
+import vector.Vec2d
 
 class InboundEvents(socket: NetworkSocket, name: String) {
   socket.onOpen { _ =>
@@ -31,7 +31,7 @@ class InboundEvents(socket: NetworkSocket, name: String) {
     try {
       read[GameClientMessage](msg) match {
         case state: State                => receivedState(state)
-        case playfield: Playfield        => gPlayField = playfield
+        case playfield: Playfield        => gPlayField = Vec2d(playfield.width, playfield.height)
         case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
         case Died                        => console.log("ToDo: sled's dead, deal with it.")
         case Ping                        => socket.send(write(Pong))

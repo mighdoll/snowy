@@ -3,9 +3,10 @@ package snowy.connection
 import snowy.GameClientProtocol._
 import snowy.client.ClientDraw._
 import snowy.playfield._
+import vector.Vec2d
 
 object GameState {
-  var gPlayField = Playfield(0, 0) // A playfield dummy until the game receives a different one
+  var gPlayField = Vec2d(0, 0) // A playfield dummy until the game receives a different one
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees = Store[Tree]()

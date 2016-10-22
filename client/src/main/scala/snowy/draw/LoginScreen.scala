@@ -6,7 +6,7 @@ import org.scalajs.dom.window
 
 class LoginScreen() {
   var snowLoop: Option[Int] = None
-  val snowFlakes = (1 to size.width / 10).map { i =>
+  val snowFlakes = (1 to size.x.toInt / 10).map { i =>
     new SnowFlake(i * 10)
   }
 
@@ -20,7 +20,7 @@ class LoginScreen() {
         flake.draw()
       }
 
-      new DrawSled("", Vec2d(size.width / 2, size.height / 2), size.width / 3, 1, Math.PI * 3 / 2, Math.PI / 2, "rgb(120, 201, 44)")
+      new DrawSled("", Vec2d(size.x / 2, size.y / 2), size.x / 3, 1, Math.PI * 3 / 2, Math.PI / 2, "rgb(120, 201, 44)")
     }, 10))
   }
 
