@@ -38,7 +38,7 @@ object SledSnowball {
   /** return a damaged version of the sled after impacting with a snowball */
   private def snowballDamaged(sled: Sled, snowball: Snowball): Sled = {
     val health = math.max(sled.health - snowballCost, 0)
-    val stopped = sled.speed + snowball.speed * 30
+    val stopped = sled.speed + snowball.speed * 15
     sled.copy(health = health, speed = stopped)
   }
 }
