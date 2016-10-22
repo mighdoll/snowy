@@ -35,6 +35,12 @@ object GameConstants {
 
     /** acceleration due to recoil in pixels/sec/sec */
     val recoil = 30
+
+    /** bullet begins its flight this many pixels away from sled center */
+    val launchDistance = 35
+
+    /** speed of bullet in pixels/sec */
+    val speed = 300
   }
 
   object Points {

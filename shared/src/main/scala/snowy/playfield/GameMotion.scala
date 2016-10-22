@@ -18,7 +18,8 @@ object GameMotion {
   /** move snowballs to their new location for this time period */
   def moveSnowballs(snowballs:Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
     snowballs.replaceItems{snowball =>
-      snowball.copy(pos = wrapInPlayfield(snowball.pos + snowball.speed))
+      val deltaPos = snowball.speed * deltaSeconds
+      snowball.copy(pos = wrapInPlayfield(snowball.pos + deltaPos))
     }
   }
 

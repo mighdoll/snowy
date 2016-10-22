@@ -137,12 +137,11 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   private def shootSnowball(id: ConnectionId): Unit = {
     modifySled(id) { sled =>
       val direction = Vec2d.fromRotation(-sled.turretRotation)
-      // TODO use GameConstants for these magic numbers
       val ball = Snowball(
         ownerId = sled.id,
-        pos = wrapInPlayfield(sled.pos + direction * 35),
-        size = GameConstants.Bullet.size,
-        speed = (sled.speed / 50) + (direction * 10),
+        pos = wrapInPlayfield(sled.pos + direction * Bullet.launchDistance),
+        size = Bullet.size,
+        speed = sled.speed + (direction * Bullet.speed),
         spawned = System.currentTimeMillis()
       )
       snowballs = snowballs.add(ball)
