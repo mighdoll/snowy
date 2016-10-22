@@ -89,8 +89,9 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(commonSettings: _*).
   settings(
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "upickle" % "0.4.1"
-    ),
+      "com.lihaoyi" %%% "upickle" % "0.4.1",
+      "me.chrons" %%% "boopickle" % "1.2.4"
+  ),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
 
