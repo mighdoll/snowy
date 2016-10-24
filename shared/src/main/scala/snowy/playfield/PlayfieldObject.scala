@@ -34,6 +34,13 @@ case class Rect(pos: Vec2d, size: Vec2d)
 
 case class Circle(pos: Vec2d, radius: Double)
 
+trait MovingCircle {
+  type MyType <: MovingCircle
+  def pos: Vec2d
+  def speed: Vec2d
+  def radius: Double
+  def updateSpeed(newSpeed:Vec2d):MyType
+}
 
 object Sled {
   val dummy = Sled(PlayId(-1), "dummy", Vec2d.zero, 0, Vec2d.zero, 0, 0)
@@ -51,11 +58,14 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 turretRotation: Double,
                 health: Double = 1,
                 pushEnergy: Double = 1,
-                lastShotTime: Long = 0
-               ) extends PlayfieldObject {
+                lastShotTime: Long = 0,
+                sledKind: SledKind = BasicSled
+               ) extends PlayfieldObject with MovingCircle {
   override def updatePos(newPos: Vec2d): Sled = {
     this.copy(pos = newPos)
   }
+  override def radius = size / 2
+  override def updateSpeed(newSpeed:Vec2d):Sled = this.copy(speed = newSpeed)
   type MyType = Sled
 }
 
@@ -84,3 +94,10 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
 }
 
 case class User(name: String, score: Double = 0)
+
+object SledKinds {
+  val sledKinds = Seq(StationaryTestSled, BasicSled)
+}
+sealed trait SledKind
+case object StationaryTestSled extends SledKind
+case object BasicSled extends SledKind

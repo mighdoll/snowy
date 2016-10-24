@@ -4,6 +4,7 @@ import scala.collection.mutable
 import snowy.GameConstants.playfield
 import vector.Vec2d
 import snowy.Awards.Travel
+import snowy.GameConstants.sledConstants
 
 /** Moving objects in each game time slice */
 object GameMotion {
@@ -53,13 +54,20 @@ object GameMotion {
     )
   }
 
+  private def gravityMap(deltaSeconds:Double):Map[SledKind, Gravity] = {
+    SledKinds.sledKinds.map { kind =>
+      kind -> Gravity(deltaSeconds, sledConstants(kind).gravity)
+    }.toMap
+  }
+
   /** Update the direction and velocity of all sleds based on gravity and friction */
   private def updateSledSpeedVector(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
-    val gravity = Gravity(deltaSeconds)
+    val gravities = gravityMap(deltaSeconds)
     val skid = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
     sleds.replaceItems{ sled =>
       import sled.rotation
+      val gravity = gravities(sled.sledKind)
       val gravitySpeed = gravity(sled.speed, rotation)
       val skidSpeed = skid(gravitySpeed, rotation)
       val frictionSpeed = friction(skidSpeed, rotation)

@@ -3,10 +3,8 @@ package snowy.server
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
-import kamon.util.Latency
 import snowy.Awards._
 import snowy.GameClientProtocol._
-import snowy.GameConstants
 import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants.{Bullet, _}
 import snowy.GameServerProtocol._
@@ -16,10 +14,10 @@ import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf
+import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
-import snowy.util.Perf.time
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -30,6 +28,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     connections.values.foreach(_.refreshTiming())
     gameTurn()
   }
+
+//  (1 to 20).foreach { i =>
+//    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled)
+//  }
 
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = time("gameTurn") {
@@ -88,18 +90,20 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     }
   }
 
-  private def newRandomSled(userName: String): Sled = {
+  private def newRandomSled(userName: String, sledKind:SledKind = BasicSled): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
-      rotation = downhillRotation, turretRotation = downhillRotation)
+      rotation = downhillRotation, turretRotation = downhillRotation,
+      sledKind = sledKind)
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId, userName: String): Unit = {
+  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind = BasicSled)
+  : Unit = {
     println(s"user joined: $userName  userCount:${users.size}")
     val user = User(userName)
     users(id) = user
-    createSled(id, user)
+    createSled(id, user, sledKind)
   }
 
   private def rejoin(id: ConnectionId): Unit = {
@@ -112,8 +116,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     }
   }
 
-  private def createSled(connctionId: ConnectionId, user: User): Unit = {
-    val sled = newRandomSled(user.name)
+  private def createSled(connctionId: ConnectionId, user: User,
+                         sledKind: SledKind = BasicSled): Unit = {
+    val sled = newRandomSled(user.name, sledKind)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id
   }
@@ -287,7 +292,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions(): Seq[SledKill] = {
     import snowy.collision.GameCollide.snowballTrees
-    case class SledReplace(oldSled: Sled, newSled: Sled)
     val awards = mutable.ListBuffer[SledKill]()
 
     def updateGlobalSleds(replace: Traversable[SledReplace]): Unit = {
@@ -300,7 +304,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     // . update global snowballs to remove collisions after each iteration
     // . update local awards table from any sleds that were killed
     // . return the revised sleds after damage taken from snowballs
-    val ballSleds =
+    val ballSleds: Set[SledReplace] =
     sleds.items.flatMap { sled =>
       collideBalls(sled, snowballs).map { case (newSled, newBalls, newAwards) =>
         snowballs = newBalls
@@ -317,6 +321,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
         }
       }
     updateGlobalSleds(treeSleds)
+
+    val sledSleds = SledSled.collide(sleds.items)
+    updateGlobalSleds(sledSleds)
 
     snowballs = snowballs.removeMatchingItems(snowballTrees(_, trees))
 
@@ -365,3 +372,5 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     deltaSeconds
   }
 }
+
+case class SledReplace(oldSled: Sled, newSled: Sled)

@@ -1,8 +1,17 @@
 package snowy
 
+import snowy.playfield.{BasicSled, StationaryTestSled}
 import vector.Vec2d
 
 object GameConstants {
+
+  case class SledConstants(gravity: Double)
+
+  val sledConstants = Map(
+    BasicSled -> SledConstants(gravity = -250),
+    StationaryTestSled -> SledConstants(gravity = 0)
+  )
+
   val playfield = Vec2d(2800, 4800)
 
   /** max speed of sled in pixels per second */
@@ -106,5 +115,12 @@ object GameConstants {
 
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50
+
+    /** min health cost from colliding with another sled */
+    val minSledCost = .01
+
+    /** health cost from colliding into a sled at maximum speed */
+    val maxSledCost = .02
   }
+
 }

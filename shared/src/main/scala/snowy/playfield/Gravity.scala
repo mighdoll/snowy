@@ -4,8 +4,8 @@ import snowy.GameConstants.{gravity, maxSpeed}
 import vector.Vec2d
 
 object Gravity {
-  def apply(deltaSeconds: Double): Gravity =
-    new Gravity(gravity * deltaSeconds)
+  def apply(deltaSeconds: Double, acceleration:Double): Gravity =
+    new Gravity(acceleration * deltaSeconds)
 }
 
 /** adjust speed based on acceleration from the force of gravity */

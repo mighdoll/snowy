@@ -23,7 +23,19 @@ case class Vec2d(x: Double, y: Double) {
 
   def abs: Vec2d = Vec2d(math.abs(x), math.abs(y))
 
-  def unit: Vec2d = this / length
+  def leftPerpendicular: Vec2d = Vec2d(y, -x)
+
+  def rightPerpendicular: Vec2d = Vec2d(-y, x)
+
+  def unit: Vec2d = {
+    val l = length
+    if (l == 0) {
+      println(s"returning unitUp from zero length Vec2.unit")
+      Vec2d.unitUp
+    } else {
+      this / l
+    }
+  }
 
   def zero: Boolean = (x == 0 && y == 0)
 
@@ -45,7 +57,7 @@ case class Vec2d(x: Double, y: Double) {
   }
 
   /** Apply a partial function to transform this vector.
-    * 
+    *
     * @return the result of the partial function, or this vector if the function is not defined
     */
   def transform(pFn: PartialFunction[Vec2d, Vec2d]): Vec2d = {
