@@ -6,14 +6,18 @@ import vector.Vec2d
 object GameConstants {
 
   /**
+    * @param minRechargeTime minimum time between shots, in milliseconds
     * @param gravity  acceleration in pixels / second / second
     * @param maxSpeed max speed of sled in pixels per second
     */
-  case class SledConstants(gravity: Double = -250, maxSpeed: Int = 1000)
+  case class SledConstants(gravity: Double = -250,
+                           maxSpeed: Int = 1000,
+                           minRechargeTime: Int = 300
+                          )
 
   val sledConstants = Map[SledKind, SledConstants](
     BasicSled -> SledConstants(),
-    TankSled -> SledConstants(gravity = -50, maxSpeed = 200),
+    TankSled -> SledConstants(gravity = -50, maxSpeed = 200, minRechargeTime = 750),
     StationaryTestSled -> SledConstants(gravity = 0)
   )
 
@@ -52,9 +56,6 @@ object GameConstants {
 
     /** speed of bullet in pixels/sec */
     val speed = 300
-
-    /** minimum time between shots, in milliseconds */
-    val minRechargeTime = 300
   }
 
   object Points {

@@ -76,9 +76,14 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
 
   override def updateSpeed(newSpeed: Vec2d): Sled = this.copy(speed = newSpeed)
 
+  /** acceleration in pixels / second / second */
   def gravity: Double = sledConstants(kind).gravity
 
+  /** max speed of sled in pixels per second */
   def maxSpeed: Double = sledConstants(kind).maxSpeed
+
+  /** minimum time between shots, in milliseconds */
+  def minRechargeTime:Int = sledConstants(kind).minRechargeTime
 
   type MyType = Sled
 }

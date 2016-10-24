@@ -141,7 +141,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   private def shootSnowball(id: ConnectionId): Unit = {
     modifySled(id) { sled =>
-      if (sled.lastShotTime + Bullet.minRechargeTime > gameTime) {
+      if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
         sled
       } else {
         val direction = Vec2d.fromRotation(-sled.turretRotation)
