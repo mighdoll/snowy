@@ -94,7 +94,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     // TODO what if sled is initialized atop a tree?
     Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation,
-      sledKind = sledKind)
+      kind = sledKind)
   }
 
   /** Called when a user sends her name and starts in the game */
@@ -179,17 +179,22 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   private def applyCommands(deltaSeconds: Double): Unit = {
-    val slow = new InlineForce(-slowButtonFriction * deltaSeconds)
-    val pushForceNow = PushEnergy.force * deltaSeconds
-    val pushEffort = deltaSeconds / PushEnergy.maxTime
-    val push = new InlineForce(pushForceNow)
+
     commands.foreachCommand { (id, command) =>
       modifySled(id) { sled =>
         command match {
           case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
-          case Slow  => sled.copy(speed = slow(sled.speed))
-          case Push  => pushSled(sled, pushForceNow, push, pushEffort)
+          case Slow  =>
+            val maxSpeed = sledConstants(sled.kind).maxSpeed
+            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, maxSpeed)
+            sled.copy(speed = slow(sled.speed))
+          case Push  =>
+            val pushForceNow = PushEnergy.force * deltaSeconds
+            val pushEffort = deltaSeconds / PushEnergy.maxTime
+            val maxSpeed = sledConstants(sled.kind).maxSpeed
+            val push = new InlineForce(pushForceNow, maxSpeed)
+            pushSled(sled, pushForceNow, push, pushEffort)
         }
       }
     }

@@ -1,27 +1,29 @@
 package snowy
 
-import snowy.playfield.{BasicSled, StationaryTestSled}
+import snowy.playfield.{BasicSled, SledKind, StationaryTestSled, TankSled}
 import vector.Vec2d
 
 object GameConstants {
 
-  case class SledConstants(gravity: Double)
+  /**
+    * @param gravity  acceleration in pixels / second / second
+    * @param maxSpeed max speed of sled in pixels per second
+    */
+  case class SledConstants(gravity: Double = -250, maxSpeed: Int = 1000)
 
-  val sledConstants = Map(
-    BasicSled -> SledConstants(gravity = -250),
+  val sledConstants = Map[SledKind, SledConstants](
+    BasicSled -> SledConstants(),
+    TankSled -> SledConstants(gravity = -50, maxSpeed = 200),
     StationaryTestSled -> SledConstants(gravity = 0)
   )
 
-  val playfield = Vec2d(2800, 4800)
+  /** max speed of any sled in pixels per second */
+  val absoluteMaxSpeed = 1000
 
-  /** max speed of sled in pixels per second */
-  val maxSpeed = 1000
+  val playfield = Vec2d(2800, 4800)
 
   /** max seconds to complete a skid at full speed */
   val maxSkidTime = .8
-
-  /** pixels / second / second */
-  val gravity = -250.0
 
   /** stop pending commands after this many milliseconds */
   val commandDuration = 2000

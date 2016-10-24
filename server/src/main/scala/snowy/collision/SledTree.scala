@@ -1,11 +1,11 @@
 package snowy.collision
 
 import snowy.GameConstants.Collision._
-import snowy.GameConstants.maxSpeed
+import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.GameCollide._
+import snowy.playfield.GameMotion.wrapInPlayfield
 import snowy.playfield.{Circle, Sled, Tree}
 import vector.Vec2d
-import snowy.playfield.GameMotion.wrapInPlayfield
 
 object SledTree {
   /** Intersect the sled with all potentially overlapping trees on the playfield.
@@ -29,7 +29,7 @@ object SledTree {
       if (speed <= safeSpeed) {
         sled.health
       } else {
-        val damage = maxTreeCost * (speed / maxSpeed)
+        val damage = maxTreeCost * (speed / absoluteMaxSpeed)
         math.max(sled.health - damage, treeMinHealth)
       }
     }

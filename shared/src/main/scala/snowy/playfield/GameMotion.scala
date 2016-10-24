@@ -67,9 +67,9 @@ object GameMotion {
     val friction = Friction(deltaSeconds)
     sleds.replaceItems{ sled =>
       import sled.rotation
-      val gravity = gravities(sled.sledKind)
-      val gravitySpeed = gravity(sled.speed, rotation)
-      val skidSpeed = skid(gravitySpeed, rotation)
+      val gravity = gravities(sled.kind)
+      val gravitySpeed = gravity(sled.speed, rotation, sled.maxSpeed)
+      val skidSpeed = skid(gravitySpeed, rotation, sled.maxSpeed)
       val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)

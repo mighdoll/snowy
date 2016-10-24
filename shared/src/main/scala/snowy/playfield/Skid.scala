@@ -18,7 +18,7 @@ class Skid(skidTime: Double) {
     * Quickly moving sleds continue in the same direction (as if they had momentum),
     * slower sleds change direction more swiftly.
     */
-  def apply(current:Vec2d, rotation:Double): Vec2d =
+  def apply(current: Vec2d, rotation: Double, maxSpeed: Double): Vec2d = {
     current.transform { case _ if !current.zero =>
       val speed = current.length
       val currentDirection = current.angle(Vec2d.unitUp)
@@ -43,6 +43,7 @@ class Skid(skidTime: Double) {
       }
 
       newVector
+    }
   }
 }
 

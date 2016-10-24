@@ -2,7 +2,6 @@ package snowy.playfield
 
 import scala.math._
 import snowy.GameConstants.Friction._
-import snowy.GameConstants.maxSpeed
 import vector.Vec2d
 
 object Friction {
@@ -32,7 +31,7 @@ class Friction(frictionMin: Double, frictionMax: Double) {
 }
 
 /** a force applied directly in the current direction of travel */
-class InlineForce(force: Double) {
+class InlineForce(force: Double, maxSpeed:Double) {
   def apply(current: Vec2d): Vec2d = {
     current.transform { case _ if !current.zero =>
       val speed = min(max(current.length + force, 0), maxSpeed)

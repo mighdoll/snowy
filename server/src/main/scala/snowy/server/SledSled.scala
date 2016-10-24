@@ -2,7 +2,7 @@ package snowy.server
 
 import scala.collection.mutable
 import snowy.GameConstants.Collision.{maxSledCost, minSledCost}
-import snowy.GameConstants.maxSpeed
+import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{Collided, collideCircles}
 import snowy.playfield.Sled
 
@@ -57,7 +57,7 @@ object SledSled {
     collideCircles(a, b).map { collided =>
       val injury = {
         val collisionSpeed = (a.speed - b.speed).length
-        val damageFactor = math.min(1.0, collisionSpeed / maxSpeed)
+        val damageFactor = math.min(1.0, collisionSpeed / absoluteMaxSpeed)
         minSledCost + (maxSledCost - minSledCost) * damageFactor
       }
       InjuredSled(collided, injury)

@@ -1,11 +1,13 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
+import snowy.GameConstants.{SledConstants, sledConstants}
 import vector.Vec2d
 
 /** A collidable object on the playfield */
 trait PlayfieldObject {
   type MyType <: PlayfieldObject
+
   def id: PlayId[MyType]
 
   def size: Double
@@ -28,6 +30,7 @@ object PlayId {
   type BallId = PlayId[Snowball]
   type TreeId = PlayId[Tree]
 }
+
 import PlayId._
 
 case class Rect(pos: Vec2d, size: Vec2d)
@@ -36,10 +39,14 @@ case class Circle(pos: Vec2d, radius: Double)
 
 trait MovingCircle {
   type MyType <: MovingCircle
+
   def pos: Vec2d
+
   def speed: Vec2d
+
   def radius: Double
-  def updateSpeed(newSpeed:Vec2d):MyType
+
+  def updateSpeed(newSpeed: Vec2d): MyType
 }
 
 object Sled {
@@ -59,13 +66,20 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 health: Double = 1,
                 pushEnergy: Double = 1,
                 lastShotTime: Long = 0,
-                sledKind: SledKind = BasicSled
+                kind: SledKind = BasicSled
                ) extends PlayfieldObject with MovingCircle {
   override def updatePos(newPos: Vec2d): Sled = {
     this.copy(pos = newPos)
   }
+
   override def radius = size / 2
-  override def updateSpeed(newSpeed:Vec2d):Sled = this.copy(speed = newSpeed)
+
+  override def updateSpeed(newSpeed: Vec2d): Sled = this.copy(speed = newSpeed)
+
+  def gravity: Double = sledConstants(kind).gravity
+
+  def maxSpeed: Double = sledConstants(kind).maxSpeed
+
   type MyType = Sled
 }
 
@@ -88,6 +102,7 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
                     spawned: Long
                    ) extends PlayfieldObject {
   type MyType = Snowball
+
   override def updatePos(newPos: Vec2d): Snowball = {
     this.copy(pos = newPos)
   }
@@ -96,8 +111,13 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
 case class User(name: String, score: Double = 0)
 
 object SledKinds {
-  val sledKinds = Seq(StationaryTestSled, BasicSled)
+  val sledKinds = Seq(StationaryTestSled, BasicSled, TankSled)
 }
+
 sealed trait SledKind
+
 case object StationaryTestSled extends SledKind
+
 case object BasicSled extends SledKind
+
+case object TankSled extends SledKind
