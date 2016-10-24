@@ -2,6 +2,7 @@ package snowy.client
 
 import org.scalajs.dom
 import org.scalajs.dom._
+import snowy.GameClientProtocol.Scoreboard
 import snowy.draw.GameColors.Sled._
 import snowy.draw.GameColors.clearColor
 import snowy.draw._
@@ -15,7 +16,7 @@ object ClientDraw {
   gameCanvas.height = size.y.toInt
   val ctx = gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
-  def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Store[Tree], border: Vec2d): Unit = {
+  def drawState(snowballs: Store[Snowball], sleds: Store[Sled], mySled: Sled, trees: Store[Tree], border: Vec2d, scoreboard: Scoreboard): Unit = {
     clearScreen()
 
     var portal = new Portal(
@@ -41,28 +42,42 @@ object ClientDraw {
       new DrawTree(tree.pos, 100 * portal.scale)
     }
 
-    var minimap = new Portal(
+    val rawminimap = new Portal(
       Rect(
         Vec2d(0, 0),
         border
       )
     )(Set(mySled), Set(), trees.items)
-    val scale = Math.max(border.x / size.x, border.y / size.y) * 2
-    minimap = minimap.convertToScreen(border / scale, border)
-    val scaled = border / scale
-    val offset = size * .95 - scaled
+    val miniscale = Math.max(border.x / size.x, border.y / size.y) * 2
+    val minimap = rawminimap.convertToScreen(border / miniscale, border)
+    val miniscaled = border / miniscale
+    val minipos = size * .99 - miniscaled
     ctx.beginPath()
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
-    ctx.fillRect(offset.x, offset.y, scaled.x, scaled.y)
-    ctx.fill()
+    ctx.fillRect(minipos.x, minipos.y, miniscaled.x, miniscaled.y)
     minimap.trees.foreach { tree =>
-      val newPos = tree.pos + offset
+      val newPos = tree.pos + minipos
       new DrawTree(newPos, 50 * minimap.scale)
     }
     minimap.sleds.foreach { sled =>
-      val newPos = sled.pos + offset
+      val newPos = sled.pos + minipos
       new DrawSled(sled.userName, newPos, 70 * minimap.scale, sled.health, sled.turretRotation, sled.rotation, bodyRed)
     }
+
+    val scorescale = Math.max(210 / size.x, 255 / size.y) * 2
+    val scorescaled = Vec2d(210, 225) / scorescale
+    val scorepos = Vec2d(size.x * .99 - scorescaled.x, size.y * .01)
+    ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
+    ctx.fillRect(scorepos.x, scorepos.y, scorescaled.x, scorescaled.y)
+
+    ctx.font = "10px Arial"
+    ctx.fillStyle = "rgb(0, 0, 0)"
+    for ((score, index) <- scoreboard.scores.sortWith(_.score>_.score).zipWithIndex) {
+      ctx.fillText(score.userName, scorepos.x + 30, scorepos.y + 50 + 10 * index)
+      ctx.fillText(score.score.toInt.toString, scorepos.x + scorescaled.x - 50, scorepos.y + 50 + 10 * index)
+    }
+    ctx.fillText(mySled.userName, scorepos.x + 30, scorepos.y + scorescaled.y - 10)
+    ctx.fillText(scoreboard.myScore.toInt.toString, scorepos.x + scorescaled.x - 50, scorepos.y + scorescaled.y - 10)
   }
 
   def clearScreen(): Unit = {

@@ -46,7 +46,7 @@ class InboundEvents(socket: NetworkSocket, name: String) {
         case Died                        => switch(false); loginScreen.setup()
         case Ping                        => socket.send(write(Pong))
         case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
-        case scoreboard: Scoreboard      => // console.log(s"scoreboard: $scoreboard")
+        case newScoreboard: Scoreboard      => scoreboard = newScoreboard
       }
     } catch {
       case e: Exception =>

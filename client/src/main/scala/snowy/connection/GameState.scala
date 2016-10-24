@@ -7,6 +7,7 @@ import vector.Vec2d
 
 object GameState {
   var gPlayField = Vec2d(0, 0) // A playfield dummy until the game receives a different one
+  var scoreboard = Scoreboard(0, Seq())
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees = Store[Tree]()
@@ -21,6 +22,6 @@ object GameState {
     serverSleds = Store(state.sleds)
     serverMySled = state.mySled
 
-    drawState(serverSnowballs, serverSleds, serverMySled, serverTrees, gPlayField)
+    drawState(serverSnowballs, serverSleds, serverMySled, serverTrees, gPlayField, scoreboard)
   }
 }
