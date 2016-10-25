@@ -19,7 +19,7 @@ sealed trait SledKind {
 }
 
 case object StationaryTestSled extends SledKind {
-  override val maxSpeed = 0
+  override val gravity:Double = 0
 }
 
 case object BasicSled extends SledKind

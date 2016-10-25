@@ -49,6 +49,10 @@ trait GameState {
     }
   }
 
+  implicit class ConnectionIdOps(id:ConnectionId) {
+    def sled:Option[Sled] = sledMap.get(id).flatMap(_.sled)
+  }
+
   implicit class SledIndices(sled: Sled) {
     def connectionId: Option[ConnectionId] = {
       sledMap.collectFirst {

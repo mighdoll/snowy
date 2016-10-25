@@ -18,7 +18,7 @@ import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
-import snowy.{BasicSled, SledKind}
+import snowy.{BasicSled, SledKind, StationaryTestSled}
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -30,9 +30,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     gameTurn()
   }
 
-  //  (1 to 20).foreach { i =>
-  //    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled)
-  //  }
+  (1 to 20).foreach { i =>
+    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled, robot = true)
+  }
 
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = time("gameTurn") {
@@ -50,10 +50,11 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     val died = collectDead()
     updateScore(moveAwards ++ collisionAwards ++ died)
     reapDead(died)
-    currentState() foreach {
-      case (id, state) => api.send(write(state), id)
+    currentState().collect {
+      case (id, state) if state.mySled.id.user.exists(!_.robot) =>
+        api.send(write(state), id)
     }
-    sendScore()
+    sendScores()
   }
 
   /** a new player has connected */
@@ -86,7 +87,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       case Start(cmd)           => commands.startCommand(id, cmd)
       case Stop(cmd)            => commands.stopCommand(id, cmd)
       case Pong                 => connections(id).pongReceived()
-      case ReJoin(sledKind)               => rejoin(id, sledKind)
+      case ReJoin(sledKind)     => rejoin(id, sledKind)
       case TestDie              => reapSled(sledMap(id))
     }
   }
@@ -99,15 +100,16 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind)
+  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind,
+                       robot: Boolean = false)
   : Unit = {
     println(s"user joined: $userName  userCount:${users.size}")
-    val user = User(userName)
+    val user = User(userName, robot = robot)
     users(id) = user
     createSled(id, user, sledKind)
   }
 
-  private def rejoin(id: ConnectionId, sledKind:SledKind): Unit = {
+  private def rejoin(id: ConnectionId, sledKind: SledKind): Unit = {
     users.get(id) match {
       case Some(user) =>
         println(s"user rejoined: ${user.name}")
@@ -255,8 +257,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   private def reapSled(sledId: SledId): Unit = {
-    val connectionId = sledId.connectionId
-    connectionId.foreach(api.send(write(Died), _))
+    if (sledId.user.exists(!_.robot)) {
+      val connectionId = sledId.connectionId
+      connectionId.foreach(api.send(write(Died), _))
+    }
     sledId.sled.foreach(_.remove())
     println(s"sled killed: sledCount:${sledMap.size}")
   }
@@ -356,10 +360,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** Send the current score to the clients */
-  private def sendScore(): Unit = {
+  private def sendScores(): Unit = {
     val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
-    users.foreach {
-      case (id, user) =>
+    users.collect {
+      case (id, user) if !user.robot =>
         val scoreboard = Scoreboard(user.score, scores)
         api.send(write[GameClientMessage](scoreboard), id)
     }
