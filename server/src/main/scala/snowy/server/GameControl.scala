@@ -150,7 +150,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
           pos = wrapInPlayfield(sled.pos + direction * Bullet.launchDistance),
           size = Bullet.size,
           speed = sled.speed + (direction * Bullet.speed),
-          spawned = gameTime
+          spawned = gameTime,
+          power = sled.bulletPower
         )
         snowballs = snowballs.add(ball)
 

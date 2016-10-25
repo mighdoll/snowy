@@ -6,18 +6,25 @@ import vector.Vec2d
 object GameConstants {
 
   /**
-    * @param minRechargeTime minimum time between shots, in milliseconds
     * @param gravity  acceleration in pixels / second / second
     * @param maxSpeed max speed of sled in pixels per second
+    * @param bulletPower health cost from being hit with a snowball
+    * @param minRechargeTime minimum time between shots, in milliseconds
     */
   case class SledConstants(gravity: Double = -250,
                            maxSpeed: Int = 1000,
-                           minRechargeTime: Int = 300
+                           minRechargeTime: Int = 300,
+                           bulletPower: Double = .4
                           )
 
   val sledConstants = Map[SledKind, SledConstants](
     BasicSled -> SledConstants(),
-    TankSled -> SledConstants(gravity = -50, maxSpeed = 200, minRechargeTime = 750),
+    TankSled -> SledConstants(
+      gravity = -50,
+      maxSpeed = 200,
+      minRechargeTime = 750,
+      bulletPower = .8
+    ),
     StationaryTestSled -> SledConstants(gravity = 0)
   )
 
@@ -112,9 +119,6 @@ object GameConstants {
 
     /** minimum health after a tree collision */
     val treeMinHealth = .05
-
-    /** health cost from being hit with a snowball */
-    val snowballCost = .5
 
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50

@@ -83,7 +83,10 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   def maxSpeed: Double = sledConstants(kind).maxSpeed
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime:Int = sledConstants(kind).minRechargeTime
+  def minRechargeTime: Int = sledConstants(kind).minRechargeTime
+
+  /** health cost from being hit with a snowball */
+  def bulletPower: Double = sledConstants(kind).bulletPower
 
   type MyType = Sled
 }
@@ -104,7 +107,8 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
                     pos: Vec2d,
                     size: Double,
                     speed: Vec2d,
-                    spawned: Long
+                    spawned: Long,
+                    power: Double
                    ) extends PlayfieldObject {
   type MyType = Snowball
 
