@@ -29,9 +29,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     gameTurn()
   }
 
-//  (1 to 20).foreach { i =>
-//    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled)
-//  }
+  //  (1 to 20).foreach { i =>
+  //    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled)
+  //  }
 
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = time("gameTurn") {
@@ -79,18 +79,18 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   /** received a client message */
   override def message(id: ConnectionId, msg: String): Unit = {
     read[GameServerMessage](msg) match {
-      case Join(name)         => userJoin(id, name)
-      case TurretAngle(angle) => rotateTurret(id, angle)
-      case Shoot              => shootSnowball(id)
-      case Start(cmd)         => commands.startCommand(id, cmd)
-      case Stop(cmd)          => commands.stopCommand(id, cmd)
-      case Pong               => connections(id).pongReceived()
-      case ReJoin             => rejoin(id)
-      case TestDie            => reapSled(sledMap(id))
+      case Join(name, sledKind) => userJoin(id, name, sledKind)
+      case TurretAngle(angle)   => rotateTurret(id, angle)
+      case Shoot                => shootSnowball(id)
+      case Start(cmd)           => commands.startCommand(id, cmd)
+      case Stop(cmd)            => commands.stopCommand(id, cmd)
+      case Pong                 => connections(id).pongReceived()
+      case ReJoin(sledKind)               => rejoin(id, sledKind)
+      case TestDie              => reapSled(sledMap(id))
     }
   }
 
-  private def newRandomSled(userName: String, sledKind:SledKind = BasicSled): Sled = {
+  private def newRandomSled(userName: String, sledKind: SledKind = BasicSled): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation,
@@ -98,7 +98,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind = BasicSled)
+  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind)
   : Unit = {
     println(s"user joined: $userName  userCount:${users.size}")
     val user = User(userName)
@@ -106,18 +106,18 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     createSled(id, user, sledKind)
   }
 
-  private def rejoin(id: ConnectionId): Unit = {
+  private def rejoin(id: ConnectionId, sledKind:SledKind): Unit = {
     users.get(id) match {
       case Some(user) =>
         println(s"user rejoined: ${user.name}")
-        createSled(id, user)
+        createSled(id, user, sledKind)
       case None       =>
         println("user not found to rejoin: $id")
     }
   }
 
   private def createSled(connctionId: ConnectionId, user: User,
-                         sledKind: SledKind = BasicSled): Unit = {
+                         sledKind: SledKind): Unit = {
     val sled = newRandomSled(user.name, sledKind)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id

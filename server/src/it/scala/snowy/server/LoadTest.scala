@@ -48,7 +48,7 @@ class SimulatedClient(url: String)(implicit executionContext: ExecutionContext) 
         val send = optSend.get
         sendRandomMessage(send)
         message match {
-          case Died => send.offer(ReJoin)
+          case Died => send.offer(ReJoin())
           case s:State => alive = true
           case Ping => send.offer(Pong)
           case _ =>

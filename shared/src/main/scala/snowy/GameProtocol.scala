@@ -1,6 +1,6 @@
 package snowy
 
-import snowy.playfield.{Sled, Snowball, Tree}
+import snowy.playfield._
 
 /** messages sent to the server */
 object GameServerProtocol {
@@ -9,9 +9,9 @@ object GameServerProtocol {
 
   sealed trait StartStopCommand
 
-  case class Join(userName: String) extends GameServerMessage
+  case class Join(userName: String, sledKind: SledKind = BasicSled) extends GameServerMessage
 
-  case object ReJoin extends GameServerMessage
+  case class ReJoin(sledKind: SledKind = BasicSled) extends GameServerMessage
 
   case class TurretAngle(angle: Double) extends GameServerMessage
 
@@ -54,6 +54,6 @@ object GameClientProtocol {
 
   case object Ping extends GameClientMessage
 
-  case class GameTime(millis:Long, oneWayDelay:Int) extends GameClientMessage
+  case class GameTime(millis: Long, oneWayDelay: Int) extends GameClientMessage
 
 }
