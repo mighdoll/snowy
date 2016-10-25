@@ -151,8 +151,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
         val ball = Snowball(
           ownerId = sled.id,
           pos = wrapInPlayfield(sled.pos + direction * Bullet.launchDistance),
-          size = Bullet.size,
-          speed = sled.speed + (direction * Bullet.speed),
+          size = sled.bulletSize,
+          speed = sled.speed + (direction * sled.bulletSpeed),
           spawned = gameTime,
           power = sled.bulletPower
         )

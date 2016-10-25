@@ -16,6 +16,12 @@ sealed trait SledKind {
 
   /** health cost from being hit with a snowball */
   def bulletPower: Double = .4
+
+  /** speed of bullet in pixels/sec */
+  def bulletSpeed = 300
+
+  /** radius in pixels */
+  def bulletSize = 12
 }
 
 case object StationaryTestSled extends SledKind {
@@ -29,4 +35,6 @@ case object TankSled extends SledKind {
   override val maxSpeed = 200
   override val minRechargeTime = 750
   override val bulletPower = .8
+  override val bulletSpeed = 500
+  override val bulletSize = 20
 }

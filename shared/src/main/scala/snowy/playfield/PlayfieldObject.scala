@@ -88,6 +88,12 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   /** health cost from being hit with a snowball */
   def bulletPower: Double = kind.bulletPower
 
+  /** speed of bullet in pixels/sec */
+  def bulletSpeed: Int = kind.bulletSpeed
+
+  /** radius in pixels */
+  def bulletSize: Int = kind.bulletSize
+
   type MyType = Sled
 }
 
@@ -117,5 +123,5 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
   }
 }
 
-case class User(name: String, score: Double = 0, robot:Boolean = false)
+case class User(name: String, score: Double = 0, robot: Boolean = false)
 
