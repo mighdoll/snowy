@@ -18,6 +18,7 @@ import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
+import snowy.{BasicSled, SledKind}
 
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
@@ -187,14 +188,12 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
           case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
           case Slow  =>
-            val maxSpeed = sledConstants(sled.kind).maxSpeed
-            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, maxSpeed)
+            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
           case Push  =>
             val pushForceNow = PushEnergy.force * deltaSeconds
             val pushEffort = deltaSeconds / PushEnergy.maxTime
-            val maxSpeed = sledConstants(sled.kind).maxSpeed
-            val push = new InlineForce(pushForceNow, maxSpeed)
+            val push = new InlineForce(pushForceNow, sled.maxSpeed)
             pushSled(sled, pushForceNow, push, pushEffort)
         }
       }

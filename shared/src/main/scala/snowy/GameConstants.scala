@@ -1,33 +1,8 @@
 package snowy
 
-import snowy.playfield.{BasicSled, SledKind, StationaryTestSled, TankSled}
 import vector.Vec2d
 
 object GameConstants {
-
-  /**
-    * @param gravity  acceleration in pixels / second / second
-    * @param maxSpeed max speed of sled in pixels per second
-    * @param bulletPower health cost from being hit with a snowball
-    * @param minRechargeTime minimum time between shots, in milliseconds
-    */
-  case class SledConstants(gravity: Double = -250,
-                           maxSpeed: Int = 1000,
-                           minRechargeTime: Int = 300,
-                           bulletPower: Double = .4
-                          )
-
-  val sledConstants = Map[SledKind, SledConstants](
-    BasicSled -> SledConstants(),
-    TankSled -> SledConstants(
-      gravity = -50,
-      maxSpeed = 200,
-      minRechargeTime = 750,
-      bulletPower = .8
-    ),
-    StationaryTestSled -> SledConstants(gravity = 0)
-  )
-
   /** max speed of any sled in pixels per second */
   val absoluteMaxSpeed = 1000
 

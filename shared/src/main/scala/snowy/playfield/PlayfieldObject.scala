@@ -1,7 +1,7 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
-import snowy.GameConstants.{SledConstants, sledConstants}
+import snowy.{BasicSled, SledKind}
 import vector.Vec2d
 
 /** A collidable object on the playfield */
@@ -77,16 +77,16 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   override def updateSpeed(newSpeed: Vec2d): Sled = this.copy(speed = newSpeed)
 
   /** acceleration in pixels / second / second */
-  def gravity: Double = sledConstants(kind).gravity
+  def gravity: Double = kind.gravity
 
   /** max speed of sled in pixels per second */
-  def maxSpeed: Double = sledConstants(kind).maxSpeed
+  def maxSpeed: Double = kind.maxSpeed
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime: Int = sledConstants(kind).minRechargeTime
+  def minRechargeTime: Int = kind.minRechargeTime
 
   /** health cost from being hit with a snowball */
-  def bulletPower: Double = sledConstants(kind).bulletPower
+  def bulletPower: Double = kind.bulletPower
 
   type MyType = Sled
 }
@@ -119,14 +119,3 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
 
 case class User(name: String, score: Double = 0)
 
-object SledKinds {
-  val sledKinds = Seq(StationaryTestSled, BasicSled, TankSled)
-}
-
-sealed trait SledKind
-
-case object StationaryTestSled extends SledKind
-
-case object BasicSled extends SledKind
-
-case object TankSled extends SledKind
