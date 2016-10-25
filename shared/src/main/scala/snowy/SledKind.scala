@@ -22,6 +22,9 @@ sealed trait SledKind {
 
   /** radius in pixels */
   def bulletSize = 12
+
+  /** acceleration due to recoil in pixels/sec/sec */
+  def bulletRecoil = 30
 }
 
 case object StationaryTestSled extends SledKind {
@@ -31,10 +34,11 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity:Double = -50
+  override val gravity:Double = -100
   override val maxSpeed = 200
   override val minRechargeTime = 750
   override val bulletPower = .8
   override val bulletSpeed = 500
   override val bulletSize = 20
+  override val bulletRecoil = 120
 }

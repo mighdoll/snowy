@@ -158,7 +158,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
         )
         snowballs = snowballs.add(ball)
 
-        val recoilForce = direction * -Bullet.recoil
+        val recoilForce = direction * -sled.bulletRecoil
         val speed = sled.speed + recoilForce
         sled.copy(speed = speed, lastShotTime = gameTime)
       }

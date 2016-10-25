@@ -94,6 +94,9 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   /** radius in pixels */
   def bulletSize: Int = kind.bulletSize
 
+  /** acceleration due to recoil in pixels/sec/sec */
+  def bulletRecoil:Int = kind.bulletRecoil
+
   type MyType = Sled
 }
 

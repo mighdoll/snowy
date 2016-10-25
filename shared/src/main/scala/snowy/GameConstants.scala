@@ -27,9 +27,6 @@ object GameConstants {
     /** snowballs disappear after this many milliseconds */
     val lifetime = 10000
 
-    /** acceleration due to recoil in pixels/sec/sec */
-    val recoil = 30
-
     /** bullet begins its flight this many pixels away from sled center */
     val launchDistance = 35
   }
