@@ -17,7 +17,7 @@ object GameConstants {
   /** point up on the screen, towards smaller Y values */
   val downhillRotation = math.Pi
 
-  /** Time to turn 180 degrees in seconds */
+  /** Time to turn skis 180 degrees, in seconds */
   val turnTime = .75
 
   /** size of the tree trunk in pixels */
@@ -25,7 +25,7 @@ object GameConstants {
 
   object Bullet {
     /** snowballs disappear after this many milliseconds */
-    val lifetime = 10000
+    val lifetime = 3500
 
     /** bullet begins its flight this many pixels away from sled center */
     val launchDistance = 35
