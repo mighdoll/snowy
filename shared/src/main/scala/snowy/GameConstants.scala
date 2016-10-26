@@ -29,6 +29,9 @@ object GameConstants {
 
     /** bullet begins its flight this many pixels away from sled center */
     val launchDistance = 35
+
+    /** max power bullets impart this amount of acceleration onto a sled, in pixels/sec/sec */
+    val impact = 150
   }
 
   object Points {

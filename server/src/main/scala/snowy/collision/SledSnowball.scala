@@ -2,6 +2,7 @@ package snowy.collision
 
 import snowy.playfield.{Sled, Snowball, Store}
 import snowy.Awards.SnowballHit
+import snowy.GameConstants.Bullet
 
 object SledSnowball {
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
@@ -37,7 +38,7 @@ object SledSnowball {
   /** return a damaged version of the sled after impacting with a snowball */
   private def snowballDamaged(sled: Sled, snowball: Snowball): Sled = {
     val health = math.max(sled.health - snowball.power, 0)
-    val stopped = sled.speed + snowball.speed.unit * snowball.power * 150
+    val stopped = sled.speed + snowball.speed.unit * snowball.power * Bullet.impact
     sled.copy(health = health, speed = stopped)
   }
 }
