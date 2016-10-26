@@ -92,7 +92,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     }
   }
 
-  private def newRandomSled(userName: String, sledKind: SledKind = BasicSled): Sled = {
+  private def newRandomSled(userName: String, sledKind: SledKind): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
       rotation = downhillRotation, turretRotation = downhillRotation,

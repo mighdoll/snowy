@@ -1,7 +1,6 @@
-package snowy.server
+package snowy.util
 
-import scala.concurrent.Future
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
 object FutureAwaiting {

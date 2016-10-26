@@ -1,15 +1,11 @@
 package snowy
 
-object SledKinds {
-  val sledKinds = Seq(StationaryTestSled, BasicSled, TankSled)
-}
-
 sealed trait SledKind {
   /** acceleration in pixels / second / second */
   def gravity: Double = -250
 
   /** max speed of sled in pixels per second */
-  def maxSpeed: Int = 1000
+  def maxSpeed: Int = 700
 
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = 300
@@ -18,7 +14,7 @@ sealed trait SledKind {
   def bulletPower: Double = .4
 
   /** speed of bullet in pixels/sec */
-  def bulletSpeed = 300
+  def bulletSpeed = 400
 
   /** radius in pixels */
   def bulletSize = 12
@@ -36,7 +32,15 @@ case object BasicSled extends SledKind
 case object TankSled extends SledKind {
   override val gravity:Double = -100
   override val maxSpeed = 200
-  override val minRechargeTime = 750
+  override val minRechargeTime = 500
+  override val bulletPower = .2
+  override val bulletSpeed = 300
+  override val bulletSize = 9
+}
+
+case object GunnerSled extends SledKind {
+  override val maxSpeed = 500
+  override val minRechargeTime = 1000
   override val bulletPower = .8
   override val bulletSpeed = 500
   override val bulletSize = 20

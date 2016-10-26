@@ -11,7 +11,7 @@ import akka.stream.testkit.scaladsl.TestSink
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
-import snowy.server.FutureAwaiting._
+import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
 import upickle.default._
 

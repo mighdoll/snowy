@@ -3,8 +3,9 @@ package socketserve
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
+import akka.stream.{ActorMaterializer, BindFailedException}
 import util.Properties
+import snowy.util.FutureAwaiting._
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
@@ -46,7 +47,18 @@ class WebServer(forcePort:Option[Int] = None)
       .getOrElse(defaultPort)
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
-  println(s"Server online at http://localhost:$port/")
+  bindingFuture.failed.foreach{failure =>
+    println(s"Server unable to start at http://localhost:$port/  $failure")
+    failure match {
+      case BindFailedException => println(s"is port $port already in use?")
+      case _ =>
+    }
+    sys.exit(1)
+  }
+  bindingFuture.await()
+  bindingFuture.foreach{_ =>
+    println(s"Server online at http://localhost:$port/")
+  }
 
   def shutDown(): Unit = {
     bindingFuture
