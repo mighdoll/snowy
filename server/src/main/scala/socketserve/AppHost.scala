@@ -6,8 +6,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.model.ws.TextMessage
 import AppHost.Protocol._
 
-class AppHost(implicit system: ActorSystem)
-  extends AppHostApi {
+class AppHost(implicit system: ActorSystem) extends AppHostApi {
 
   private val connections = mutable.Map[ConnectionId, ActorRef]()
   private var app: Option[AppController] = None

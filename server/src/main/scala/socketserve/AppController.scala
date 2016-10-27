@@ -21,6 +21,8 @@ trait AppHostApi {
   /** Send a message to one client */
   def send(msg: String, id: ConnectionId): Unit
 
+//  def sendBinary(msg:Array[Byte], id: ConnectionId): Unit
+
   /** register a function to be called periodically */
   def tick(time: FiniteDuration)(fn: => Unit)
 }
