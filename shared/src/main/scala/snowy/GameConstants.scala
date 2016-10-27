@@ -54,11 +54,6 @@ object GameConstants {
     val maxTime = 5
   }
 
-  object Health {
-    /** time in seconds to recover from almost 0 */
-    val recoveryTime = 25.0
-  }
-
   object Friction {
     /** friction from the slowdown button. in pixels / second / second */
     val slowButtonFriction = 400

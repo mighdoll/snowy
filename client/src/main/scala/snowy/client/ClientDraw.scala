@@ -34,9 +34,9 @@ object ClientDraw {
       new DrawSnowball(snowball.pos, snowball.size / 2 * portal.scale)
     }
     portal.sleds.foreach { sled =>
-      new DrawSled(sled.userName, sled.pos, 35 * portal.scale, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+      new DrawSled(sled.userName, sled.pos, 35 * portal.scale, sled.healthPercent, sled.turretRotation, sled.rotation, bodyRed)
     }
-    new DrawSled(mySled.userName, size / 2, 35 * portal.scale, mySled.health, mySled.turretRotation, mySled.rotation, bodyGreen)
+    new DrawSled(mySled.userName, size / 2, 35 * portal.scale, mySled.healthPercent, mySled.turretRotation, mySled.rotation, bodyGreen)
 
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, 100 * portal.scale)
@@ -61,7 +61,7 @@ object ClientDraw {
     }
     minimap.sleds.foreach { sled =>
       val newPos = sled.pos + minipos
-      new DrawSled(sled.userName, newPos, 70 * minimap.scale, sled.health, sled.turretRotation, sled.rotation, bodyRed)
+      new DrawSled(sled.userName, newPos, 70 * minimap.scale, sled.healthPercent, sled.turretRotation, sled.rotation, bodyRed)
     }
 
     val scorescale = Math.max(210 / size.x, 255 / size.y) * 2

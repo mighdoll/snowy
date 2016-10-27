@@ -31,11 +31,14 @@ sealed trait SledKind {
   /** launch angle rotation from turret direction, e.g. for rear facing cannon */
   def bulletLaunchAngle: Double = 0
 
+  /** health of this sled. If it falls to zero, the sled dies. */
+  def maxHealth: Double = 1
+
+  /** time in seconds to recover 1 full point of health */
+  def healthRecoveryTime: Double = 25.0
+
   /*
   TODO
-  * launch angle of bullet (rear mounted cannons)
-  * health max amount
-  * health recovery rate
   * damage from sled-sled collision (spiky sled)
   * penetration factor for bullets (off axis hits bounce off modulo this factor)
   * armor?
@@ -43,13 +46,13 @@ sealed trait SledKind {
 }
 
 case object StationaryTestSled extends SledKind {
-  override val gravity:Double = 0
+  override val gravity: Double = 0
 }
 
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity:Double = -100
+  override val gravity: Double = -100
   override val maxSpeed = 200
   override val minRechargeTime = 500
   override val bulletPower = .2

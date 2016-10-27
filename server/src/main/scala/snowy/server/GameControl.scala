@@ -220,9 +220,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** slowly recover some health points */
   private def recoverHealth(deltaSeconds: Double): Unit = {
-    val deltaHealth = deltaSeconds / Health.recoveryTime
     sleds = sleds.replaceItems { sled =>
-      val newHealth = min(1.0, sled.health + deltaHealth)
+      val deltaHealth = deltaSeconds / sled.healthRecoveryTime
+      val newHealth = min(sled.maxHealth, sled.health + deltaHealth)
       sled.copy(health = newHealth)
     }
   }

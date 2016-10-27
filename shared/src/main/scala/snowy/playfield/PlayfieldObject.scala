@@ -68,6 +68,8 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 lastShotTime: Long = 0,
                 kind: SledKind = BasicSled
                ) extends PlayfieldObject with MovingCircle {
+  type MyType = Sled
+
   override def updatePos(newPos: Vec2d): Sled = {
     this.copy(pos = newPos)
   }
@@ -104,7 +106,14 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   /** launch angle rotation from turret direction, e.g. for rear facing cannon */
   def bulletLaunchAngle: Double = kind.bulletLaunchAngle
 
-  type MyType = Sled
+  /** health of this sled. If it falls to zero, the sled dies. */
+  def maxHealth: Double = kind.maxHealth
+
+  /** time in seconds to recover 1 full point of health */
+  def healthRecoveryTime: Double = kind.healthRecoveryTime
+
+  /** health as a value between zero and one */
+  def healthPercent: Double = health / kind.maxHealth
 }
 
 case class Tree(id: TreeId = PlayfieldObject.nextId(),
