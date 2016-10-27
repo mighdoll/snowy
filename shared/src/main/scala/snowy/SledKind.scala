@@ -21,6 +21,17 @@ sealed trait SledKind {
 
   /** acceleration due to recoil in pixels/sec/sec */
   def bulletRecoil = 30
+
+  /*
+  TODO
+  * offset location of bullet start (side mounted cannons, rear cannons)
+  * launch angle of bullet (rear mounted cannons)
+  * health max amount
+  * health recovery rate
+  * damage from sled-sled collision (spiky sled)
+  * penetration factor for bullets (off axis hits bounce off modulo this factor)
+  * armor?
+  */
 }
 
 case object StationaryTestSled extends SledKind {
