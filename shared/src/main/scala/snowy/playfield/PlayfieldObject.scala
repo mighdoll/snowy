@@ -114,6 +114,12 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
 
   /** health as a value between zero and one */
   def healthPercent: Double = health / kind.maxHealth
+
+  /** deliver this amount of damage on collision with another sled at full speed */
+  def maxImpactDamage: Double = kind.maxImpactDamage
+
+  /** reduce impact by this factor in sled/sled collisions */
+  def armor: Double = kind.armor
 }
 
 case class Tree(id: TreeId = PlayfieldObject.nextId(),

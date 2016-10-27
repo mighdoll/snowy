@@ -86,9 +86,6 @@ object GameConstants {
 
     /** min health cost from colliding with another sled */
     val minSledCost = .01
-
-    /** health cost from colliding into a sled at maximum speed */
-    val maxSledCost = .4
   }
 
 }

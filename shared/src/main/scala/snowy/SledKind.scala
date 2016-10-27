@@ -37,11 +37,15 @@ sealed trait SledKind {
   /** time in seconds to recover 1 full point of health */
   def healthRecoveryTime: Double = 25.0
 
+  /** deliver this amount of damage on collision with another sled at full speed */
+  def maxImpactDamage: Double = .5
+
+  /** reduce impact by this factor in sled/sled collisions */
+  def armor: Double = 1.0
+
   /*
   TODO
-  * damage from sled-sled collision (spiky sled)
   * penetration factor for bullets (off axis hits bounce off modulo this factor)
-  * armor?
   */
 }
 
@@ -68,3 +72,8 @@ case object GunnerSled extends SledKind {
   override val bulletSize = 20
   override val bulletRecoil = 120
 }
+
+case object SpikySled extends SledKind {
+  override val maxImpactDamage = 1.0
+}
+

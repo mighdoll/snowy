@@ -115,7 +115,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
         println(s"user rejoined: ${user.name}")
         createSled(id, user, sledKind)
       case None       =>
-        println("user not found to rejoin: $id")
+        println(s"user not found to rejoin: $id")
     }
   }
 
