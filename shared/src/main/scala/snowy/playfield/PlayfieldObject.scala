@@ -95,7 +95,11 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   def bulletSize: Int = kind.bulletSize
 
   /** acceleration due to recoil in pixels/sec/sec */
-  def bulletRecoil:Int = kind.bulletRecoil
+  def bulletRecoil: Int = kind.bulletRecoil
+
+  /** bullet begins its flight this pixel offset from the sled center
+    * if the sled is shooting straight up */
+  def bulletLaunchPosition: Vec2d = kind.bulletLaunchPosition
 
   type MyType = Sled
 }

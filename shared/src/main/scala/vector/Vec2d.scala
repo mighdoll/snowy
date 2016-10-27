@@ -42,7 +42,11 @@ case class Vec2d(x: Double, y: Double) {
   def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)
 
-  def rotate(radians: Double): Vec2d = ???
+  def rotate(radians: Double): Vec2d = {
+    val sin = math.sin(radians)
+    val cos = math.cos(radians)
+    Vec2d(cos * x - sin * y, sin * x + cos * y)
+  }
 
   def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
 

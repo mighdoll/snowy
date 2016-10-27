@@ -1,5 +1,7 @@
 package snowy
 
+import vector.Vec2d
+
 sealed trait SledKind {
   /** acceleration in pixels / second / second */
   def gravity: Double = -250
@@ -21,6 +23,11 @@ sealed trait SledKind {
 
   /** acceleration due to recoil in pixels/sec/sec */
   def bulletRecoil = 30
+
+  /** bullet begins its flight this pixel offset from the sled center
+    * if the sled is shooting straight up */
+  def bulletLaunchPosition = Vec2d(0, 30)
+
 
   /*
   TODO
