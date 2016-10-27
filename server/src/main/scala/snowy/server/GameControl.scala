@@ -147,8 +147,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
         sled
       } else {
+        val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
         val launchPos = sled.bulletLaunchPosition.rotate(sled.turretRotation)
-        val direction = Vec2d.fromRotation(-sled.turretRotation)
+        val direction = Vec2d.fromRotation(-launchAngle)
         val ball = Snowball(
           ownerId = sled.id,
           pos = wrapInPlayfield(sled.pos + launchPos),

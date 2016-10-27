@@ -101,6 +101,9 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
     * if the sled is shooting straight up */
   def bulletLaunchPosition: Vec2d = kind.bulletLaunchPosition
 
+  /** launch angle rotation from turret direction, e.g. for rear facing cannon */
+  def bulletLaunchAngle: Double = kind.bulletLaunchAngle
+
   type MyType = Sled
 }
 
