@@ -42,6 +42,8 @@ lazy val server = (project in file("server")).
   settings(
     assemblyJarName in assembly := "full.jar",
     name := "server",
+    javaOptions := Seq("-Xmx2G", "-Xms2g", "-XX:+UseG1GC", "-XX:+UseCompressedOops"),
+    javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0",
       "org.apache.logging.log4j" % "log4j-core" % V.log4j,
