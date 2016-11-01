@@ -17,6 +17,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
   val appActor = system.actorOf(Props(new Actor {
     def receive: Receive = {
       case ClientMessage(id, text) => clientMessage(id, text)
+      case ClientBinaryMessage(id, binary) => binaryMessage(id, binary)
       case Open(id, out)           => open(id, out)
       case Gone(id)                => gone(id)
       case RegisterApp(newApp)     => app = Some(newApp)
@@ -69,6 +70,10 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
     app.map(_.message(id, text))
   }
 
+  private def binaryMessage(id: ConnectionId, binary: ByteString): Unit = {
+    app.map(_.binaryMessage(id, binary))
+  }
+
   private def open(id: ConnectionId, out: ActorRef): Unit = {
     connections += id -> out
     app.map(_.open(id))
@@ -89,6 +94,8 @@ object AppHost {
     case class Open(id: ConnectionId, out: ActorRef) extends GameCommand
 
     case class ClientMessage(id: ConnectionId, message: String) extends GameCommand
+
+    case class ClientBinaryMessage(id: ConnectionId, message: ByteString) extends GameCommand
 
     case class Gone(id: ConnectionId) extends GameCommand
 

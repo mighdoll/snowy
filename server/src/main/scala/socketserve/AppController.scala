@@ -25,6 +25,9 @@ trait AppController {
 
   /** a text message has been received */
   def message(id: ConnectionId, msg: String): Unit
+
+  /** a binary message has been received */
+  def binaryMessage(id: ConnectionId, msg: ByteString): Unit
 }
 
 trait AppHostApi {

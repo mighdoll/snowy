@@ -18,6 +18,8 @@ import snowy.util.Perf
 import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
+import boopickle.Default._
+import snowy.playfield.Picklers._
 import vector.Vec2d
 import snowy.{BasicSled, SledKind, StationaryTestSled}
 
@@ -81,9 +83,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     connections.remove(connectionId)
   }
 
-  /** received a client message */
-  override def message(id: ConnectionId, msg: String): Unit = {
-    read[GameServerMessage](msg) match {
+  /** Process a [[GameServerMessage]] from the client */
+  def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
+    msg match {
       case Join(name, sledKind) => userJoin(id, name, sledKind)
       case TurretAngle(angle)   => rotateTurret(id, angle)
       case Shoot                => shootSnowball(id)
@@ -93,6 +95,16 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       case ReJoin(sledKind)     => rejoin(id, sledKind)
       case TestDie              => reapSled(sledMap(id))
     }
+  }
+
+  /** decode received binary message then pass on to handler */
+  override def message(id: ConnectionId, msg: String): Unit = {
+    handleMessage(id, read[GameServerMessage](msg))
+  }
+
+  /** decode received binary message then pass on to handler */
+  override def binaryMessage(id: ConnectionId, msg: ByteString): Unit = {
+    handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
   }
 
   private def newRandomSled(userName: String, sledKind: SledKind): Sled = {

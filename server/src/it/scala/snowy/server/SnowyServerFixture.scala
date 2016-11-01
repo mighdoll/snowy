@@ -1,5 +1,7 @@
 package snowy.server
 
+import akka.NotUsed
+
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
@@ -9,12 +11,14 @@ import akka.stream.scaladsl._
 import akka.stream.testkit.TestSubscriber.Probe
 import akka.stream.testkit.scaladsl.TestSink
 import akka.stream.{ActorMaterializer, OverflowStrategy}
+import akka.util.ByteString
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
 import upickle.default._
-
+import boopickle.Default._
+import snowy.playfield.Picklers._
 object SnowyServerFixture {
   implicit val system = ActorSystem()
 
@@ -84,19 +88,22 @@ object SnowyServerFixture {
     val outputBufferSize = 100
 
     val sinkFromServer = {
-      val messageToString = Flow[Message]
-        .collect { case orig@TextMessage.Strict(msg) => read[GameClientMessage](msg) }
-      messageToString.toMat(sink)(Keep.right)
+      val messageToGameMessage = Flow[Message]
+        .collect {
+          case TextMessage.Strict(msg) => read[GameClientMessage](msg)
+          case BinaryMessage.Strict(msg) => Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
+        }
+      messageToGameMessage.toMat(sink)(Keep.right)
     }
 
     val sourceToServer = {
       val sourceQueue = Source.queue[GameServerMessage](outputBufferSize, OverflowStrategy.dropTail)
-      val gameMessageToTextMessage = Flow[GameServerMessage]
+      val gameMessageToBinaryMessage = Flow[GameServerMessage]
         .map { msg =>
-          val msgString = write[GameServerMessage](msg)
-          TextMessage(msgString): Message
+          val msgString = Pickle.intoBytes[GameServerMessage](msg)
+          BinaryMessage(ByteString(msgString)): Message
         }
-      sourceQueue.via(gameMessageToTextMessage)
+      sourceQueue.via(gameMessageToBinaryMessage)
     }
 
     val flow = Flow.fromSinkAndSourceMat(sinkFromServer, sourceToServer)(Keep.both)

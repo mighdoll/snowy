@@ -4,8 +4,9 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.connection.{InboundEvents, OutboundEvents}
 import upickle.default._
+import boopickle.Default._
 import snowy.GameServerProtocol._
-
+import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 import scala.concurrent.duration._
 
 class Connection(name: String) {
@@ -17,7 +18,9 @@ class Connection(name: String) {
   }
 
   def sendMessage(item: GameServerMessage): Unit = {
-    socket.send(write(item))
+    val bytes = Pickle.intoBytes(item)
+    val byteArray = bytes.typedArray().subarray(bytes.position, bytes.limit)
+    socket.socket.send(byteArray.buffer)
   }
 
   new InboundEvents(socket, sendMessage, name)

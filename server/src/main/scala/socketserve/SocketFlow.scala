@@ -2,7 +2,7 @@ package socketserve
 
 import akka.NotUsed
 import akka.actor._
-import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
 import akka.stream._
 import akka.stream.scaladsl._
 import socketserve.AppHost.Protocol._
@@ -23,6 +23,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) {
     val in = Flow[Message]
       .collect {
         case TextMessage.Strict(text) => app ! ClientMessage(connectionId, text)
+        case BinaryMessage.Strict(text) => app ! ClientBinaryMessage(connectionId, text)
       }.to(Sink.actorRef[Unit](app, Gone(connectionId)))
 
     Flow.fromSinkAndSource(in, out)
