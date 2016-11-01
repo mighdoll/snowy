@@ -81,7 +81,7 @@ object ClientDraw {
   }
 
   def clearScreen(): Unit = {
-    ctx.fillStyle = clearColor
+    ctx.fillStyle = clearColor.toString
     ctx.fillRect(0, 0, size.x, size.y)
   }
 
