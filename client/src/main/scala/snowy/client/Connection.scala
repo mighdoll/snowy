@@ -16,11 +16,15 @@ class Connection(name: String) {
     new NetworkSocket(url, inDelay, outDelay)
   }
 
-  new InboundEvents(socket, name)
-  new OutboundEvents(socket)
+  def sendMessage(item: GameServerMessage): Unit = {
+    socket.send(write(item))
+  }
+
+  new InboundEvents(socket, sendMessage, name)
+  new OutboundEvents(sendMessage)
 
   def reSpawn(): Unit ={
-    socket.send(write(ReJoin()))
+    sendMessage(ReJoin())
     document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
     document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
   }

@@ -1,20 +1,20 @@
 package snowy.connection
 
-import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
-import network.NetworkSocket
 import org.scalajs.dom._
+import vector.Vec2d
+import network.NetworkSocket
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import GameState._
-import upickle.default._
-import vector.Vec2d
 import snowy.client.ClientMain.loginScreen
+import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
+import upickle.default._
 import boopickle.Default._
 import snowy.playfield.Picklers._
 
-class InboundEvents(socket: NetworkSocket, name: String) {
+class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => Unit, name: String) {
   socket.onOpen { _ =>
-    socket.send(write(Join(name)))
+    sendMessage(Join(name))
     switch(true)
   }
 
@@ -56,13 +56,13 @@ class InboundEvents(socket: NetworkSocket, name: String) {
     handleMessage(read[GameClientMessage](msg))
   }
 
-  private def handleMessage(message:GameClientMessage):Unit = {
+  private def handleMessage(message: GameClientMessage): Unit = {
     message match {
       case state: State                => receivedState(state)
       case Playfield(width, height)    => gPlayField = Vec2d(width, height)
       case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
       case Died                        => switch(false); loginScreen.setup()
-      case Ping                        => socket.send(write(Pong))
+      case Ping                        => sendMessage(Pong)
       case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
       case x                           => println(s"unexpected message: $message")
