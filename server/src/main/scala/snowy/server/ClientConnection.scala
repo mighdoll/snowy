@@ -1,18 +1,23 @@
 package snowy.server
 
 import scala.concurrent.duration._
-import snowy.GameClientProtocol.Ping
+import akka.util.ByteString
+import snowy.GameClientProtocol.{GameClientMessage, Ping}
 import socketserve.{AppHostApi, ConnectionId}
-import upickle.default._
+import boopickle.Default._
+import snowy.playfield.Picklers._
 
 object ClientConnection {
-  val pingMessage = write(Ping)
+  val pingMessage = {
+    val byteBuffer = Pickle.intoBytes[GameClientMessage](Ping)
+    ByteString(byteBuffer)
+  }
 }
 
 import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
-class ClientConnection(id: ConnectionId, api: AppHostApi) {
+class ClientConnection(id: ConnectionId, messageIO:MessageIO) {
   var minPingTime: Option[Long] = None
   var lastPingSent = 0L
   var pingsSent = 0
@@ -48,7 +53,7 @@ class ClientConnection(id: ConnectionId, api: AppHostApi) {
 
   /** send a ping message to the client */
   private def sendPing(): Unit = {
-    api.send(pingMessage, id)
+    messageIO.sendBinaryMessage(pingMessage, id)
     lastPingSent = System.currentTimeMillis()
     pingsSent = pingsSent + 1
   }

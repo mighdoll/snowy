@@ -60,5 +60,31 @@ class TestBooPickle extends PropSpec with PropertyChecks {
       Scoreboard(1.1, Seq(Score("fred", .8)))
     )
   }
+
+  property("pickle game client message Ping") {
+    val bytes = Pickle.intoBytes[GameClientMessage](Ping)
+    val result = Unpickle[GameClientMessage].fromBytes(bytes)
+    result === Ping
+  }
+
+  property("pickle game client message State and Ping") {
+    val state = State(sled, sleds = Seq(sled), snowballs = Seq(ball))
+    val stateBytes = Pickle.intoBytes[GameClientMessage](state)
+    val unpickledState: GameClientMessage = Unpickle[GameClientMessage].fromBytes(stateBytes)
+
+    val pingBytes = Pickle.intoBytes[GameClientMessage](Ping)
+    val unpickledPing: GameClientMessage = Unpickle[GameClientMessage].fromBytes(pingBytes)
+
+    unpickledState match {
+      case s: State =>
+      case _        => fail
+    }
+
+    unpickledPing match {
+      case Ping =>
+      case _    => fail
+    }
+  }
+
 }
 

@@ -11,6 +11,7 @@ import org.scalajs.dom._
 class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
   val socket = new WebSocket(url)
 
+  socket.binaryType = "arraybuffer"
   private def delay(time: FiniteDuration)(fn: => Unit): Unit = {
     window.setTimeout(() => fn, time.toMillis)
   }

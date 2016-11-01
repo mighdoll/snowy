@@ -3,6 +3,7 @@ package snowy.server
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
+import akka.util.ByteString
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants.Friction.slowButtonFriction
@@ -23,7 +24,9 @@ import snowy.{BasicSled, SledKind, StationaryTestSled}
 class GameControl(api: AppHostApi) extends AppController with GameState {
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
+  val messageIO = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
+  import messageIO.sendMessage
 
   api.tick(tickDelta) {
     connections.values.foreach(_.refreshTiming())
@@ -52,17 +55,17 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     reapDead(died)
     currentState().collect {
       case (id, state) if state.mySled.id.user.exists(!_.robot) =>
-        api.send(write(state), id)
+        sendMessage(state, id)
     }
     sendScores()
   }
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
-    connections(id) = new ClientConnection(id, api)
+    connections(id) = new ClientConnection(id, messageIO)
     val clientPlayfield = Playfield(playfield.x.toInt, playfield.y.toInt)
-    api.send(write(clientPlayfield), id)
-    api.send(write(Trees(trees.toSeq)), id)
+    sendMessage(clientPlayfield, id)
+    sendMessage(Trees(trees.toSeq), id)
   }
 
   /** Called when a connection is dropped */
@@ -261,7 +264,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   private def reapSled(sledId: SledId): Unit = {
     if (sledId.user.exists(!_.robot)) {
       val connectionId = sledId.connectionId
-      connectionId.foreach(api.send(write(Died), _))
+      connectionId.foreach(sendMessage(Died, _))
     }
     sledId.sled.foreach(_.remove())
     println(s"sled killed: sledCount:${sledMap.size}")
@@ -367,7 +370,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
     users.collect {
       case (id, user) if !user.robot =>
         val scoreboard = Scoreboard(user.score, scores)
-        api.send(write[GameClientMessage](scoreboard), id)
+        sendMessage(scoreboard, id)
     }
   }
 
