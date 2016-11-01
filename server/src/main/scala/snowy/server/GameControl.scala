@@ -378,7 +378,11 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** Send the current score to the clients */
   private def sendScores(): Unit = {
-    val scores = users.values.map { user => Score(user.name, user.score) }.toSeq
+    val scores = {
+      val rawScores = users.values.map { user => Score(user.name, user.score) }.toSeq
+      val sorted = rawScores.sortWith{(a,b) => a.score > b.score}
+      sorted.take(10)
+    }
     users.collect {
       case (id, user) if !user.robot =>
         val scoreboard = Scoreboard(user.score, scores)
