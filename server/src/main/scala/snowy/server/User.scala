@@ -39,4 +39,7 @@ class User(val name: String, val robot: Boolean = false, val createTime: Long) {
 
   /** modify the score by multiplying the current score */
   def multiplyScore(value: Double): Unit = theScore = theScore * value
+
+  /** Set the score given a function that takes a score and returns a score */
+  def setScore(fn: (Double)=>(Double)): Unit = theScore = fn(theScore)
 }

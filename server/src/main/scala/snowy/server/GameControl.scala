@@ -309,7 +309,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             connectionId <- loserId.connectionId
             user <- loserId.user
           } {
-            user.multiplyScore(1/2)
+            user.setScore((score: Double) => {
+              Math.max(score / 2, 10)
+            })
           }
       }
     }
