@@ -119,7 +119,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
                        robot: Boolean = false)
   : Unit = {
     println(s"user joined: $userName  userCount:${users.size}")
-    val user = User(userName, robot = robot)
+    val user = new User(userName, createTime = gameTime, robot = robot)
     users(id) = user
     createSled(id, user, sledKind)
   }
@@ -293,7 +293,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             loser <- loserId.user
           } {
             val points = loser.score / 2
-            users(winnerConnectionId) = winner.copy(score = winner.score + points)
+            winner.addScore(points)
           }
         case Travel(sledId, distance)    =>
           for {
@@ -301,7 +301,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             user <- sledId.user
           } {
             val points = distance * Points.travel
-            users(connectionId) = user.copy(score = user.score + points)
+            user.addScore(points)
           }
         case SnowballHit(winnerId)       =>
         case SledDied(loserId)           =>
@@ -309,7 +309,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
             connectionId <- loserId.connectionId
             user <- loserId.user
           } {
-            users(connectionId) = user.copy(score = user.score / 2)
+            user.multiplyScore(1/2)
           }
       }
     }
@@ -384,7 +384,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
       sorted.take(10)
     }
     users.collect {
-      case (id, user) if !user.robot =>
+      case (id, user) if !user.robot && user.timeToSendScore(gameTime) =>
+        user.scoreSent(gameTime)
         val scoreboard = Scoreboard(user.score, scores)
         sendMessage(scoreboard, id)
     }

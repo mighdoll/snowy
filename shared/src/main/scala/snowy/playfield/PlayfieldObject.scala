@@ -148,5 +148,4 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
   }
 }
 
-case class User(name: String, score: Double = 0, robot: Boolean = false)
 

@@ -8,6 +8,7 @@ import GameSeeding.randomTrees
 import snowy.playfield.PlayId.SledId
 
 
+
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState {
   self: GameControl =>
