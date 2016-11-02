@@ -15,7 +15,7 @@ import User._
   * Note that the user might not currently have a sled in the game
   * if they have been killed and not yet rejoined.  */
 class User(val name: String, val robot: Boolean = false, val createTime: Long) {
-  private var theScore: Double = 0
+  private var theScore: Double = 10
   private var nextScoreSend: Long = 0
 
   /** Scores are sent to users once per second (see scoreFrequency).
