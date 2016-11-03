@@ -78,11 +78,12 @@ object ClientDraw {
     val inbetween = 20 * portal.scale
     ctx.font = (25 * portal.scale) + "px Arial"
     ctx.textAlign = "center"
-    ctx.fillText("Scoreboard", scorepos.x + scorescaled.x / 2, scorepos.y + inbetween)
+    ctx.fillText("Scoreboard", scorepos.x + scorescaled.x / 2, scorepos.y + inbetween * 2)
     ctx.font = (15 * portal.scale) + "px Arial"
-    for ((score, index) <- scoreboard.scores.sortWith(_.score>_.score).zipWithIndex) {
+    for ((score, index) <- scoreboard.scores.sortWith(_.score > _.score).zipWithIndex) {
       ctx.textAlign = "left"
-      ctx.fillText(score.userName, scorepos.x + fromLeft, scorepos.y + fromTop + inbetween * index)
+      ctx.fillText(index + 1 + ".", scorepos.x + fromLeft, scorepos.y + fromTop + inbetween * index)
+      ctx.fillText(score.userName, scorepos.x + fromLeft * 4, scorepos.y + fromTop + inbetween * index)
       ctx.textAlign = "right"
       ctx.fillText(score.score.toInt.toString, scorepos.x + scorescaled.x - fromRight, scorepos.y + fromTop + inbetween * index)
     }
