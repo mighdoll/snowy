@@ -64,28 +64,38 @@ object ClientDraw {
       new DrawSled(sled.userName, newPos, 70 * minimap.scale, sled.healthPercent, sled.turretRotation, sled.rotation, bodyRed)
     }
 
-    val scorescale = Math.max(210 / size.x, 255 / size.y) * 2
+    val scorescale = Math.max(210 / size.x, 255 / size.y) * 2.5
     val scorescaled = Vec2d(210, 225) / scorescale
     val scorepos = Vec2d(size.x * .99 - scorescaled.x, size.y * .01)
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
     ctx.fillRect(scorepos.x, scorepos.y, scorescaled.x, scorescaled.y)
 
-    ctx.font = "10px Arial"
+
     ctx.fillStyle = "rgb(0, 0, 0)"
+    val fromLeft = 10 * portal.scale
+    val fromRight = 10 * portal.scale
+    val fromTop = 60 * portal.scale
+    val inbetween = 20 * portal.scale
+    ctx.font = (25 * portal.scale) + "px Arial"
+    ctx.textAlign = "center"
+    ctx.fillText("Scoreboard", scorepos.x + scorescaled.x / 2, scorepos.y + inbetween)
+    ctx.font = (15 * portal.scale) + "px Arial"
     for ((score, index) <- scoreboard.scores.sortWith(_.score>_.score).zipWithIndex) {
-      ctx.fillText(score.userName, scorepos.x + 30, scorepos.y + 50 + 10 * index)
-      ctx.fillText(score.score.toInt.toString, scorepos.x + scorescaled.x - 50, scorepos.y + 50 + 10 * index)
+      ctx.textAlign = "left"
+      ctx.fillText(score.userName, scorepos.x + fromLeft, scorepos.y + fromTop + inbetween * index)
+      ctx.textAlign = "right"
+      ctx.fillText(score.score.toInt.toString, scorepos.x + scorescaled.x - fromRight, scorepos.y + fromTop + inbetween * index)
     }
-    ctx.fillText(mySled.userName, scorepos.x + 30, scorepos.y + scorescaled.y - 10)
-    ctx.fillText(scoreboard.myScore.toInt.toString, scorepos.x + scorescaled.x - 50, scorepos.y + scorescaled.y - 10)
+    ctx.textAlign = "left"
+    ctx.fillText(mySled.userName, scorepos.x + fromLeft, scorepos.y + scorescaled.y - inbetween)
+    ctx.textAlign = "right"
+    ctx.fillText(scoreboard.myScore.toInt.toString, scorepos.x + scorescaled.x - fromRight, scorepos.y + scorescaled.y - inbetween)
   }
 
   def clearScreen(): Unit = {
     ctx.fillStyle = clearColor.toString
     ctx.fillRect(0, 0, size.x, size.y)
   }
-
-  case class Size(width: Int, height: Int)
 
   window.onresize = (_: UIEvent) => {
     size = Vec2d(window.innerWidth, window.innerHeight)

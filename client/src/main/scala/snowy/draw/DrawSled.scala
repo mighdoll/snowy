@@ -48,7 +48,8 @@ class DrawSled(name: String, pos: Vec2d, size: Double, health: Double, cannonRot
 
   //Draw the name
   ctx.font = (size * 3 / 11) + "px Arial"
-  ctx.fillText(name, x - (ctx.measureText(name).width / 2), y - size * 27 / 22)
+  ctx.textAlign = "center"
+  ctx.fillText(name, x, y - size * 27 / 22)
 
   if (health < 1) {
     ctx.lineWidth = size * 3 / 25
