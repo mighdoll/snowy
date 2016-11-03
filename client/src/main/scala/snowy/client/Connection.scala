@@ -13,7 +13,8 @@ class Connection(name: String) {
   val socket = {
     val inDelay = 0 milliseconds
     val outDelay = 0 milliseconds
-    val url = s"ws://${window.location.host}/game"
+    val secure = if(window.location.protocol.slice(0, -1).length > 4) "s" else ""
+    val url = s"ws$secure://${window.location.host}/game"
     new NetworkSocket(url, inDelay, outDelay)
   }
 
