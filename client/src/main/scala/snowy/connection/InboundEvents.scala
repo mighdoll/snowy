@@ -43,6 +43,7 @@ class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => U
     event.data match {
       case arrayBuffer: ArrayBuffer => arrayBufferMessage(arrayBuffer)
       case msgString: String        => stringMessage(msgString)
+      case x => console.log(s"unexpected message received: $x")
     }
   }
 
