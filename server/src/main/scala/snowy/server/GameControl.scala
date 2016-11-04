@@ -4,6 +4,8 @@ import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
 import akka.util.ByteString
+import boopickle.Default._
+import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants.Friction.slowButtonFriction
@@ -16,13 +18,10 @@ import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf
 import snowy.util.Perf.time
+import snowy.{SledKind, StationaryTestSled}
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
-import boopickle.Default._
-import com.typesafe.scalalogging.{LazyLogging, Logger, StrictLogging}
-import snowy.playfield.Picklers._
 import vector.Vec2d
-import snowy.{BasicSled, SledKind, StationaryTestSled}
 
 class GameControl(api: AppHostApi)
     extends AppController with GameState with StrictLogging {
@@ -44,47 +43,6 @@ class GameControl(api: AppHostApi)
       userName = s"StationarySled:$i",
       sledKind = StationaryTestSled,
       robot = true
-    )
-  }
-
-  /** Called to update game state on a regular timer */
-  private def gameTurn(): Unit = time("gameTurn") {
-    val deltaSeconds = nextTimeSlice()
-    recordTurnJitter(deltaSeconds)
-
-    recoverHealth(deltaSeconds)
-    recoverPushEnergy(deltaSeconds)
-    applyCommands(deltaSeconds)
-    expireSnowballs()
-    snowballs = moveSnowballs(snowballs, deltaSeconds)
-
-    val (newSleds, moveAwards) = time("moveSleds") {
-      moveSleds(sleds, deltaSeconds)
-    }
-    sleds = newSleds
-
-    val collisionAwards = time("checkCollisions") { checkCollisions() }
-    val died            = collectDead()
-    updateScore(moveAwards ++ collisionAwards ++ died)
-    reapDead(died)
-
-    time("sendUpdates") { sendUpdates() }
-  }
-
-  private def sendUpdates(): Unit = {
-    currentState().collect {
-      case (id, state) if state.mySled.id.user.exists(!_.robot) =>
-        sendMessage(state, id)
-    }
-    sendScores()
-  }
-
-  private def recordTurnJitter(deltaSeconds: Double): Unit = {
-    val secondsToMicros = 1000000
-    val offset          = 10 * secondsToMicros // library can't handle negative
-    Perf.record(
-      "turnJitter",
-      offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
     )
   }
 
@@ -134,101 +92,68 @@ class GameControl(api: AppHostApi)
     handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
   }
 
-  private def newRandomSled(userName: String, sledKind: SledKind): Sled = {
-    // TODO what if sled is initialized atop a tree?
-    Sled(
-      userName = userName,
-      pos = randomSpot(),
-      size = 35,
-      speed = Vec2d(0, 0),
-      rotation = downhillRotation,
-      turretRotation = downhillRotation,
-      kind = sledKind
+  /** Called to update game state on a regular timer */
+  private def gameTurn(): Unit = time("gameTurn") {
+    val deltaSeconds = nextTimeSlice()
+    recordTurnJitter(deltaSeconds)
+
+    recoverHealth(deltaSeconds)
+    recoverPushEnergy(deltaSeconds)
+    applyCommands(deltaSeconds)
+    expireSnowballs()
+    snowballs = moveSnowballs(snowballs, deltaSeconds)
+
+    val (newSleds, moveAwards) = time("moveSleds") {
+      moveSleds(sleds, deltaSeconds)
+    }
+    sleds = newSleds
+
+    val collisionAwards = time("checkCollisions") {
+      checkCollisions()
+    }
+    val died = collectDead()
+    updateScore(moveAwards ++ collisionAwards ++ died)
+    reapDead(died)
+
+    time("sendUpdates") {
+      sendUpdates()
+    }
+  }
+
+  private def sendUpdates(): Unit = {
+    currentState().collect {
+      case (id, state) if state.mySled.id.user.exists(!_.robot) =>
+        sendMessage(state, id)
+    }
+    sendScores()
+  }
+
+  /** Send the current score to the clients */
+  private def sendScores(): Unit = {
+    val scores = {
+      val rawScores = users.values.map { user =>
+        Score(user.name, user.score)
+      }.toSeq
+      val sorted = rawScores.sortWith { (a, b) =>
+        a.score > b.score
+      }
+      sorted.take(10)
+    }
+    users.collect {
+      case (id, user) if !user.robot && user.timeToSendScore(gameTime) =>
+        user.scoreSent(gameTime)
+        val scoreboard = Scoreboard(user.score, scores)
+        sendMessage(scoreboard, id)
+    }
+  }
+
+  private def recordTurnJitter(deltaSeconds: Double): Unit = {
+    val secondsToMicros = 1000000
+    val offset          = 10 * secondsToMicros // library can't handle negative
+    Perf.record(
+      "turnJitter",
+      offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
     )
-  }
-
-  /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId,
-                       userName: String,
-                       sledKind: SledKind,
-                       robot: Boolean = false): Unit = {
-    println(s"user joined: $userName  userCount:${users.size}")
-    val user = new User(userName, createTime = gameTime, robot = robot)
-    users(id) = user
-    createSled(id, user, sledKind)
-  }
-
-  private def rejoin(id: ConnectionId, sledKind: SledKind): Unit = {
-    users.get(id) match {
-      case Some(user) =>
-        println(s"user rejoined: ${user.name}")
-        createSled(id, user, sledKind)
-      case None =>
-        println(s"user not found to rejoin: $id")
-    }
-  }
-
-  private def createSled(connctionId: ConnectionId,
-                         user: User,
-                         sledKind: SledKind): Unit = {
-    val sled = newRandomSled(user.name, sledKind)
-    sleds = sleds.add(sled)
-    sledMap(connctionId) = sled.id
-  }
-
-  /** Rotate the turret on a sled */
-  private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
-    modifySled(id) { sled =>
-      sled.copy(turretRotation = angle)
-    }
-  }
-
-  private def modifySled(id: ConnectionId)(fn: Sled => Sled): Unit = {
-    sledMap.get(id).foreach { sledId =>
-      sleds = sleds.replaceById(sledId) { sled =>
-        fn(sled)
-      }
-    }
-  }
-
-  private def shootSnowball(id: ConnectionId): Unit = {
-    modifySled(id) { sled =>
-      if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
-        sled
-      } else {
-        val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
-        val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
-        val direction   = Vec2d.fromRotation(-launchAngle)
-        val ball = Snowball(
-          ownerId = sled.id,
-          pos = wrapInPlayfield(sled.pos + launchPos),
-          size = sled.bulletSize,
-          speed = sled.speed + (direction * sled.bulletSpeed),
-          spawned = gameTime,
-          power = sled.bulletPower
-        )
-        snowballs = snowballs.add(ball)
-
-        val recoilForce = direction * -sled.bulletRecoil
-        val speed       = sled.speed + recoilForce
-        sled.copy(speed = speed, lastShotTime = gameTime)
-      }
-    }
-  }
-
-  /** Rotate a sled.
-    *
-    * @param rotate rotation in radians from current position. */
-  private def turnSled(sled: Sled, rotate: Double): Sled = {
-    // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
-    val max      = math.Pi * 2
-    val min      = -math.Pi * 2
-    val rotation = sled.rotation + rotate
-    val wrappedRotation =
-      if (rotation > max) rotation - max
-      else if (rotation < min) rotation - min
-      else rotation
-    sled.copy(rotation = wrappedRotation)
   }
 
   /** apply any pending but not yet cancelled commands from user actions,
@@ -251,6 +176,29 @@ class GameControl(api: AppHostApi)
         }
       }
     }
+  }
+
+  private def modifySled(id: ConnectionId)(fn: Sled => Sled): Unit = {
+    sledMap.get(id).foreach { sledId =>
+      sleds = sleds.replaceById(sledId) { sled =>
+        fn(sled)
+      }
+    }
+  }
+
+  /** Rotate a sled.
+    *
+    * @param rotate rotation in radians from current position. */
+  private def turnSled(sled: Sled, rotate: Double): Sled = {
+    // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
+    val max      = math.Pi * 2
+    val min      = -math.Pi * 2
+    val rotation = sled.rotation + rotate
+    val wrappedRotation =
+      if (rotation > max) rotation - max
+      else if (rotation < min) rotation - min
+      else rotation
+    sled.copy(rotation = wrappedRotation)
   }
 
   /** apply a push to a sled */
@@ -320,36 +268,34 @@ class GameControl(api: AppHostApi)
 
   /** update the score based on sled travel distance */
   private def updateScore(awards: Seq[Award]): Unit = {
-    awards.foreach { award =>
-      award match {
-        case SledKill(winnerId, loserId) =>
-          for {
-            winnerConnectionId <- winnerId.connectionId
-            winner             <- winnerId.user
-            loser              <- loserId.user
-          } {
-            val points = loser.score / 2
-            winner.addScore(points)
-          }
-        case Travel(sledId, distance) =>
-          for {
-            connectionId <- sledId.connectionId
-            user         <- sledId.user
-          } {
-            val points = distance * Points.travel
-            user.addScore(points)
-          }
-        case SnowballHit(winnerId) =>
-        case SledDied(loserId) =>
-          for {
-            connectionId <- loserId.connectionId
-            user         <- loserId.user
-          } {
-            user.setScore((score: Double) => {
-              Math.max(score / 2, 10)
-            })
-          }
-      }
+    awards.foreach {
+      case SledKill(winnerId, loserId) =>
+        for {
+          winnerConnectionId <- winnerId.connectionId
+          winner             <- winnerId.user
+          loser              <- loserId.user
+        } {
+          val points = loser.score / 2
+          winner.addScore(points)
+        }
+      case Travel(sledId, distance) =>
+        for {
+          connectionId <- sledId.connectionId
+          user         <- sledId.user
+        } {
+          val points = distance * Points.travel
+          user.addScore(points)
+        }
+      case SnowballHit(winnerId) =>
+      case SledDied(loserId) =>
+        for {
+          connectionId <- loserId.connectionId
+          user         <- loserId.user
+        } {
+          user.setScore((score: Double) => {
+            Math.max(score / 2, 10)
+          })
+        }
     }
   }
 
@@ -419,25 +365,6 @@ class GameControl(api: AppHostApi)
     }
   }
 
-  /** Send the current score to the clients */
-  private def sendScores(): Unit = {
-    val scores = {
-      val rawScores = users.values.map { user =>
-        Score(user.name, user.score)
-      }.toSeq
-      val sorted = rawScores.sortWith { (a, b) =>
-        a.score > b.score
-      }
-      sorted.take(10)
-    }
-    users.collect {
-      case (id, user) if !user.robot && user.timeToSendScore(gameTime) =>
-        user.scoreSent(gameTime)
-        val scoreboard = Scoreboard(user.score, scores)
-        sendMessage(scoreboard, id)
-    }
-  }
-
   /** Advance to the next game simulation state
     *
     * @return the time since the last time slice, in seconds
@@ -447,6 +374,80 @@ class GameControl(api: AppHostApi)
     val deltaSeconds = (currentTime - gameTime) / 1000.0
     gameTime = currentTime
     deltaSeconds
+  }
+
+  private def newRandomSled(userName: String, sledKind: SledKind): Sled = {
+    // TODO what if sled is initialized atop a tree?
+    Sled(
+      userName = userName,
+      pos = randomSpot(),
+      size = 35,
+      speed = Vec2d(0, 0),
+      rotation = downhillRotation,
+      turretRotation = downhillRotation,
+      kind = sledKind
+    )
+  }
+
+  /** Called when a user sends her name and starts in the game */
+  private def userJoin(id: ConnectionId,
+                       userName: String,
+                       sledKind: SledKind,
+                       robot: Boolean = false): Unit = {
+    println(s"user joined: $userName  userCount:${users.size}")
+    val user = new User(userName, createTime = gameTime, robot = robot)
+    users(id) = user
+    createSled(id, user, sledKind)
+  }
+
+  private def rejoin(id: ConnectionId, sledKind: SledKind): Unit = {
+    users.get(id) match {
+      case Some(user) =>
+        println(s"user rejoined: ${user.name}")
+        createSled(id, user, sledKind)
+      case None =>
+        println(s"user not found to rejoin: $id")
+    }
+  }
+
+  private def createSled(connctionId: ConnectionId,
+                         user: User,
+                         sledKind: SledKind): Unit = {
+    val sled = newRandomSled(user.name, sledKind)
+    sleds = sleds.add(sled)
+    sledMap(connctionId) = sled.id
+  }
+
+  /** Rotate the turret on a sled */
+  private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
+    modifySled(id) { sled =>
+      sled.copy(turretRotation = angle)
+    }
+  }
+
+  private def shootSnowball(id: ConnectionId): Unit = {
+    modifySled(id) { sled =>
+      if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
+        sled
+      } else {
+        val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
+        val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
+        val direction   = Vec2d.fromRotation(-launchAngle)
+        val ball = Snowball(
+          ownerId = sled.id,
+          pos = wrapInPlayfield(sled.pos + launchPos),
+          size = sled.bulletSize,
+          speed = sled.speed + (direction * sled.bulletSpeed),
+          spawned = gameTime,
+          power = sled.bulletPower
+        )
+        snowballs = snowballs.add(ball)
+
+        val recoilForce = direction * -sled.bulletRecoil
+        val speed       = sled.speed + recoilForce
+        sled.copy(speed = speed, lastShotTime = gameTime)
+      }
+    }
   }
 }
 
