@@ -25,12 +25,10 @@ import vector.Vec2d
 import snowy.{BasicSled, SledKind, StationaryTestSled}
 
 class GameControl(api: AppHostApi)
-    extends AppController
-    with GameState
-    with StrictLogging {
-  val tickDelta = 20 milliseconds
-  val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
-  val messageIO = new MessageIO(api)
+    extends AppController with GameState with StrictLogging {
+  val tickDelta   = 20 milliseconds
+  val turnDelta   = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
+  val messageIO   = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
 
   import messageIO.sendMessage
@@ -41,10 +39,12 @@ class GameControl(api: AppHostApi)
   }
 
   (1 to 20).foreach { i =>
-    userJoin(new ConnectionId,
-             s"StationarySled:$i",
-             StationaryTestSled,
-             robot = true)
+    userJoin(
+      id = new ConnectionId,
+      userName = s"StationarySled:$i",
+      sledKind = StationaryTestSled,
+      robot = true
+    )
   }
 
   /** Called to update game state on a regular timer */
@@ -64,7 +64,7 @@ class GameControl(api: AppHostApi)
     sleds = newSleds
 
     val collisionAwards = time("checkCollisions") { checkCollisions() }
-    val died = collectDead()
+    val died            = collectDead()
     updateScore(moveAwards ++ collisionAwards ++ died)
     reapDead(died)
 
@@ -81,7 +81,7 @@ class GameControl(api: AppHostApi)
 
   private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
-    val offset = 10 * secondsToMicros // library can't handle negative
+    val offset          = 10 * secondsToMicros // library can't handle negative
     Perf.record(
       "turnJitter",
       offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
@@ -100,7 +100,7 @@ class GameControl(api: AppHostApi)
   override def gone(connectionId: ConnectionId): Unit = {
     for {
       sledId <- sledMap.get(connectionId)
-      sled <- sledId.sled
+      sled   <- sledId.sled
     } {
       sled.remove()
     }
@@ -114,13 +114,13 @@ class GameControl(api: AppHostApi)
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind) => userJoin(id, name, sledKind)
-      case TurretAngle(angle) => rotateTurret(id, angle)
-      case Shoot => shootSnowball(id)
-      case Start(cmd) => commands.startCommand(id, cmd)
-      case Stop(cmd) => commands.stopCommand(id, cmd)
-      case Pong => connections(id).pongReceived()
-      case ReJoin(sledKind) => rejoin(id, sledKind)
-      case TestDie => reapSled(sledMap(id))
+      case TurretAngle(angle)   => rotateTurret(id, angle)
+      case Shoot                => shootSnowball(id)
+      case Start(cmd)           => commands.startCommand(id, cmd)
+      case Stop(cmd)            => commands.stopCommand(id, cmd)
+      case Pong                 => connections(id).pongReceived()
+      case ReJoin(sledKind)     => rejoin(id, sledKind)
+      case TestDie              => reapSled(sledMap(id))
     }
   }
 
@@ -197,8 +197,8 @@ class GameControl(api: AppHostApi)
         sled
       } else {
         val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
-        val launchPos = sled.bulletLaunchPosition.rotate(sled.turretRotation)
-        val direction = Vec2d.fromRotation(-launchAngle)
+        val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
+        val direction   = Vec2d.fromRotation(-launchAngle)
         val ball = Snowball(
           ownerId = sled.id,
           pos = wrapInPlayfield(sled.pos + launchPos),
@@ -210,7 +210,7 @@ class GameControl(api: AppHostApi)
         snowballs = snowballs.add(ball)
 
         val recoilForce = direction * -sled.bulletRecoil
-        val speed = sled.speed + recoilForce
+        val speed       = sled.speed + recoilForce
         sled.copy(speed = speed, lastShotTime = gameTime)
       }
     }
@@ -221,8 +221,8 @@ class GameControl(api: AppHostApi)
     * @param rotate rotation in radians from current position. */
   private def turnSled(sled: Sled, rotate: Double): Sled = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
-    val max = math.Pi * 2
-    val min = -math.Pi * 2
+    val max      = math.Pi * 2
+    val min      = -math.Pi * 2
     val rotation = sled.rotation + rotate
     val wrappedRotation =
       if (rotation > max) rotation - max
@@ -238,16 +238,15 @@ class GameControl(api: AppHostApi)
     commands.foreachCommand { (id, command) =>
       modifySled(id) { sled =>
         command match {
-          case Left => turnSled(sled, turnDelta)
+          case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
           case Slow =>
-            val slow = new InlineForce(-slowButtonFriction * deltaSeconds,
-                                       sled.maxSpeed)
+            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
           case Push =>
             val pushForceNow = PushEnergy.force * deltaSeconds
-            val pushEffort = deltaSeconds / PushEnergy.maxTime
-            val push = new InlineForce(pushForceNow, sled.maxSpeed)
+            val pushEffort   = deltaSeconds / PushEnergy.maxTime
+            val push         = new InlineForce(pushForceNow, sled.maxSpeed)
             pushSled(sled, pushForceNow, push, pushEffort)
         }
       }
@@ -274,7 +273,7 @@ class GameControl(api: AppHostApi)
   private def recoverHealth(deltaSeconds: Double): Unit = {
     sleds = sleds.replaceItems { sled =>
       val deltaHealth = deltaSeconds / sled.healthRecoveryTime
-      val newHealth = min(sled.maxHealth, sled.health + deltaHealth)
+      val newHealth   = min(sled.maxHealth, sled.health + deltaHealth)
       sled.copy(health = newHealth)
     }
   }
@@ -326,8 +325,8 @@ class GameControl(api: AppHostApi)
         case SledKill(winnerId, loserId) =>
           for {
             winnerConnectionId <- winnerId.connectionId
-            winner <- winnerId.user
-            loser <- loserId.user
+            winner             <- winnerId.user
+            loser              <- loserId.user
           } {
             val points = loser.score / 2
             winner.addScore(points)
@@ -335,7 +334,7 @@ class GameControl(api: AppHostApi)
         case Travel(sledId, distance) =>
           for {
             connectionId <- sledId.connectionId
-            user <- sledId.user
+            user         <- sledId.user
           } {
             val points = distance * Points.travel
             user.addScore(points)
@@ -344,7 +343,7 @@ class GameControl(api: AppHostApi)
         case SledDied(loserId) =>
           for {
             connectionId <- loserId.connectionId
-            user <- loserId.user
+            user         <- loserId.user
           } {
             user.setScore((score: Double) => {
               Math.max(score / 2, 10)
@@ -444,7 +443,7 @@ class GameControl(api: AppHostApi)
     * @return the time since the last time slice, in seconds
     */
   private def nextTimeSlice(): Double = {
-    val currentTime = System.currentTimeMillis()
+    val currentTime  = System.currentTimeMillis()
     val deltaSeconds = (currentTime - gameTime) / 1000.0
     gameTime = currentTime
     deltaSeconds
