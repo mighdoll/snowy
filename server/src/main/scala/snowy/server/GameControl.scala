@@ -29,6 +29,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
   val messageIO = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
+
   import messageIO.sendMessage
 
   api.tick(tickDelta) {
@@ -44,18 +45,25 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   private def gameTurn(): Unit = time("gameTurn") {
     val deltaSeconds = nextTimeSlice()
     recordTurnJitter(deltaSeconds)
+
     recoverHealth(deltaSeconds)
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     expireSnowballs()
     snowballs = moveSnowballs(snowballs, deltaSeconds)
 
-    val (newSleds, moveAwards) = moveSleds(sleds, deltaSeconds)
+    val (newSleds, moveAwards) = time("moveSleds") { moveSleds(sleds, deltaSeconds) }
     sleds = newSleds
-    val collisionAwards = checkCollisions()
+
+    val collisionAwards = time("checkCollisions") { checkCollisions() }
     val died = collectDead()
     updateScore(moveAwards ++ collisionAwards ++ died)
     reapDead(died)
+
+    time("sendUpdates") { sendUpdates() }
+  }
+
+  private def sendUpdates(): Unit = {
     currentState().collect {
       case (id, state) if state.mySled.id.user.exists(!_.robot) =>
         sendMessage(state, id)
@@ -63,7 +71,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     sendScores()
   }
 
-  private def recordTurnJitter(deltaSeconds:Double):Unit = {
+  private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
     val offset = 10 * secondsToMicros // library can't handle negative
     Perf.record("turnJitter",
@@ -392,7 +400,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   private def sendScores(): Unit = {
     val scores = {
       val rawScores = users.values.map { user => Score(user.name, user.score) }.toSeq
-      val sorted = rawScores.sortWith{(a,b) => a.score > b.score}
+      val sorted = rawScores.sortWith { (a, b) => a.score > b.score }
       sorted.take(10)
     }
     users.collect {
