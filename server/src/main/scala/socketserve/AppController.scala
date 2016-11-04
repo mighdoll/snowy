@@ -17,6 +17,7 @@ import akka.util.ByteString
   * is that applications are easier to write.
   */
 trait AppController {
+
   /** a new connection is established */
   def open(id: ConnectionId): Unit
 
@@ -31,6 +32,7 @@ trait AppController {
 }
 
 trait AppHostApi {
+
   /** Broadcast a message to all clients */
   def sendAll(msg: String): Unit
 

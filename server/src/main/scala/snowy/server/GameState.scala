@@ -7,11 +7,8 @@ import socketserve.ConnectionId
 import GameSeeding.randomTrees
 import snowy.playfield.PlayId.SledId
 
-
-
 /** Records the current state of sleds, trees, snowballs etc. */
-trait GameState {
-  self: GameControl =>
+trait GameState { self: GameControl =>
 
   val gridSpacing = 100.0
   var sleds = Store[Sled]()
@@ -50,8 +47,8 @@ trait GameState {
     }
   }
 
-  implicit class ConnectionIdOps(id:ConnectionId) {
-    def sled:Option[Sled] = sledMap.get(id).flatMap(_.sled)
+  implicit class ConnectionIdOps(id: ConnectionId) {
+    def sled: Option[Sled] = sledMap.get(id).flatMap(_.sled)
   }
 
   implicit class SledIndices(sled: Sled) {

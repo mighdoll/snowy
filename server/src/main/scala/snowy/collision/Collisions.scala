@@ -4,13 +4,15 @@ import snowy.playfield.{Circle, MovingCircle, Rect}
 import vector.Vec2d
 
 object Collisions {
+
   /** @return true if a circle and rect are overlapping */
   def circleRectCollide(circle: Circle, rect: Rect): Boolean = {
     // Find the nearest point to the circle within the rectangle
     val closestPoint = circle.pos.clamp(rect.pos, rect.pos + rect.size)
 
     val distanceSquared = (circle.pos - closestPoint).lengthSquared
-    distanceSquared < Math.max(circle.radius * circle.radius, Double.MinPositiveValue)
+    distanceSquared < Math.max(circle.radius * circle.radius,
+                               Double.MinPositiveValue)
   }
 
   def rectClosestPerimeterPoint(rect: Rect, circle: Circle): Vec2d = {
@@ -27,7 +29,9 @@ object Collisions {
     * to the collided object, but this separation allows adjustments from multiple
     * collisions to be accumulated.)
     */
-  case class Collided[A <: MovingCircle](movingCircle: A, rebound: Vec2d, reposition: Vec2d)
+  case class Collided[A <: MovingCircle](movingCircle: A,
+                                         rebound: Vec2d,
+                                         reposition: Vec2d)
 
   /** Collide two circular objects
     *
@@ -63,7 +67,7 @@ object Collisions {
 
       Collided(a, bounceA, repositionA) ::
         Collided(b, bounceB, repositionB) ::
-        Nil
+          Nil
     } else {
       Nil
     }

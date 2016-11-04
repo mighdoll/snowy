@@ -24,24 +24,24 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   window.setInterval(() => {
     turning match {
-      case Some(GoLeft)  => sendMessage(Start(Left))
+      case Some(GoLeft) => sendMessage(Start(Left))
       case Some(GoRight) => sendMessage(Start(Right))
-      case _             =>
+      case _ =>
     }
     speeding match {
       case Some(SlowDown) => sendMessage(Start(Slow))
-      case Some(SpeedUp)  => sendMessage(Start(Push))
-      case _              =>
+      case Some(SpeedUp) => sendMessage(Start(Push))
+      case _ =>
     }
   }, 500)
 
   window.onkeydown = { event: KeyboardEvent =>
     event.key match {
-      case Keys.Right() if !turning.contains(GoRight)  =>
+      case Keys.Right() if !turning.contains(GoRight) =>
         sendMessage(Stop(Left))
         sendMessage(Start(Right))
         turning = Some(GoRight)
-      case Keys.Left() if !turning.contains(GoLeft)    =>
+      case Keys.Left() if !turning.contains(GoLeft) =>
         sendMessage(Stop(Right))
         sendMessage(Start(Left))
         turning = Some(GoLeft)
@@ -49,11 +49,11 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Stop(Push))
         sendMessage(Start(Slow))
         speeding = Some(SlowDown)
-      case Keys.Up() if !speeding.contains(SpeedUp)    =>
+      case Keys.Up() if !speeding.contains(SpeedUp) =>
         sendMessage(Stop(Slow))
         sendMessage(Start(Push))
         speeding = Some(SpeedUp)
-      case _                                           =>
+      case _ =>
     }
   }
 
@@ -62,19 +62,19 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       case (Keys.Right(), Some(GoRight)) =>
         sendMessage(Stop(Right))
         turning = None
-      case (Keys.Left(), Some(GoLeft))   =>
+      case (Keys.Left(), Some(GoLeft)) =>
         sendMessage(Stop(Left))
         turning = None
-      case _                             =>
+      case _ =>
     }
     (event.key, speeding) match {
-      case (Keys.Up(), Some(SpeedUp))    =>
+      case (Keys.Up(), Some(SpeedUp)) =>
         sendMessage(Stop(Push))
         speeding = None
       case (Keys.Down(), Some(SlowDown)) =>
         sendMessage(Stop(Slow))
         speeding = None
-      case _                             =>
+      case _ =>
     }
   }
 

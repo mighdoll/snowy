@@ -20,7 +20,13 @@ class LoginScreen() {
         flake.draw()
       }
 
-      new DrawSled("", Vec2d(size.x / 2, size.y / 2), size.x / 3, 1, Math.PI * 3 / 2, Math.PI / 2, "rgb(120, 201, 44)")
+      new DrawSled("",
+                   Vec2d(size.x / 2, size.y / 2),
+                   size.x / 3,
+                   1,
+                   Math.PI * 3 / 2,
+                   Math.PI / 2,
+                   "rgb(120, 201, 44)")
     }, 10))
   }
 

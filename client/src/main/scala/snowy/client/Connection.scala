@@ -13,7 +13,8 @@ class Connection(name: String) {
   val socket = {
     val inDelay = 0 milliseconds
     val outDelay = 0 milliseconds
-    val secure = if(window.location.protocol.slice(0, -1).length > 4) "s" else ""
+    val secure =
+      if (window.location.protocol.slice(0, -1).length > 4) "s" else ""
     val url = s"ws$secure://${window.location.host}/game"
     new NetworkSocket(url, inDelay, outDelay)
   }
@@ -27,9 +28,17 @@ class Connection(name: String) {
   new InboundEvents(socket, sendMessage, name)
   new OutboundEvents(sendMessage)
 
-  def reSpawn(): Unit ={
+  def reSpawn(): Unit = {
     sendMessage(ReJoin())
-    document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
-    document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
+    document
+      .getElementById("game-div")
+      .asInstanceOf[html.Div]
+      .classList
+      .remove("back")
+    document
+      .getElementById("login-form")
+      .asInstanceOf[html.Div]
+      .classList
+      .add("hide")
   }
 }

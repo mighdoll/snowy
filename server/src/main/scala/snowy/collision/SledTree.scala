@@ -8,10 +8,11 @@ import snowy.playfield.{Circle, Sled, Tree}
 import vector.Vec2d
 
 object SledTree {
+
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
     * @return a damaged sled if it overlaps with a tree */
-  def collide(sled:Sled, trees:Set[Tree]): Option[Sled] = {
+  def collide(sled: Sled, trees: Set[Tree]): Option[Sled] = {
     val sledBody = Circle(sled.pos, sled.size / 2)
 
     trees.collectFirst {
@@ -20,9 +21,8 @@ object SledTree {
     }
   }
 
-
   /** return a damaged version of the sled after impacting with a tree */
-  private def treeDamaged(sled:Sled, sledBody:Circle, tree:Tree): Sled = {
+  private def treeDamaged(sled: Sled, sledBody: Circle, tree: Tree): Sled = {
     // take damage proportional to speed
     val health = {
       val speed = sled.speed.length

@@ -22,6 +22,11 @@ object GameState {
     serverSleds = Store(state.sleds)
     serverMySled = state.mySled
 
-    drawState(serverSnowballs, serverSleds, serverMySled, serverTrees, gPlayField, scoreboard)
+    drawState(serverSnowballs,
+              serverSleds,
+              serverMySled,
+              serverTrees,
+              gPlayField,
+              scoreboard)
   }
 }

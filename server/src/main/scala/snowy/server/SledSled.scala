@@ -31,26 +31,29 @@ object SledSled {
     def applyDamage(injuredSled: InjuredSled): Unit = {
       import injuredSled.collided.{rebound, reposition}
       import injuredSled.{injury, sled}
-      damagedSleds.add(sled.copy(
-        health = sled.health - injury,
-        pos = sled.pos + reposition,
-        speed = sled.speed + rebound
-      ))
+      damagedSleds.add(
+        sled.copy(
+          health = sled.health - injury,
+          pos = sled.pos + reposition,
+          speed = sled.speed + rebound
+        ))
     }
 
     val injuries: List[InjuredSled] = {
-      sleds.toList.combinations(2).flatMap { elems =>
-        elems match {
-          case a :: b :: Nil => collideTwoSleds(a, b)
-          case _             => ??? // can't happen AFAIK
+      sleds.toList
+        .combinations(2)
+        .flatMap { elems =>
+          elems match {
+            case a :: b :: Nil => collideTwoSleds(a, b)
+            case _ => ??? // can't happen AFAIK
+          }
         }
-      }.toList
+        .toList
     }
 
     injuries foreach applyDamage
     damagedSleds
   }
-
 
   /** Collide two sleds and return the collision adjustments, or Nil */
   private def collideTwoSleds(a: Sled, b: Sled): List[InjuredSled] = {
@@ -60,8 +63,8 @@ object SledSled {
           InjuredSled(collidedA, impactDamage(a, b)),
           InjuredSled(collidedB, impactDamage(b, a))
         )
-      case Nil                           => Nil
-      case _                             => ???
+      case Nil => Nil
+      case _ => ???
     }
   }
 
@@ -77,6 +80,5 @@ object SledSled {
   private case class InjuredSled(collided: Collided[Sled], injury: Double) {
     def sled: Sled = collided.movingCircle
   }
-
 
 }

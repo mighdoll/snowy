@@ -19,6 +19,7 @@ object GameSeeding {
       random.nextInt(playfield.y.toInt)
     )
   }
+
   /** Initialize a set of playfield obstacles */
   def randomTrees(): Set[Tree] = {
     val random = ThreadLocalRandom.current
@@ -48,7 +49,7 @@ object GameSeeding {
       val tree = fn
       forest.flatten.find(treesOverlap(_, tree)) match {
         case Some(t) => nonOverlapping(fn)
-        case None    => tree
+        case None => tree
       }
     }
 

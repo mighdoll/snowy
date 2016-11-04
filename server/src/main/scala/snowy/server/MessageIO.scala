@@ -26,7 +26,7 @@ class MessageIO(api: AppHostApi) {
     }
   }
 
-  def sendBinaryMessage(byteString:ByteString, id:ConnectionId):Unit = {
+  def sendBinaryMessage(byteString: ByteString, id: ConnectionId): Unit = {
     api.sendBinary(byteString, id)
   }
 }

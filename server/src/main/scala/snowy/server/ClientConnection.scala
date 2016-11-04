@@ -17,7 +17,7 @@ object ClientConnection {
 import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
-class ClientConnection(id: ConnectionId, messageIO:MessageIO) {
+class ClientConnection(id: ConnectionId, messageIO: MessageIO) {
   var minPingTime: Option[Long] = None
   var lastPingSent = 0L
   var pingsSent = 0

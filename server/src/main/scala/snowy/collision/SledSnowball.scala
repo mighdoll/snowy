@@ -5,12 +5,13 @@ import snowy.Awards.SnowballHit
 import snowy.GameConstants.Bullet
 
 object SledSnowball {
+
   /** Intersect the sled with all potentially overlapping snowballs on the playfield.
     * If a snowball collides with the sled, remove the snowball from the playfield
     *
     * @return a damaged sled if it intersects with a snowball */
   def collide(sled: Sled, snowballs: Store[Snowball])
-      : Option[(Sled, Store[Snowball], Traversable[SnowballHit])] = {
+    : Option[(Sled, Store[Snowball], Traversable[SnowballHit])] = {
     val collisions =
       snowballs.items.filter { snowball =>
         snowball.ownerId != sled.id && snowballCollide(sled, snowball)

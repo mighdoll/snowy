@@ -4,7 +4,6 @@ import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw._
 import vector.Vec2d
 
-
 class DrawGrid(sled: Vec2d, scale: Double) {
   ctx.strokeStyle = (lineColors * 2.4).toString
   val lineGap = (10 * scale).toInt

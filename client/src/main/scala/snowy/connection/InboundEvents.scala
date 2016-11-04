@@ -12,7 +12,9 @@ import upickle.default._
 import boopickle.Default._
 import snowy.playfield.Picklers._
 
-class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => Unit, name: String) {
+class InboundEvents(socket: NetworkSocket,
+                    sendMessage: (GameServerMessage) => Unit,
+                    name: String) {
   socket.onOpen { _ =>
     sendMessage(Join(name))
     switch(true)
@@ -24,12 +26,28 @@ class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => U
 
   def switch(game: Boolean) {
     game match {
-      case true  =>
-        document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
-        document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
+      case true =>
+        document
+          .getElementById("game-div")
+          .asInstanceOf[html.Div]
+          .classList
+          .remove("back")
+        document
+          .getElementById("login-form")
+          .asInstanceOf[html.Div]
+          .classList
+          .add("hide")
       case false =>
-        document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
-        document.getElementById("login-form").asInstanceOf[html.Div].classList.remove("hide")
+        document
+          .getElementById("game-div")
+          .asInstanceOf[html.Div]
+          .classList
+          .add("back")
+        document
+          .getElementById("login-form")
+          .asInstanceOf[html.Div]
+          .classList
+          .remove("hide")
     }
 
   }
@@ -42,7 +60,7 @@ class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => U
   socket.onMessage { event =>
     event.data match {
       case arrayBuffer: ArrayBuffer => arrayBufferMessage(arrayBuffer)
-      case msgString: String        => stringMessage(msgString)
+      case msgString: String => stringMessage(msgString)
       case x => console.log(s"unexpected message received: $x")
     }
   }
@@ -59,14 +77,15 @@ class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => U
 
   private def handleMessage(message: GameClientMessage): Unit = {
     message match {
-      case state: State                => receivedState(state)
-      case Playfield(width, height)    => gPlayField = Vec2d(width, height)
-      case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
-      case Died                        => switch(false); loginScreen.setup()
-      case Ping                        => sendMessage(Pong)
-      case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
-      case newScoreboard: Scoreboard   => scoreboard = newScoreboard
-      case x                           => println(s"unexpected message: $message")
+      case state: State => receivedState(state)
+      case Playfield(width, height) => gPlayField = Vec2d(width, height)
+      case trees: Trees => serverTrees = serverTrees.addItems(trees.trees)
+      case Died => switch(false); loginScreen.setup()
+      case Ping => sendMessage(Pong)
+      case GameTime(time, oneWayDelay) =>
+        console.log(s"Game Time: $time, $oneWayDelay")
+      case newScoreboard: Scoreboard => scoreboard = newScoreboard
+      case x => println(s"unexpected message: $message")
     }
   }
 

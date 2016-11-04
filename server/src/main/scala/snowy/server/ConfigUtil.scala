@@ -8,7 +8,6 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 object ConfigUtil {
 
-
   /** Load configuration with an extended set of .conf files.
     * In addition to the standard reference.conf/application.conf files,
     * a set of explicitly named filesystem .conf files and resource path .conf files
@@ -19,15 +18,18 @@ object ConfigUtil {
     * Third priority goes to standard typesafe.Config loaded files:
     * (the application.conf and reference.conf files.)
     */
-  def configFromFilesAndResources(files: Traversable[File], resources: Traversable[String] = Nil)
-  : Config = {
+  def configFromFilesAndResources(
+      files: Traversable[File],
+      resources: Traversable[String] = Nil): Config = {
     val baseConfig = ConfigFactory.load()
     val fileConfigs = files.map { configFile =>
       ConfigFactory.parseFile(configFile)
     }.toSeq
     val resourceConfigs = resources.map(ConfigFactory.parseResources)
     val allConfigs: Seq[Config] = fileConfigs ++ resourceConfigs :+ baseConfig
-    val combined = allConfigs.reduceLeft { (a, b) => a.withFallback(b) }
+    val combined = allConfigs.reduceLeft { (a, b) =>
+      a.withFallback(b)
+    }
     combined.resolve()
   }
 
@@ -38,7 +40,10 @@ object ConfigUtil {
       import java.nio.file.StandardOpenOption._
       val configString = config.root.render()
       val charSet = Charset.forName("UTF-8")
-      val writer = Files.newBufferedWriter(Paths.get(fileName), charSet, TRUNCATE_EXISTING, CREATE)
+      val writer = Files.newBufferedWriter(Paths.get(fileName),
+                                           charSet,
+                                           TRUNCATE_EXISTING,
+                                           CREATE)
       writer.write(configString)
       writer.close()
     }

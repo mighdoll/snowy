@@ -17,5 +17,3 @@ object Keys {
   object Left extends KeyMatch("ArrowLeft", "a", "A")
 
 }
-
-

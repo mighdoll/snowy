@@ -9,19 +9,19 @@ import akka.util.ByteString
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi {
 
-  private val connections = mutable.Map[ConnectionId, ActorRef]()
+  private val connections                = mutable.Map[ConnectionId, ActorRef]()
   private var app: Option[AppController] = None
 
   import system.dispatcher
 
   val appActor = system.actorOf(Props(new Actor {
     def receive: Receive = {
-      case ClientMessage(id, text) => clientMessage(id, text)
+      case ClientMessage(id, text)         => clientMessage(id, text)
       case ClientBinaryMessage(id, binary) => binaryMessage(id, binary)
-      case Open(id, out)           => open(id, out)
-      case Gone(id)                => gone(id)
-      case RegisterApp(newApp)     => app = Some(newApp)
-      case Turn                    => tickFn.map { fn => fn() }
+      case Open(id, out)                   => open(id, out)
+      case Gone(id)                        => gone(id)
+      case RegisterApp(newApp)             => app = Some(newApp)
+      case Turn                            => tickFn.map(fn => fn())
     }
   }))
 
@@ -29,8 +29,11 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
 
   def tick(duration: FiniteDuration)(fn: => Unit) {
     tickFn = Some(() => fn)
-    system.scheduler.schedule(initialDelay = duration, interval = duration,
-      receiver = appActor, message = Turn)
+    system.scheduler.schedule(
+      initialDelay = duration,
+      interval = duration,
+      receiver = appActor,
+      message = Turn)
   }
 
   /** Send a message to one client */
@@ -38,7 +41,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
     connections.get(id) match {
       case Some(out) =>
         out ! TextMessage(msg)
-      case None      =>
+      case None =>
         println(s"send to unknown connection id: $id")
     }
   }
@@ -46,10 +49,8 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
   /** Send a binary message to one client */
   def sendBinary(data: ByteString, id: ConnectionId): Unit = {
     connections.get(id) match {
-      case Some(out) =>
-        out ! BinaryMessage(data)
-      case None      =>
-        println(s"send to unknown connection id: $id")
+      case Some(out) => out ! BinaryMessage(data)
+      case None      => println(s"send to unknown connection id: $id")
     }
   }
 
@@ -59,7 +60,6 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
       out ! TextMessage(msg)
     }
   }
-
 
   /** register a controller application for this host */
   def registerApp(multiApp: AppController): Unit = {
@@ -95,7 +95,8 @@ object AppHost {
 
     case class ClientMessage(id: ConnectionId, message: String) extends GameCommand
 
-    case class ClientBinaryMessage(id: ConnectionId, message: ByteString) extends GameCommand
+    case class ClientBinaryMessage(id: ConnectionId, message: ByteString)
+        extends GameCommand
 
     case class Gone(id: ConnectionId) extends GameCommand
 

@@ -9,19 +9,25 @@ class Portal(portalRect: Rect) {
   var snowballs = Seq[Snowball]()
   var scale = 0.0
 
-  def apply(tsleds: Set[Sled], tsnowballs: Set[Snowball], ttrees: Set[Tree]): Portal = {
+  def apply(tsleds: Set[Sled],
+            tsnowballs: Set[Snowball],
+            ttrees: Set[Tree]): Portal = {
     sleds = tsleds.toSeq
     snowballs = tsnowballs.toSeq
     trees = ttrees.toSeq
     this
   }
 
-
   // TODO comment
-  private def wrapInPlayfield(pos: Vec2d, padding: Vec2d, wrapRange: Vec2d): Option[Vec2d] = {
+  private def wrapInPlayfield(pos: Vec2d,
+                              padding: Vec2d,
+                              wrapRange: Vec2d): Option[Vec2d] = {
 
     /** TODO take min, max, wrapSize instead of pad? */
-    def wrap(value: Double, max: Double, pad: Double, wrapSize: Double): Option[Double] = {
+    def wrap(value: Double,
+             max: Double,
+             pad: Double,
+             wrapSize: Double): Option[Double] = {
       val wrapped =
         if (value > pad + max) value - wrapSize
         else if (value < -pad) value + wrapSize
@@ -53,10 +59,10 @@ class Portal(portalRect: Rect) {
       (screenSize - portalScaled) / 2
     }
 
-
     /** @param playfieldObject a sled snowball or tree
       * @return playfieldObject translated, wrapped, and filtered */
-    def transformToScreen[A <: PlayfieldObject](playfieldObject: A): Option[playfieldObject.MyType] = {
+    def transformToScreen[A <: PlayfieldObject](
+        playfieldObject: A): Option[playfieldObject.MyType] = {
       val portalPos = playfieldObject.pos - portalRect.pos
 
       for {

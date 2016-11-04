@@ -5,7 +5,6 @@ import snowy.GameConstants.commandDuration
 import snowy.GameServerProtocol.StartStopCommand
 import socketserve.ConnectionId
 
-
 case class PendingCommand(start: Millis, command: StartStopCommand)
 
 object PendingCommand {
@@ -20,7 +19,8 @@ class PendingCommands {
 
   import scala.collection.mutable.{HashMap, MultiMap}
 
-  val commands = new HashMap[ConnectionId, mutable.Set[PendingCommand]] with MultiMap[ConnectionId, PendingCommand]
+  val commands = new HashMap[ConnectionId, mutable.Set[PendingCommand]]
+  with MultiMap[ConnectionId, PendingCommand]
 
   /** record a pending command, replacing any previous matching command for this id  */
   def startCommand(id: ConnectionId, command: StartStopCommand): Unit = {
@@ -35,7 +35,7 @@ class PendingCommands {
   /** remove all expired commands */
   def removeExpired(): Unit = {
     val now = System.currentTimeMillis()
-    filterRemove{ (_, command) =>
+    filterRemove { (_, command) =>
       command.start.time + commandDuration < now
     }
   }
@@ -62,7 +62,8 @@ class PendingCommands {
     }
   }
 
-  private def removeCommand(id: ConnectionId, command: StartStopCommand): Unit = {
+  private def removeCommand(id: ConnectionId,
+                            command: StartStopCommand): Unit = {
     commands.get(id).map { cmds =>
       cmds.filter(_.command == command).map(cmds.remove)
     }

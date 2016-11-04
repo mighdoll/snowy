@@ -24,7 +24,10 @@ import snowy.playfield.Picklers._
 import vector.Vec2d
 import snowy.{BasicSled, SledKind, StationaryTestSled}
 
-class GameControl(api: AppHostApi) extends AppController with GameState with StrictLogging {
+class GameControl(api: AppHostApi)
+    extends AppController
+    with GameState
+    with StrictLogging {
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
   val messageIO = new MessageIO(api)
@@ -38,7 +41,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   }
 
   (1 to 20).foreach { i =>
-    userJoin(new ConnectionId, s"StationarySled:$i", StationaryTestSled, robot = true)
+    userJoin(new ConnectionId,
+             s"StationarySled:$i",
+             StationaryTestSled,
+             robot = true)
   }
 
   /** Called to update game state on a regular timer */
@@ -52,7 +58,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     expireSnowballs()
     snowballs = moveSnowballs(snowballs, deltaSeconds)
 
-    val (newSleds, moveAwards) = time("moveSleds") { moveSleds(sleds, deltaSeconds) }
+    val (newSleds, moveAwards) = time("moveSleds") {
+      moveSleds(sleds, deltaSeconds)
+    }
     sleds = newSleds
 
     val collisionAwards = time("checkCollisions") { checkCollisions() }
@@ -74,7 +82,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
     val offset = 10 * secondsToMicros // library can't handle negative
-    Perf.record("turnJitter",
+    Perf.record(
+      "turnJitter",
       offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
     )
   }
@@ -105,13 +114,13 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind) => userJoin(id, name, sledKind)
-      case TurretAngle(angle)   => rotateTurret(id, angle)
-      case Shoot                => shootSnowball(id)
-      case Start(cmd)           => commands.startCommand(id, cmd)
-      case Stop(cmd)            => commands.stopCommand(id, cmd)
-      case Pong                 => connections(id).pongReceived()
-      case ReJoin(sledKind)     => rejoin(id, sledKind)
-      case TestDie              => reapSled(sledMap(id))
+      case TurretAngle(angle) => rotateTurret(id, angle)
+      case Shoot => shootSnowball(id)
+      case Start(cmd) => commands.startCommand(id, cmd)
+      case Stop(cmd) => commands.stopCommand(id, cmd)
+      case Pong => connections(id).pongReceived()
+      case ReJoin(sledKind) => rejoin(id, sledKind)
+      case TestDie => reapSled(sledMap(id))
     }
   }
 
@@ -127,15 +136,22 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
 
   private def newRandomSled(userName: String, sledKind: SledKind): Sled = {
     // TODO what if sled is initialized atop a tree?
-    Sled(userName = userName, pos = randomSpot(), size = 35, speed = Vec2d(0, 0),
-      rotation = downhillRotation, turretRotation = downhillRotation,
-      kind = sledKind)
+    Sled(
+      userName = userName,
+      pos = randomSpot(),
+      size = 35,
+      speed = Vec2d(0, 0),
+      rotation = downhillRotation,
+      turretRotation = downhillRotation,
+      kind = sledKind
+    )
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId, userName: String, sledKind: SledKind,
-                       robot: Boolean = false)
-  : Unit = {
+  private def userJoin(id: ConnectionId,
+                       userName: String,
+                       sledKind: SledKind,
+                       robot: Boolean = false): Unit = {
     println(s"user joined: $userName  userCount:${users.size}")
     val user = new User(userName, createTime = gameTime, robot = robot)
     users(id) = user
@@ -147,18 +163,18 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
       case Some(user) =>
         println(s"user rejoined: ${user.name}")
         createSled(id, user, sledKind)
-      case None       =>
+      case None =>
         println(s"user not found to rejoin: $id")
     }
   }
 
-  private def createSled(connctionId: ConnectionId, user: User,
+  private def createSled(connctionId: ConnectionId,
+                         user: User,
                          sledKind: SledKind): Unit = {
     val sled = newRandomSled(user.name, sledKind)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id
   }
-
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
@@ -222,12 +238,13 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     commands.foreachCommand { (id, command) =>
       modifySled(id) { sled =>
         command match {
-          case Left  => turnSled(sled, turnDelta)
+          case Left => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
-          case Slow  =>
-            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, sled.maxSpeed)
+          case Slow =>
+            val slow = new InlineForce(-slowButtonFriction * deltaSeconds,
+                                       sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
-          case Push  =>
+          case Push =>
             val pushForceNow = PushEnergy.force * deltaSeconds
             val pushEffort = deltaSeconds / PushEnergy.maxTime
             val push = new InlineForce(pushForceNow, sled.maxSpeed)
@@ -238,8 +255,10 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
   }
 
   /** apply a push to a sled */
-  private def pushSled(sled: Sled, pushForceNow: Double, push: InlineForce, effort: Double)
-  : Sled = {
+  private def pushSled(sled: Sled,
+                       pushForceNow: Double,
+                       push: InlineForce,
+                       effort: Double): Sled = {
     if (effort < sled.pushEnergy) {
       val speed =
         if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
@@ -269,7 +288,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     }
   }
 
-
   private def expireSnowballs(): Unit = {
     val now = System.currentTimeMillis()
     snowballs = snowballs.removeMatchingItems { snowball =>
@@ -286,8 +304,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
 
   /** Notify clients whose sleds have been killed, remove sleds from the game */
   private def reapDead(dead: Traversable[SledDied]): Unit = {
-    dead.foreach { case SledDied(sledId) =>
-      reapSled(sledId)
+    dead.foreach {
+      case SledDied(sledId) =>
+        reapSled(sledId)
     }
   }
 
@@ -313,7 +332,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
             val points = loser.score / 2
             winner.addScore(points)
           }
-        case Travel(sledId, distance)    =>
+        case Travel(sledId, distance) =>
           for {
             connectionId <- sledId.connectionId
             user <- sledId.user
@@ -321,8 +340,8 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
             val points = distance * Points.travel
             user.addScore(points)
           }
-        case SnowballHit(winnerId)       =>
-        case SledDied(loserId)           =>
+        case SnowballHit(winnerId) =>
+        case SledDied(loserId) =>
           for {
             connectionId <- loserId.connectionId
             user <- loserId.user
@@ -341,8 +360,9 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     val awards = mutable.ListBuffer[SledKill]()
 
     def updateGlobalSleds(replace: Traversable[SledReplace]): Unit = {
-      sleds = replace.foldLeft(sleds) { case (newSleds, SledReplace(oldSled, newSled)) =>
-        newSleds.remove(oldSled).add(newSled)
+      sleds = replace.foldLeft(sleds) {
+        case (newSleds, SledReplace(oldSled, newSled)) =>
+          newSleds.remove(oldSled).add(newSled)
       }
     }
 
@@ -351,13 +371,14 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     // . update local awards table from any sleds that were killed
     // . return the revised sleds after damage taken from snowballs
     val ballSleds: Set[SledReplace] =
-    sleds.items.flatMap { sled =>
-      collideBalls(sled, snowballs).map { case (newSled, newBalls, newAwards) =>
-        snowballs = newBalls
-        awards ++= newAwards
-        SledReplace(sled, newSled)
+      sleds.items.flatMap { sled =>
+        collideBalls(sled, snowballs).map {
+          case (newSled, newBalls, newAwards) =>
+            snowballs = newBalls
+            awards ++= newAwards
+            SledReplace(sled, newSled)
+        }
       }
-    }
     updateGlobalSleds(ballSleds)
 
     val treeSleds =
@@ -384,23 +405,30 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
     *         awards to the shooters if the sled was killed
     */
   private def collideBalls(sled: Sled, balls: Store[Snowball])
-  : Option[(Sled, Store[Snowball], Traversable[SledKill])] = {
-    SledSnowball.collide(sled, snowballs).map { case (newSled, newBalls, awards) =>
-      val killAwards =
-        if (newSled.health <= 0) {
-          awards.map { winner => SledKill(winner.sledId, newSled.id) }
-        } else {
-          Nil
-        }
-      (newSled, newBalls, killAwards)
+    : Option[(Sled, Store[Snowball], Traversable[SledKill])] = {
+    SledSnowball.collide(sled, snowballs).map {
+      case (newSled, newBalls, awards) =>
+        val killAwards =
+          if (newSled.health <= 0) {
+            awards.map { winner =>
+              SledKill(winner.sledId, newSled.id)
+            }
+          } else {
+            Nil
+          }
+        (newSled, newBalls, killAwards)
     }
   }
 
   /** Send the current score to the clients */
   private def sendScores(): Unit = {
     val scores = {
-      val rawScores = users.values.map { user => Score(user.name, user.score) }.toSeq
-      val sorted = rawScores.sortWith { (a, b) => a.score > b.score }
+      val rawScores = users.values.map { user =>
+        Score(user.name, user.score)
+      }.toSeq
+      val sorted = rawScores.sortWith { (a, b) =>
+        a.score > b.score
+      }
       sorted.take(10)
     }
     users.collect {
@@ -410,7 +438,6 @@ class GameControl(api: AppHostApi) extends AppController with GameState with Str
         sendMessage(scoreboard, id)
     }
   }
-
 
   /** Advance to the next game simulation state
     *

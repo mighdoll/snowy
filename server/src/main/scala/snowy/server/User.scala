@@ -3,7 +3,6 @@ package snowy.server
 import java.util.concurrent.ThreadLocalRandom
 import scala.concurrent.duration._
 
-
 object User {
   val scoreFrequency = 1.second.toMillis
 }
@@ -41,5 +40,5 @@ class User(val name: String, val robot: Boolean = false, val createTime: Long) {
   def multiplyScore(value: Double): Unit = theScore = theScore * value
 
   /** Set the score given a function that takes a score and returns a score */
-  def setScore(fn: (Double)=>(Double)): Unit = theScore = fn(theScore)
+  def setScore(fn: (Double) => (Double)): Unit = theScore = fn(theScore)
 }

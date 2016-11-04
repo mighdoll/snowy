@@ -8,7 +8,9 @@ import org.scalajs.dom._
   * @param inDelay: delay message from the server by this amount of time
   * @param outDelay: delay message to the server by this amount of time
   */
-class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
+class NetworkSocket(url: String,
+                    inDelay: FiniteDuration,
+                    outDelay: FiniteDuration) {
   val socket = new WebSocket(url)
 
   socket.binaryType = "arraybuffer"
@@ -42,7 +44,7 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
     if (inDelay.length == 0) {
       socket.onmessage = fn
     } else {
-      socket.onmessage = { message:MessageEvent =>
+      socket.onmessage = { message: MessageEvent =>
         delay(inDelay) {
           fn(message)
         }

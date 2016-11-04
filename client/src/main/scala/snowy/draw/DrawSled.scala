@@ -4,7 +4,13 @@ import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw.ctx
 import vector.Vec2d
 
-class DrawSled(name: String, pos: Vec2d, size: Double, health: Double, cannonRotation: Double, rotation: Double, color: String) {
+class DrawSled(name: String,
+               pos: Vec2d,
+               size: Double,
+               health: Double,
+               cannonRotation: Double,
+               rotation: Double,
+               color: String) {
   val x = pos.x
   val y = pos.y
   //val size = 35.0
