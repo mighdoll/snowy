@@ -6,13 +6,16 @@ import vector.Vec2d
 
 object Grid {
   val defaultSpacing = 100
-  def apply[A <: PlayfieldObject](size: Vec2d = GameConstants.playfield, spacing: Double = defaultSpacing, items: TraversableOnce[A] = Set()): Grid[A] = {
+  def apply[A <: PlayfieldObject](size: Vec2d = GameConstants.playfield,
+                                  spacing: Double = defaultSpacing,
+                                  items: TraversableOnce[A] = Set()): Grid[A] = {
     new Grid[A](size, spacing) {
       override def initialCells() = {
-        val array = blankCells()
+        val array  = blankCells()
         val sorted = items.toVector.groupBy(cellIndex(_))
-        sorted.foreach { case (index, cellItems) =>
-          array(index) = Some(cellItems.toSet)
+        sorted.foreach {
+          case (index, cellItems) =>
+            array(index) = Some(cellItems.toSet)
         }
         array
       }
@@ -30,7 +33,7 @@ class Grid[A <: PlayfieldObject](val size: Vec2d, val spacing: Double) {
 
   protected def blankCells(): Array[Option[Set[A]]] = {
     val cellCount = rawIndex(size.x, size.y) + 1
-    val array = new Array[Option[Set[A]]](cellCount)
+    val array     = new Array[Option[Set[A]]](cellCount)
     (0 until cellCount).foreach { index =>
       array(index) = None
     }
@@ -71,9 +74,8 @@ class Grid[A <: PlayfieldObject](val size: Vec2d, val spacing: Double) {
     rawIndex(playfieldObject.pos.x, playfieldObject.pos.y)
 
   protected def rawIndex(x: Double, y: Double): Int = {
-    val row = floor(y / spacing).toInt
+    val row    = floor(y / spacing).toInt
     val column = floor(x / spacing).toInt
     row * columns + column
   }
 }
-

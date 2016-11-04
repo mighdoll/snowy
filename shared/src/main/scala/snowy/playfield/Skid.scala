@@ -19,31 +19,31 @@ class Skid(skidTime: Double) {
     * slower sleds change direction more swiftly.
     */
   def apply(current: Vec2d, rotation: Double, maxSpeed: Double): Vec2d = {
-    current.transform { case _ if !current.zero =>
-      val speed = current.length
-      val currentDirection = current.angle(Vec2d.unitUp)
+    current.transform {
+      case _ if !current.zero =>
+        val speed            = current.length
+        val currentDirection = current.angle(Vec2d.unitUp)
 
-      // the ski direction we'll actually aim for
-      // subtract out any extra rotations since the skis go both ways
-      val targetDirection = {
-        val delta = rotation - currentDirection
-        val baseOffset = math.abs(delta)
-        val rotations = math.floor((baseOffset + Pi / 2) / Pi) * Pi
-        rotation - delta.signum * rotations
-      }
+        // the ski direction we'll actually aim for
+        // subtract out any extra rotations since the skis go both ways
+        val targetDirection = {
+          val delta      = rotation - currentDirection
+          val baseOffset = math.abs(delta)
+          val rotations  = math.floor((baseOffset + Pi / 2) / Pi) * Pi
+          rotation - delta.signum * rotations
+        }
 
-      // skidFactor of 1.0 means no more skidding, proceed directly to targetDirection
-      val skidFactor = {
-        val rawSkidFactor = maxSpeed * skidTime / speed
-        math.min(1.0, rawSkidFactor)
-      }
-      val newVector = {
-        val newAngle = currentDirection + ((targetDirection - currentDirection) * skidFactor)
-        Vec2d.fromRotation(newAngle) * speed
-      }
+        // skidFactor of 1.0 means no more skidding, proceed directly to targetDirection
+        val skidFactor = {
+          val rawSkidFactor = maxSpeed * skidTime / speed
+          math.min(1.0, rawSkidFactor)
+        }
+        val newVector = {
+          val newAngle = currentDirection + ((targetDirection - currentDirection) * skidFactor)
+          Vec2d.fromRotation(newAngle) * speed
+        }
 
-      newVector
+        newVector
     }
   }
 }
-

@@ -71,6 +71,7 @@ case class Vec2d(x: Double, y: Double) {
 }
 
 object Vec2d {
+
   /** @return a vector rotated from straight up vector.Vec2d(0,1)
     * @param angle in radians
     */

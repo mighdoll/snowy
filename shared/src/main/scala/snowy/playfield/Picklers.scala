@@ -8,8 +8,8 @@ object Picklers {
   implicit val TreeIdPickler = playIdPickler[Tree]
 
   private def playIdPickler[A]: Pickler[PlayId[A]] =
-    transformPickler[PlayId[A], Int]{
-      (id:Int) => new PlayId[A](id)
+    transformPickler[PlayId[A], Int] { (id: Int) =>
+      new PlayId[A](id)
     } {
       _.id
     }

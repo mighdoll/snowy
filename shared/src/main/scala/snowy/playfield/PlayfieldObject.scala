@@ -31,7 +31,7 @@ object PlayId {
   type TreeId = PlayId[Tree]
 }
 
-import PlayId._
+import snowy.playfield.PlayId._
 
 case class Rect(pos: Vec2d, size: Vec2d)
 
@@ -66,8 +66,8 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
                 health: Double = 1,
                 pushEnergy: Double = 1,
                 lastShotTime: Long = 0,
-                kind: SledKind = BasicSled
-               ) extends PlayfieldObject with MovingCircle {
+                kind: SledKind = BasicSled)
+    extends PlayfieldObject with MovingCircle {
   type MyType = Sled
 
   override def updatePos(newPos: Vec2d): Sled = {
@@ -122,10 +122,8 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   def armor: Double = kind.armor
 }
 
-case class Tree(id: TreeId = PlayfieldObject.nextId(),
-                pos: Vec2d,
-                size: Double
-               ) extends PlayfieldObject {
+case class Tree(id: TreeId = PlayfieldObject.nextId(), pos: Vec2d, size: Double)
+    extends PlayfieldObject {
   type MyType = Tree
 
   override def updatePos(newPos: Vec2d): Tree = {
@@ -139,13 +137,11 @@ case class Snowball(id: BallId = PlayfieldObject.nextId(),
                     size: Double,
                     speed: Vec2d,
                     spawned: Long,
-                    power: Double
-                   ) extends PlayfieldObject {
+                    power: Double)
+    extends PlayfieldObject {
   type MyType = Snowball
 
   override def updatePos(newPos: Vec2d): Snowball = {
     this.copy(pos = newPos)
   }
 }
-
-
