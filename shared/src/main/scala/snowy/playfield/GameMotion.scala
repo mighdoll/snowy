@@ -1,23 +1,22 @@
 package snowy.playfield
 
 import scala.collection.mutable
+import snowy.Awards.Travel
 import snowy.GameConstants.playfield
 import vector.Vec2d
-import snowy.Awards.Travel
 
 /** Moving objects in each game time slice */
 object GameMotion {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds:Store[Sled], deltaSeconds: Double)
-      : (Store[Sled], Seq[Travel]) = {
+  def moveSleds(sleds: Store[Sled], deltaSeconds: Double): (Store[Sled], Seq[Travel]) = {
     val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
     repositionSleds(newSleds, deltaSeconds)
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs:Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
-    snowballs.replaceItems{snowball =>
+  def moveSnowballs(snowballs: Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
+    snowballs.replaceItems { snowball =>
       val deltaPos = snowball.speed * deltaSeconds
       snowball.copy(pos = wrapInPlayfield(snowball.pos + deltaPos))
     }
@@ -54,14 +53,15 @@ object GameMotion {
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
-  private def updateSledSpeedVector(sleds:Store[Sled], deltaSeconds: Double): Store[Sled] = {
-    val skid = Skid(deltaSeconds)
+  private def updateSledSpeedVector(sleds: Store[Sled],
+                                    deltaSeconds: Double): Store[Sled] = {
+    val skid     = Skid(deltaSeconds)
     val friction = Friction(deltaSeconds)
-    sleds.replaceItems{ sled =>
+    sleds.replaceItems { sled =>
       import sled.rotation
-      val gravity = Gravity(deltaSeconds, sled.gravity)
-      val gravitySpeed = gravity(sled.speed, rotation, sled.maxSpeed)
-      val skidSpeed = skid(gravitySpeed, rotation, sled.maxSpeed)
+      val gravity       = Gravity(deltaSeconds, sled.gravity)
+      val gravitySpeed  = gravity(sled.speed, rotation, sled.maxSpeed)
+      val skidSpeed     = skid(gravitySpeed, rotation, sled.maxSpeed)
       val frictionSpeed = friction(skidSpeed, rotation)
 
       sled.copy(speed = frictionSpeed)
@@ -69,19 +69,18 @@ object GameMotion {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds:Store[Sled], deltaSeconds: Double)
-     : (Store[Sled], Seq[Travel]) = {
+  private def repositionSleds(sleds: Store[Sled],
+                              deltaSeconds: Double): (Store[Sled], Seq[Travel]) = {
     val awards = mutable.ListBuffer[Travel]()
     val newSleds =
       sleds.replaceItems { sled =>
         val positionChange = sled.speed * deltaSeconds
-        val moved = sled.pos + positionChange
-        val wrapped = wrapInPlayfield(moved)
-        val distance = positionChange.length
+        val moved          = sled.pos + positionChange
+        val wrapped        = wrapInPlayfield(moved)
+        val distance       = positionChange.length
         if (distance > 0) awards += Travel(sled.id, distance)
         sled.copy(pos = wrapped)
       }
     (newSleds, awards.toList)
   }
 }
-
