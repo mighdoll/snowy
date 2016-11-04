@@ -8,16 +8,27 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Sink, SourceQueue}
 import snowy.GameClientProtocol.{Died, GameClientMessage, Ping, State}
 import snowy.GameServerProtocol._
+import snowy.server.CommandLine.BasicArgs
 import snowy.server.SnowyServerFixture.connectSinkToServer
 
 object LoadTest {
+
   def main(args: Array[String]): Unit = {
+    val cmdLineParser = CommandLine.parser("snowy-loadtest")
+    cmdLineParser.parse(args, BasicArgs()).foreach { basicArgs =>
+      run(basicArgs)
+    }
+  }
+
+  def run(basicArgs: BasicArgs) {
+    basicArgs.conf.foreach(GlobalConfig.addConfigFiles(_))
+
     val actorSystem = ActorSystem()
     import actorSystem.dispatcher
 
     val testDuration = 1 hour
 
-    val port       = 9000
+    val port       = GlobalConfig.config.getInt("snowy.server.port")
     val wsUrl      = s"ws://localhost:${port}/game"
     val numClients = 5
     (1 to numClients).foreach { _ =>

@@ -5,6 +5,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.{ActorMaterializer, BindFailedException}
+import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
 
 /** A web server that hosts static files from the web/ resource directory,
@@ -14,7 +15,6 @@ import snowy.util.FutureAwaiting._
 class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem) {
   implicit val materializer     = ActorMaterializer()
   implicit val executionContext = system.dispatcher
-  val defaultPort               = 9000
 
   val appHost    = new AppHost
   val socketFlow = new SocketFlow(appHost)
@@ -42,8 +42,11 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem) {
         getFromResource(s"web/$file")
       }
 
-  val port =
-    forcePort.orElse(Properties.envOrNone("PORT").map(_.toInt)).getOrElse(defaultPort)
+  val port = {
+    forcePort
+      .orElse(Properties.envOrNone("PORT").map(_.toInt))
+      .getOrElse(GlobalConfig.config.getInt("snowy.server.port"))
+  }
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
   bindingFuture.failed.foreach { failure =>
