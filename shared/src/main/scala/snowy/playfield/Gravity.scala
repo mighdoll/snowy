@@ -16,7 +16,7 @@ class Gravity(gravityForce: Double) {
   def apply(speed: Vec2d, rotation: Double, maxSpeed: Double): Vec2d = {
     val gravityLength = cos(rotation) * gravityForce // +speed in direction of travel
     val gravitySpeedV = Vec2d.fromRotation(rotation) * gravityLength
-    val newSpeed = speed + gravitySpeedV
+    val newSpeed      = speed + gravitySpeedV
 
     if (newSpeed.length <= maxSpeed) newSpeed
     else newSpeed.unit * maxSpeed
