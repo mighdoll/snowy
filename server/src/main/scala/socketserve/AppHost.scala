@@ -39,10 +39,8 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
   /** Send a message to one client */
   def send(msg: String, id: ConnectionId): Unit = {
     connections.get(id) match {
-      case Some(out) =>
-        out ! TextMessage(msg)
-      case None =>
-        println(s"send to unknown connection id: $id")
+      case Some(out) => out ! TextMessage(msg)
+      case None      => println(s"send to unknown connection id: $id")
     }
   }
 
