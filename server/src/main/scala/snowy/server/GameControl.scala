@@ -19,11 +19,12 @@ import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import boopickle.Default._
+import com.typesafe.scalalogging.{LazyLogging, Logger, StrictLogging}
 import snowy.playfield.Picklers._
 import vector.Vec2d
 import snowy.{BasicSled, SledKind, StationaryTestSled}
 
-class GameControl(api: AppHostApi) extends AppController with GameState {
+class GameControl(api: AppHostApi) extends AppController with GameState with StrictLogging {
   val tickDelta = 20 milliseconds
   val turnDelta = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
   val messageIO = new MessageIO(api)
@@ -42,7 +43,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
   /** Called to update game state on a regular timer */
   private def gameTurn(): Unit = time("gameTurn") {
     val deltaSeconds = nextTimeSlice()
-    Perf.record("turnJitter", (deltaSeconds * 1000000).toLong - tickDelta.toMicros)
+    recordTurnJitter(deltaSeconds)
     recoverHealth(deltaSeconds)
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
@@ -60,6 +61,14 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
         sendMessage(state, id)
     }
     sendScores()
+  }
+
+  private def recordTurnJitter(deltaSeconds:Double):Unit = {
+    val secondsToMicros = 1000000
+    val offset = 10 * secondsToMicros // library can't handle negative
+    Perf.record("turnJitter",
+      offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
+    )
   }
 
   /** a new player has connected */
@@ -85,6 +94,7 @@ class GameControl(api: AppHostApi) extends AppController with GameState {
 
   /** Process a [[GameServerMessage]] from the client */
   def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
+    logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind) => userJoin(id, name, sledKind)
       case TurretAngle(angle)   => rotateTurret(id, angle)
