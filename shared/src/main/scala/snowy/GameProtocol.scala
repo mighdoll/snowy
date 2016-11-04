@@ -9,7 +9,8 @@ object GameServerProtocol {
 
   sealed trait StartStopCommand
 
-  case class Join(userName: String, sledKind: SledKind = SpikySled) extends GameServerMessage
+  case class Join(userName: String, sledKind: SledKind = SpikySled)
+      extends GameServerMessage
 
   case class ReJoin(sledKind: SledKind = BasicSled) extends GameServerMessage
 
@@ -40,7 +41,8 @@ object GameClientProtocol {
 
   sealed abstract class GameClientMessage
 
-  case class State(mySled: Sled, sleds: Seq[Sled], snowballs: Seq[Snowball]) extends GameClientMessage
+  case class State(mySled: Sled, sleds: Seq[Sled], snowballs: Seq[Snowball])
+      extends GameClientMessage
 
   case class Playfield(width: Int, height: Int) extends GameClientMessage
 

@@ -7,31 +7,30 @@ import snowy.client.Keys
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
+  var turning: Option[Direction] = None
+  var speeding: Option[Speed]    = None
+
   sealed trait Direction
+
+  sealed trait Speed
 
   object GoLeft extends Direction
 
   object GoRight extends Direction
 
-  sealed trait Speed
-
-  object SpeedUp extends Speed
-
+  object SpeedUp  extends Speed
   object SlowDown extends Speed
-
-  var turning: Option[Direction] = None
-  var speeding: Option[Speed] = None
 
   window.setInterval(() => {
     turning match {
-      case Some(GoLeft) => sendMessage(Start(Left))
+      case Some(GoLeft)  => sendMessage(Start(Left))
       case Some(GoRight) => sendMessage(Start(Right))
-      case _ =>
+      case _             =>
     }
     speeding match {
       case Some(SlowDown) => sendMessage(Start(Slow))
-      case Some(SpeedUp) => sendMessage(Start(Push))
-      case _ =>
+      case Some(SpeedUp)  => sendMessage(Start(Push))
+      case _              =>
     }
   }, 500)
 

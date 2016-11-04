@@ -12,10 +12,10 @@ import vector.Vec2d
 object ClientDraw {
   var size = Vec2d(window.innerWidth, window.innerHeight)
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
-  gameCanvas.width = size.x.toInt
-  gameCanvas.height = size.y.toInt
   val ctx =
     gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+  gameCanvas.width = size.x.toInt
+  gameCanvas.height = size.y.toInt
 
   def drawState(snowballs: Store[Snowball],
                 sleds: Store[Sled],
@@ -39,21 +39,23 @@ object ClientDraw {
       new DrawSnowball(snowball.pos, snowball.size / 2 * portal.scale)
     }
     portal.sleds.foreach { sled =>
-      new DrawSled(sled.userName,
-                   sled.pos,
-                   35 * portal.scale,
-                   sled.healthPercent,
-                   sled.turretRotation,
-                   sled.rotation,
-                   bodyRed)
+      new DrawSled(
+        sled.userName,
+        sled.pos,
+        35 * portal.scale,
+        sled.healthPercent,
+        sled.turretRotation,
+        sled.rotation,
+        bodyRed)
     }
-    new DrawSled(mySled.userName,
-                 size / 2,
-                 35 * portal.scale,
-                 mySled.healthPercent,
-                 mySled.turretRotation,
-                 mySled.rotation,
-                 bodyGreen)
+    new DrawSled(
+      mySled.userName,
+      size / 2,
+      35 * portal.scale,
+      mySled.healthPercent,
+      mySled.turretRotation,
+      mySled.rotation,
+      bodyGreen)
 
     portal.trees.foreach { tree =>
       new DrawTree(tree.pos, 100 * portal.scale)
@@ -65,10 +67,10 @@ object ClientDraw {
         border
       )
     )(Set(mySled), Set(), trees.items)
-    val miniscale = Math.max(border.x / size.x, border.y / size.y) * 2
-    val minimap = rawminimap.convertToScreen(border / miniscale, border)
+    val miniscale  = Math.max(border.x / size.x, border.y / size.y) * 2
+    val minimap    = rawminimap.convertToScreen(border / miniscale, border)
     val miniscaled = border / miniscale
-    val minipos = size * .99 - miniscaled
+    val minipos    = size * .99 - miniscaled
     ctx.beginPath()
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
     ctx.fillRect(minipos.x, minipos.y, miniscaled.x, miniscaled.y)
@@ -78,55 +80,58 @@ object ClientDraw {
     }
     minimap.sleds.foreach { sled =>
       val newPos = sled.pos + minipos
-      new DrawSled(sled.userName,
-                   newPos,
-                   70 * minimap.scale,
-                   sled.healthPercent,
-                   sled.turretRotation,
-                   sled.rotation,
-                   bodyRed)
+      new DrawSled(
+        sled.userName,
+        newPos,
+        70 * minimap.scale,
+        sled.healthPercent,
+        sled.turretRotation,
+        sled.rotation,
+        bodyRed)
     }
 
-    val scorescale = Math.max(210 / size.x, 255 / size.y) * 2.5
+    val scorescale  = Math.max(210 / size.x, 255 / size.y) * 2.5
     val scorescaled = Vec2d(210, 225) / scorescale
-    val scorepos = Vec2d(size.x * .99 - scorescaled.x, size.y * .01)
+    val scorepos    = Vec2d(size.x * .99 - scorescaled.x, size.y * .01)
     ctx.fillStyle = "rgba(255, 255, 255, 0.5)"
     ctx.fillRect(scorepos.x, scorepos.y, scorescaled.x, scorescaled.y)
 
     ctx.fillStyle = "rgb(0, 0, 0)"
-    val fromLeft = 10 * portal.scale
+    val fromLeft  = 10 * portal.scale
     val fromRight = 10 * portal.scale
-    val fromTop = 60 * portal.scale
+    val fromTop   = 60 * portal.scale
     val inbetween = 20 * portal.scale
     ctx.font = (25 * portal.scale) + "px Arial"
     ctx.textAlign = "center"
-    ctx.fillText("Scoreboard",
-                 scorepos.x + scorescaled.x / 2,
-                 scorepos.y + inbetween * 2)
+    ctx
+      .fillText("Scoreboard", scorepos.x + scorescaled.x / 2, scorepos.y + inbetween * 2)
     ctx.font = (15 * portal.scale) + "px Arial"
-    for ((score, index) <- scoreboard.scores
-           .sortWith(_.score > _.score)
-           .zipWithIndex) {
+    for ((score, index) <- scoreboard.scores.sortWith(_.score > _.score).zipWithIndex) {
       ctx.textAlign = "left"
-      ctx.fillText(index + 1 + ".",
-                   scorepos.x + fromLeft,
-                   scorepos.y + fromTop + inbetween * index)
-      ctx.fillText(score.userName,
-                   scorepos.x + fromLeft * 4,
-                   scorepos.y + fromTop + inbetween * index)
+      ctx.fillText(
+        index + 1 + ".",
+        scorepos.x + fromLeft,
+        scorepos.y + fromTop + inbetween * index)
+      ctx.fillText(
+        score.userName,
+        scorepos.x + fromLeft * 4,
+        scorepos.y + fromTop + inbetween * index)
       ctx.textAlign = "right"
-      ctx.fillText(score.score.toInt.toString,
-                   scorepos.x + scorescaled.x - fromRight,
-                   scorepos.y + fromTop + inbetween * index)
+      ctx.fillText(
+        score.score.toInt.toString,
+        scorepos.x + scorescaled.x - fromRight,
+        scorepos.y + fromTop + inbetween * index)
     }
     ctx.textAlign = "left"
-    ctx.fillText(mySled.userName,
-                 scorepos.x + fromLeft,
-                 scorepos.y + scorescaled.y - inbetween)
+    ctx.fillText(
+      mySled.userName,
+      scorepos.x + fromLeft,
+      scorepos.y + scorescaled.y - inbetween)
     ctx.textAlign = "right"
-    ctx.fillText(scoreboard.myScore.toInt.toString,
-                 scorepos.x + scorescaled.x - fromRight,
-                 scorepos.y + scorescaled.y - inbetween)
+    ctx.fillText(
+      scoreboard.myScore.toInt.toString,
+      scorepos.x + scorescaled.x - fromRight,
+      scorepos.y + scorescaled.y - inbetween)
   }
 
   def clearScreen(): Unit = {

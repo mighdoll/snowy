@@ -4,47 +4,16 @@ import snowy.playfield._
 import vector.Vec2d
 
 class Portal(portalRect: Rect) {
-  var sleds = Seq[Sled]()
-  var trees = Seq[Tree]()
+  var sleds     = Seq[Sled]()
+  var trees     = Seq[Tree]()
   var snowballs = Seq[Snowball]()
-  var scale = 0.0
+  var scale     = 0.0
 
-  def apply(tsleds: Set[Sled],
-            tsnowballs: Set[Snowball],
-            ttrees: Set[Tree]): Portal = {
+  def apply(tsleds: Set[Sled], tsnowballs: Set[Snowball], ttrees: Set[Tree]): Portal = {
     sleds = tsleds.toSeq
     snowballs = tsnowballs.toSeq
     trees = ttrees.toSeq
     this
-  }
-
-  // TODO comment
-  private def wrapInPlayfield(pos: Vec2d,
-                              padding: Vec2d,
-                              wrapRange: Vec2d): Option[Vec2d] = {
-
-    /** TODO take min, max, wrapSize instead of pad? */
-    def wrap(value: Double,
-             max: Double,
-             pad: Double,
-             wrapSize: Double): Option[Double] = {
-      val wrapped =
-        if (value > pad + max) value - wrapSize
-        else if (value < -pad) value + wrapSize
-        else value
-
-      if (wrapped > -pad && wrapped < pad + max)
-        Some(wrapped)
-      else {
-        None
-      }
-    }
-    for {
-      x <- wrap(pos.x, portalRect.size.x, padding.x, wrapRange.x)
-      y <- wrap(pos.y, portalRect.size.y, padding.y, wrapRange.y)
-    } yield {
-      Vec2d(x, y)
-    }
   }
 
   def convertToScreen(screenSize: Vec2d, border: Vec2d): Portal = {
@@ -62,7 +31,7 @@ class Portal(portalRect: Rect) {
     /** @param playfieldObject a sled snowball or tree
       * @return playfieldObject translated, wrapped, and filtered */
     def transformToScreen[A <: PlayfieldObject](
-        playfieldObject: A): Option[playfieldObject.MyType] = {
+          playfieldObject: A): Option[playfieldObject.MyType] = {
       val portalPos = playfieldObject.pos - portalRect.pos
 
       for {
@@ -78,5 +47,31 @@ class Portal(portalRect: Rect) {
     snowballs = snowballs.flatMap(transformToScreen(_))
 
     this
+  }
+
+  // TODO comment
+  private def wrapInPlayfield(pos: Vec2d,
+                              padding: Vec2d,
+                              wrapRange: Vec2d): Option[Vec2d] = {
+
+    /** TODO take min, max, wrapSize instead of pad? */
+    def wrap(value: Double, max: Double, pad: Double, wrapSize: Double): Option[Double] = {
+      val wrapped =
+        if (value > pad + max) value - wrapSize
+        else if (value < -pad) value + wrapSize
+        else value
+
+      if (wrapped > -pad && wrapped < pad + max)
+        Some(wrapped)
+      else {
+        None
+      }
+    }
+    for {
+      x <- wrap(pos.x, portalRect.size.x, padding.x, wrapRange.x)
+      y <- wrap(pos.y, portalRect.size.y, padding.y, wrapRange.y)
+    } yield {
+      Vec2d(x, y)
+    }
   }
 }

@@ -13,4 +13,3 @@ object Awards {
 
   case class SledDied(sledId: SledId) extends Award
 }
-

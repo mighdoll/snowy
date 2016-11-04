@@ -1,7 +1,7 @@
 package snowy.draw
 
-import snowy.draw.GameColors._
 import snowy.client.ClientDraw.ctx
+import snowy.draw.GameColors._
 import vector.Vec2d
 
 class DrawSnowball(pos: Vec2d, size: Double) {

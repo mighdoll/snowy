@@ -1,7 +1,7 @@
 package snowy.draw
 
-import snowy.draw.GameColors.Tree._
 import snowy.client.ClientDraw.ctx
+import snowy.draw.GameColors.Tree._
 import vector.Vec2d
 
 class DrawTree(pos: Vec2d, size: Double) {

@@ -8,15 +8,10 @@ import org.scalajs.dom._
   * @param inDelay: delay message from the server by this amount of time
   * @param outDelay: delay message to the server by this amount of time
   */
-class NetworkSocket(url: String,
-                    inDelay: FiniteDuration,
-                    outDelay: FiniteDuration) {
+class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
   val socket = new WebSocket(url)
 
   socket.binaryType = "arraybuffer"
-  private def delay(time: FiniteDuration)(fn: => Unit): Unit = {
-    window.setTimeout(() => fn, time.toMillis)
-  }
 
   def onOpen(fn: Event => Unit): Unit = {
     socket.onopen = fn
@@ -50,6 +45,10 @@ class NetworkSocket(url: String,
         }
       }
     }
+  }
+
+  private def delay(time: FiniteDuration)(fn: => Unit): Unit = {
+    window.setTimeout(() => fn, time.toMillis)
   }
 
 }

@@ -3,6 +3,7 @@ package snowy
 import vector.Vec2d
 
 sealed trait SledKind {
+
   /** acceleration in pixels / second / second */
   def gravity: Double = -250
 
@@ -45,8 +46,8 @@ sealed trait SledKind {
 
   /*
   TODO
-  * penetration factor for bullets (off axis hits bounce off modulo this factor)
-  */
+ * penetration factor for bullets (off axis hits bounce off modulo this factor)
+ */
 }
 
 case object StationaryTestSled extends SledKind {
@@ -57,23 +58,22 @@ case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
   override val gravity: Double = -100
-  override val maxSpeed = 200
+  override val maxSpeed        = 200
   override val minRechargeTime = 500
-  override val bulletPower = .2
-  override val bulletSpeed = 300
-  override val bulletSize = 9
+  override val bulletPower     = .2
+  override val bulletSpeed     = 300
+  override val bulletSize      = 9
 }
 
 case object GunnerSled extends SledKind {
-  override val maxSpeed = 500
+  override val maxSpeed        = 500
   override val minRechargeTime = 1000
-  override val bulletPower = .8
-  override val bulletSpeed = 500
-  override val bulletSize = 20
-  override val bulletRecoil = 120
+  override val bulletPower     = .8
+  override val bulletSpeed     = 500
+  override val bulletSize      = 20
+  override val bulletRecoil    = 120
 }
 
 case object SpikySled extends SledKind {
   override val maxImpactDamage = 1.0
 }
-

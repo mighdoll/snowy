@@ -10,10 +10,10 @@ object GameState {
   var scoreboard = Scoreboard(0, Seq())
 
   // TODO add a gametime timestamp to these, and organize together into a class
-  var serverTrees = Store[Tree]()
+  var serverTrees     = Store[Tree]()
   var serverSnowballs = Store[Snowball]()
-  var serverSleds = Store[Sled]()
-  var serverMySled = Sled.dummy
+  var serverSleds     = Store[Sled]()
+  var serverMySled    = Sled.dummy
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
@@ -22,11 +22,12 @@ object GameState {
     serverSleds = Store(state.sleds)
     serverMySled = state.mySled
 
-    drawState(serverSnowballs,
-              serverSleds,
-              serverMySled,
-              serverTrees,
-              gPlayField,
-              scoreboard)
+    drawState(
+      serverSnowballs,
+      serverSleds,
+      serverMySled,
+      serverTrees,
+      gPlayField,
+      scoreboard)
   }
 }

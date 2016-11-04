@@ -1,7 +1,7 @@
 package snowy.draw
 
-import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw.ctx
+import snowy.draw.GameColors.lineColors
 import vector.Vec2d
 
 class DrawSled(name: String,

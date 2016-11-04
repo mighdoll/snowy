@@ -1,7 +1,7 @@
 package snowy.draw
 
-import snowy.draw.GameColors.lineColors
 import snowy.client.ClientDraw._
+import snowy.draw.GameColors.lineColors
 import vector.Vec2d
 
 class DrawGrid(sled: Vec2d, scale: Double) {
@@ -16,7 +16,7 @@ class DrawGrid(sled: Vec2d, scale: Double) {
   }
   for (i <- 0 to size.y.toInt / lineGap) {
     ctx.beginPath()
-    ctx.moveTo(0, i * lineGap - sled.y % lineGap)
+    ctx.moveTo(0, i * lineGap - sled.y      % lineGap)
     ctx.lineTo(size.x, i * lineGap - sled.y % lineGap)
     ctx.stroke()
   }

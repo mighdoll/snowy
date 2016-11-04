@@ -5,7 +5,7 @@ import org.scalajs.dom._
 import snowy.draw.LoginScreen
 
 object ClientMain extends JSApp {
-  val loginScreen = new LoginScreen()
+  val loginScreen                   = new LoginScreen()
   var connected: Option[Connection] = None
   def main(): Unit = {
     loginScreen.setup()
@@ -19,12 +19,9 @@ object ClientMain extends JSApp {
         case x if x.isEmpty =>
           connected = Some(
             new Connection(
-              document
-                .getElementById("username")
-                .asInstanceOf[html.Input]
-                .value))
+              document.getElementById("username").asInstanceOf[html.Input].value))
         case x if x.isDefined => connected.get.reSpawn()
-        case _ =>
+        case _                =>
       }
 
       //Stop drawing the snow as a background

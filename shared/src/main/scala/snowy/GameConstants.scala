@@ -3,6 +3,7 @@ package snowy
 import vector.Vec2d
 
 object GameConstants {
+
   /** max speed of any sled in pixels per second */
   val absoluteMaxSpeed = 1000
 
@@ -24,6 +25,7 @@ object GameConstants {
   val treeSize = Vec2d(10, 40)
 
   object Bullet {
+
     /** snowballs disappear after this many milliseconds */
     val lifetime = 3500
 
@@ -32,6 +34,7 @@ object GameConstants {
   }
 
   object Points {
+
     /** points earned per pixel travelled */
     val travel = .0002
 
@@ -42,8 +45,8 @@ object GameConstants {
     val sledLoss = .5
   }
 
-
   object PushEnergy {
+
     /** speedup from the push button. in pixels / second / second */
     val force = 200.0
 
@@ -55,6 +58,7 @@ object GameConstants {
   }
 
   object Friction {
+
     /** friction from the slowdown button. in pixels / second / second */
     val slowButtonFriction = 400
 
@@ -69,6 +73,7 @@ object GameConstants {
   }
 
   object Collision {
+
     /** health cost from colliding into a tree */
     val treeCost = .25
 
