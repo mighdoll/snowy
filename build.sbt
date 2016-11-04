@@ -42,7 +42,13 @@ lazy val server = (project in file("server")).
   settings(
     assemblyJarName in assembly := "full.jar",
     name := "server",
-    javaOptions := Seq("-Xmx2G", "-Xms2g", "-XX:+UseG1GC", "-XX:+UseCompressedOops"),
+    javaOptions := Seq(
+      "-Xmx500m",
+      "-Xms500m",
+      "-XX:+UseG1GC",
+      "-XX:+UseCompressedOops",
+      "-XX:+AggressiveOpts",
+      "-XX:MaxGCPauseMillis=10"),
     javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
       "com.github.scopt" %% "scopt" % "3.5.0",
