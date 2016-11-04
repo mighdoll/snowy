@@ -2,29 +2,29 @@ package snowy.server
 
 import scala.collection.mutable
 import snowy.GameClientProtocol._
-import snowy.playfield._
-import socketserve.ConnectionId
-import GameSeeding.randomTrees
 import snowy.playfield.PlayId.SledId
+import snowy.playfield._
+import snowy.server.GameSeeding.randomTrees
+import socketserve.ConnectionId
 
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState { self: GameControl =>
 
-  val gridSpacing = 100.0
-  var sleds = Store[Sled]()
-  var snowballs = Store[Snowball]()
+  val gridSpacing      = 100.0
   val trees: Set[Tree] = randomTrees()
-  val users = mutable.Map[ConnectionId, User]()
-  val sledMap = mutable.Map[ConnectionId, SledId]()
-  var gameTime = System.currentTimeMillis()
-  val commands = new PendingCommands
+  val users            = mutable.Map[ConnectionId, User]()
+  val sledMap          = mutable.Map[ConnectionId, SledId]()
+  val commands         = new PendingCommands
+  var sleds            = Store[Sled]()
+  var snowballs        = Store[Snowball]()
+  var gameTime         = System.currentTimeMillis()
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {
     val clientSnowballs = snowballs.items.toSeq
 
     (for {
-      mySled <- sleds.items
+      mySled       <- sleds.items
       connectionId <- mySled.connectionId
     } yield {
       val otherSleds = sleds.items.filter(_.id != mySled.id).toSeq

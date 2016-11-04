@@ -24,5 +24,3 @@ class TestReJoin extends PropSpec with PropertyChecks {
     }
   }
 }
-
-

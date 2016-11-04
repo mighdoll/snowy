@@ -1,14 +1,10 @@
 package snowy.server
 
 import java.io.File
-import java.util.logging.Level
 import kamon.Kamon
-import org.apache.logging.log4j.LogManager
 import socketserve.WebServer.socketApplication
 
 object ServerMain {
-
-  case class CmdlineArgs(conf: Option[File] = None)
 
   val cmdLineParser = new scopt.OptionParser[CmdlineArgs]("scopt") {
     head("snowy", "0.1")
@@ -26,8 +22,9 @@ object ServerMain {
   }
 
   def main(args: Array[String]): Unit = {
-    System.setProperty("java.util.logging.manager",
-                       "org.apache.logging.log4j.jul.LogManager")
+    System.setProperty(
+      "java.util.logging.manager",
+      "org.apache.logging.log4j.jul.LogManager")
     cmdLineParser.parse(args, CmdlineArgs()).foreach { config =>
       run(config)
     }
@@ -39,4 +36,6 @@ object ServerMain {
     Kamon.start()
     socketApplication(new GameControl(_))
   }
+
+  case class CmdlineArgs(conf: Option[File] = None)
 }

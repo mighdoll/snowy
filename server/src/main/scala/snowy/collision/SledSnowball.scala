@@ -1,8 +1,8 @@
 package snowy.collision
 
-import snowy.playfield.{Sled, Snowball, Store}
 import snowy.Awards.SnowballHit
 import snowy.GameConstants.Bullet
+import snowy.playfield.{Sled, Snowball, Store}
 
 object SledSnowball {
 
@@ -32,13 +32,13 @@ object SledSnowball {
   /** return true if the snowball intersects the sled body */
   private def snowballCollide(sled: Sled, snowball: Snowball): Boolean = {
     val centerDistance = (sled.pos - snowball.pos).length
-    val radiiSum = sled.size / 2 + snowball.size / 2
+    val radiiSum       = sled.size / 2 + snowball.size / 2
     centerDistance < radiiSum
   }
 
   /** return a damaged version of the sled after impacting with a snowball */
   private def snowballDamaged(sled: Sled, snowball: Snowball): Sled = {
-    val health = math.max(sled.health - snowball.power, 0)
+    val health  = math.max(sled.health - snowball.power, 0)
     val stopped = sled.speed + snowball.speed.unit * snowball.power * Bullet.impact
     sled.copy(health = health, speed = stopped)
   }

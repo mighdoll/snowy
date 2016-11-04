@@ -1,12 +1,12 @@
 package snowy.server
 
 import akka.util.ByteString
-import snowy.GameClientProtocol.GameClientMessage
-import socketserve.{AppHostApi, ConnectionId}
 import boopickle.Default._
 import boopickle.{BufferPool, EncoderSize}
-import snowy.playfield.Picklers._
+import snowy.GameClientProtocol.GameClientMessage
 import snowy.util.Perf.time
+import socketserve.{AppHostApi, ConnectionId}
+import snowy.playfield.Picklers._
 
 /** A GameClientMessage wrapper over the send/receive api */
 class MessageIO(api: AppHostApi) {
@@ -17,7 +17,7 @@ class MessageIO(api: AppHostApi) {
   def sendMessage(message: GameClientMessage, id: ConnectionId): Unit = {
 
     time("pickling") {
-      val bytes = Pickle.intoBytes(message)
+      val bytes      = Pickle.intoBytes(message)
       val byteString = ByteString(bytes)
       time("send") {
         sendBinaryMessage(byteString, id)

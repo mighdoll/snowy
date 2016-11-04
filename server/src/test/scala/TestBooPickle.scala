@@ -3,10 +3,10 @@ import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
 import snowy.GunnerSled
-import snowy.playfield.PlayId.{BallId, SledId}
-import snowy.playfield.{PlayId, Sled, Snowball}
-import vector.Vec2d
 import snowy.playfield.Picklers._
+import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.{Sled, Snowball}
+import vector.Vec2d
 
 class TestBooPickle extends PropSpec with PropertyChecks {
   val sled = Sled(
@@ -30,7 +30,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     power = 0)
 
   def pickleUnpickle[T: Pickler](value: T): Unit = {
-    val bytes = Pickle.intoBytes[T](value)
+    val bytes     = Pickle.intoBytes[T](value)
     val unpickled = Unpickle[T](implicitly[Pickler[T]]).fromBytes(bytes)
     unpickled === value
   }
@@ -62,18 +62,20 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
 
   property("pickle game client message Ping") {
-    val bytes = Pickle.intoBytes[GameClientMessage](Ping)
+    val bytes  = Pickle.intoBytes[GameClientMessage](Ping)
     val result = Unpickle[GameClientMessage].fromBytes(bytes)
     result === Ping
   }
 
   property("pickle game client message State and Ping") {
-    val state = State(sled, sleds = Seq(sled), snowballs = Seq(ball))
+    val state      = State(sled, sleds = Seq(sled), snowballs = Seq(ball))
     val stateBytes = Pickle.intoBytes[GameClientMessage](state)
-    val unpickledState: GameClientMessage = Unpickle[GameClientMessage].fromBytes(stateBytes)
+    val unpickledState: GameClientMessage =
+      Unpickle[GameClientMessage].fromBytes(stateBytes)
 
     val pingBytes = Pickle.intoBytes[GameClientMessage](Ping)
-    val unpickledPing: GameClientMessage = Unpickle[GameClientMessage].fromBytes(pingBytes)
+    val unpickledPing: GameClientMessage =
+      Unpickle[GameClientMessage].fromBytes(pingBytes)
 
     unpickledState match {
       case s: State =>
@@ -87,4 +89,3 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
 
 }
-

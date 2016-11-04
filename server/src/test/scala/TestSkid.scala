@@ -1,8 +1,6 @@
+import scala.math.Pi
 import org.scalacheck.Prop._
 import org.scalacheck._
-import org.scalacheck.Gen._
-import snowy.GameConstants._
-import math.Pi
 import snowy.playfield.Skid
 import vector.Vec2d
 
@@ -23,9 +21,9 @@ object RichTestVec2d {
 import RichTestVec2d._
 
 object TestSkid extends Properties("Skid") {
-  val skid100 = new Skid(1.0)
-  val skid10 = new Skid(.1)
-  val skid50 = new Skid(.5)
+  val skid100  = new Skid(1.0)
+  val skid10   = new Skid(.1)
+  val skid50   = new Skid(.5)
   val maxSpeed = 1000
 
   property("up the screen, no rotation => up the screen") = {
@@ -52,7 +50,7 @@ object TestSkid extends Properties("Skid") {
     result.unit approxEquals Vec2d.fromRotation(Pi / 4 / 2)
   }
   property("downscreen at max speed, skis rotated at 45, 10% of skid => 4.5") = {
-    val result = skid10(Vec2d.unitUp * maxSpeed, rotation = Pi/ 4, maxSpeed)
+    val result = skid10(Vec2d.unitUp * maxSpeed, rotation = Pi / 4, maxSpeed)
     result.unit approxEquals Vec2d.fromRotation(.1 * Pi / 4)
   }
   property("downscreen at max speed, skis rotated at 45+180, 10% of skid => 4.5") = {
@@ -61,18 +59,21 @@ object TestSkid extends Properties("Skid") {
   }
   property("upscreen 45 at max speed, skis rotated straight up, 100% of skid => up") = {
     val initialAngle = Pi / 2 + Pi / 4
-    val result = skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
+    val result =
+      skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
     result.unit approxEquals Vec2d.unitDown
   }
   property("upscreen 45 at max speed, skis rotated straight up, 10% of skid => 4.5") = {
     val initialAngle = Pi * 3 / 4
-    val result = skid10(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
-    val expectedAngle = initialAngle + (Pi - initialAngle) *  .1
+    val result =
+      skid10(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
+    val expectedAngle = initialAngle + (Pi - initialAngle) * .1
     result.unit approxEquals Vec2d.fromRotation(expectedAngle)
   }
   property("upscreen -45 at max speed, skis rotated straight up, 100% of skid => up") = {
     val initialAngle = Pi + Pi / 4
-    val result = skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
+    val result =
+      skid100(Vec2d.fromRotation(initialAngle) * maxSpeed, rotation = Pi, maxSpeed)
     result.unit approxEquals Vec2d.unitDown
   }
 

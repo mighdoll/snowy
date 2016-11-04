@@ -32,6 +32,12 @@ class PendingCommands {
   def stopCommand(id: ConnectionId, command: StartStopCommand): Unit =
     removeCommand(id, command)
 
+  private def removeCommand(id: ConnectionId, command: StartStopCommand): Unit = {
+    commands.get(id).map { cmds =>
+      cmds.filter(_.command == command).map(cmds.remove)
+    }
+  }
+
   /** remove all expired commands */
   def removeExpired(): Unit = {
     val now = System.currentTimeMillis()
@@ -44,7 +50,7 @@ class PendingCommands {
   def filterRemove(fn: (ConnectionId, PendingCommand) => Boolean): Unit = {
     for {
       (id, set) <- commands
-      value <- set.toArray
+      value     <- set.toArray
       if fn(id, value)
     } {
       set.remove(value)
@@ -56,16 +62,9 @@ class PendingCommands {
   def foreachCommand(fn: (ConnectionId, StartStopCommand) => Unit): Unit = {
     for {
       (id, set) <- commands
-      value <- set
+      value     <- set
     } {
       fn(id, value.command)
-    }
-  }
-
-  private def removeCommand(id: ConnectionId,
-                            command: StartStopCommand): Unit = {
-    commands.get(id).map { cmds =>
-      cmds.filter(_.command == command).map(cmds.remove)
     }
   }
 

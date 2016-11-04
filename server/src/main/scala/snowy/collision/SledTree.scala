@@ -37,15 +37,15 @@ object SledTree {
     // rebound slower downhill
     val rebound = {
       val leftRight = -math.signum(sled.speed.x)
-      val x = math.max(math.abs(sled.speed.x) / 2, 10)
+      val x         = math.max(math.abs(sled.speed.x) / 2, 10)
       Vec2d(leftRight * x, sled.speed.y / 5)
     }
 
     // force sled position to the edge of the tree
     val newPos = {
-      val trunk = treeTrunk(tree)
-      val edge = Collisions.rectClosestPerimeterPoint(trunk, sledBody)
-      val edgeToSled = sled.pos - edge
+      val trunk            = treeTrunk(tree)
+      val edge             = Collisions.rectClosestPerimeterPoint(trunk, sledBody)
+      val edgeToSled       = sled.pos - edge
       val edgeToSledLength = edgeToSled.length
       val result =
         if (edgeToSledLength < sledBody.radius) {

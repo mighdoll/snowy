@@ -3,7 +3,7 @@ package snowy.server
 import scala.collection.mutable
 import snowy.GameConstants.Collision.minSledCost
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.Collisions.{Collided, collideCircles}
+import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield.Sled
 
 object SledSled {
@@ -45,7 +45,7 @@ object SledSled {
         .flatMap { elems =>
           elems match {
             case a :: b :: Nil => collideTwoSleds(a, b)
-            case _ => ??? // can't happen AFAIK
+            case _             => ??? // can't happen AFAIK
           }
         }
         .toList
@@ -64,15 +64,15 @@ object SledSled {
           InjuredSled(collidedB, impactDamage(b, a))
         )
       case Nil => Nil
-      case _ => ???
+      case _   => ???
     }
   }
 
   /** @return the damage to sled a from a collision with sled b */
   private def impactDamage(a: Sled, b: Sled): Double = {
     val collisionSpeed = (a.speed - b.speed).length
-    val speedFactor = math.min(1.0, collisionSpeed / absoluteMaxSpeed)
-    val baseDamage = minSledCost + (b.maxImpactDamage - minSledCost) * speedFactor
+    val speedFactor    = math.min(1.0, collisionSpeed / absoluteMaxSpeed)
+    val baseDamage     = minSledCost + (b.maxImpactDamage - minSledCost) * speedFactor
     baseDamage / a.armor
   }
 

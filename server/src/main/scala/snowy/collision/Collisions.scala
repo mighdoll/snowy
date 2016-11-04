@@ -11,8 +11,7 @@ object Collisions {
     val closestPoint = circle.pos.clamp(rect.pos, rect.pos + rect.size)
 
     val distanceSquared = (circle.pos - closestPoint).lengthSquared
-    distanceSquared < Math.max(circle.radius * circle.radius,
-                               Double.MinPositiveValue)
+    distanceSquared < Math.max(circle.radius * circle.radius, Double.MinPositiveValue)
   }
 
   def rectClosestPerimeterPoint(rect: Rect, circle: Circle): Vec2d = {
@@ -23,16 +22,6 @@ object Collisions {
     closestPoint
   }
 
-  /** Adjustments to speed and position of a collided object.
-    *
-    * (At first glance, it might seem simpler to apply the adjustments directly
-    * to the collided object, but this separation allows adjustments from multiple
-    * collisions to be accumulated.)
-    */
-  case class Collided[A <: MovingCircle](movingCircle: A,
-                                         rebound: Vec2d,
-                                         reposition: Vec2d)
-
   /** Collide two circular objects
     *
     * @return A list containing speed and position adjustments for two collided objects,
@@ -40,18 +29,18 @@ object Collisions {
     */
   def collideCircles[A <: MovingCircle](a: A, b: A): List[Collided[A]] = {
     val collisionDistance = a.radius + b.radius
-    val collisionVector = (a.pos - b.pos) // vector between the centers
-    val distance = collisionVector.length
+    val collisionVector   = (a.pos - b.pos) // vector between the centers
+    val distance          = collisionVector.length
     if (distance < collisionDistance) {
 
       // unit vectors in collision direction and perpendicular to collision
-      val collisionUnit = collisionVector.unit
+      val collisionUnit     = collisionVector.unit
       val perpendicularUnit = collisionUnit.leftPerpendicular
 
       def bounce(speed: Vec2d, collision: Double): Vec2d = {
         val perpendicularComponent = perpendicularUnit * (speed dot perpendicularUnit)
-        val collisionComponent = collisionUnit * collision
-        val newSpeed = collisionComponent + perpendicularComponent
+        val collisionComponent     = collisionUnit * collision
+        val newSpeed               = collisionComponent + perpendicularComponent
         newSpeed - speed
       }
 
@@ -60,7 +49,7 @@ object Collisions {
 
       // move circles so they don't overlap
       val (repositionA, repositionB) = {
-        val overlap = collisionDistance - distance
+        val overlap   = collisionDistance - distance
         val adjustPos = collisionUnit * (overlap / 2)
         (adjustPos, adjustPos * -1)
       }
@@ -72,5 +61,15 @@ object Collisions {
       Nil
     }
   }
+
+  /** Adjustments to speed and position of a collided object.
+    *
+    * (At first glance, it might seem simpler to apply the adjustments directly
+    * to the collided object, but this separation allows adjustments from multiple
+    * collisions to be accumulated.)
+    */
+  case class Collided[A <: MovingCircle](movingCircle: A,
+                                         rebound: Vec2d,
+                                         reposition: Vec2d)
 
 }

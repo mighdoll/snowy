@@ -8,7 +8,7 @@ import akka.stream.scaladsl._
 import socketserve.AppHost.Protocol._
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) {
-  val app = appHost.appActor
+  val app              = appHost.appActor
   val outputBufferSize = 100
 
   /** a flow for each connection received over the /game websocket */

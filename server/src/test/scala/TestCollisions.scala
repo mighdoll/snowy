@@ -1,9 +1,8 @@
-import snowy.collision.Collisions._
 import org.scalacheck.Prop._
 import org.scalacheck._
+import snowy.collision.Collisions._
 import snowy.playfield.{Circle, Rect}
 import vector.Vec2d
-
 
 object TestCollisions extends Properties("Collisions") {
   property("Encompassing circle") = {
@@ -39,6 +38,8 @@ object TestCollisions extends Properties("Collisions") {
   }
 
   property("Near y, far x, shouldn't intersect") = {
-    circleRectCollide(Circle(Vec2d(2478, 7998),35), Rect(Vec2d(728,7928),Vec2d(10,40))) =? false
+    circleRectCollide(
+      Circle(Vec2d(2478, 7998), 35),
+      Rect(Vec2d(728, 7928), Vec2d(10, 40))) =? false
   }
 }

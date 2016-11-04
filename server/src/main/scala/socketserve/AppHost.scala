@@ -4,15 +4,10 @@ import scala.collection.mutable
 import scala.concurrent.duration._
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
-import AppHost.Protocol._
 import akka.util.ByteString
+import socketserve.AppHost.Protocol._
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi {
-
-  private val connections                = mutable.Map[ConnectionId, ActorRef]()
-  private var app: Option[AppController] = None
-
-  import system.dispatcher
 
   val appActor = system.actorOf(Props(new Actor {
     def receive: Receive = {
@@ -24,7 +19,10 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
       case Turn                            => tickFn.map(fn => fn())
     }
   }))
+  private val connections = mutable.Map[ConnectionId, ActorRef]()
 
+  import system.dispatcher
+  private var app: Option[AppController] = None
   private var tickFn: Option[() => Unit] = None
 
   def tick(duration: FiniteDuration)(fn: => Unit) {
