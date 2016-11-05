@@ -5,6 +5,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.{ActorMaterializer, BindFailedException}
+import com.typesafe.scalalogging.StrictLogging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
 
@@ -12,7 +13,8 @@ import snowy.util.FutureAwaiting._
   * scala js output files from the root resource directory,
   * and a websocket for -connect json messages.
   */
-class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem) {
+class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
+    extends StrictLogging {
   implicit val materializer     = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
@@ -50,16 +52,16 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem) {
 
   val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
   bindingFuture.failed.foreach { failure =>
-    println(s"Server unable to start at http://localhost:$port/  $failure")
+    logger.error(s"Server unable to start at http://localhost:$port/  $failure")
     failure match {
-      case BindFailedException => println(s"is port $port already in use?")
+      case BindFailedException => logger.error(s"is port $port already in use?")
       case _                   =>
     }
     sys.exit(1)
   }
   bindingFuture.await()
   bindingFuture.foreach { _ =>
-    println(s"Server online at http://localhost:$port/")
+    logger.info(s"Server online at http://localhost:$port/")
   }
 
   def shutDown(): Unit = {

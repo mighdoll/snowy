@@ -395,7 +395,7 @@ class GameControl(api: AppHostApi)
                        userName: String,
                        sledKind: SledKind,
                        robot: Boolean = false): Unit = {
-    println(s"user joined: $userName  userCount:${users.size}")
+    logger.info(s"user joined: $userName  kind: $sledKind  robot: $robot  userCount:${users.size}")
     val user = new User(userName, createTime = gameTime, sledKind = sledKind, robot = robot)
     users(id) = user
     createSled(id, user, sledKind)
@@ -404,10 +404,10 @@ class GameControl(api: AppHostApi)
   private def rejoin(id: ConnectionId): Unit = {
     users.get(id) match {
       case Some(user) =>
-        println(s"user rejoined: ${user.name}")
+        logger.info(s"user rejoined: ${user.name}")
         createSled(id, user, user.sledKind)
       case None =>
-        println(s"user not found to rejoin: $id")
+        logger.warn(s"user not found to rejoin: $id")
     }
   }
 
