@@ -166,10 +166,10 @@ class GameControl(api: AppHostApi)
           case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
           case Slowing =>
-            val slow = new InlineForce(-slowButtonFriction * deltaSeconds, sled.maxSpeed)
+            val slow = new InlineForce(-slowButtonFriction * deltaSeconds / sled.mass, sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
           case Pushing =>
-            val pushForceNow = PushEnergy.force * deltaSeconds
+            val pushForceNow = PushEnergy.force * deltaSeconds / sled.mass
             val pushEffort   = deltaSeconds / PushEnergy.maxTime
             val push         = new InlineForce(pushForceNow, sled.maxSpeed)
             pushSled(sled, pushForceNow, push, pushEffort)
