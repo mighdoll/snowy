@@ -2,12 +2,23 @@
 
 An experimental WebSocket game using [Scala](http://scala-lang.org) and [Scala.js](http://scala-js.org)
 
-### Prerequisites 
+1. [Cloning / Downloading](#cloning--downloading)
+2. [Running](#running)
+3. [Customization](#customization)
 
-* [sbt](http://www.scala-sbt.org/)
+### Cloning / Downloading
+
+1. Download Java: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+2. Download SBT: http://www.scala-sbt.org/
+3. Clone the git repository: `git clone https://github.com/mighdoll/snowy.git`
 
 ### Running
 
-1. Clone the project `git clone https://github.com/mighdoll/snowy.git`
-2. Setup sbt and run `sbt "run"`
-3. Open a browser window and navigate to [http://localhost:9000](http://localhost:9000)
+1. cd into the project: `cd snowy`
+2. run snowy: `sbt run` or `sbt reStart shell`
+
+### Customization
+
+* To spawn test users run `sbt it:run`
+* Change port inside this file: `server/src/main/resources/application.conf`
+* Change game features in this file: `shared/src/main/scala/snowy/GameConstants.scala`
