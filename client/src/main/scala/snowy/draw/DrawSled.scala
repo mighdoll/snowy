@@ -43,14 +43,10 @@ class DrawSled(name: String,
       ctx.translate(x, y)
       ctx.rotate(cannonRotation)
       ctx.rect(-size * 7 / 22, 0, size * 7 / 11, size * 9 / 10)
-    case SpikySled =>
-      ctx.translate(x, y)
-      ctx.rotate(cannonRotation)
-      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
     case GunnerSled =>
       ctx.translate(x, y)
       ctx.rotate(cannonRotation)
-      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
+      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 12 / 11)
     case StationaryTestSled =>
     case _ =>
       ctx.translate(x, y)

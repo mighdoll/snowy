@@ -17,7 +17,7 @@ class InboundEvents(socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit,
                     name: String) {
   socket.onOpen { _ =>
-    sendMessage(Join(name, TankSled))
+    sendMessage(Join(name, GunnerSled))
     switch(true)
   }
 
