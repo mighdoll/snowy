@@ -6,6 +6,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
+import snowy.sleds._
 import snowy.client.ClientMain.loginScreen
 import snowy.connection.GameState._
 import upickle.default._
@@ -16,7 +17,7 @@ class InboundEvents(socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit,
                     name: String) {
   socket.onOpen { _ =>
-    sendMessage(Join(name))
+    sendMessage(Join(name, TankSled))
     switch(true)
   }
 

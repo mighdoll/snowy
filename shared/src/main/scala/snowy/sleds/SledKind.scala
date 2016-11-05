@@ -1,4 +1,4 @@
-package snowy
+package snowy.sleds
 
 import vector.Vec2d
 
@@ -58,20 +58,24 @@ case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
   override val gravity: Double = -100
-  override val maxSpeed        = 200
-  override val minRechargeTime = 500
-  override val bulletPower     = .2
-  override val bulletSpeed     = 300
-  override val bulletSize      = 9
+  override val minRechargeTime = 1000
+  override val bulletPower     = .8
+  override val bulletSpeed     = 400
+  override val bulletSize      = 20
+  override val bulletRecoil    = 120
 }
 
 case object GunnerSled extends SledKind {
   override val maxSpeed        = 500
-  override val minRechargeTime = 1000
-  override val bulletPower     = .8
-  override val bulletSpeed     = 500
-  override val bulletSize      = 20
-  override val bulletRecoil    = 120
+  override val minRechargeTime = 30
+  override val bulletSpeed     = 600
+  override val bulletSize      = 10
+  override val bulletPower     = .05
+  override val bulletRecoil    = 10
+}
+
+case object SpeedySled extends SledKind {
+  override val gravity: Double = -500
 }
 
 case object SpikySled extends SledKind {

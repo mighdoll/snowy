@@ -2,7 +2,7 @@ import boopickle.Default._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
-import snowy.GunnerSled
+import snowy.sleds._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, Snowball}

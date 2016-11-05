@@ -18,7 +18,7 @@ import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf
 import snowy.util.Perf.time
-import snowy.{SledKind, StationaryTestSled}
+import snowy.sleds._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d

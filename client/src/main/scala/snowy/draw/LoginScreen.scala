@@ -1,7 +1,7 @@
 package snowy.draw
 
 import org.scalajs.dom.window
-import snowy.BasicSled
+import snowy.sleds.BasicSled
 import snowy.client.ClientDraw._
 import vector.Vec2d
 

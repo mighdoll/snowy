@@ -1,7 +1,7 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
-import snowy.{BasicSled, SledKind}
+import snowy.sleds._
 import vector.Vec2d
 
 /** A collidable object on the playfield */

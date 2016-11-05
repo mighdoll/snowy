@@ -1,6 +1,6 @@
 package snowy.draw
 
-import snowy.SledKind
+import snowy.sleds._
 import snowy.client.ClientDraw.ctx
 import snowy.draw.GameColors.lineColors
 import vector.Vec2d
@@ -39,8 +39,21 @@ class DrawSled(name: String,
   ctx.fillStyle = "rgb(153, 153, 153)"
   ctx.beginPath()
   kind match {
+    case TankSled =>
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-size * 7 / 22, 0, size * 7 / 11, size * 9 / 10)
+    case SpikySled =>
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
+    case GunnerSled =>
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
+    case StationaryTestSled =>
     case _ =>
-      ctx.translate(x + size / 55, y)
+      ctx.translate(x, y)
       ctx.rotate(cannonRotation)
       ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
   }
