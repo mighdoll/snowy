@@ -120,6 +120,9 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
 
   /** reduce impact by this factor in sled/sled collisions */
   def armor: Double = kind.armor
+
+  /** sleds heavier than 1.0 accelerate and decelerate more slowly */
+  def mass: Double = kind.mass
 }
 
 case class Tree(id: TreeId = PlayfieldObject.nextId(), pos: Vec2d, size: Double)

@@ -44,6 +44,9 @@ sealed trait SledKind {
   /** reduce impact by this factor in sled/sled collisions */
   def armor: Double = 1.0
 
+  /** sleds heavier than 1.0 accelerate and decelerate more slowly */
+  def mass: Double = 2.0
+
   /*
   TODO
  * penetration factor for bullets (off axis hits bounce off modulo this factor)
