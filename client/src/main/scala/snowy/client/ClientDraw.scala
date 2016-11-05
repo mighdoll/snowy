@@ -10,7 +10,7 @@ import snowy.playfield._
 import vector.Vec2d
 
 object ClientDraw {
-  var size = Vec2d(window.innerWidth, window.innerHeight)
+  var size       = Vec2d(window.innerWidth, window.innerHeight)
   val gameCanvas = document.getElementById("game-c").asInstanceOf[html.Canvas]
   val ctx =
     gameCanvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
@@ -46,6 +46,7 @@ object ClientDraw {
         sled.healthPercent,
         sled.turretRotation,
         sled.rotation,
+        sled.kind,
         bodyRed)
     }
     new DrawSled(
@@ -55,6 +56,7 @@ object ClientDraw {
       mySled.healthPercent,
       mySled.turretRotation,
       mySled.rotation,
+      mySled.kind,
       bodyGreen)
 
     portal.trees.foreach { tree =>
@@ -87,6 +89,7 @@ object ClientDraw {
         sled.healthPercent,
         sled.turretRotation,
         sled.rotation,
+        sled.kind,
         bodyRed)
     }
 

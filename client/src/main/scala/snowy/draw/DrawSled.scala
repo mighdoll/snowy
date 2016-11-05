@@ -1,5 +1,6 @@
 package snowy.draw
 
+import snowy.SledKind
 import snowy.client.ClientDraw.ctx
 import snowy.draw.GameColors.lineColors
 import vector.Vec2d
@@ -10,10 +11,10 @@ class DrawSled(name: String,
                health: Double,
                cannonRotation: Double,
                rotation: Double,
+               kind: SledKind,
                color: String) {
   val x = pos.x
   val y = pos.y
-  //val size = 35.0
 
   //Global strokeStyle
   ctx.strokeStyle = lineColors.toString
@@ -34,11 +35,15 @@ class DrawSled(name: String,
   ctx.setTransform(1, 0, 0, 1, 0, 0)
 
   //Draw the barrel for snowballs
-  ctx.translate(x + size / 55, y)
-  ctx.rotate(cannonRotation)
   ctx.lineWidth = size / 20
   ctx.fillStyle = "rgb(153, 153, 153)"
-  ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
+  ctx.beginPath()
+  kind match {
+    case _ =>
+      ctx.translate(x + size / 55, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-size * 3 / 22, 0, size * 3 / 11, size * 9 / 10)
+  }
   ctx.fill()
   ctx.stroke()
   ctx.setTransform(1, 0, 0, 1, 0, 0)

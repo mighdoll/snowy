@@ -1,6 +1,7 @@
 package snowy.draw
 
 import org.scalajs.dom.window
+import snowy.BasicSled
 import snowy.client.ClientDraw._
 import vector.Vec2d
 
@@ -27,6 +28,7 @@ class LoginScreen() {
         1,
         Math.PI * 3 / 2,
         Math.PI / 2,
+        BasicSled,
         "rgb(120, 201, 44)")
     }, 10))
   }
