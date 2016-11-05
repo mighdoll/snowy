@@ -16,14 +16,17 @@ class MessageIO(api: AppHostApi) {
   /** Send a message to the client */
   def sendMessage(message: GameClientMessage, id: ConnectionId): Unit = {
 
-    time("pickling") {
+    val (bytes, byteString) = time("pickle") {
       val bytes      = Pickle.intoBytes(message)
       val byteString = ByteString(bytes)
-      time("send") {
-        sendBinaryMessage(byteString, id)
-      }
-      BufferPool.release(bytes)
+      (bytes, byteString)
     }
+
+    time("sendBinaryMessage") {
+      sendBinaryMessage(byteString, id)
+    }
+
+    BufferPool.release(bytes)
   }
 
   def sendBinaryMessage(byteString: ByteString, id: ConnectionId): Unit = {
