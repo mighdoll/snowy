@@ -5,20 +5,18 @@ import snowy.GameConstants._
 import vector.Vec2d
 
 object Skid {
-  def apply(deltaSeconds: Double): Skid =
-    new Skid(deltaSeconds * maxSkidTime)
-}
-
-/** Rotate speed vectors to take into account skidding effect
-  *
-  * @param skidTime time since last game turn as a % of the maximum skid time */
-class Skid(skidTime: Double) {
 
   /** Return a rotated speed vector adjusted for skidding effect for a sled.
     * Quickly moving sleds continue in the same direction (as if they had momentum),
     * slower sleds change direction more swiftly.
     */
-  def apply(current: Vec2d, rotation: Double, maxSpeed: Double): Vec2d = {
+  def skid(current: Vec2d,
+           rotation: Double,
+           maxSpeed: Double,
+           mass: Double,
+           deltaSeconds: Double): Vec2d = {
+    val skidTime = deltaSeconds * maxSkidTime
+
     current.transform {
       case _ if !current.zero =>
         val speed            = current.length
@@ -35,7 +33,7 @@ class Skid(skidTime: Double) {
 
         // skidFactor of 1.0 means no more skidding, proceed directly to targetDirection
         val skidFactor = {
-          val rawSkidFactor = maxSpeed * skidTime / speed
+          val rawSkidFactor = maxSpeed * skidTime / (speed * mass)
           math.min(1.0, rawSkidFactor)
         }
         val newVector = {

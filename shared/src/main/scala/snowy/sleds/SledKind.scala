@@ -45,7 +45,7 @@ sealed trait SledKind {
   def armor: Double = 1.0
 
   /** sleds heavier than 1.0 accelerate and decelerate more slowly */
-  def mass: Double = 2.0
+  def mass: Double = 1.0
 
   /*
   TODO
@@ -66,6 +66,7 @@ case object TankSled extends SledKind {
   override val bulletSpeed     = 400
   override val bulletSize      = 20
   override val bulletRecoil    = 120
+  override val mass            = 3.0
 }
 
 case object GunnerSled extends SledKind {

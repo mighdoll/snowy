@@ -5,6 +5,8 @@ import snowy.Awards.Travel
 import snowy.GameConstants.playfield
 import vector.Vec2d
 import Friction.friction
+import Gravity.gravity
+import Skid.skid
 
 /** Moving objects in each game time slice */
 object GameMotion {
@@ -57,13 +59,10 @@ object GameMotion {
   private def updateSledSpeedVector(sleds: Store[Sled],
                                     deltaSeconds: Double): Store[Sled] = {
     sleds.replaceItems { sled =>
-      val skid     = Skid(deltaSeconds)
-
-      import sled.rotation
-      val gravity       = Gravity(deltaSeconds, sled.gravity)
-      val gravitySpeed  = gravity(sled.speed, rotation, sled.maxSpeed)
-      val skidSpeed     = skid(gravitySpeed, rotation, sled.maxSpeed)
-      val frictionSpeed = friction(skidSpeed, rotation, deltaSeconds, sled.mass)
+      import sled.{gravity => grav, mass, maxSpeed, rotation}
+      val gravitySpeed  = gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
+      val skidSpeed     = skid(gravitySpeed, rotation, maxSpeed, mass, deltaSeconds)
+      val frictionSpeed = friction(skidSpeed, rotation, deltaSeconds, mass)
 
       sled.copy(speed = frictionSpeed)
     }

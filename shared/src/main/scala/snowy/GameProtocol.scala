@@ -10,7 +10,7 @@ object GameServerProtocol {
 
   sealed trait StartStopCommand
 
-  case class Join(userName: String, sledKind: SledKind = SpikySled)
+  case class Join(userName: String, sledKind: SledKind = BasicSled)
       extends GameServerMessage
 
   case object ReJoin extends GameServerMessage
