@@ -16,4 +16,5 @@ object Keys {
 
   object Left extends KeyMatch(65, 37)
 
+  object Space extends KeyMatch(32)
 }

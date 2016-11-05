@@ -27,9 +27,11 @@ object GameServerProtocol {
 
   case object Right extends StartStopCommand
 
-  case object Slow extends StartStopCommand
+  case object Slowing extends StartStopCommand
 
-  case object Push extends StartStopCommand
+  case object Pushing extends StartStopCommand
+
+  case object Shooting extends StartStopCommand
 
   case object Pong extends GameServerMessage
 

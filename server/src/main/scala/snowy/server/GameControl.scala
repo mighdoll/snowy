@@ -67,13 +67,13 @@ class GameControl(api: AppHostApi)
     connections.remove(connectionId)
   }
 
-  /** Process a [[GameServerMessage]] from the client */
+  /** Process a GameServerMessage from the client */
   def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind) => userJoin(id, name, sledKind)
       case TurretAngle(angle)   => rotateTurret(id, angle)
-      case Shoot                => shootSnowball(id)
+      case Shoot                => modifySled(id)(sled => shootSnowball(sled))
       case Start(cmd)           => commands.startCommand(id, cmd)
       case Stop(cmd)            => commands.stopCommand(id, cmd)
       case Pong                 => connections(id).pongReceived()
@@ -165,14 +165,15 @@ class GameControl(api: AppHostApi)
         command match {
           case Left  => turnSled(sled, turnDelta)
           case Right => turnSled(sled, -turnDelta)
-          case Slow =>
+          case Slowing =>
             val slow = new InlineForce(-slowButtonFriction * deltaSeconds, sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
-          case Push =>
+          case Pushing =>
             val pushForceNow = PushEnergy.force * deltaSeconds
             val pushEffort   = deltaSeconds / PushEnergy.maxTime
             val push         = new InlineForce(pushForceNow, sled.maxSpeed)
             pushSled(sled, pushForceNow, push, pushEffort)
+          case Shooting => shootSnowball(sled)
         }
       }
     }
@@ -425,30 +426,29 @@ class GameControl(api: AppHostApi)
     }
   }
 
-  private def shootSnowball(id: ConnectionId): Unit = {
-    modifySled(id) { sled =>
-      if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
-        sled
-      } else {
-        val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
-        val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
-        val direction   = Vec2d.fromRotation(-launchAngle)
-        val ball = Snowball(
-          ownerId = sled.id,
-          pos = wrapInPlayfield(sled.pos + launchPos),
-          size = sled.bulletSize,
-          speed = sled.speed + (direction * sled.bulletSpeed),
-          spawned = gameTime,
-          power = sled.bulletPower
-        )
-        snowballs = snowballs.add(ball)
+  private def shootSnowball(sled: Sled): Sled = {
+    if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
+      sled
+    } else {
+      val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
+      val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
+      val direction   = Vec2d.fromRotation(-launchAngle)
+      val ball = Snowball(
+        ownerId = sled.id,
+        pos = wrapInPlayfield(sled.pos + launchPos),
+        size = sled.bulletSize,
+        speed = sled.speed + (direction * sled.bulletSpeed),
+        spawned = gameTime,
+        power = sled.bulletPower
+      )
+      snowballs = snowballs.add(ball)
 
-        val recoilForce = direction * -sled.bulletRecoil
-        val speed       = sled.speed + recoilForce
-        sled.copy(speed = speed, lastShotTime = gameTime)
-      }
+      val recoilForce = direction * -sled.bulletRecoil
+      val speed       = sled.speed + recoilForce
+      sled.copy(speed = speed, lastShotTime = gameTime)
     }
   }
+
 }
 
 case class SledReplace(oldSled: Sled, newSled: Sled)

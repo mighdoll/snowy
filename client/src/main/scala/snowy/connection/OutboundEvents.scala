@@ -7,6 +7,7 @@ import snowy.client.Keys
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
+  var shooting: Boolean = false
   var turning: Option[Direction] = None
   var speeding: Option[Speed]    = None
 
@@ -19,19 +20,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   object SpeedUp  extends Speed
   object SlowDown extends Speed
 
-  window.setInterval(() => {
-    turning match {
-      case Some(GoLeft)  => sendMessage(Start(Left))
-      case Some(GoRight) => sendMessage(Start(Right))
-      case _             =>
-    }
-    speeding match {
-      case Some(SlowDown) => sendMessage(Start(Slow))
-      case Some(SpeedUp)  => sendMessage(Start(Push))
-      case _              =>
-    }
-  }, 500)
-
   window.onkeydown = { event: KeyboardEvent =>
     event.keyCode match {
       case Keys.Right() if !turning.contains(GoRight) =>
@@ -43,13 +31,16 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Start(Left))
         turning = Some(GoLeft)
       case Keys.Down() if !speeding.contains(SlowDown) =>
-        sendMessage(Stop(Push))
-        sendMessage(Start(Slow))
+        sendMessage(Stop(Pushing))
+        sendMessage(Start(Slowing))
         speeding = Some(SlowDown)
       case Keys.Up() if !speeding.contains(SpeedUp) =>
-        sendMessage(Stop(Slow))
-        sendMessage(Start(Push))
+        sendMessage(Stop(Slowing))
+        sendMessage(Start(Pushing))
         speeding = Some(SpeedUp)
+      case Keys.Space() if !shooting =>
+        sendMessage(Start(Shooting))
+        shooting = true
       case _ =>
     }
   }
@@ -66,12 +57,17 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
     }
     (event.keyCode, speeding) match {
       case (Keys.Up(), Some(SpeedUp)) =>
-        sendMessage(Stop(Push))
+        sendMessage(Stop(Pushing))
         speeding = None
       case (Keys.Down(), Some(SlowDown)) =>
-        sendMessage(Stop(Slow))
+        sendMessage(Stop(Slowing))
         speeding = None
       case _ =>
+    }
+    event.keyCode match {
+      case Keys.Space() =>
+        sendMessage(Stop(Shooting))
+        shooting = false
     }
   }
 
