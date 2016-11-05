@@ -30,7 +30,7 @@ object LoadTest {
 
     val port       = GlobalConfig.config.getInt("snowy.server.port")
     val wsUrl      = s"ws://localhost:${port}/game"
-    val numClients = 5
+    val numClients = 20
     (1 to numClients).foreach { _ =>
       new SimulatedClient(wsUrl)
     }
@@ -71,9 +71,9 @@ class SimulatedClient(url: String)(implicit executionContext: ExecutionContext) 
         case _ if random < .030 => send.offer(Stop(Right)); send.offer(Stop(Right))
         case _ if random < .040 => send.offer(Start(Push))
         case _ if random < .060 => send.offer(Stop(Push))
-        case _ if random < .080 => send.offer(Shoot)
-        case _ if random < .090 =>
+        case _ if random < .070 =>
           send.offer(TurretAngle(ThreadLocalRandom.current.nextDouble() * math.Pi * 2))
+        case _ if random < .120 => send.offer(Shoot)
         case _ =>
       }
     }
