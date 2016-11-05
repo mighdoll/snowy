@@ -68,6 +68,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       case Keys.Space() =>
         sendMessage(Stop(Shooting))
         shooting = false
+      case _ =>
     }
   }
 
