@@ -9,7 +9,7 @@ object GameConstants {
 
   val playfield = Vec2d(2800, 4800)
 
-  /** max seconds to complete a skid at full speed */
+  /** max seconds for a normal weight sled to complete a skid at full speed */
   val maxSkidTime = .8
 
   /** stop pending commands after this many milliseconds */

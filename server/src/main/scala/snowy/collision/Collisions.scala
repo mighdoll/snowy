@@ -54,9 +54,7 @@ object Collisions {
         (adjustPos, adjustPos * -1)
       }
 
-      Collided(a, bounceA, repositionA) ::
-        Collided(b, bounceB, repositionB) ::
-          Nil
+      Collided(a, bounceA, repositionA) :: Collided(b, bounceB, repositionB) :: Nil
     } else {
       Nil
     }
