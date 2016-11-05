@@ -12,9 +12,9 @@ class Connection(name: String) {
   val socket = {
     val inDelay  = 0 milliseconds
     val outDelay = 0 milliseconds
-    val secure =
-      if (window.location.protocol.slice(0, -1).length > 4) "s" else ""
-    val url = s"ws$secure://${window.location.host}/game"
+    val protocol =
+      if (window.location.protocol == "https:") "wss:" else "ws:"
+    val url = s"$protocol//${window.location.host}/game"
     new NetworkSocket(url, inDelay, outDelay)
   }
 
