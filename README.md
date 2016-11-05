@@ -9,5 +9,5 @@ An experimental WebSocket game using [Scala](http://scala-lang.org) and [Scala.j
 ### Running
 
 1. Clone the project `git clone https://github.com/mighdoll/snowy.git`
-2. Setup sbt and run `sbt "project server" "run"`
-3. Open a browser window and navigate to [http://localhost:2345](http://localhost:2345)
+2. Setup sbt and run `sbt "run"`
+3. Open a browser window and navigate to [http://localhost:9000](http://localhost:9000)
