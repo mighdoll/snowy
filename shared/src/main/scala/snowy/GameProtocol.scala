@@ -13,7 +13,7 @@ object GameServerProtocol {
   case class Join(userName: String, sledKind: SledKind = SpikySled)
       extends GameServerMessage
 
-  case class ReJoin(sledKind: SledKind = BasicSled) extends GameServerMessage
+  case object ReJoin extends GameServerMessage
 
   case class TurretAngle(angle: Double) extends GameServerMessage
 

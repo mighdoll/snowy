@@ -2,6 +2,7 @@ package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
 import scala.concurrent.duration._
+import snowy.sleds.SledKind
 
 object User {
   val scoreFrequency = 1.second.toMillis
@@ -13,7 +14,10 @@ import snowy.server.User._
   *
   * Note that the user might not currently have a sled in the game
   * if they have been killed and not yet rejoined.  */
-class User(val name: String, val robot: Boolean = false, val createTime: Long) {
+class User(val name: String,
+           val robot: Boolean = false,
+           val sledKind: SledKind,
+           val createTime: Long) {
   private var theScore: Double    = 10
   private var nextScoreSend: Long = 0
 

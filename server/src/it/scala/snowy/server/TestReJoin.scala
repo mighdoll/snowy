@@ -16,7 +16,7 @@ class TestReJoin extends PropSpec with PropertyChecks {
       val origSled = skipToMessage { case State(mySled, _, _) => mySled }
       send(TestDie)
       skipToMessage { case Died => }
-      send(ReJoin())
+      send(ReJoin)
       val newSled = skipToMessage { case State(mySled, _, _) => mySled }
       newSled.id !== origSled.id
 

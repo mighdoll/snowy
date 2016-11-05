@@ -19,7 +19,7 @@ class Connection(name: String) {
   }
 
   def reSpawn(): Unit = {
-    sendMessage(ReJoin())
+    sendMessage(ReJoin)
     document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
     document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
   }
