@@ -1,4 +1,4 @@
-package snowy.server
+package snowy.load
 
 import java.util.concurrent.ThreadLocalRandom
 import java.util.concurrent.atomic.AtomicInteger
@@ -9,7 +9,8 @@ import akka.stream.scaladsl.{Flow, Sink, SourceQueue}
 import snowy.GameClientProtocol.{Died, GameClientMessage, Ping, State}
 import snowy.GameServerProtocol._
 import snowy.server.CommandLine.BasicArgs
-import snowy.server.SnowyServerFixture.connectSinkToServer
+import snowy.server.{CommandLine, GlobalConfig}
+import snowy.load.SnowyServerFixture.connectSinkToServer
 
 object LoadTest {
 
@@ -41,8 +42,7 @@ object LoadTest {
 object SimulatedClient {
   val testUserId = new AtomicInteger()
 }
-
-import snowy.server.SimulatedClient.testUserId
+import SimulatedClient.testUserId
 
 class SimulatedClient(url: String)(implicit executionContext: ExecutionContext) {
   val flow =

@@ -5,7 +5,7 @@ import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol.{Died, State}
 import snowy.GameServerProtocol.{Join, ReJoin, TestDie}
-import snowy.server.SnowyServerFixture.withServer
+import snowy.load.SnowyServerFixture.withServer
 
 class TestReJoin extends PropSpec with PropertyChecks {
   property("ReJoin registers user with a new sled") {

@@ -24,11 +24,9 @@ lazy val commonSettings = Seq(
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
     libraryDependencies ++= Seq(
-      "org.scalacheck"    %% "scalacheck"          % "1.13.2" % "it",
-      "org.scalactic"     %% "scalactic"           % "3.0.0"  % "it",
-      "org.scalatest"     %% "scalatest"           % "3.0.0"  % "it",
-      "com.typesafe.akka" %% "akka-testkit"        % V.akka   % "it",
-      "com.typesafe.akka" %% "akka-stream-testkit" % V.akka   % "it"
+      "org.scalacheck" %% "scalacheck" % "1.13.2" % "it",
+      "org.scalactic"  %% "scalactic"  % "3.0.0"  % "it",
+      "org.scalatest"  %% "scalatest"  % "3.0.0"  % "it"
     )
   )
 
@@ -41,9 +39,7 @@ lazy val V = new Object {
 }
 
 lazy val server = (project in file("server"))
-  .configs(IntegrationTest)
   .settings(commonSettings: _*)
-  .settings(itSettings: _*)
   .settings(
     assemblyJarName in assembly := "full.jar",
     herokuAppName in Compile := "superskier",
@@ -98,6 +94,19 @@ lazy val client = (project in file("client"))
     )
   )
   .dependsOn(shared.js)
+
+lazy val load = (project in file("load"))
+  .configs(IntegrationTest)
+  .settings(commonSettings: _*)
+  .settings(itSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-testkit"        % V.akka,
+      "com.typesafe.akka" %% "akka-stream-testkit" % V.akka
+    )
+  )
+  .dependsOn(server)
+  .dependsOn(sharedJvm)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)

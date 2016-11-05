@@ -1,4 +1,4 @@
-package snowy.server
+package snowy.load
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -17,6 +17,7 @@ import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
 import upickle.default._
 import snowy.playfield.Picklers._
+import snowy.server.GameControl
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()
