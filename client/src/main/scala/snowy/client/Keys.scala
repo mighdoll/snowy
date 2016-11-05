@@ -3,17 +3,17 @@ package snowy.client
 /** scala extractor objects to identify game keys in with pattern matching */
 object Keys {
 
-  class KeyMatch(keys: String*) {
-    def unapply(keyEvent: String): Boolean =
+  class KeyMatch(keys: Int*) {
+    def unapply(keyEvent: Int): Boolean =
       keys.contains(keyEvent)
   }
 
-  object Up extends KeyMatch("ArrowUp", "w", "W")
+  object Up extends KeyMatch(87, 38)
 
-  object Down extends KeyMatch("ArrowDown", "s", "S")
+  object Down extends KeyMatch(83, 40)
 
-  object Right extends KeyMatch("ArrowRight", "d", "D")
+  object Right extends KeyMatch(68, 39)
 
-  object Left extends KeyMatch("ArrowLeft", "a", "A")
+  object Left extends KeyMatch(65, 37)
 
 }

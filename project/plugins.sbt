@@ -9,6 +9,3 @@ addSbtPlugin("io.spray" % "sbt-revolver" % "0.8.0")
 addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.4.8")
 
 addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")
-
-
-

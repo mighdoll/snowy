@@ -11,11 +11,9 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   var speeding: Option[Speed]    = None
 
   sealed trait Direction
-
   sealed trait Speed
 
-  object GoLeft extends Direction
-
+  object GoLeft  extends Direction
   object GoRight extends Direction
 
   object SpeedUp  extends Speed
@@ -35,7 +33,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   }, 500)
 
   window.onkeydown = { event: KeyboardEvent =>
-    event.key match {
+    event.keyCode match {
       case Keys.Right() if !turning.contains(GoRight) =>
         sendMessage(Stop(Left))
         sendMessage(Start(Right))
@@ -57,7 +55,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   }
 
   window.onkeyup = { event: KeyboardEvent =>
-    (event.key, turning) match {
+    (event.keyCode, turning) match {
       case (Keys.Right(), Some(GoRight)) =>
         sendMessage(Stop(Right))
         turning = None
@@ -66,7 +64,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         turning = None
       case _ =>
     }
-    (event.key, speeding) match {
+    (event.keyCode, speeding) match {
       case (Keys.Up(), Some(SpeedUp)) =>
         sendMessage(Stop(Push))
         speeding = None
