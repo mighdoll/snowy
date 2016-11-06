@@ -1,68 +1,123 @@
 <html class="fullscreen">
-
 <head>
   <title>Snowy Day</title>
   <style>
-    #username {
-      width: 20vw;
-      height: 3vw;
-      top: calc( 50vh - 3vw / 2);
-      left: calc( 50vw - 10vw);
-      position: absolute;
-      border-radius: 10px;
-      background: white;
-      border: 0;
-      font-size: 2vw;
-    }
-
-    #play {
-      position: absolute;
-      left: 68vw;
-      top: calc(50vh - 1vw);
-      height: 2vw;
-      width: 10vw;
-      border-radius: 10px;
-      background: white;
-      border: 0;
-      font-size: 1vw;
-    }
-
-    #login-form {
-      position: absolute;
-    }
-
-    #game-div {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
-    }
-
-    .back {
-      z-index: -1;
-    }
-
-    .hide {
-      display: none;
-    }
-  </style>
-
+	#username {
+	   width: 35vh;
+	   height: 7vh;
+	   top: calc( 50vh - 4vh);
+	   left: calc( 50vw - 18vh);
+	   position: absolute;
+	   border-radius: 10px;
+	   background: white;
+	   border: 0;
+	   font-size: 3vh;
+	   padding: 10px;
+	}
+	#username::-webkit-input-placeholder {
+	   color: rgb(120, 201, 44);
+	}
+	#play {
+	   position: absolute;
+	   left: calc(50vw + 35vh);
+	   top: calc(50vh - 3vh);
+	   height: 5vh;
+	   width: 20vh;
+	   border-radius: 10px;
+	   background: white;
+	   border: 0;
+	   font-size: 1vw;
+	}
+	#login-form {
+	   position: absolute;
+	}
+	#game-div {
+	   position: absolute;
+	   width: 100vw;
+	   height: 100vh;
+	   top: 0;
+	   left: 0;
+	}
+	.back {
+	   z-index: -1;
+	}
+	.hide {
+	   display: none;
+	}
+	#splitter {
+	   position: relative;
+	   background: white;
+	   border-radius: 100px;
+	   padding-left: 10px;
+	   width: 100px;
+	   height: 50px;
+	   top: calc( 66vh - 25px);
+	   left: calc( 50vw - 50px);
+	   font-family: Arial;
+	}
+	#container {
+	   display: inline-block;
+	   position: absolute;
+	   right: -5px;
+	   height: calc(50% - 5px);
+	   border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(120, 201, 44) rgb(120, 201, 44);
+	   border-width: thin;
+	   border-style: solid;
+	   width: 30px;
+	   padding-top: 5px;
+	   padding-left: 5px;
+	   color: black;
+	}
+	#bottom {
+	   position: absolute;
+	   height: 100%;
+	   top: 100%;
+	   left: -1px;
+	   border-color: rgb(120, 201, 44) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(120, 201, 44);
+	   border-width: thin;
+	   border-style: solid;
+	   padding-left: 5px;
+	   color: black;
+	}
+	#bottom:hover {
+	   color: blue
+	}
+	#top:hover {
+	   color: blue
+	}
+	#caption {
+	   display: inline-block;
+	   position: absolute;
+	   top: 0px;
+	   height: 50px;
+	   width: calc(100% - 32px);
+	   font-size: 19px;
+	   padding-top: 2px;
+	   padding-left: 2px;
+	}
+	</style>
 </head>
-
 <body class="fullscreen">
-
-  <form id="login-form">
-    <input maxlength="15" id="username">
-    <button id="play">Join Game</button>
-  </form>
-  <div id="game-div" class="back fullscreen">
-    <canvas id="game-c"></div>
+<form id="login-form" name="login-form">
+  <input id="username" maxlength="15" placeholder="Your Name Here"> <button id="play">Join Game</button>
+  <div id="splitter">
+    <div id="caption">
+      Class Kind
     </div>
-
-    <!-- <script type="text/javascript" src="sock-client-jsdeps.js"></script> -->
-    <script type="text/javascript" src="sock-client-fastopt.js"></script>
-    <script type="text/javascript" src="sock-client-launcher.js"></script>
-
-  </body>
+    <div id="container">
+      <span id="top">
+        &#9650;
+      </span>
+      <span id="bottom">
+        &#9660;
+      </span>
+    </div>
+  </div>
+</form>
+<div class="back fullscreen" id="game-div">
+  <canvas id="game-c"></canvas>
+</div><!-- <script type="text/javascript" src="sock-client-jsdeps.js"></script> -->
+<script src="sock-client-fastopt.js" type="text/javascript"></script>
+<script src="sock-client-launcher.js" type="text/javascript"></script>
+</body>
 </html>

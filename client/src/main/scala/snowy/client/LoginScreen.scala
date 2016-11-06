@@ -24,7 +24,7 @@ object LoginScreen {
     new DrawSled(
       "",
       Vec2d(size.x / 2, size.y / 2),
-      size.x / 3,
+      size.y * 2 / 3,
       1,
       Math.PI * 3 / 2,
       Math.PI / 2,
