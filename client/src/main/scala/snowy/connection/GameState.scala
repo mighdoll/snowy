@@ -13,25 +13,13 @@ object GameState {
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees     = Store[Tree]()
-  var serverSnowballs = Store[Snowball]()
-  var serverSleds     = Store[Sled]()
-  var serverMySled    = Sled.dummy
+  private var serverSnowballs = Store[Snowball]()
+  private var serverSleds     = Store[Sled]()
+  private var serverMySled    = Sled.dummy
   var gameTime        = 0L
 
-  var gameLoop: Option[Int] = None
-
-  var turning: Turning = NoTurn
-
-  def startTurn(direction: Turning): Unit = {
-    turning = direction
-  }
-
-  private def nextTimeSlice(): Double = {
-    val currentTime  = System.currentTimeMillis()
-    val deltaSeconds = (currentTime - gameTime) / 1000.0
-    gameTime = currentTime
-    deltaSeconds
-  }
+  private var gameLoop: Option[Int] = None
+  private var turning: Turning = NoTurn
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
@@ -41,7 +29,12 @@ object GameState {
     gameTime = state.gameTime
   }
 
+  def startTurn(direction: Turning): Unit = {
+    turning = direction
+  }
+
   def startRedraw(): Unit = {
+    stopRedraw()
     val loop = window.setInterval(() => {
       val deltaSeconds = nextTimeSlice()
       refresh(deltaSeconds)
@@ -51,7 +44,7 @@ object GameState {
 
   def stopRedraw(): Unit = gameLoop.foreach(id => window.clearInterval(id))
 
-  def applyTurn(sled: Sled, deltaSeconds: Double): Sled = {
+  private def applyTurn(sled: Sled, deltaSeconds: Double): Sled = {
     turning match {
       case NoTurn    => sled
       case RightTurn => GameMotion.turnSled(serverMySled, RightTurn, deltaSeconds)
@@ -64,7 +57,7 @@ object GameState {
     store.items.head
   }
 
-  def nextState(deltaSeconds: Double): Unit = {
+  private def nextState(deltaSeconds: Double): Unit = {
     serverSnowballs = moveSnowballs(serverSnowballs, deltaSeconds)
     val turnedSled    = applyTurn(serverMySled, deltaSeconds)
     val movedSled     = moveOneSled(turnedSled, deltaSeconds)
@@ -73,7 +66,15 @@ object GameState {
     serverMySled = movedSled
   }
 
-  def refresh(deltaSeconds: Double): Unit = {
+
+  private def nextTimeSlice(): Double = {
+    val currentTime  = System.currentTimeMillis()
+    val deltaSeconds = (currentTime - gameTime) / 1000.0
+    gameTime = currentTime
+    deltaSeconds
+  }
+
+  private def refresh(deltaSeconds: Double): Unit = {
     nextState(deltaSeconds)
 
     clearScreen()

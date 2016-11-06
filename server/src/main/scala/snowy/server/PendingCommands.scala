@@ -23,13 +23,13 @@ class PendingCommands {
   with MultiMap[ConnectionId, PendingCommand]
 
   /** record a pending command, replacing any previous matching command for this id  */
-  def startCommand(id: ConnectionId, command: StartStopCommand): Unit = {
+  def startCommand(id: ConnectionId, command: StartStopCommand, time: Long): Unit = {
     removeCommand(id, command)
     commands.addBinding(id, PendingCommand(command))
   }
 
   /** remove a pending command */
-  def stopCommand(id: ConnectionId, command: StartStopCommand): Unit =
+  def stopCommand(id: ConnectionId, command: StartStopCommand, time: Long): Unit =
     removeCommand(id, command)
 
   private def removeCommand(id: ConnectionId, command: StartStopCommand): Unit = {

@@ -63,17 +63,18 @@ class SimulatedClient(url: String)(implicit executionContext: ExecutionContext) 
   var alive                                           = false
 
   def sendRandomMessage(send: SourceQueue[GameServerMessage]): Unit = {
+    val gameTime = System.currentTimeMillis()
     val random = ThreadLocalRandom.current.nextDouble()
     if (alive) {
       random match {
-        case _ if random < .005 => send.offer(Start(Left))
-        case _ if random < .010 => send.offer(Start(Right))
-        case _ if random < .030 => send.offer(Stop(Right)); send.offer(Stop(Right))
-        case _ if random < .040 => send.offer(Start(Pushing))
-        case _ if random < .060 => send.offer(Stop(Pushing))
+        case _ if random < .005 => send.offer(Start(Left, gameTime))
+        case _ if random < .010 => send.offer(Start(Right, gameTime))
+        case _ if random < .030 => send.offer(Stop(Right, gameTime)); send.offer(Stop(Right, gameTime))
+        case _ if random < .040 => send.offer(Start(Pushing, gameTime))
+        case _ if random < .060 => send.offer(Stop(Pushing, gameTime))
         case _ if random < .070 =>
           send.offer(TurretAngle(ThreadLocalRandom.current.nextDouble() * math.Pi * 2))
-        case _ if random < .120 => send.offer(Shoot)
+        case _ if random < .120 => send.offer(Shoot(gameTime))
         case _ =>
       }
     }
