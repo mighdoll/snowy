@@ -2,6 +2,7 @@ package snowy.client
 
 import org.scalajs.dom._
 import snowy.client.ClientDraw._
+import snowy.connection.GameState
 import snowy.draw.{DrawSled, SnowFlake}
 import snowy.sleds.BasicSled
 import vector.Vec2d
@@ -79,12 +80,15 @@ object LoginScreen {
 
       //Stop drawing the snow as a background
       drawLoop.foreach(id => window.clearInterval(id))
+      GameState.startRedraw()
       //Do not redirect
       false
   }
 
   def rejoinPanel() {
     switch(false)
+
+    GameState.stopRedraw()
     drawLoop = Some(window.setInterval(tick, 10))
   }
 }

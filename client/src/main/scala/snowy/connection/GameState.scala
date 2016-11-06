@@ -6,6 +6,7 @@ import snowy.client.ClientDraw._
 import snowy.playfield._
 import vector.Vec2d
 import snowy.playfield.GameMotion._
+
 object GameState {
   var gPlayField = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard = Scoreboard(0, Seq())
@@ -16,6 +17,8 @@ object GameState {
   var serverSleds     = Store[Sled]()
   var serverMySled    = Sled.dummy
   var gameTime        = 0L
+
+  var gameLoop: Option[Int] = None
 
   var turning: Turning = NoTurn
 
@@ -38,10 +41,15 @@ object GameState {
     gameTime = state.gameTime
   }
 
-  window.setInterval(() => {
-    val deltaSeconds = nextTimeSlice()
-    refresh(deltaSeconds)
-  }, 20)
+  def startRedraw(): Unit = {
+    val loop = window.setInterval(() => {
+      val deltaSeconds = nextTimeSlice()
+      refresh(deltaSeconds)
+    }, 20)
+    gameLoop = Some(loop)
+  }
+
+  def stopRedraw(): Unit = gameLoop.foreach(id => window.clearInterval(id))
 
   def applyTurn(sled: Sled, deltaSeconds: Double): Sled = {
     turning match {
