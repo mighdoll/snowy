@@ -7,7 +7,7 @@ import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.sleds._
-import snowy.client.ClientMain.loginScreen
+import snowy.client.LoginScreen
 import snowy.connection.GameState._
 import upickle.default._
 import snowy.playfield.Picklers._
@@ -18,7 +18,6 @@ class InboundEvents(socket: NetworkSocket,
                     name: String) {
   socket.onOpen { _ =>
     sendMessage(Join(name, TankSled))
-    switch(true)
   }
 
   socket.onError { event =>
@@ -33,7 +32,7 @@ class InboundEvents(socket: NetworkSocket,
 
   socket.onClose { _ =>
     console.log(s"socket closed ")
-    switch(false)
+    LoginScreen.startPanel()
   }
 
   socket.onMessage { event =>
@@ -49,37 +48,13 @@ class InboundEvents(socket: NetworkSocket,
       case state: State             => receivedState(state)
       case Playfield(width, height) => gPlayField = Vec2d(width, height)
       case trees: Trees             => serverTrees = serverTrees.addItems(trees.trees)
-      case Died                     => switch(false); loginScreen.setup()
+      case Died                     => LoginScreen.rejoinPanel()
       case Ping                     => sendMessage(Pong)
       case GameTime(time, oneWayDelay) =>
         console.log(s"Game Time: $time, $oneWayDelay")
       case newScoreboard: Scoreboard => scoreboard = newScoreboard
       case x                         => println(s"unexpected message: $message")
     }
-  }
-
-  def switch(game: Boolean) {
-    game match {
-      case true =>
-        document
-          .getElementById("game-div")
-          .asInstanceOf[html.Div]
-          .classList
-          .remove("back")
-        document
-          .getElementById("login-form")
-          .asInstanceOf[html.Div]
-          .classList
-          .add("hide")
-      case false =>
-        document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
-        document
-          .getElementById("login-form")
-          .asInstanceOf[html.Div]
-          .classList
-          .remove("hide")
-    }
-
   }
 
   def stringMessage(msg: String): Unit = {
