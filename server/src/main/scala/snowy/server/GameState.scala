@@ -17,7 +17,6 @@ trait GameState { self: GameControl =>
   val commands         = new PendingCommands
   var sleds            = Store[Sled]()
   var snowballs        = Store[Snowball]()
-  var gameTime         = System.currentTimeMillis()
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): Iterable[(ConnectionId, State)] = {

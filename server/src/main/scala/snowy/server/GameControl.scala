@@ -28,6 +28,8 @@ class GameControl(api: AppHostApi)
   val tickDelta   = 20 milliseconds
   val messageIO   = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
+  var gameTime         = System.currentTimeMillis()
+  var lastGameTime     = gameTime - tickDelta.toMillis
 
   import messageIO.sendMessage
 
@@ -159,7 +161,7 @@ class GameControl(api: AppHostApi)
     * e.g. turning or slowing */
   private def applyCommands(deltaSeconds: Double): Unit = {
 
-    commands.foreachCommand { (id, command) =>
+    commands.foreachCommand { (id, command, time) =>
       modifySled(id) { sled =>
         command match {
           case Left  => turnSled(sled, LeftTurn, deltaSeconds)
@@ -359,6 +361,7 @@ class GameControl(api: AppHostApi)
   private def nextTimeSlice(): Double = {
     val currentTime  = System.currentTimeMillis()
     val deltaSeconds = (currentTime - gameTime) / 1000.0
+    lastGameTime = gameTime
     gameTime = currentTime
     deltaSeconds
   }

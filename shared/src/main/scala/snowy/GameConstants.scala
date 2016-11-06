@@ -13,7 +13,7 @@ object GameConstants {
   val maxSkidTime = .8
 
   /** stop pending commands after this many milliseconds */
-  val commandDuration = 2000
+  val maxCommandDuration = 2000
 
   /** point up on the screen, towards smaller Y values */
   val downhillRotation = math.Pi
