@@ -3,6 +3,7 @@ package snowy.playfield
 import scala.collection.mutable
 import snowy.Awards.Travel
 import snowy.GameConstants.playfield
+import snowy.GameConstants.turnTime
 import vector.Vec2d
 import Friction.friction
 import Gravity.gravity
@@ -23,6 +24,35 @@ object GameMotion {
       val deltaPos = snowball.speed * deltaSeconds
       snowball.copy(pos = wrapInPlayfield(snowball.pos + deltaPos))
     }
+  }
+
+  sealed trait Turning
+  sealed trait Turn {
+    def rotationSign: Int
+  }
+  case object NoTurn extends Turning
+  case object LeftTurn extends Turning with Turn {
+    override val rotationSign = 1
+  }
+  case object RightTurn extends Turning with Turn {
+    override val rotationSign = -1
+  }
+
+  /** Rotate a sled at a rate controlled by GameConstants.turnTime
+    *
+    * @return a rotated sled instance
+    */
+  def turnSled(sled: Sled, direction: Turn, deltaSeconds: Double): Sled = {
+    // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
+    val turnDelta = direction.rotationSign * (math.Pi / turnTime) * deltaSeconds
+    val max       = math.Pi * 2
+    val min       = -math.Pi * 2
+    val rotation  = sled.rotation + turnDelta
+    val wrappedRotation =
+      if (rotation > max) rotation - max
+      else if (rotation < min) rotation - min
+      else rotation
+    sled.copy(rotation = wrappedRotation)
   }
 
   /** Constrain a value between 0 and a max value.

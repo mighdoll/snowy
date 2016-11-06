@@ -12,21 +12,20 @@ import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants.{Bullet, _}
 import snowy.GameServerProtocol._
 import snowy.collision.{SledSnowball, SledTree}
-import snowy.playfield.GameMotion.{moveSleds, moveSnowballs, wrapInPlayfield}
+import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import snowy.server.GameSeeding.randomSpot
+import snowy.sleds._
 import snowy.util.Perf
 import snowy.util.Perf.time
-import snowy.sleds._
 import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
 
 class GameControl(api: AppHostApi)
     extends AppController with GameState with StrictLogging {
-  val tickDelta   = 20 milliseconds
-  val turnDelta   = (math.Pi / turnTime) * (tickDelta.toMillis / 1000.0)
+  val tickDelta   = 40 milliseconds
   val messageIO   = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
 
@@ -77,7 +76,7 @@ class GameControl(api: AppHostApi)
       case Start(cmd)           => commands.startCommand(id, cmd)
       case Stop(cmd)            => commands.stopCommand(id, cmd)
       case Pong                 => connections(id).pongReceived()
-      case ReJoin     => rejoin(id)
+      case ReJoin               => rejoin(id)
       case TestDie              => reapSled(sledMap(id))
     }
   }
@@ -163,10 +162,12 @@ class GameControl(api: AppHostApi)
     commands.foreachCommand { (id, command) =>
       modifySled(id) { sled =>
         command match {
-          case Left  => turnSled(sled, turnDelta)
-          case Right => turnSled(sled, -turnDelta)
+          case Left  => turnSled(sled, LeftTurn, deltaSeconds)
+          case Right => turnSled(sled, RightTurn, deltaSeconds)
           case Slowing =>
-            val slow = new InlineForce(-slowButtonFriction * deltaSeconds / sled.mass, sled.maxSpeed)
+            val slow = new InlineForce(
+              -slowButtonFriction * deltaSeconds / sled.mass,
+              sled.maxSpeed)
             sled.copy(speed = slow(sled.speed))
           case Pushing =>
             val pushForceNow = PushEnergy.force * deltaSeconds / sled.mass
@@ -185,21 +186,6 @@ class GameControl(api: AppHostApi)
         fn(sled)
       }
     }
-  }
-
-  /** Rotate a sled.
-    *
-    * @param rotate rotation in radians from current position. */
-  private def turnSled(sled: Sled, rotate: Double): Sled = {
-    // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
-    val max      = math.Pi * 2
-    val min      = -math.Pi * 2
-    val rotation = sled.rotation + rotate
-    val wrappedRotation =
-      if (rotation > max) rotation - max
-      else if (rotation < min) rotation - min
-      else rotation
-    sled.copy(rotation = wrappedRotation)
   }
 
   /** apply a push to a sled */
@@ -395,8 +381,10 @@ class GameControl(api: AppHostApi)
                        userName: String,
                        sledKind: SledKind,
                        robot: Boolean = false): Unit = {
-    logger.info(s"user joined: $userName  kind: $sledKind  robot: $robot  userCount:${users.size}")
-    val user = new User(userName, createTime = gameTime, sledKind = sledKind, robot = robot)
+    logger.info(
+      s"user joined: $userName  kind: $sledKind  robot: $robot  userCount:${users.size}")
+    val user =
+      new User(userName, createTime = gameTime, sledKind = sledKind, robot = robot)
     users(id) = user
     createSled(id, user, sledKind)
   }

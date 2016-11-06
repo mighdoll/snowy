@@ -28,7 +28,7 @@ trait GameState { self: GameControl =>
       connectionId <- mySled.connectionId
     } yield {
       val otherSleds = sleds.items.filter(_.id != mySled.id).toSeq
-      connectionId -> State(mySled, otherSleds, clientSnowballs)
+      connectionId -> State(gameTime, mySled, otherSleds, clientSnowballs)
     }).toSeq
   }
 

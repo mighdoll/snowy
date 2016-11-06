@@ -4,6 +4,7 @@ import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.client.ClientDraw.size
 import snowy.client.Keys
+import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
@@ -23,10 +24,12 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   window.onkeydown = { event: KeyboardEvent =>
     event.keyCode match {
       case Keys.Right() if !turning.contains(GoRight) =>
+        GameState.startTurn(RightTurn)
         sendMessage(Stop(Left))
         sendMessage(Start(Right))
         turning = Some(GoRight)
       case Keys.Left() if !turning.contains(GoLeft) =>
+        GameState.startTurn(LeftTurn)
         sendMessage(Stop(Right))
         sendMessage(Start(Left))
         turning = Some(GoLeft)
@@ -48,9 +51,11 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   window.onkeyup = { event: KeyboardEvent =>
     (event.keyCode, turning) match {
       case (Keys.Right(), Some(GoRight)) =>
+        GameState.startTurn(NoTurn)
         sendMessage(Stop(Right))
         turning = None
       case (Keys.Left(), Some(GoLeft)) =>
+        GameState.startTurn(NoTurn)
         sendMessage(Stop(Left))
         turning = None
       case _ =>

@@ -45,15 +45,14 @@ class InboundEvents(socket: NetworkSocket,
 
   private def handleMessage(message: GameClientMessage): Unit = {
     message match {
-      case state: State             => receivedState(state)
-      case Playfield(width, height) => gPlayField = Vec2d(width, height)
-      case trees: Trees             => serverTrees = serverTrees.addItems(trees.trees)
-      case Died                     => LoginScreen.rejoinPanel()
-      case Ping                     => sendMessage(Pong)
-      case GameTime(time, oneWayDelay) =>
-        console.log(s"Game Time: $time, $oneWayDelay")
-      case newScoreboard: Scoreboard => scoreboard = newScoreboard
-      case x                         => println(s"unexpected message: $message")
+      case state: State                => receivedState(state)
+      case Playfield(width, height)    => gPlayField = Vec2d(width, height)
+      case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
+      case Died                        => LoginScreen.rejoinPanel()
+      case Ping                        => sendMessage(Pong)
+      case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
+      case newScoreboard: Scoreboard   => scoreboard = newScoreboard
+      case x                           => println(s"unexpected message: $message")
     }
   }
 

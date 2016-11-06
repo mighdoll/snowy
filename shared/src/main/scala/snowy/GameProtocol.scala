@@ -44,7 +44,10 @@ object GameClientProtocol {
 
   sealed abstract class GameClientMessage
 
-  case class State(mySled: Sled, sleds: Seq[Sled], snowballs: Seq[Snowball])
+  case class State(gameTime: Long,
+                   mySled: Sled,
+                   sleds: Seq[Sled],
+                   snowballs: Seq[Snowball])
       extends GameClientMessage
 
   case class Playfield(width: Int, height: Int) extends GameClientMessage
