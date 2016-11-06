@@ -32,11 +32,11 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   def pickleUnpickle[T: Pickler](value: T): Unit = {
     val bytes     = Pickle.intoBytes[T](value)
     val unpickled = Unpickle[T](implicitly[Pickler[T]]).fromBytes(bytes)
-    unpickled === value
+    assert(unpickled === value)
   }
 
   property("pickle Died") {
-    val diedBytes = Pickle.intoBytes(Died)
+    pickleUnpickle(Died)
   }
   property("pickle Vec2d") {
     pickleUnpickle(Vec2d.unitUp)

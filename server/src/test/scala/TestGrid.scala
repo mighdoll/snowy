@@ -18,7 +18,7 @@ class TestGrid extends PropSpec with PropertyChecks {
         Snowball(PlayfieldObject.nextId(), ownerId, Vec2d(x, y), 0, Vec2d.zero, 0, 0)
       grid.add(ball)
       grid.remove(ball)
-      grid.itemCount === 0
+      assert(grid.itemCount === 0)
     }
   }
 }
