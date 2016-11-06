@@ -7,6 +7,8 @@ import snowy.draw.{DrawSled, SnowFlake}
 import snowy.sleds._
 import vector.Vec2d
 
+import scala.scalajs.js.RegExp
+
 object LoginScreen {
 
   /** Create a loop that moves and draws the snowflakes every 10ms */
@@ -35,6 +37,9 @@ object LoginScreen {
   private var connected: Option[Connection] = None
   private var drawLoop: Option[Int]         = None
   private var sledKind: SledKind            = BasicSled
+  private val sledKinds: Seq[SledKind] =
+    Seq(BasicSled, GunnerSled, TankSled, SpeedySled, SpikySled)
+
   def startPanel() {
     switch(false)
 
@@ -66,27 +71,18 @@ object LoginScreen {
           .remove("hide")
     }
   }
-
-  document.getElementById("top").asInstanceOf[html.Span].onclick = {
-    event: Event =>
-      sledKind = sledKind match {
-        case BasicSled => GunnerSled
-        case GunnerSled => TankSled
-        case TankSled => SpeedySled
-        case SpeedySled => SpikySled
-        case _ => BasicSled
-      }
+  val text = document.getElementById("caption").asInstanceOf[html.Div]
+  document.getElementById("top").asInstanceOf[html.Span].onclick = { event: Event =>
+    val currentIndex = sledKinds.indexOf(sledKind)
+    sledKind =
+      if (currentIndex < sledKinds.length - 1) sledKinds(currentIndex + 1)
+      else sledKinds.head
+    text.innerHTML = sledKind.toString.replace("Sled", "")
   }
-  document.getElementById("bottom").asInstanceOf[html.Span].onclick = {
-    event: Event =>
-      sledKind = sledKind match {
-        case BasicSled => GunnerSled
-        case GunnerSled => BasicSled
-        case TankSled => GunnerSled
-        case SpeedySled => TankSled
-        case SpikySled => SpeedySled
-        case _ => SpeedySled
-      }
+  document.getElementById("bottom").asInstanceOf[html.Span].onclick = { event: Event =>
+    val currentIndex = sledKinds.indexOf(sledKind)
+    sledKind = if (currentIndex > 0) sledKinds(currentIndex - 1) else sledKinds.last
+    text.innerHTML = sledKind.toString.replace("Sled", "")
   }
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
