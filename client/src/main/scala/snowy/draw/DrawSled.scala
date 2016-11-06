@@ -63,10 +63,19 @@ class DrawSled(name: String,
   //Draw the main body
   ctx.beginPath()
   kind match {
+    case SpeedySled =>
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.moveTo(0 - size / 2, -size / 2)
+      ctx.lineTo(0, -size * 0.3)
+      ctx.lineTo(size / 2, -size / 2)
+      ctx.lineTo(0, size / 2)
+      ctx.closePath()
     case _ => ctx.arc(x, y, size / 2, 0, 2 * Math.PI)
   }
   ctx.fill()
   ctx.stroke()
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
 
   //Draw the name
   ctx.font = (size * 3 / 11) + "px Arial"
