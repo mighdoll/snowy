@@ -64,38 +64,43 @@
        border-left: 2px solid rgb(120, 201, 44);
 	}
 	#bottom {
+	   display: inline-block;
+	   color: black;
 	   position: absolute;
        height: 50%;
+       width: 105%;
+       line-height: 4vh;
        bottom: 0;
        left: -1px;
        border-top: 1px solid rgb(120, 201, 44);
-       color: black;
-       width: 105%;
+       border-bottom-right-radius: 100px;
 	}
 	#bottom:hover {
-	   color: blue
+	   background: blue
 	}
 	#top {
+	   display: inline-block;
+	   color: black;
 	   position: absolute;
        height: 50%;
+       width: 105%;
+       line-height: 3vh;
        top: 0;
        left: -1px;
        border-bottom: 1px solid rgb(120, 201, 44);
-       color: black;
-       width: 105%;
+       border-top-right-radius: 100px;
 	}
 	#top:hover {
-	   color: blue
+	   background: blue
 	}
 	#caption {
 	   display: inline-block;
-	   position: absolute;
-	   top: 0px;
-	   height: 50px;
-	   width: calc(100% - 32px);
-	   font-size: 3vh;
-	   padding-top: 2px;
-	   padding-left: 2px;
+       position: absolute;
+       top: 0px;
+       height: 100%;
+       width: calc(100% - 32px);
+       font-size: 3vh;
+       line-height: 7vh;
 	}
 	</style>
 </head>
@@ -104,7 +109,7 @@
   <input id="username" maxlength="15" placeholder="Your Name Here"> <button id="play">Join Game</button>
   <div id="splitter">
     <div id="caption">
-      Sled Type
+      Basic
     </div>
     <div id="container">
       <span id="top">
