@@ -44,7 +44,7 @@ object LoginScreen {
     switch(false)
 
     connected = None
-    
+
     GameState.stopRedraw()
     drawLoop = Some(window.setInterval(tick, 10))
   }
@@ -92,7 +92,10 @@ object LoginScreen {
         case x if x.isEmpty =>
           connected = Some(
             new Connection(
-              document.getElementById("username").asInstanceOf[html.Input].value))
+              document.getElementById("username").asInstanceOf[html.Input].value,
+              sledKind
+            )
+          )
         case x if x.isDefined => connected.get.reSpawn()
         case _                =>
       }

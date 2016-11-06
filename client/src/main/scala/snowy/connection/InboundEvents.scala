@@ -15,9 +15,10 @@ import vector.Vec2d
 
 class InboundEvents(socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit,
-                    name: String) {
+                    name: String,
+                    kind: SledKind) {
   socket.onOpen { _ =>
-    sendMessage(Join(name, TankSled))
+    sendMessage(Join(name, kind))
   }
 
   socket.onError { event =>

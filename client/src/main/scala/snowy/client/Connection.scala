@@ -7,8 +7,9 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.connection.{InboundEvents, OutboundEvents}
+import snowy.sleds.SledKind
 
-class Connection(name: String) {
+class Connection(name: String, kind: SledKind) {
   val socket = {
     val inDelay  = 0 milliseconds
     val outDelay = 0 milliseconds
@@ -24,7 +25,7 @@ class Connection(name: String) {
     document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
   }
 
-  new InboundEvents(socket, sendMessage, name)
+  new InboundEvents(socket, sendMessage, name, kind)
   new OutboundEvents(sendMessage)
 
   def sendMessage(item: GameServerMessage): Unit = {
