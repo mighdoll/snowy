@@ -62,7 +62,9 @@ class DrawSled(name: String,
 
   //Draw the main body
   ctx.beginPath()
-  ctx.arc(x, y, size / 2, 0, 2 * Math.PI)
+  kind match {
+    case _ => ctx.arc(x, y, size / 2, 0, 2 * Math.PI)
+  }
   ctx.fill()
   ctx.stroke()
 

@@ -4,7 +4,7 @@ import org.scalajs.dom._
 import snowy.client.ClientDraw._
 import snowy.connection.GameState
 import snowy.draw.{DrawSled, SnowFlake}
-import snowy.sleds.BasicSled
+import snowy.sleds._
 import vector.Vec2d
 
 object LoginScreen {
@@ -28,13 +28,13 @@ object LoginScreen {
       1,
       Math.PI * 3 / 2,
       Math.PI / 2,
-      BasicSled,
+      sledKind,
       "rgb(120, 201, 44)")
   }
 
-  var connected: Option[Connection] = None
-  var drawLoop: Option[Int]         = None
-
+  private var connected: Option[Connection] = None
+  private var drawLoop: Option[Int]         = None
+  private var sledKind: SledKind            = BasicSled
   def startPanel() {
     switch(false)
 
@@ -67,6 +67,27 @@ object LoginScreen {
     }
   }
 
+  document.getElementById("top").asInstanceOf[html.Span].onclick = {
+    event: Event =>
+      sledKind = sledKind match {
+        case BasicSled => GunnerSled
+        case GunnerSled => TankSled
+        case TankSled => SpeedySled
+        case SpeedySled => SpikySled
+        case _ => BasicSled
+      }
+  }
+  document.getElementById("bottom").asInstanceOf[html.Span].onclick = {
+    event: Event =>
+      sledKind = sledKind match {
+        case BasicSled => GunnerSled
+        case GunnerSled => BasicSled
+        case TankSled => GunnerSled
+        case SpeedySled => TankSled
+        case SpikySled => SpeedySled
+        case _ => SpeedySled
+      }
+  }
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
     event: Event =>
