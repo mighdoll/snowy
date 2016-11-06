@@ -38,6 +38,8 @@ object LoginScreen {
   def startPanel() {
     switch(false)
 
+    connected = None
+    
     GameState.stopRedraw()
     drawLoop = Some(window.setInterval(tick, 10))
   }
