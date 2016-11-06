@@ -37,9 +37,9 @@ object Collisions {
       val collisionUnit     = collisionVector.unit
       val perpendicularUnit = collisionUnit.leftPerpendicular
 
-      def bounce(speed: Vec2d, collision: Double): Vec2d = {
+      def bounce(speed: Vec2d, collisionProjection: Double): Vec2d = {
         val perpendicularComponent = perpendicularUnit * (speed dot perpendicularUnit)
-        val collisionComponent     = collisionUnit * collision
+        val collisionComponent     = collisionUnit * collisionProjection
         val newSpeed               = collisionComponent + perpendicularComponent
         newSpeed - speed
       }
