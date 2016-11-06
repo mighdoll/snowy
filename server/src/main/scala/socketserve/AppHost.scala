@@ -5,9 +5,10 @@ import scala.concurrent.duration._
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
 import akka.util.ByteString
+import com.typesafe.scalalogging.StrictLogging
 import socketserve.AppHost.Protocol._
 
-class AppHost(implicit system: ActorSystem) extends AppHostApi {
+class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLogging {
 
   val appActor = system.actorOf(Props(new Actor {
     def receive: Receive = {
@@ -38,7 +39,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
   def send(msg: String, id: ConnectionId): Unit = {
     connections.get(id) match {
       case Some(out) => out ! TextMessage(msg)
-      case None      => println(s"send to unknown connection id: $id")
+      case None      => logger.error(s"send to unknown connection id: $id")
     }
   }
 
@@ -46,7 +47,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi {
   def sendBinary(data: ByteString, id: ConnectionId): Unit = {
     connections.get(id) match {
       case Some(out) => out ! BinaryMessage(data)
-      case None      => println(s"send to unknown connection id: $id")
+      case None      => logger.error(s"send to unknown connection id: $id")
     }
   }
 

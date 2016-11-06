@@ -250,7 +250,7 @@ class GameControl(api: AppHostApi)
       connectionId.foreach(sendMessage(Died, _))
     }
     sledId.sled.foreach(_.remove())
-    println(s"sled killed: sledCount:${sledMap.size}")
+    logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
   }
 
   /** update the score based on sled travel distance */
