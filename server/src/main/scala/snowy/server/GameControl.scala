@@ -25,7 +25,7 @@ import vector.Vec2d
 
 class GameControl(api: AppHostApi)
     extends AppController with GameState with StrictLogging {
-  val tickDelta   = 40 milliseconds
+  val tickDelta   = 20 milliseconds
   val messageIO   = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
 
