@@ -57,7 +57,8 @@ object SnowyServerFixture {
   def withServer(fn: ServerTestApi => Future[Unit],
                  timeout: FiniteDuration = 3 seconds): Unit = {
     testPort = testPort + 1
-    val server = socketApplication(new GameControl(_), Some(testPort))
+    val server =
+      socketApplication((api, system) => new GameControl(api)(system), Some(testPort))
     try {
       connectToServer(s"ws://localhost:${server.port}/game").flatMap { api =>
         fn(api).flatMap { _ =>

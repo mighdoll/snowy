@@ -72,12 +72,12 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
 object WebServer {
 
   /** create a web server hosting the given websocket app controller */
-  def socketApplication(makeController: AppHostApi => AppController,
+  def socketApplication(makeController: (AppHostApi, ActorSystem) => AppController,
                         forcePort: Option[Int] = None): WebServer = {
     implicit val system = ActorSystem()
     val server          = new WebServer(forcePort)
     val appHost         = server.appHost
-    val controller      = makeController(appHost)
+    val controller      = makeController(appHost, system)
     appHost.registerApp(controller)
     server
   }

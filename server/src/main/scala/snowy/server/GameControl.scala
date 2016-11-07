@@ -3,6 +3,7 @@ package snowy.server
 import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.math.min
+import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.Default._
 import com.typesafe.scalalogging.StrictLogging
@@ -23,18 +24,17 @@ import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
 
-class GameControl(api: AppHostApi)
+class GameControl(api: AppHostApi)(implicit system:ActorSystem)
     extends AppController with GameState with StrictLogging {
-  val tickDelta   = 20 milliseconds
-  val messageIO   = new MessageIO(api)
-  val connections = mutable.Map[ConnectionId, ClientConnection]()
-  var gameTime         = System.currentTimeMillis()
-  var lastGameTime     = gameTime - tickDelta.toMillis
+  val tickDelta    = 20 milliseconds
+  val messageIO    = new MessageIO(api)
+  val connections  = mutable.Map[ConnectionId, ClientConnection]()
+  var gameTime     = System.currentTimeMillis()
+  var lastGameTime = gameTime - tickDelta.toMillis
 
   import messageIO.sendMessage
 
   api.tick(tickDelta) {
-    connections.values.foreach(_.refreshTiming())
     gameTurn()
   }
 

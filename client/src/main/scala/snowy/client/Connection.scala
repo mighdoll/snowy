@@ -11,8 +11,8 @@ import snowy.sleds.SledKind
 
 class Connection(name: String, kind: SledKind) {
   val socket = {
-    val inDelay  = 0 milliseconds
-    val outDelay = 0 milliseconds
+    val inDelay  = 100 milliseconds
+    val outDelay = 100 milliseconds
     val protocol =
       if (window.location.protocol == "https:") "wss:" else "ws:"
     val url = s"$protocol//${window.location.host}/game"
