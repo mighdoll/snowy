@@ -1,0 +1,95 @@
+#username {
+	width: 35vh;
+	height: 7vh;
+	top: calc( 50vh - 4vh);
+	left: calc( 50vw - 18vh);
+	position: absolute;
+	border-radius: 10px;
+	background: white;
+	border: 0;
+	font-size: 3vh;
+	padding: 10px;
+}
+#username::-webkit-input-placeholder {
+	color: rgb(120, 201, 44);
+}
+#play {
+	position: absolute;
+	left: calc(50vw + 35vh);
+	top: calc(50vh - 3vh);
+	height: 5vh;
+	width: 20vh;
+	border-radius: 10px;
+	background: white;
+	border: 0;
+	font-size: 3vh;
+}
+#login-form {
+	position: absolute;
+}
+#game-div {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	top: 0;
+	left: 0;
+}
+.back {
+	z-index: -1;
+}
+.hide {
+	display: none;
+}
+#splitter {
+	position: relative;
+	background: white;
+	border-radius: 100px;
+	padding-left: 10px;
+	width: 15vh;
+	height: 7vh;
+	top: calc( 66vh - 4vh);
+	left: calc( 50vw - 8vh);
+	font-family: Arial;
+}
+#container {
+	position: absolute;
+	right: 0;
+	height: 100%;
+	width: 4vh;
+	border-left: 2px solid rgb(120, 201, 44);
+	font-size: 3vh;
+}
+#bottom {
+	position: absolute;
+	height: 50%;
+	width: 105%;
+	line-height: 4vh;
+	bottom: 0;
+	left: -1px;
+	border-top: 1px solid rgb(120, 201, 44);
+	border-bottom-right-radius: 100px;
+}
+#bottom:hover {
+	background: rgb(120, 201, 44);
+}
+#top {
+	position: absolute;
+	height: 50%;
+	width: 105%;
+	line-height: 3vh;
+	top: 0;
+	left: -1px;
+	border-bottom: 1px solid rgb(120, 201, 44);
+	border-top-right-radius: 100px;
+}
+#top:hover {
+	background: rgb(120, 201, 44);
+}
+#caption {
+	position: absolute;
+	top: 0px;
+	height: 100%;
+	width: calc(100% - 32px);
+	font-size: 3vh;
+	line-height: 7vh;
+}
