@@ -12,6 +12,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   var shooting: Boolean          = false
   var turning: Option[Direction] = None
   var speeding: Option[Speed]    = None
+  var mouseDir: Double           = 0
 
   sealed trait Direction
   sealed trait Speed
@@ -80,7 +81,11 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   window.onmousemove = { e: MouseEvent =>
     val angle = -Math.atan2(e.clientX - size.x / 2, e.clientY - size.y / 2)
-    sendMessage(TurretAngle(angle))
+
+    if (math.abs(mouseDir - angle) > .2) {
+      sendMessage(TurretAngle(angle))
+      mouseDir = angle
+    }
   }
 
   window.onmousedown = { _: Event =>
