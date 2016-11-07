@@ -51,7 +51,7 @@ class InboundEvents(socket: NetworkSocket,
       case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
       case Died                        => LoginScreen.rejoinPanel()
       case Ping                        => sendMessage(Pong)
-      case GameTime(time, oneWayDelay) => console.log(s"Game Time: $time, $oneWayDelay")
+      case GameTime(time, oneWayDelay) => // console.log(s"Game Time: $time, $oneWayDelay")
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
       case x                           => println(s"unexpected message: $message")
     }
