@@ -3,6 +3,7 @@ package snowy.draw
 import snowy.client.ClientDraw.{ctx, size}
 import snowy.client.Portal
 import snowy.draw.GameColors.Sled._
+import snowy.draw.GameColors.Tree._
 import snowy.draw.GameColors.clearColor
 import snowy.playfield.{Rect, Sled, Store, Tree}
 import vector.Vec2d
@@ -27,7 +28,20 @@ class DrawMiniMap(border: Vec2d) {
 
     minimap.trees.foreach { tree =>
       val newPos = tree.pos + minipos
-      new DrawTree(newPos, 50 * minimap.scale)
+      val size = 50 * minimap.scale
+      val x = newPos.x
+      val y = newPos.y
+
+      ctx.fillStyle = leaves
+      ctx.beginPath()
+      ctx.moveTo(x, y - size * 2)
+      ctx.lineTo(x - size * 1 / 2, y - size * 1 / 2)
+      ctx.lineTo(x + size * 1 / 2, y - size * 1 / 2)
+      ctx.closePath()
+      ctx.fill()
+
+      ctx.fillStyle = trunk
+      ctx.fillRect(x - size * 1 / 16, y - size * 3 / 4, size * 1 / 8, size * 3 / 4)
     }
 
     minimap.sleds.foreach { sled =>
