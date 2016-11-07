@@ -40,9 +40,7 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
       path(scalaJsFile) { file =>
         getFromResource(file)
       } ~
-      pathSuffix(Segment) { file =>
-        getFromResource(s"web/$file")
-      }
+      getFromResourceDirectory("web")
 
   val port = {
     forcePort
