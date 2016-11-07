@@ -1,5 +1,7 @@
 enablePlugins(JavaAppPackaging)
 
+scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
+
 lazy val root =
   (project in file(".")).aggregate(server, client).settings(commonSettings: _*)
 
