@@ -37,6 +37,8 @@ object GameServerProtocol {
 
   case object TestDie extends GameServerMessage
 
+  case class RequestGameTime(clientTime: Long) extends GameServerMessage
+
 }
 
 /** messages sent to the web client */

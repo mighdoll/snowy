@@ -17,18 +17,24 @@ class InboundEvents(socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit,
                     name: String,
                     kind: SledKind) {
-  socket.onOpen { _ =>
-    sendMessage(Join(name, kind))
-  }
-
-  socket.onError { event =>
-    console.log(s"Failed: code: $event")
-  }
 
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
     val message    = Unpickle[GameClientMessage].fromBytes(byteBuffer)
     handleMessage(message)
+  }
+
+  def stringMessage(msg: String): Unit = {
+    handleMessage(read[GameClientMessage](msg))
+  }
+
+  socket.onOpen { _ =>
+    GameState.serverGameClock = Some(new ServerGameClock(sendMessage))
+    sendMessage(Join(name, kind))
+  }
+
+  socket.onError { event =>
+    console.log(s"Failed: code: $event")
   }
 
   socket.onClose { _ =>
@@ -51,14 +57,13 @@ class InboundEvents(socket: NetworkSocket,
       case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
       case Died                        => LoginScreen.rejoinPanel()
       case Ping                        => sendMessage(Pong)
-      case GameTime(time, oneWayDelay) => // console.log(s"Game Time: $time, $oneWayDelay")
+      case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
-      case x                           => println(s"unexpected message: $message")
+      case _                           => println(s"unexpected message: $message")
     }
   }
 
-  def stringMessage(msg: String): Unit = {
-    handleMessage(read[GameClientMessage](msg))
+  private def updateClock(time:Long, oneWayDelay:Int):Unit = {
+    GameState.serverGameClock.foreach(_.updateClock(time, oneWayDelay))
   }
-
 }

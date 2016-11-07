@@ -18,8 +18,9 @@ object GameState {
   private var serverMySled    = Sled.dummy
   var gameTime                = 0L
 
-  private var gameLoop: Option[Int] = None
-  private var turning: Turning      = NoTurn
+  private var gameLoop: Option[Int]    = None
+  private var turning: Turning         = NoTurn
+  var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
@@ -37,7 +38,7 @@ object GameState {
     stopRedraw()
     val loop = window.setInterval(() => {
       val deltaSeconds = nextTimeSlice()
-      refresh(deltaSeconds)
+      refresh(math.max(deltaSeconds, 0))
     }, 20)
     gameLoop = Some(loop)
   }
@@ -66,10 +67,13 @@ object GameState {
     serverMySled = movedSled
   }
 
+  /** Advance to the next game simulation frame.
+    *
+    * @return the time in seconds since the last frame */
   private def nextTimeSlice(): Double = {
-    val currentTime  = System.currentTimeMillis()
-    val deltaSeconds = (currentTime - gameTime) / 1000.0
-    gameTime = currentTime
+    val newTurn      = serverGameClock.map(_.serverGameTime).getOrElse(System.currentTimeMillis())
+    val deltaSeconds = (newTurn - gameTime) / 1000.0
+    gameTime = newTurn
     deltaSeconds
   }
 

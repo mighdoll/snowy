@@ -72,14 +72,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
-      case Join(name, sledKind) => userJoin(id, name, sledKind)
-      case TurretAngle(angle)   => rotateTurret(id, angle)
-      case Shoot(time)          => modifySled(id)(sled => shootSnowball(sled))
-      case Start(cmd, time)     => commands.startCommand(id, cmd, time)
-      case Stop(cmd, time)      => commands.stopCommand(id, cmd, time)
-      case Pong                 => connections(id).pongReceived()
-      case ReJoin               => rejoin(id)
-      case TestDie              => reapSled(sledMap(id))
+      case Join(name, sledKind)        => userJoin(id, name, sledKind)
+      case TurretAngle(angle)          => rotateTurret(id, angle)
+      case Shoot(time)                 => modifySled(id)(sled => shootSnowball(sled))
+      case Start(cmd, time)            => commands.startCommand(id, cmd, time)
+      case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
+      case Pong                        => connections(id).pongReceived()
+      case ReJoin                      => rejoin(id)
+      case TestDie                     => reapSled(sledMap(id))
+      case RequestGameTime(clientTime) => reportGameTime(id, clientTime)
     }
   }
 
@@ -127,6 +128,23 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         sendMessage(state, id)
     }
     sendScores()
+  }
+
+  private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
+    logger.debug {
+      val clientTimeDelta = clientTime - System.currentTimeMillis()
+      s"client $id time vs server time: $clientTimeDelta"
+    }
+
+    connections.get(id) match {
+      case Some(connection) => reportGameTime(connection.roundTripTime)
+      case None             => logger.warn(s"reportGameTime: connection $id not fouud")
+    }
+
+    def reportGameTime(rtt: Long): Unit = {
+      val msg = GameTime(System.currentTimeMillis(), (rtt / 2).toInt)
+      messageIO.sendMessage(msg, id)
+    }
   }
 
   /** Send the current score to the clients */

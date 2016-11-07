@@ -27,11 +27,19 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
-  val pingFrequency = 1 seconds
-  var lastPingSent  = 0L
-  val pongsRef      = watchForPongs()
+  private val pingFrequency  = 10 seconds
+  private var lastPingSent   = 0L
+  private var minRecentRtt   = 0L
+  private val pingWindowSize = 5
+  private val pongsRef       = watchForPongs()
+
+  /** minimum round trip time in the last 5 pings */
+  def roundTripTime: Long = minRecentRtt
+
   sendPing()
 
+  /** The framework message handler should call this to report when
+    * a Pong message is received on the server */
   def pongReceived(): Unit = {
     val now      = System.currentTimeMillis()
     val pingTime = now - lastPingSent
@@ -46,19 +54,18 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
     val graph = GraphDSL.create(pongSource) { implicit builder => pongs =>
       import GraphDSL.Implicits._
       val end = Sink.ignore
-      val firstSet = Flow[Long].take(5).map { time =>
+      val firstSet = Flow[Long].take(pingWindowSize).map { time =>
         sendPing()
         time
       }
-      val ongoing = Flow[Long].drop(5).map { time =>
+      val ongoing = Flow[Long].drop(pingWindowSize).map { time =>
         system.scheduler.scheduleOnce(pingFrequency) { sendPing() }
         time
       }
-      val window = Flow[Long].sliding(5).map { seq =>
-        val minPing = seq.min
-        logger.debug(s"min ping time for $id is $minPing")
-        reportRtt(minPing)
-        minPing
+      val window = Flow[Long].sliding(pingWindowSize).map { seq =>
+        minRecentRtt = seq.min
+        logger.debug(s"min ping time for $id is $minRecentRtt")
+        minRecentRtt
       }
 
       val bcast = builder.add(Broadcast[Long](2))
@@ -70,11 +77,6 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
 
     val sourceRef: ActorRef = RunnableGraph.fromGraph(graph).run()
     sourceRef
-  }
-
-  private def reportRtt(rtt: Long): Unit = {
-    val msg = GameTime(System.currentTimeMillis(), (rtt / 2).toInt)
-    messageIO.sendMessage(msg, id)
   }
 
   /** send a ping message to the client */
