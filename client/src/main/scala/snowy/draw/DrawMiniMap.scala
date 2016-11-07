@@ -28,9 +28,9 @@ class DrawMiniMap(border: Vec2d) {
 
     minimap.trees.foreach { tree =>
       val newPos = tree.pos + minipos
-      val size = 50 * minimap.scale
-      val x = newPos.x
-      val y = newPos.y
+      val size   = 50 * minimap.scale
+      val x      = newPos.x
+      val y      = newPos.y
 
       ctx.fillStyle = leaves
       ctx.beginPath()

@@ -24,7 +24,7 @@ import socketserve.{AppController, AppHostApi, ConnectionId}
 import upickle.default._
 import vector.Vec2d
 
-class GameControl(api: AppHostApi)(implicit system:ActorSystem)
+class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     extends AppController with GameState with StrictLogging {
   val tickDelta    = 20 milliseconds
   val messageIO    = new MessageIO(api)

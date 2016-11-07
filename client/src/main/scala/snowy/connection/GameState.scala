@@ -12,14 +12,14 @@ object GameState {
   var scoreboard = Scoreboard(0, Seq())
 
   // TODO add a gametime timestamp to these, and organize together into a class
-  var serverTrees     = Store[Tree]()
+  var serverTrees             = Store[Tree]()
   private var serverSnowballs = Store[Snowball]()
   private var serverSleds     = Store[Sled]()
   private var serverMySled    = Sled.dummy
-  var gameTime        = 0L
+  var gameTime                = 0L
 
   private var gameLoop: Option[Int] = None
-  private var turning: Turning = NoTurn
+  private var turning: Turning      = NoTurn
 
   //When the client receives the state of canvas, draw all sleds
   def receivedState(state: State): Unit = {
@@ -65,7 +65,6 @@ object GameState {
     serverSleds = newSleds
     serverMySled = movedSled
   }
-
 
   private def nextTimeSlice(): Double = {
     val currentTime  = System.currentTimeMillis()

@@ -22,7 +22,9 @@ object ServerMain {
     cmdLine.conf.foreach(GlobalConfig.addConfigFiles(_))
 
     Kamon.start()
-    socketApplication{(api, system) => new GameControl(api)(system)}
+    socketApplication { (api, system) =>
+      new GameControl(api)(system)
+    }
   }
 
 }

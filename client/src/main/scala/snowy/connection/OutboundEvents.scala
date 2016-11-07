@@ -9,7 +9,7 @@ import snowy.connection.GameState.gameTime
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
-  var shooting: Boolean = false
+  var shooting: Boolean          = false
   var turning: Option[Direction] = None
   var speeding: Option[Speed]    = None
 

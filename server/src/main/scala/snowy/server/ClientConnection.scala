@@ -11,7 +11,6 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{GameClientMessage, GameTime, Ping}
 import socketserve.ConnectionId
 
-
 object ClientConnection {
   val pingMessage = {
     val byteBuffer = Pickle.intoBytes[GameClientMessage](Ping)
@@ -20,9 +19,11 @@ object ClientConnection {
 }
 
 import snowy.server.ClientConnection._
+
 /** track network delay to a client connection */
 class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
-  implicit system: ActorSystem) extends StrictLogging {
+      implicit system: ActorSystem)
+    extends StrictLogging {
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
 
@@ -71,7 +72,7 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
     sourceRef
   }
 
-  private def reportRtt(rtt:Long): Unit ={
+  private def reportRtt(rtt: Long): Unit = {
     val msg = GameTime(System.currentTimeMillis(), (rtt / 2).toInt)
     messageIO.sendMessage(msg, id)
   }
@@ -83,4 +84,3 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
   }
 
 }
-
