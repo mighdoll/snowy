@@ -31,6 +31,8 @@ object GameConstants {
 
     /** max power bullets impart this amount of acceleration onto a sled, in pixels/sec/sec */
     val impact = 150
+
+    val averageSize = 10
   }
 
   object Points {

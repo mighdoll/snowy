@@ -1,6 +1,8 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
+
+import snowy.GameConstants.Bullet
 import snowy.sleds._
 import vector.Vec2d
 
@@ -12,9 +14,15 @@ trait PlayfieldObject {
 
   def size: Double
 
+  def health: Double
+
   def pos: Vec2d
 
   def updatePos(newPos: Vec2d): MyType
+
+  def updateHealth(newHealth: Double): MyType
+
+  def updateSpeed(newSpeed: Vec2d): MyType
 }
 
 object PlayfieldObject {
@@ -72,13 +80,13 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
     extends PlayfieldObject with MovingCircle {
   type MyType = Sled
 
-  override def updatePos(newPos: Vec2d): Sled = {
-    this.copy(pos = newPos)
-  }
-
-  override def radius = size / 2
+  override def updatePos(newPos: Vec2d): Sled = this.copy(pos = newPos)
 
   override def updateSpeed(newSpeed: Vec2d): Sled = this.copy(speed = newSpeed)
+
+  override def updateHealth(newHealth: Double): Sled = this.copy(health = newHealth)
+
+  override def radius = size / 2
 
   /** acceleration in pixels / second / second */
   def gravity: Double = kind.gravity
@@ -127,26 +135,38 @@ case class Sled(id: SledId = PlayfieldObject.nextId(),
   override def mass: Double = kind.mass
 }
 
-case class Tree(id: TreeId = PlayfieldObject.nextId(), pos: Vec2d, size: Double)
+case class Tree(id: TreeId = PlayfieldObject.nextId(),
+                pos: Vec2d,
+                health: Double = 1,
+                size: Double)
     extends PlayfieldObject {
   type MyType = Tree
 
-  override def updatePos(newPos: Vec2d): Tree = {
-    this.copy(pos = newPos)
-  }
+  override def updatePos(newPos: Vec2d): Tree = this.copy(pos = newPos)
+
+  override def updateSpeed(newSpeed: Vec2d): Tree = this
+
+  override def updateHealth(newHealth: Double): Tree = this.copy(health = newHealth)
 }
 
 case class Snowball(id: BallId = PlayfieldObject.nextId(),
                     ownerId: SledId,
                     pos: Vec2d,
+                    health: Double = 1,
                     size: Double,
                     speed: Vec2d,
                     spawned: Long,
                     power: Double)
-    extends PlayfieldObject {
+    extends PlayfieldObject with MovingCircle {
   type MyType = Snowball
 
-  override def updatePos(newPos: Vec2d): Snowball = {
-    this.copy(pos = newPos)
-  }
+  override def updatePos(newPos: Vec2d): Snowball = this.copy(pos = newPos)
+
+  override def updateSpeed(newSpeed: Vec2d): Snowball = this.copy(speed = newSpeed)
+
+  override def updateHealth(newHealth: Double): Snowball = this.copy(health = newHealth)
+
+  override def radius = size / 2
+
+  override def mass: Double = (size / Bullet.averageSize) / 10
 }

@@ -322,16 +322,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     // . update global snowballs to remove collisions after each iteration
     // . update local awards table from any sleds that were killed
     // . return the revised sleds after damage taken from snowballs
-    val ballSleds: Set[SledReplace] =
-      sleds.items.flatMap { sled =>
-        collideBalls(sled, snowballs).map {
-          case (newSled, newBalls, newAwards) =>
-            snowballs = newBalls
-            awards ++= newAwards
-            SledReplace(sled, newSled)
-        }
-      }
-    updateGlobalSleds(ballSleds)
+    val (ballSleds, ballSnowballs, ballKillAwards) = collideBalls(sleds, snowballs)
+
+    snowballs = ballSnowballs
+    awards ++= ballKillAwards
+
+    sleds = (ballSleds)
 
     val treeSleds =
       sleds.items.flatMap { sled =>
@@ -356,19 +352,21 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     *         the snowball set with the colliding ball removed,
     *         awards to the shooters if the sled was killed
     */
-  private def collideBalls(sled: Sled, balls: Store[Snowball])
-    : Option[(Sled, Store[Snowball], Traversable[SledKill])] = {
-    SledSnowball.collide(sled, snowballs).map {
-      case (newSled, newBalls, awards) =>
-        val killAwards =
-          if (newSled.health <= 0) {
-            awards.map { winner =>
-              SledKill(winner.sledId, newSled.id)
+  private def collideBalls(sleds: Store[Sled], balls: Store[Snowball])
+    : (Store[Sled], Store[Snowball], Traversable[SledKill]) = {
+    SledSnowball2.collide(sleds.items, balls.items) match {
+      case (newSleds, newBalls, awards) =>
+        val killAwards: Traversable[SledKill] =
+          newSleds.flatMap { sled =>
+            if (sled.health <= 0) {
+              awards.map { winner =>
+                SledKill(winner.sledId, sled.id)
+              }
+            } else {
+              Nil
             }
-          } else {
-            Nil
           }
-        (newSled, newBalls, killAwards)
+        (Store(newSleds.toSeq), Store(newBalls.toSeq), killAwards)
     }
   }
 
