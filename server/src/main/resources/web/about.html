@@ -1,8 +1,117 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>About Snowy Day</title>
+    <title>About Snowy</title>
+    <style>
+	 body {
+	   width: 100%;
+	   height: 100%;
+	   position: fixed;
+	   background-color: #34495e;
+	}
+	.content {
+	   position: absolute;
+	   top: 10%;
+	   left: 50%;
+	   transform: translate(-50%, -50%);
+	   font-size: 35px;
+	   line-height: 40px;
+	   font-family: Arial, sans-serif;
+	   color: #ecf0f1;
+	   height: 160px;
+	   overflow: hidden;
+	}
+	.visible {
+	   font-weight: 600;
+	   overflow: hidden;
+	   height: 40px;
+	   padding: 0 40px;
+	}
+	p {
+	   display: inline;
+	   float: left;
+	   margin: 0;
+	}
+	ul {
+	   margin-top: 0;
+	   padding-left: 110px;
+	   text-align: left;
+	   list-style: none;
+	   -webkit-animation-name: change;
+	   -webkit-animation-duration: 3s;
+	   -webkit-animation-iteration-count: infinite;
+	   animation-name: change;
+	   animation-duration: 3s;
+	   animation-iteration-count: infinite;
+	}
+	ul li {
+	   line-height: 40px;
+	   margin: 0;
+	}
+	@-webkit-keyframes opacity {
+	   0%, 100% {
+	       opacity: 0;
+	   }
+	   50% {
+	       opacity: 1;
+	   }
+	}
+	@keyframes opacity {
+	   0%, 100% {
+	       opacity: 0;
+	   }
+	   50% {
+	       opacity: 1;
+	   }
+	}
+	@-webkit-keyframes change {
+	   0%, 100% {
+	       transform: translateY(0);
+	   }
+	   33% {
+	       transform: translateY(-33%);
+	   }
+	   66% {
+	       transform: translateY(-66%);
+	   }
+	}
+	@keyframes change {
+	   0%, 100% {
+	       transform: translateY(0);
+	   }
+	   33% {
+	       transform: translateY(-33%);
+	   }
+	   66% {
+	       transform: translateY(-66%);
+	   }
+	}
+	.text {
+	    position: absolute;
+	    top: 10%;
+	    font-family: Arial, sans-serif;
+	    color: #ecf0f1;
+	}
+	.link {
+	    color: #2196f3;
+	}
+	</style>
 </head>
 <body>
-About!
+<div class='content'>
+    <div class='visible'>
+        <p>About</p>
+        <ul>
+            <li>the creators !</li>
+            <li>the contributers !</li>
+            <li>the tools !</li>
+        </ul>
+    </div>
+</div>
+<div class='text'>
+    <p>
+        Hi! We hope you are having fun playing the game. It's original source code is located here: <a class='link' href="https://github.com/mighdoll/snowy">https://github.com/mighdoll/snowy</a>
+    </p>
+</div>
 </body>
 </html>
