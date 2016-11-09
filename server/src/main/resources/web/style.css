@@ -1,29 +1,10 @@
-#username {
-	width: 35vh;
-	height: 7vh;
-	top: calc( 50vh - 4vh);
-	left: calc( 50vw - 18vh);
-	position: absolute;
-	border-radius: 10px;
-	background: white;
-	border: 0;
-	font-size: 3vh;
-	padding: 10px;
+.back {
+	z-index: -1;
 }
-#username::-webkit-input-placeholder {
-	color: rgb(120, 201, 44);
+.hide {
+	display: none;
 }
-#play {
-	position: absolute;
-	left: calc(50vw + 35vh);
-	top: calc(50vh - 3vh);
-	height: 5vh;
-	width: 20vh;
-	border-radius: 10px;
-	background: white;
-	border: 0;
-	font-size: 3vh;
-}
+
 #login-form {
 	position: absolute;
 }
@@ -34,21 +15,47 @@
 	top: 0;
 	left: 0;
 }
-.back {
-	z-index: -1;
-}
-.hide {
-	display: none;
-}
-#splitter {
-	position: relative;
+
+#username {
+	width: 35vh;
+	height: 7vh;
+	top: 50vh;
+	left: 50vw;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	border-radius: 10px;
 	background: white;
+	border: 0;
+	font-size: 3vh;
+	padding: 10px;
+}
+#username::-webkit-input-placeholder {
+	color: rgb(120, 201, 44);
+}
+
+#play {
+	position: absolute;
+	height: 5vh;
+    width: 20vh;
+	left: calc(50vw + 45vh);
+	top: 50vh;
+	transform: translate(-50%, -50%);
+	border-radius: 10px;
+	background: white;
+	border: 0;
+	font-size: 3vh;
+}
+
+#splitter {
+    background: white;
+	position: relative;
+	width: 15vh;
+    height: 7vh;
+    top: 66vh;
+    left: 50vw;
+	transform: translate(-50%, -50%);
 	border-radius: 100px;
 	padding-left: 10px;
-	width: 15vh;
-	height: 7vh;
-	top: calc( 66vh - 4vh);
-	left: calc( 50vw - 8vh);
 	font-family: Arial;
 }
 #container {
@@ -59,6 +66,7 @@
 	border-left: 2px solid rgb(120, 201, 44);
 	font-size: 3vh;
 }
+
 #bottom {
 	position: absolute;
 	height: 50%;
@@ -68,9 +76,6 @@
 	left: -1px;
 	border-top: 1px solid rgb(120, 201, 44);
 	border-bottom-right-radius: 100px;
-}
-#bottom:hover {
-	background: rgb(120, 201, 44);
 }
 #top {
 	position: absolute;
@@ -85,6 +90,10 @@
 #top:hover {
 	background: rgb(120, 201, 44);
 }
+#bottom:hover {
+	background: rgb(120, 201, 44);
+}
+
 #caption {
 	position: absolute;
 	top: 0px;
