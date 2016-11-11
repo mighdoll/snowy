@@ -72,14 +72,14 @@ object LoginScreen {
     }
   }
   val text = document.querySelector("#class > .caption").asInstanceOf[html.Div]
-  document.getElementById("top").asInstanceOf[html.Span].onclick = { event: Event =>
+  document.querySelector("#class > .container > :last-child").asInstanceOf[html.Span].onclick = { event: Event =>
     val currentIndex = sledKinds.indexOf(sledKind)
     sledKind =
       if (currentIndex < sledKinds.length - 1) sledKinds(currentIndex + 1)
       else sledKinds.head
     text.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
   }
-  document.getElementById("bottom").asInstanceOf[html.Span].onclick = { event: Event =>
+  document.querySelector("#class > .container :last-child").asInstanceOf[html.Span].onclick = { event: Event =>
     val currentIndex = sledKinds.indexOf(sledKind)
     sledKind = if (currentIndex > 0) sledKinds(currentIndex - 1) else sledKinds.last
     text.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
