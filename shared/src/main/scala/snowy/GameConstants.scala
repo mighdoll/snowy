@@ -29,7 +29,7 @@ object GameConstants {
     /** snowballs disappear after this many milliseconds */
     val lifetime = 3500
 
-    val averageRadius = 10
+    val averageRadius = 5
 
     val baseImpactFactor = 4
   }
