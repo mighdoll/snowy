@@ -12,12 +12,11 @@ import snowy.GameClientProtocol._
 import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants.{Bullet, _}
 import snowy.GameServerProtocol._
-import snowy.collision.{SledSnowball, SledTree}
+import snowy.collision.{CollideThings, Death, SledTree}
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
-import snowy.playfield._
+import snowy.playfield.{Sled, _}
 import snowy.server.GameSeeding.randomSpot
-import snowy.sleds._
 import snowy.util.Perf
 import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
@@ -74,7 +73,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     msg match {
       case Join(name, sledKind)        => userJoin(id, name, sledKind)
       case TurretAngle(angle)          => rotateTurret(id, angle)
-      case Shoot(time)                 => modifySled(id)(sled => shootSnowball(sled))
+      case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
       case Start(cmd, time)            => commands.startCommand(id, cmd, time)
       case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
       case Pong                        => connections(id).pongReceived()
@@ -103,18 +102,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     recoverPushEnergy(deltaSeconds)
     applyCommands(deltaSeconds)
     expireSnowballs()
-    snowballs = moveSnowballs(snowballs, deltaSeconds)
+    moveSnowballs(snowballs.items, deltaSeconds)
 
-    val (newSleds, moveAwards) = time("moveSleds") {
-      moveSleds(sleds, deltaSeconds)
+    val moveAwards = time("moveSleds") {
+      moveSleds(sleds.items, deltaSeconds)
     }
-    sleds = newSleds
 
     val collisionAwards = time("checkCollisions") {
       checkCollisions()
     }
     val died = collectDead()
-    updateScore(moveAwards ++ collisionAwards ++ died)
+    updateScore(moveAwards.toSeq ++ collisionAwards ++ died)
     reapDead(died)
 
     time("sendUpdates") {
@@ -131,7 +129,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
-    logger.debug {
+    logger.trace {
       val clientTimeDelta = clientTime - System.currentTimeMillis()
       s"client $id time vs server time: $clientTimeDelta"
     }
@@ -180,7 +178,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   private def applyCommands(deltaSeconds: Double): Unit = {
 
     commands.foreachCommand { (id, command, time) =>
-      modifySled(id) { sled =>
+      id.sled.foreach { sled =>
         command match {
           case Left  => turnSled(sled, LeftTurn, deltaSeconds)
           case Right => turnSled(sled, RightTurn, deltaSeconds)
@@ -188,7 +186,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
             val slow = new InlineForce(
               -slowButtonFriction * deltaSeconds / sled.mass,
               sled.maxSpeed)
-            sled.copy(speed = slow(sled.speed))
+            sled.speed = slow(sled.speed)
           case Pushing =>
             val pushForceNow = PushEnergy.force * deltaSeconds / sled.mass
             val pushEffort   = deltaSeconds / PushEnergy.maxTime
@@ -212,33 +210,31 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   private def pushSled(sled: Sled,
                        pushForceNow: Double,
                        push: InlineForce,
-                       effort: Double): Sled = {
+                       effort: Double): Unit = {
     if (effort < sled.pushEnergy) {
       val speed =
         if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
         else push(sled.speed)
-      val energy = sled.pushEnergy - effort
-      sled.copy(speed = speed, pushEnergy = energy)
-    } else {
-      sled
+      sled.speed = speed
+      sled.pushEnergy = sled.pushEnergy - effort
     }
   }
 
   /** slowly recover some health points */
   private def recoverHealth(deltaSeconds: Double): Unit = {
-    sleds = sleds.replaceItems { sled =>
+    sleds.items.foreach { sled =>
       val deltaHealth = deltaSeconds / sled.healthRecoveryTime
       val newHealth   = min(sled.maxHealth, sled.health + deltaHealth)
-      sled.copy(health = newHealth)
+      sled.health = newHealth
     }
   }
 
   /** slowly recover some push energy */
   private def recoverPushEnergy(deltaSeconds: Double): Unit = {
     val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
-    sleds = sleds.replaceItems { sled =>
+    sleds.items.foreach { sled =>
       val energy = min(1.0, sled.pushEnergy + deltaEnergy)
-      sled.copy(pushEnergy = energy)
+      sled.pushEnergy = energy
     }
   }
 
@@ -307,67 +303,38 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** check for collisions between the sled and trees or snowballs */
-  private def checkCollisions(): Seq[SledKill] = {
+  private def checkCollisions(): Traversable[SledKill] = {
     import snowy.collision.GameCollide.snowballTrees
-    val awards = mutable.ListBuffer[SledKill]()
-
-    def updateGlobalSleds(replace: Traversable[SledReplace]): Unit = {
-      sleds = replace.foldLeft(sleds) {
-        case (newSleds, SledReplace(oldSled, newSled)) =>
-          newSleds.remove(oldSled).add(newSled)
-      }
-    }
 
     // collide snowballs with each sled
     // . update global snowballs to remove collisions after each iteration
     // . update local awards table from any sleds that were killed
     // . return the revised sleds after damage taken from snowballs
-    val (ballSleds, ballSnowballs, ballKillAwards) = collideBalls(sleds, snowballs)
+    val snowballDeaths = CollideThings.collideThings(sleds.items, snowballs.items)
 
-    snowballs = ballSnowballs
-    awards ++= ballKillAwards
+    // TODO handle snowballs killed
+    val snowballAwards = snowballDeaths.flatMap {
+      case Death(killed: Sled, killer: Snowball) =>
+        Some(SledKill(killer.ownerId, killed.id))
+      case Death(killed: Snowball, killer: Sled) =>
+        snowballs = snowballs.removeMatchingItems(_.id == killed.id)
+        None
+      case x =>
+        logger.error(
+          s"unexpected message in checkCollisions (snowball sled deaths failed): $x");
+        None
+    }
 
-    sleds = (ballSleds)
+    sleds.items.foreach(SledTree.collide(_, trees))
 
-    val treeSleds =
-      sleds.items.flatMap { sled =>
-        SledTree.collide(sled, trees).map { newSled =>
-          SledReplace(sled, newSled)
-        }
-      }
-    updateGlobalSleds(treeSleds)
-
-    val sledSleds = SledSled.collide(sleds.items)
-    updateGlobalSleds(sledSleds)
+    val sledDeaths = CollideThings.collideCollection(sleds.items)
+    val sledAwards = sledDeaths.map {
+      case Death(killed: Sled, killer: Sled) => SledKill(killer.id, killed.id)
+    }
 
     snowballs = snowballs.removeMatchingItems(snowballTrees(_, trees))
 
-    awards.toList
-  }
-
-  /** Collide a sled with a set of snowballs
-    *
-    * @return if there's a collision, returns:
-    *         the damaged sled,
-    *         the snowball set with the colliding ball removed,
-    *         awards to the shooters if the sled was killed
-    */
-  private def collideBalls(sleds: Store[Sled], balls: Store[Snowball])
-    : (Store[Sled], Store[Snowball], Traversable[SledKill]) = {
-    SledSnowball2.collide(sleds.items, balls.items) match {
-      case (newSleds, newBalls, awards) =>
-        val killAwards: Traversable[SledKill] =
-          newSleds.flatMap { sled =>
-            if (sled.health <= 0) {
-              awards.map { winner =>
-                SledKill(winner.sledId, sled.id)
-              }
-            } else {
-              Nil
-            }
-          }
-        (Store(newSleds.toSeq), Store(newBalls.toSeq), killAwards)
-    }
+    snowballAwards ++ sledAwards
   }
 
   /** Advance to the next game simulation state
@@ -386,11 +353,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
-      pos = randomSpot(),
-      size = 35,
-      speed = Vec2d(0, 0),
-      rotation = downhillRotation,
-      turretRotation = downhillRotation,
+      initialPosition = randomSpot(),
       kind = sledKind
     )
   }
@@ -428,34 +391,29 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
-    modifySled(id) { sled =>
-      sled.copy(turretRotation = angle)
-    }
+    id.sled.foreach(_.turretRotation = angle)
   }
 
-  private def shootSnowball(sled: Sled): Sled = {
-    if (sled.lastShotTime + sled.minRechargeTime > gameTime) {
-      sled
-    } else {
+  private def shootSnowball(sled: Sled): Unit = {
+    if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
       val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
       val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
       val direction   = Vec2d.fromRotation(-launchAngle)
       val ball = Snowball(
         ownerId = sled.id,
-        pos = wrapInPlayfield(sled.pos + launchPos),
-        size = sled.bulletSize,
+        _position = wrapInPlayfield(sled.pos + launchPos), // TODO don't use _position
         speed = sled.speed + (direction * sled.bulletSpeed),
+        radius = sled.bulletRadius,
         spawned = gameTime,
-        power = sled.bulletPower
+        impactDamage = sled.bulletImpactFactor,
+        health = sled.bulletHealth
       )
       snowballs = snowballs.add(ball)
 
       val recoilForce = direction * -sled.bulletRecoil
-      val speed       = sled.speed + recoilForce
-      sled.copy(speed = speed, lastShotTime = gameTime)
+      sled.speed = sled.speed + recoilForce
+      sled.lastShotTime = gameTime
     }
   }
 
 }
-
-case class SledReplace(oldSled: Sled, newSled: Sled)

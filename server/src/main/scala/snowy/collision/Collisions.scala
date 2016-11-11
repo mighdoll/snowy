@@ -1,6 +1,6 @@
 package snowy.collision
 
-import snowy.playfield.{Circle, MovingCircle, Rect}
+import snowy.playfield.{Circle, CircularObject, Rect}
 import vector.Vec2d
 
 object Collisions {
@@ -27,7 +27,9 @@ object Collisions {
     * @return A list containing speed and position adjustments for two collided objects,
     *         or an empty list
     */
-  def collideCircles[A <: MovingCircle](a: A, b: A): List[Collided[A]] = {
+  def collideCircles[A <: CircularObject, B <: CircularObject](
+        a: A,
+        b: B): Option[(Collided[A], Collided[B])] = {
     val collisionDistance = a.radius + b.radius
     val collisionVector   = (a.pos - b.pos) // vector between the centers
     val distance          = collisionVector.length
@@ -54,9 +56,9 @@ object Collisions {
         (adjustPos, adjustPos * -1)
       }
 
-      Collided(a, bounceA, repositionA) :: Collided(b, bounceB, repositionB) :: Nil
+      Some(Collided(a, bounceA, repositionA), Collided(b, bounceB, repositionB))
     } else {
-      Nil
+      None
     }
   }
 
@@ -66,8 +68,8 @@ object Collisions {
     * to the collided object, but this separation allows adjustments from multiple
     * collisions to be accumulated.)
     */
-  case class Collided[A <: MovingCircle](movingCircle: A,
-                                         rebound: Vec2d,
-                                         reposition: Vec2d)
+  case class Collided[A <: CircularObject](movingCircle: A,
+                                           rebound: Vec2d,
+                                           reposition: Vec2d)
 
 }

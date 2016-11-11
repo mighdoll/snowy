@@ -82,7 +82,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   window.onmousemove = { e: MouseEvent =>
     val angle = -Math.atan2(e.clientX - size.x / 2, e.clientY - size.y / 2)
 
-    if (math.abs(mouseDir - angle) > .2) {
+    if (math.abs(mouseDir - angle) > .05) {
       sendMessage(TurretAngle(angle))
       mouseDir = angle
     }

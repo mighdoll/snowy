@@ -32,7 +32,7 @@ object GameSeeding {
       val x      = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val y      = pos.y + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val newPos = wrapInPlayfield(Vec2d(x, y))
-      Tree(pos = newPos, size = treeSize)
+      Tree(newPos)
     }
 
     @tailrec
@@ -53,13 +53,13 @@ object GameSeeding {
         forest(clump) += tree
       } else {
         forest += mutable.Buffer(nonOverlapping {
-          Tree(pos = randomSpot(), size = 20)
+          Tree(randomSpot())
         })
       }
     }
     (0 to numTrees).foreach { _ =>
       forest += mutable.Buffer(nonOverlapping {
-        Tree(pos = randomSpot(), size = 20)
+        Tree(randomSpot())
       })
     }
     forest.flatten.toSet

@@ -2,32 +2,23 @@ import boopickle.Default._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
-import snowy.sleds._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, SledId}
-import snowy.playfield.{Sled, Snowball}
+import snowy.playfield.{GunnerSled, Sled, Snowball}
 import vector.Vec2d
 
 class TestBooPickle extends PropSpec with PropertyChecks {
-  val sled = Sled(
-    id = new SledId(0),
-    userName = "fo",
-    pos = Vec2d.zero,
-    size = 0,
-    speed = Vec2d.zero,
-    rotation = 0,
-    turretRotation = 0,
-    kind = GunnerSled
-  )
+  val sled = Sled.dummy
 
   val ball = Snowball(
-    id = new BallId(0),
     ownerId = new SledId(1),
-    pos = Vec2d.zero,
-    size = 1,
+    _position = Vec2d.zero,
+    radius = 1,
     speed = Vec2d.zero,
     spawned = 0,
-    power = 0)
+    impactDamage = 0,
+    health = 1
+  )
 
   def pickleUnpickle[T: Pickler](value: T): Unit = {
     val bytes     = Pickle.intoBytes[T](value)

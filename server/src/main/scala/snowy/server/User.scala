@@ -2,7 +2,7 @@ package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
 import scala.concurrent.duration._
-import snowy.sleds.SledKind
+import snowy.playfield.SledKind
 
 object User {
   val scoreFrequency = 1.second.toMillis

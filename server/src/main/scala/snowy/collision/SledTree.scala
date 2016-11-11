@@ -12,17 +12,17 @@ object SledTree {
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
     * @return a damaged sled if it overlaps with a tree */
-  def collide(sled: Sled, trees: Set[Tree]): Option[Sled] = {
-    val sledBody = Circle(sled.pos, sled.size / 2)
+  def collide(sled: Sled, trees: Set[Tree]): Unit = {
+    val sledBody = Circle(sled.pos, sled.radius)
 
     trees.collectFirst {
       case tree if treeCollide(tree, sledBody) =>
-        treeDamaged(sled, sledBody, tree)
+        applyDamage(sled, sledBody, tree)
     }
   }
 
-  /** return a damaged version of the sled after impacting with a tree */
-  private def treeDamaged(sled: Sled, sledBody: Circle, tree: Tree): Sled = {
+  /** modify a sled after impacting with a tree */
+  private def applyDamage(sled: Sled, sledBody: Circle, tree: Tree): Unit = {
     // take damage proportional to speed
     val health = {
       val speed = sled.speed.length
@@ -57,7 +57,9 @@ object SledTree {
       result
     }
 
-    sled.copy(health = health, speed = rebound, pos = newPos)
+    sled.health = health
+    sled.speed = rebound
+    sled.updatePos(newPos)
   }
 
 }

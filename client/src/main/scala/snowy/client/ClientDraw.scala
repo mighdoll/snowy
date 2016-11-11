@@ -25,42 +25,51 @@ object ClientDraw {
                 scoreboard: Scoreboard): Unit = {
     clearScreen()
 
-    var portal = new Portal(
+    val portal = new Portal(
       Rect(
         mySled.pos - Vec2d(1000, 500),
         Vec2d(2000, 1000)
-      )
-    )(sleds.items, snowballs.items, trees.items)
-
-    portal = portal.convertToScreen(size, border)
+      ),
+      size,
+      border
+    )
     new DrawGrid(mySled.pos * portal.scale, portal.scale)
 
-    portal.snowballs.foreach { snowball =>
-      new DrawSnowball(snowball.pos, snowball.size / 2 * portal.scale)
+    snowballs.items.foreach { snowball =>
+      val snowballPosition = portal.transformToScreen(snowball.pos)
+      snowballPosition.foreach { pos =>
+        new DrawSnowball(pos, snowball.radius / 2 * portal.scale)
+      }
     }
-    portal.sleds.foreach { sled =>
-      new DrawSled(
-        sled.userName,
-        sled.pos,
-        35 * portal.scale,
-        sled.healthPercent,
-        sled.turretRotation,
-        sled.rotation,
-        sled.kind,
-        bodyRed)
+    sleds.items.foreach { sled =>
+      val sledPosition = portal.transformToScreen(sled.pos)
+      sledPosition.foreach { pos =>
+        new DrawSled(
+          sled.userName,
+          pos,
+          sled.radius * 2 * portal.scale,
+          sled.healthPercent,
+          sled.turretRotation,
+          sled.rotation,
+          sled.kind,
+          bodyRed)
+      }
     }
     new DrawSled(
       mySled.userName,
       size / 2,
-      35 * portal.scale,
+      mySled.radius * 2 * portal.scale,
       mySled.healthPercent,
       mySled.turretRotation,
       mySled.rotation,
       mySled.kind,
       bodyGreen)
 
-    portal.trees.foreach { tree =>
-      new DrawTree(tree.pos, 100 * portal.scale)
+    trees.items.foreach { tree =>
+      val treePosition = portal.transformToScreen(tree.pos)
+      treePosition.foreach { pos =>
+        new DrawTree(pos, tree.size * 4 * portal.scale)
+      }
     }
 
     new DrawMiniMap(border).draw(mySled, trees)

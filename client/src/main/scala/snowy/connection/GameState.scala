@@ -18,8 +18,8 @@ object GameState {
   private var serverMySled    = Sled.dummy
   var gameTime                = 0L
 
-  private var gameLoop: Option[Int]    = None
-  private var turning: Turning         = NoTurn
+  private var gameLoop: Option[Int]            = None
+  private var turning: Turning                 = NoTurn
   var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
   //When the client receives the state of canvas, draw all sleds
@@ -45,33 +45,31 @@ object GameState {
 
   def stopRedraw(): Unit = gameLoop.foreach(id => window.clearInterval(id))
 
-  private def applyTurn(sled: Sled, deltaSeconds: Double): Sled = {
+  private def applyTurn(sled: Sled, deltaSeconds: Double): Unit = {
     turning match {
-      case NoTurn    => sled
-      case RightTurn => GameMotion.turnSled(serverMySled, RightTurn, deltaSeconds)
-      case LeftTurn  => GameMotion.turnSled(serverMySled, LeftTurn, deltaSeconds)
+      case RightTurn => GameMotion.turnSled(sled, RightTurn, deltaSeconds)
+      case LeftTurn  => GameMotion.turnSled(sled, LeftTurn, deltaSeconds)
+      case NoTurn    => None
     }
   }
 
-  private def moveOneSled(sled: Sled, deltaSeconds: Double): Sled = {
-    val (store, _) = moveSleds(Store(Seq(sled)), deltaSeconds)
-    store.items.head
+  private def moveOneSled(sled: Sled, deltaSeconds: Double): Unit = {
+    moveSleds(List(sled), deltaSeconds)
   }
 
   private def nextState(deltaSeconds: Double): Unit = {
-    serverSnowballs = moveSnowballs(serverSnowballs, deltaSeconds)
-    val turnedSled    = applyTurn(serverMySled, deltaSeconds)
-    val movedSled     = moveOneSled(turnedSled, deltaSeconds)
-    val (newSleds, _) = moveSleds(serverSleds, deltaSeconds)
-    serverSleds = newSleds
-    serverMySled = movedSled
+    moveSnowballs(serverSnowballs.items, deltaSeconds)
+    applyTurn(serverMySled, deltaSeconds)
+    moveOneSled(serverMySled, deltaSeconds)
+    moveSleds(serverSleds.items, deltaSeconds)
   }
 
   /** Advance to the next game simulation frame.
     *
     * @return the time in seconds since the last frame */
   private def nextTimeSlice(): Double = {
-    val newTurn      = serverGameClock.map(_.serverGameTime).getOrElse(System.currentTimeMillis())
+    val newTurn =
+      serverGameClock.map(_.serverGameTime).getOrElse(System.currentTimeMillis())
     val deltaSeconds = (newTurn - gameTime) / 1000.0
     gameTime = newTurn
     deltaSeconds

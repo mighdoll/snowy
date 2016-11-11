@@ -4,10 +4,9 @@ import org.scalajs.dom._
 import snowy.client.ClientDraw._
 import snowy.connection.GameState
 import snowy.draw.{DrawSled, SnowFlake}
-import snowy.sleds._
 import vector.Vec2d
-
 import scala.scalajs.js.RegExp
+import snowy.playfield._
 
 object LoginScreen {
 

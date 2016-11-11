@@ -1,5 +1,6 @@
-package snowy.sleds
+package snowy.playfield
 
+import snowy.GameConstants
 import vector.Vec2d
 
 sealed trait SledKind {
@@ -13,14 +14,18 @@ sealed trait SledKind {
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = 300
 
-  /** health cost from being hit with a snowball */
-  def bulletPower: Double = .4
+  /** factor increasing or decreasing damage from being hit with a snowball
+    * beyond the mass and speed of the ball */
+  def bulletImpactFactor: Double = GameConstants.Bullet.baseImpactFactor * bulletImpact
+
+  /** factor increasing or decreasing damage from being hit with a snowball */
+  def bulletImpact: Double = 1.0
 
   /** speed of bullet in pixels/sec */
   def bulletSpeed = 400
 
   /** radius in pixels */
-  def bulletSize = 12
+  def bulletRadius = GameConstants.Bullet.averageRadius
 
   /** acceleration due to recoil in pixels/sec/sec */
   def bulletRecoil = 30
@@ -31,6 +36,9 @@ sealed trait SledKind {
 
   /** launch angle rotation from turret direction, e.g. for rear facing cannon */
   def bulletLaunchAngle: Double = 0
+
+  /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */
+  def bulletHealth: Double = .3
 
   /** health of this sled. If it falls to zero, the sled dies. */
   def maxHealth: Double = 1
@@ -47,6 +55,9 @@ sealed trait SledKind {
   /** sleds heavier than 1.0 accelerate and decelerate more slowly */
   def mass: Double = 1.0
 
+  /** radius of the sled body */
+  def radius: Double = 18
+
   /*
   TODO
  * penetration factor for bullets (off axis hits bounce off modulo this factor)
@@ -60,22 +71,23 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity: Double = -100
-  override val minRechargeTime = 1000
-  override val bulletPower     = .8
-  override val bulletSpeed     = 400
-  override val bulletSize      = 20
-  override val bulletRecoil    = 120
-  override val mass            = 3.0
+  override val gravity: Double    = -100
+  override val minRechargeTime    = 1000
+  override val bulletImpact       = 2.5
+  override val bulletSpeed        = 400
+  override val bulletRadius       = 20
+  override val bulletRecoil       = 120
+  override val mass               = 3.0
 }
 
 case object GunnerSled extends SledKind {
-  override val maxSpeed        = 500
-  override val minRechargeTime = 30
-  override val bulletSpeed     = 600
-  override val bulletSize      = 10
-  override val bulletPower     = .05
-  override val bulletRecoil    = 10
+  override val maxSpeed           = 500
+  override val minRechargeTime    = 30
+  override val bulletSpeed        = 600
+  override val bulletRadius       = 10
+  override val bulletImpact       = .3
+  override val bulletRecoil       = 10
+  override val bulletHealth       = 1.0
 }
 
 case object SpeedySled extends SledKind {

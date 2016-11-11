@@ -41,29 +41,31 @@ class Grid[A <: PlayfieldObject](val size: Vec2d, val spacing: Double) {
   }
 
   def add(item: A): Grid[A] = {
-    val index = cellIndex(item)
-    val newSet =
-      cells(index) match {
-        case Some(set) => set + item
-        case None      => Set(item)
-      }
-    val newCells = cells.updated(index, Some(newSet))
-    new Grid[A](size, spacing) {
-      override val cells = newCells
-    }
+//    val index = cellIndex(item)
+//    val newSet =
+//      cells(index) match {
+//        case Some(set) => set + item
+//        case None      => Set(item)
+//      }
+//    val newCells = cells.updated(index, Some(newSet))
+//    new Grid[A](size, spacing) {
+//      override val cells = newCells
+//    }
+    this
   }
 
   def remove(item: A): Grid[A] = {
-    val index = cellIndex(item)
-    val newCells =
-      cells(index) match {
-        case Some(set) if set.size > 1  => cells.updated(index, Some(set - item))
-        case Some(set) if set.size == 1 => cells.updated(index, None)
-        case None                       => cells
-      }
-    new Grid[A](size, spacing) {
-      override val cells = newCells
-    }
+//    val index = cellIndex(item)
+//    val newCells =
+//      cells(index) match {
+//        case Some(set) if set.size > 1  => cells.updated(index, Some(set - item))
+//        case Some(set) if set.size == 1 => cells.updated(index, None)
+//        case None                       => cells
+//      }
+//    new Grid[A](size, spacing) {
+//      override val cells = newCells
+//    }
+    this
   }
 
   def inBox(box: Rect): Set[A] = ???

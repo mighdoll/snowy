@@ -29,10 +29,9 @@ object GameConstants {
     /** snowballs disappear after this many milliseconds */
     val lifetime = 3500
 
-    /** max power bullets impart this amount of acceleration onto a sled, in pixels/sec/sec */
-    val impact = 150
+    val averageRadius = 10
 
-    val averageSize = 10
+    val baseImpactFactor = 4
   }
 
   object Points {

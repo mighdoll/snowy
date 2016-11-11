@@ -3,50 +3,28 @@ package snowy.client
 import snowy.playfield._
 import vector.Vec2d
 
-class Portal(portalRect: Rect) {
-  var sleds     = Seq[Sled]()
-  var trees     = Seq[Tree]()
-  var snowballs = Seq[Snowball]()
-  var scale     = 0.0
+class Portal(portalRect: Rect, screenSize: Vec2d, border: Vec2d) {
+  private val scaleX = screenSize.x / portalRect.size.x
+  private val scaleY = screenSize.y / portalRect.size.y
+  val scale          = math.max(scaleX, scaleY)
 
-  def apply(tsleds: Set[Sled], tsnowballs: Set[Snowball], ttrees: Set[Tree]): Portal = {
-    sleds = tsleds.toSeq
-    snowballs = tsnowballs.toSeq
-    trees = ttrees.toSeq
-    this
+  private val portalToScreenOffset = {
+    val portalScaled = portalRect.size * scale
+    (screenSize - portalScaled) / 2
   }
 
-  def convertToScreen(screenSize: Vec2d, border: Vec2d): Portal = {
-    val scaleX = screenSize.x / portalRect.size.x
-    val scaleY = screenSize.y / portalRect.size.y
-    scale = math.max(scaleX, scaleY)
+  private val treeBBox = Vec2d(100, 200)
 
-    val treeBBox = Vec2d(100, 200)
+  /** @param pos of a sled snowball or tree
+    * @return pos translated, wrapped, and filtered */
+  def transformToScreen(pos: Vec2d): Option[Vec2d] = {
+    val portalPos = pos - portalRect.pos
 
-    val portalToScreenOffset = {
-      val portalScaled = portalRect.size * scale
-      (screenSize - portalScaled) / 2
+    for {
+      portalPosition <- wrapInPlayfield(portalPos, treeBBox, border)
+    } yield {
+      portalPosition * scale + portalToScreenOffset
     }
-
-    /** @param playfieldObject a sled snowball or tree
-      * @return playfieldObject translated, wrapped, and filtered */
-    def transformToScreen[A <: PlayfieldObject](
-          playfieldObject: A): Option[playfieldObject.MyType] = {
-      val portalPos = playfieldObject.pos - portalRect.pos
-
-      for {
-        portalPosition <- wrapInPlayfield(portalPos, treeBBox, border)
-      } yield {
-        val newPos = portalPosition * scale + portalToScreenOffset
-        playfieldObject.updatePos(newPos)
-      }
-    }
-
-    trees = trees.flatMap(transformToScreen(_))
-    sleds = sleds.flatMap(transformToScreen(_))
-    snowballs = snowballs.flatMap(transformToScreen(_))
-
-    this
   }
 
   // TODO comment

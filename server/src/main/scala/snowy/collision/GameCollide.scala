@@ -12,7 +12,7 @@ object GameCollide {
     *
     * @return true if the tree collides */
   def snowballTrees(snowball: Snowball, trees: Set[Tree]): Boolean = {
-    val ball = Circle(snowball.pos, snowball.size / 2)
+    val ball = Circle(snowball.pos, snowball.radius)
     trees.find(treeCollide(_, ball)).isDefined
   }
 

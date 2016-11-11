@@ -6,11 +6,11 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.sleds._
 import snowy.client.LoginScreen
 import snowy.connection.GameState._
 import upickle.default._
 import snowy.playfield.Picklers._
+import snowy.playfield.SledKind
 import vector.Vec2d
 
 class InboundEvents(socket: NetworkSocket,
@@ -63,7 +63,7 @@ class InboundEvents(socket: NetworkSocket,
     }
   }
 
-  private def updateClock(time:Long, oneWayDelay:Int):Unit = {
+  private def updateClock(time: Long, oneWayDelay: Int): Unit = {
     GameState.serverGameClock.foreach(_.updateClock(time, oneWayDelay))
   }
 }

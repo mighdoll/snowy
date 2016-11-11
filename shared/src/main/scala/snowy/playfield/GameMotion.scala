@@ -13,16 +13,20 @@ import Skid.skid
 object GameMotion {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Store[Sled], deltaSeconds: Double): (Store[Sled], Seq[Travel]) = {
-    val newSleds = updateSledSpeedVector(sleds, deltaSeconds)
-    repositionSleds(newSleds, deltaSeconds)
+  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double): Traversable[Travel] = {
+    updateSledSpeedVector(sleds, deltaSeconds)
+    repositionSleds(sleds, deltaSeconds)
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs: Store[Snowball], deltaSeconds: Double): Store[Snowball] = {
-    snowballs.replaceItems { snowball =>
-      val deltaPos = snowball.speed * deltaSeconds
-      snowball.copy(pos = wrapInPlayfield(snowball.pos + deltaPos))
+  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double): Unit = {
+    snowballs.foreach { snowball =>
+      val wrappedPos = {
+        val deltaPosition   = snowball.speed * deltaSeconds
+        val newPosition     = snowball.pos + deltaPosition
+        wrapInPlayfield(newPosition)
+      }
+      snowball.updatePos(wrappedPos)
     }
   }
 
@@ -42,7 +46,7 @@ object GameMotion {
     *
     * @return a rotated sled instance
     */
-  def turnSled(sled: Sled, direction: Turn, deltaSeconds: Double): Sled = {
+  def turnSled(sled: Sled, direction: Turn, deltaSeconds: Double): Unit = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
     val turnDelta = direction.rotationSign * (math.Pi / turnTime) * deltaSeconds
     val max       = math.Pi * 2
@@ -52,7 +56,7 @@ object GameMotion {
       if (rotation > max) rotation - max
       else if (rotation < min) rotation - min
       else rotation
-    sled.copy(rotation = wrappedRotation)
+    sled.rotation = wrappedRotation
   }
 
   /** Constrain a value between 0 and a max value.
@@ -86,31 +90,37 @@ object GameMotion {
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
-  private def updateSledSpeedVector(sleds: Store[Sled],
-                                    deltaSeconds: Double): Store[Sled] = {
-    sleds.replaceItems { sled =>
+  private def updateSledSpeedVector(sleds: Traversable[Sled],
+                                    deltaSeconds: Double): Unit = {
+    sleds.foreach { sled =>
       import sled.{gravity => grav, mass, maxSpeed, rotation}
-      val gravitySpeed  = gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
-      val skidSpeed     = skid(gravitySpeed, rotation, maxSpeed, mass, deltaSeconds)
-      val frictionSpeed = friction(skidSpeed, rotation, deltaSeconds, mass)
+      val newSpeed = {
+        val afterGravity = gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
+        val afterSkid    = skid(afterGravity, rotation, maxSpeed, mass, deltaSeconds)
+        friction(afterSkid, rotation, deltaSeconds, mass)
+      }
 
-      sled.copy(speed = frictionSpeed)
+      sled.speed = newSpeed
     }
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Store[Sled],
-                              deltaSeconds: Double): (Store[Sled], Seq[Travel]) = {
-    val awards = mutable.ListBuffer[Travel]()
-    val newSleds =
-      sleds.replaceItems { sled =>
-        val positionChange = sled.speed * deltaSeconds
-        val moved          = sled.pos + positionChange
-        val wrapped        = wrapInPlayfield(moved)
-        val distance       = positionChange.length
-        if (distance > 0) awards += Travel(sled.id, distance)
-        sled.copy(pos = wrapped)
+  private def repositionSleds(sleds: Traversable[Sled],
+                              deltaSeconds: Double): Traversable[Travel] = {
+    val awards = sleds.flatMap { sled =>
+      val positionChange = sled.speed * deltaSeconds
+      val moved          = sled.pos + positionChange
+      val wrappedPos     = wrapInPlayfield(moved)
+      sled.updatePos(wrappedPos)
+
+      val distance = positionChange.length
+      if (distance > 0) {
+        Some(Travel(sled.id, distance))
+      } else {
+        None
       }
-    (newSleds, awards.toList)
+    }
+
+    awards
   }
 }

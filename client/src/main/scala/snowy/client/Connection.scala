@@ -7,7 +7,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.connection.{InboundEvents, OutboundEvents}
-import snowy.sleds.SledKind
+import snowy.playfield.SledKind
 
 class Connection(name: String, kind: SledKind) {
   val socket = {

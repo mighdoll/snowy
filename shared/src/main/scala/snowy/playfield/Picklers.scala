@@ -13,5 +13,4 @@ object Picklers {
     } {
       _.id
     }
-
 }
