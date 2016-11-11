@@ -38,7 +38,7 @@ object ClientDraw {
     snowballs.items.foreach { snowball =>
       val snowballPosition = portal.transformToScreen(snowball.pos)
       snowballPosition.foreach { pos =>
-        new DrawSnowball(pos, snowball.radius / 2 * portal.scale)
+        DrawSnowball.draw(pos, snowball.radius / 2 * portal.scale)
       }
     }
     sleds.items.foreach { sled =>
@@ -68,7 +68,7 @@ object ClientDraw {
     trees.items.foreach { tree =>
       val treePosition = portal.transformToScreen(tree.pos)
       treePosition.foreach { pos =>
-        new DrawTree(pos, tree.size * 4 * portal.scale)
+        DrawTree.draw(pos, tree.size * 4 * portal.scale)
       }
     }
 

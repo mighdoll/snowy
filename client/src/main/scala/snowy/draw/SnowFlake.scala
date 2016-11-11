@@ -13,6 +13,6 @@ class SnowFlake(index: Double) {
   }
 
   def draw(): Unit = {
-    new DrawSnowball(pos, flakeSize)
+    DrawSnowball.draw(pos, flakeSize)
   }
 }
