@@ -44,7 +44,6 @@ object ClientDraw {
     sleds.items.foreach { sled =>
       val sledPosition = portal.transformToScreen(sled.pos)
       sledPosition.foreach { pos =>
-        println(sled.skiColor.color.toString)
         DrawSled.draw(
           sled.userName,
           pos,
