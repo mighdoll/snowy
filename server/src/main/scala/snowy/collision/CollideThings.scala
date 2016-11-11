@@ -2,7 +2,7 @@ package snowy.collision
 
 import scala.collection.mutable.ListBuffer
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.Collisions.{Collided, collideCircles}
+import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield.CircularObject
 
 object CollideThings {
@@ -17,8 +17,8 @@ object CollideThings {
 
     val allDeaths =
       for {
-        objA                  <- aCollection
-        objB                  <- bCollection
+        objA               <- aCollection
+        objB               <- bCollection
         (effectA, effectB) <- collide2(objA, objB)
       } yield {
         applyTwoEffects(effectA, effectB)
