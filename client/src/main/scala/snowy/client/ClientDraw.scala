@@ -74,6 +74,13 @@ object ClientDraw {
 
     new DrawMiniMap(border).draw(mySled, trees)
 
+    val stats = Seq(
+      s"Push: ${math.floor(mySled.pushEnergy * 100) / 10.0}",
+      s"Health: ${math.floor(mySled.health * 100) / 10.0}",
+      s"Pos: (${mySled._position.x.toInt}, ${mySled._position.y.toInt})"
+    )
+    new DrawStats(stats.length, portal.scale).draw(stats)
+
     new DrawScoreBoard(portal.scale, mySled.userName).draw(scoreboard)
   }
 
