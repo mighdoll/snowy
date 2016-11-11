@@ -39,15 +39,20 @@ object Collisions {
       val collisionUnit     = collisionVector.unit
       val perpendicularUnit = collisionUnit.leftPerpendicular
 
-      def bounce(speed: Vec2d, collisionProjection: Double): Vec2d = {
-        val perpendicularComponent = perpendicularUnit * (speed dot perpendicularUnit)
-        val collisionComponent     = collisionUnit * collisionProjection
+      def bounce(speed1: Vec2d, speed2: Vec2d, m1: Double, m2: Double): Vec2d = {
+        val collisionComponent = {
+          val v1    = speed1 dot collisionUnit
+          val v2    = speed2 dot collisionUnit
+          val newV1 = (v1 * (m1 - m2) + (2 * m2 * v2)) / (m1 + m2)
+          collisionUnit * newV1
+        }
+        val perpendicularComponent = perpendicularUnit * (speed1 dot perpendicularUnit)
         val newSpeed               = collisionComponent + perpendicularComponent
-        newSpeed - speed
+        newSpeed - speed1
       }
 
-      val bounceA = bounce(a.speed, b.speed dot collisionUnit)
-      val bounceB = bounce(b.speed, a.speed dot collisionUnit)
+      val bounceA = bounce(a.speed, b.speed, a.mass, b.mass)
+      val bounceB = bounce(b.speed, a.speed, b.mass, a.mass)
 
       // move circles so they don't overlap
       val (repositionA, repositionB) = {
