@@ -47,7 +47,7 @@ object ClientDraw {
         new DrawSled(
           sled.userName,
           pos,
-          sled.radius * 2 * portal.scale,
+          sled.radius * portal.scale,
           sled.healthPercent,
           sled.turretRotation,
           sled.rotation,
@@ -58,7 +58,7 @@ object ClientDraw {
     new DrawSled(
       mySled.userName,
       size / 2,
-      mySled.radius * 2 * portal.scale,
+      mySled.radius * portal.scale,
       mySled.healthPercent,
       mySled.turretRotation,
       mySled.rotation,
