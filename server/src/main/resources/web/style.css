@@ -45,20 +45,36 @@
 	font-size: 3vh;
 }
 
-#splitter {
-	background: #eee;
-	position: relative;
-	width: 15vh;
-	height: 7vh;
-	top: 66vh;
+#class {
+    top: 66vh;
 	left: 50vw;
+}
+#skis {
+    top: 33vh;
+	left: 50vw;
+}
+
+.splitter {
+	background: #eee;
+	position: absolute;
+	width: 17vh;
+	height: 7vh;
 	transform: translate(-50%, -50%);
 	border-radius: 100px;
 	padding-left: 10px;
 	font-family: Arial;
 }
 
-#container {
+.caption {
+	position: absolute;
+	top: 0px;
+	height: 100%;
+	width: calc(100% - 32px);
+	font-size: 2vh;
+	line-height: 7vh;
+}
+
+.container {
 	position: absolute;
 	right: 0;
 	height: 100%;
@@ -67,7 +83,7 @@
 	font-size: 3vh;
 }
 
-#bottom {
+.container :last-child {
 	position: absolute;
 	height: 50%;
 	width: 105%;
@@ -77,7 +93,8 @@
 	border-top: 1px solid rgb(120, 201, 44);
 	border-bottom-right-radius: 100px;
 }
-#top {
+
+.container :first-child {
 	position: absolute;
 	height: 50%;
 	width: 105%;
@@ -86,15 +103,6 @@
 	left: -1px;
 	border-bottom: 1px solid rgb(120, 201, 44);
 	border-top-right-radius: 100px;
-}
-
-#caption {
-	position: absolute;
-	top: 0px;
-	height: 100%;
-	width: calc(100% - 32px);
-	font-size: 3vh;
-	line-height: 7vh;
 }
 
 .link {

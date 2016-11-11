@@ -71,18 +71,18 @@ object LoginScreen {
           .remove("hide")
     }
   }
-  val text = document.getElementById("caption").asInstanceOf[html.Div]
+  val text = document.querySelector("#class > .caption").asInstanceOf[html.Div]
   document.getElementById("top").asInstanceOf[html.Span].onclick = { event: Event =>
     val currentIndex = sledKinds.indexOf(sledKind)
     sledKind =
       if (currentIndex < sledKinds.length - 1) sledKinds(currentIndex + 1)
       else sledKinds.head
-    text.innerHTML = sledKind.toString.replace("Sled", "")
+    text.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
   }
   document.getElementById("bottom").asInstanceOf[html.Span].onclick = { event: Event =>
     val currentIndex = sledKinds.indexOf(sledKind)
     sledKind = if (currentIndex > 0) sledKinds(currentIndex - 1) else sledKinds.last
-    text.innerHTML = sledKind.toString.replace("Sled", "")
+    text.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
   }
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
