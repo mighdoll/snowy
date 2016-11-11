@@ -24,7 +24,7 @@
 	transform: translate(-50%, -50%);
 	position: absolute;
 	border-radius: 10px;
-	background: white;
+	background: #eee;
 	border: 0;
 	font-size: 3vh;
 	padding: 10px;
@@ -41,13 +41,12 @@
 	top: 50vh;
 	transform: translate(-50%, -50%);
 	border-radius: 10px;
-	background: white;
 	border: 0;
 	font-size: 3vh;
 }
 
 #splitter {
-    background: white;
+    background: #eee;
 	position: relative;
 	width: 15vh;
     height: 7vh;
@@ -87,12 +86,6 @@
 	border-bottom: 1px solid rgb(120, 201, 44);
 	border-top-right-radius: 100px;
 }
-#top:hover {
-	background: rgb(120, 201, 44);
-}
-#bottom:hover {
-	background: rgb(120, 201, 44);
-}
 
 #caption {
 	position: absolute;
@@ -101,4 +94,18 @@
 	width: calc(100% - 32px);
 	font-size: 3vh;
 	line-height: 7vh;
+}
+
+.link {
+    border-radius: 100px;
+    padding: 7px;
+    text-decoration: none;
+    color: black;
+    font-family: arial
+}
+.button {
+    background: #eee;
+}
+.button:hover {
+    background: rgb(120, 201, 44);
 }
