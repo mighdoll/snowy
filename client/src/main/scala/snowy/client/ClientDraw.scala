@@ -44,7 +44,7 @@ object ClientDraw {
     sleds.items.foreach { sled =>
       val sledPosition = portal.transformToScreen(sled.pos)
       sledPosition.foreach { pos =>
-        new DrawSled(
+        DrawSled.draw(
           sled.userName,
           pos,
           sled.radius * portal.scale,
@@ -55,7 +55,7 @@ object ClientDraw {
           bodyRed)
       }
     }
-    new DrawSled(
+    DrawSled.draw(
       mySled.userName,
       size / 2,
       mySled.radius * portal.scale,

@@ -5,65 +5,130 @@ import snowy.draw.GameColors.lineColors
 import snowy.playfield._
 import vector.Vec2d
 
-class DrawSled(name: String,
-               pos: Vec2d,
-               radius: Double,
-               health: Double,
-               cannonRotation: Double,
-               rotation: Double,
-               kind: SledKind,
-               color: String) {
-  val x = pos.x
-  val y = pos.y
+object DrawSled {
+  def draw(name: String,
+           pos: Vec2d,
+           radius: Double,
+           health: Double,
+           cannonRotation: Double,
+           rotation: Double,
+           kind: SledKind,
+           color: String) {
+    val x = pos.x
+    val y = pos.y
 
-  //Global strokeStyle
-  ctx.strokeStyle = lineColors.toString
+    //Global strokeStyle
+    ctx.strokeStyle = lineColors.toString
 
-  //Draw two skis
-  ctx.lineCap = "round"
-  ctx.lineWidth = radius * 18 / 55
-  ctx.translate(x, y)
-  ctx.rotate(-rotation)
-  ctx.beginPath()
-  ctx.moveTo(radius * 10 / 11, -radius * 25 / 11)
-  ctx.lineTo(radius * 10 / 11, radius * 25 / 11)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.moveTo(-radius * 10 / 11, -radius * 25 / 11)
-  ctx.lineTo(-radius * 10 / 11, radius * 25 / 11)
-  ctx.stroke()
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.lineCap = "round"
+    ctx.lineWidth = radius * 18 / 55
+    drawSkis(x, y, radius, rotation)
 
-  //Draw the barrel for snowballs
-  ctx.lineWidth = radius / 10
-  ctx.fillStyle = "rgb(153, 153, 153)"
-  ctx.beginPath()
-  kind match {
-    case TankSled =>
-      ctx.translate(x, y)
-      ctx.rotate(cannonRotation)
-      ctx.rect(-radius * 7 / 11, 0, radius * 14 / 11, radius * 9 / 5)
-    case GunnerSled =>
-      ctx.translate(x, y)
-      ctx.rotate(cannonRotation)
-      ctx.rect(-radius * 3 / 11, 0, radius * 6 / 11, radius * 24 / 11)
-    case StationaryTestSled =>
-    case _ =>
+    ctx.lineWidth = radius / 10
+    ctx.fillStyle = "rgb(153, 153, 153)"
+    kind match {
+      case TankSled           => drawTankSled.drawTurret(x, y, radius, cannonRotation)
+      case GunnerSled         => drawGunnerSled.drawTurret(x, y, radius, cannonRotation)
+      case StationaryTestSled =>
+      case _                  => drawDefaultSled.drawTurret(x, y, radius, cannonRotation)
+    }
+
+    ctx.fillStyle = color
+    kind match {
+      case SpeedySled => drawSpeedySled.drawBody(x, y, radius, cannonRotation)
+      case SpikySled  => drawSpikySled.drawBody(x, y, radius, cannonRotation)
+      case _          => drawDefaultSled.drawBody(x, y, radius, cannonRotation)
+    }
+
+    drawName(x, y, radius, name)
+    if (health < 1) {
+      drawHealth(x, y, radius, health)
+    }
+  }
+
+  def drawSkis(x: Double, y: Double, radius: Double, rotation: Double): Unit = {
+    ctx.translate(x, y)
+    ctx.rotate(-rotation)
+    ctx.beginPath()
+    ctx.moveTo(radius * 10 / 11, -radius * 25 / 11)
+    ctx.lineTo(radius * 10 / 11, radius * 25 / 11)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(-radius * 10 / 11, -radius * 25 / 11)
+    ctx.lineTo(-radius * 10 / 11, radius * 25 / 11)
+    ctx.stroke()
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+  }
+
+  def drawName(x: Double, y: Double, radius: Double, name: String): Unit = {
+    ctx.font = (radius * 6 / 11) + "px Arial"
+    ctx.textAlign = "center"
+    ctx.fillText(name, x, y - radius * 27 / 11)
+  }
+
+  def drawHealth(x: Double, y: Double, radius: Double, health: Double): Unit = {
+    ctx.lineWidth = radius * 6 / 25
+    ctx.strokeStyle = "rgb(85, 85, 85)"
+    ctx.beginPath()
+    ctx.moveTo(x - radius * 4 / 5, y + radius * 2)
+    ctx.lineTo(x + radius * 4 / 5, y + radius * 2)
+    ctx.stroke()
+
+    ctx.lineWidth = radius * 4 / 25
+    ctx.strokeStyle = "rgb(134, 198, 128)"
+    ctx.beginPath()
+    ctx.moveTo(x - radius * 4 / 5, y + radius * 2)
+    ctx.lineTo(x - radius * 4 / 5 + radius * 8 / 5 * health, y + radius * 2)
+    ctx.stroke()
+  }
+
+  object drawDefaultSled {
+    def drawBody(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
+      ctx.arc(x, y, radius, 0, 2 * Math.PI)
+      ctx.fill()
+      ctx.stroke()
+    }
+    def drawTurret(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
       ctx.translate(x, y)
       ctx.rotate(cannonRotation)
       ctx.rect(-radius * 3 / 11, 0, radius * 6 / 11, radius * 9 / 5)
+      ctx.fill()
+      ctx.stroke()
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    }
   }
-  ctx.fill()
-  ctx.stroke()
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
 
-  //Set the color for you vs other players
-  ctx.fillStyle = color
+  object drawTankSled {
+    def drawBody(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {}
+    def drawTurret(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-radius * 7 / 11, 0, radius * 14 / 11, radius * 9 / 5)
+      ctx.fill()
+      ctx.stroke()
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    }
+  }
 
-  //Draw the main body
-  ctx.beginPath()
-  kind match {
-    case SpeedySled =>
+  object drawGunnerSled {
+    def drawBody(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {}
+    def drawTurret(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
+      ctx.translate(x, y)
+      ctx.rotate(cannonRotation)
+      ctx.rect(-radius * 3 / 11, 0, radius * 6 / 11, radius * 24 / 11)
+      ctx.fill()
+      ctx.stroke()
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    }
+  }
+
+  object drawSpeedySled {
+    def drawBody(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
       ctx.translate(x, y)
       ctx.rotate(cannonRotation)
       ctx.moveTo(-radius, -radius)
@@ -71,7 +136,16 @@ class DrawSled(name: String,
       ctx.lineTo(radius, -radius)
       ctx.lineTo(0, radius)
       ctx.closePath()
-    case SpikySled =>
+      ctx.fill()
+      ctx.stroke()
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    }
+    def drawTurret(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {}
+  }
+
+  object drawSpikySled {
+    def drawBody(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {
+      ctx.beginPath()
       ctx.translate(x, y)
       ctx.rotate(cannonRotation)
       ctx.moveTo(radius * 3 / 4, 0)
@@ -92,30 +166,10 @@ class DrawSled(name: String,
       ctx.lineTo(radius * 28.3 / 40, -radius * 28.3 / 40)
       ctx.lineTo(radius * 3 / 4, 0)
       ctx.closePath()
-    case _ => ctx.arc(x, y, radius, 0, 2 * Math.PI)
-  }
-  ctx.fill()
-  ctx.stroke()
-  ctx.setTransform(1, 0, 0, 1, 0, 0)
-
-  //Draw the name
-  ctx.font = (radius * 6 / 11) + "px Arial"
-  ctx.textAlign = "center"
-  ctx.fillText(name, x, y - radius * 27 / 11)
-
-  if (health < 1) {
-    ctx.lineWidth = radius * 6 / 25
-    ctx.strokeStyle = "rgb(85, 85, 85)"
-    ctx.beginPath()
-    ctx.moveTo(x - radius * 4 / 5, y + radius * 2)
-    ctx.lineTo(x + radius * 4 / 5, y + radius * 2)
-    ctx.stroke()
-
-    ctx.lineWidth = radius * 4 / 25
-    ctx.strokeStyle = "rgb(134, 198, 128)"
-    ctx.beginPath()
-    ctx.moveTo(x - radius * 4 / 5, y + radius * 2)
-    ctx.lineTo(x - radius * 4 / 5 + radius * 8 / 5 * health, y + radius * 2)
-    ctx.stroke()
+      ctx.fill()
+      ctx.stroke()
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    }
+    def drawTurret(x: Double, y: Double, radius: Double, cannonRotation: Double): Unit = {}
   }
 }
