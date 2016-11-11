@@ -3,10 +3,10 @@ package snowy.client
 import org.scalajs.dom._
 import snowy.client.ClientDraw._
 import snowy.connection.GameState
+import snowy.draw.GameColors.lineColors
 import snowy.draw.{DrawSled, SnowFlake}
-import vector.Vec2d
-import scala.scalajs.js.RegExp
 import snowy.playfield._
+import vector.Vec2d
 
 object LoginScreen {
 
@@ -30,6 +30,7 @@ object LoginScreen {
       Math.PI * 3 / 2,
       Math.PI / 2,
       sledKind,
+      lineColors.toString,
       "rgb(120, 201, 44)")
   }
 
@@ -92,7 +93,8 @@ object LoginScreen {
           connected = Some(
             new Connection(
               document.getElementById("username").asInstanceOf[html.Input].value,
-              sledKind
+              sledKind,
+              BasicSkis
             )
           )
         case x if x.isDefined => connected.get.reSpawn()

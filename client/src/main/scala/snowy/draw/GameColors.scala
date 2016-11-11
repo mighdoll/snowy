@@ -1,10 +1,5 @@
 package snowy.draw
-
-case class Color(r: Int, g: Int, b: Int) {
-  override def toString = s"rgb($r, $g, $b)"
-
-  def *(p: Double) = Color((r * p).toInt, (g * p).toInt, (b * p).toInt)
-}
+import snowy.playfield.Color
 
 object GameColors {
   val lineColors = Color(100, 100, 100)

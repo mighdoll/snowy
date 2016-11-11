@@ -13,16 +13,18 @@ object DrawSled {
            cannonRotation: Double,
            rotation: Double,
            kind: SledKind,
+           skiColor: String,
            color: String) {
     val x = pos.x
     val y = pos.y
 
-    //Global strokeStyle
-    ctx.strokeStyle = lineColors.toString
-
     ctx.lineCap = "round"
     ctx.lineWidth = radius * 18 / 55
+    ctx.strokeStyle = skiColor
     drawSkis(x, y, radius, rotation)
+
+    //Global strokeStyle
+    ctx.strokeStyle = lineColors.toString
 
     ctx.lineWidth = radius / 10
     ctx.fillStyle = "rgb(153, 153, 153)"

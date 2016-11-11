@@ -1,8 +1,9 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
+
 import scala.concurrent.duration._
-import snowy.playfield.SledKind
+import snowy.playfield.{SkiColor, SledKind}
 
 object User {
   val scoreFrequency = 1.second.toMillis
@@ -17,6 +18,7 @@ import snowy.server.User._
 class User(val name: String,
            val robot: Boolean = false,
            val sledKind: SledKind,
+           val skiColor: SkiColor,
            val createTime: Long) {
   private var theScore: Double    = 10
   private var nextScoreSend: Long = 0

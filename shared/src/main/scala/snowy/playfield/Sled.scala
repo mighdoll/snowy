@@ -10,8 +10,8 @@ object Sled {
     new Sled(userName = userName, _position = Vec2d.zero)
   }
 
-  def apply(userName: String, initialPosition: Vec2d, kind: SledKind): Sled = {
-    new Sled(userName = userName, _position = initialPosition, kind = kind)
+  def apply(userName: String, initialPosition: Vec2d, kind: SledKind, color: SkiColor): Sled = {
+    new Sled(userName = userName, _position = initialPosition, kind = kind, skiColor = color)
   }
 }
 /* rotation in radians, 0 points down the screen, towards larger Y values.
@@ -22,6 +22,7 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 var _position: Vec2d,
                 var speed: Vec2d = Vec2d.zero,
                 kind: SledKind = BasicSled,
+                skiColor: SkiColor = BasicSkis,
                 var rotation: Double = downhillRotation,
                 var health: Double = 1,
                 impactDamage: Double = 1,

@@ -10,13 +10,14 @@ import snowy.client.LoginScreen
 import snowy.connection.GameState._
 import upickle.default._
 import snowy.playfield.Picklers._
-import snowy.playfield.SledKind
+import snowy.playfield.{SkiColor, SledKind}
 import vector.Vec2d
 
 class InboundEvents(socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit,
                     name: String,
-                    kind: SledKind) {
+                    kind: SledKind,
+                    color: SkiColor) {
 
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
@@ -30,7 +31,7 @@ class InboundEvents(socket: NetworkSocket,
 
   socket.onOpen { _ =>
     GameState.serverGameClock = Some(new ServerGameClock(sendMessage))
-    sendMessage(Join(name, kind))
+    sendMessage(Join(name, kind, color))
   }
 
   socket.onError { event =>

@@ -44,6 +44,7 @@ object ClientDraw {
     sleds.items.foreach { sled =>
       val sledPosition = portal.transformToScreen(sled.pos)
       sledPosition.foreach { pos =>
+        println(sled.skiColor.color.toString)
         DrawSled.draw(
           sled.userName,
           pos,
@@ -52,6 +53,7 @@ object ClientDraw {
           sled.turretRotation,
           sled.rotation,
           sled.kind,
+          sled.skiColor.color.toString,
           bodyRed)
       }
     }
@@ -63,6 +65,7 @@ object ClientDraw {
       mySled.turretRotation,
       mySled.rotation,
       mySled.kind,
+      mySled.skiColor.color.toString,
       bodyGreen)
 
     trees.items.foreach { tree =>

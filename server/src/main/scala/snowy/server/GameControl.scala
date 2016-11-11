@@ -42,6 +42,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       id = new ConnectionId,
       userName = s"StationarySled:$i",
       sledKind = StationaryTestSled,
+      skiColor = BasicSkis,
       robot = true
     )
   }
@@ -71,15 +72,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
-      case Join(name, sledKind)        => userJoin(id, name, sledKind)
-      case TurretAngle(angle)          => rotateTurret(id, angle)
-      case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
-      case Start(cmd, time)            => commands.startCommand(id, cmd, time)
-      case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
-      case Pong                        => connections(id).pongReceived()
-      case ReJoin                      => rejoin(id)
-      case TestDie                     => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) => reportGameTime(id, clientTime)
+      case Join(name, sledKind, skiColor) => userJoin(id, name, sledKind, skiColor)
+      case TurretAngle(angle)             => rotateTurret(id, angle)
+      case Shoot(time)                    => id.sled.foreach(sled => shootSnowball(sled))
+      case Start(cmd, time)               => commands.startCommand(id, cmd, time)
+      case Stop(cmd, time)                => commands.stopCommand(id, cmd, time)
+      case Pong                           => connections(id).pongReceived()
+      case ReJoin                         => rejoin(id)
+      case TestDie                        => reapSled(sledMap(id))
+      case RequestGameTime(clientTime)    => reportGameTime(id, clientTime)
     }
   }
 
@@ -349,12 +350,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     deltaSeconds
   }
 
-  private def newRandomSled(userName: String, sledKind: SledKind): Sled = {
+  private def newRandomSled(userName: String,
+                            sledKind: SledKind,
+                            color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
       initialPosition = randomSpot(),
-      kind = sledKind
+      kind = sledKind,
+      color = color
     )
   }
 
@@ -362,11 +366,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   private def userJoin(id: ConnectionId,
                        userName: String,
                        sledKind: SledKind,
+                       skiColor: SkiColor,
                        robot: Boolean = false): Unit = {
     logger.info(
       s"user joined: $userName  kind: $sledKind  robot: $robot  userCount:${users.size}")
     val user =
-      new User(userName, createTime = gameTime, sledKind = sledKind, robot = robot)
+      new User(
+        userName,
+        createTime = gameTime,
+        sledKind = sledKind,
+        skiColor = skiColor,
+        robot = robot)
     users(id) = user
     createSled(id, user, sledKind)
   }
@@ -384,7 +394,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   private def createSled(connctionId: ConnectionId,
                          user: User,
                          sledKind: SledKind): Unit = {
-    val sled = newRandomSled(user.name, sledKind)
+    val sled = newRandomSled(user.name, sledKind, user.skiColor)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id
   }
