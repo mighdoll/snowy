@@ -81,6 +81,7 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
 
   /** send a ping message to the client */
   private def sendPing(): Unit = {
+    logger.trace(s"sendPing $id")
     messageIO.sendBinaryMessage(pingMessage, id)
     lastPingSent = System.currentTimeMillis()
   }

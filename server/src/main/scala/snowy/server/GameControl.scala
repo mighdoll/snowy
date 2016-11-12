@@ -30,28 +30,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   import gameTurns.gameTime
   import messageIO.sendMessage
 
-  api.tick(tickDelta) {
-    val deltaSeconds = gameTurns.nextTurn()
-    applyCommands(deltaSeconds)
-    val died = gameTurns.turn(deltaSeconds)
-    reapDead(died)
-    time("sendUpdates") {
-      sendUpdates()
-    }
-  }
-
-  (1 to 20).foreach { i =>
-    userJoin(
-      id = new ConnectionId,
-      userName = s"StationarySled:$i",
-      sledKind = StationaryTestSled,
-      skiColor = BasicSkis,
-      robot = true
-    )
-  }
+  api.tick(tickDelta)(turn())
+  robotSleds()
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
+    logger.trace(s"open $id")
     connections(id) = new ClientConnection(id, messageIO)
     val clientPlayfield = Playfield(playfield.x.toInt, playfield.y.toInt)
     sendMessage(clientPlayfield, id)
@@ -60,6 +44,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** Called when a connection is dropped */
   override def gone(connectionId: ConnectionId): Unit = {
+    logger.trace(s"gone $connectionId")
     for {
       sledId <- sledMap.get(connectionId)
       sled   <- sledId.sled
@@ -71,8 +56,30 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     connections.remove(connectionId)
   }
 
+  /** decode received binary message then pass on to handler */
+  override def message(id: ConnectionId, msg: String): Unit = {
+    handleMessage(id, read[GameServerMessage](msg))
+  }
+
+  /** decode received binary message then pass on to handler */
+  override def binaryMessage(id: ConnectionId, msg: ByteString): Unit = {
+    handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
+  }
+
+  /** Run the next game turn. (called on a periodic timer) */
+  private def turn(): Unit = {
+    val deltaSeconds = gameTurns.nextTurn()
+    logger.trace(s"tick $deltaSeconds")
+    applyCommands(deltaSeconds)
+    val died = gameTurns.turn(deltaSeconds)
+    reapDead(died)
+    time("sendUpdates") {
+      sendUpdates()
+    }
+  }
+
   /** Process a GameServerMessage from the client */
-  def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
+  private def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind, skiColor) => userJoin(id, name, sledKind, skiColor)
@@ -87,14 +94,18 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  /** decode received binary message then pass on to handler */
-  override def message(id: ConnectionId, msg: String): Unit = {
-    handleMessage(id, read[GameServerMessage](msg))
-  }
+  /** Add some autonomous players to the game */
+  private def robotSleds(): Unit = {
+    (1 to 20).foreach { i =>
+      userJoin(
+        id = new ConnectionId,
+        userName = s"StationarySled:$i",
+        sledKind = StationaryTestSled,
+        skiColor = BasicSkis,
+        robot = true
+      )
+    }
 
-  /** decode received binary message then pass on to handler */
-  override def binaryMessage(id: ConnectionId, msg: ByteString): Unit = {
-    handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
   }
 
   private def sendUpdates(): Unit = {
@@ -125,7 +136,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
-    logger.trace {
+    logger.info {
       val clientTimeDelta = clientTime - System.currentTimeMillis()
       s"client $id time vs server time: $clientTimeDelta"
     }
@@ -201,14 +212,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       sled.lastShotTime = gameTime
     }
   }
-
-//  private def modifySled(id: ConnectionId)(fn: Sled => Sled): Unit = {
-//    sledMap.get(id).foreach { sledId =>
-//      sleds = sleds.replaceById(sledId) { sled =>
-//        fn(sled)
-//      }
-//    }
-//  }
 
   /** Notify clients whose sleds have been killed, remove sleds from the game */
   private def reapDead(dead: Traversable[SledDied]): Unit = {

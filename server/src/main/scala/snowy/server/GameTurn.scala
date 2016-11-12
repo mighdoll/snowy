@@ -28,20 +28,16 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
   /** Called to update game state on a regular timer */
   def turn(deltaSeconds: Double): Traversable[SledDied] = time("gameTurn") {
+//    Thread.sleep(18)  // for simulating a slow server
     gameHealth.recoverHealth(deltaSeconds)
     gameHealth.recoverPushEnergy(deltaSeconds)
     gameHealth.expireSnowballs()
 
     moveSnowballs(state.snowballs.items, deltaSeconds)
 
-    val moveAwards = time("moveSleds") {
-      moveSleds(state.sleds.items, deltaSeconds)
-    }
-
-    val collisionAwards = time("checkCollisions") {
-      checkCollisions()
-    }
-    val died = gameHealth.collectDead()
+    val moveAwards      = time("moveSleds")(moveSleds(state.sleds.items, deltaSeconds))
+    val collisionAwards = time("checkCollisions")(checkCollisions())
+    val died            = gameHealth.collectDead()
 
     updateScore(moveAwards.toSeq ++ collisionAwards ++ died)
     died
