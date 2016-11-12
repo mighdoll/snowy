@@ -172,9 +172,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
             val push         = new InlineForce(pushForceNow, sled.maxSpeed)
             pushSled(sled, pushForceNow, push, pushEffort)
           case TurretLeft =>
-            id.sled.foreach(_.turretRotation += (math.Pi / turnTime) * deltaSeconds)
-          case TurretRight =>
             id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
+          case TurretRight =>
+            id.sled.foreach(_.turretRotation += (math.Pi / turnTime) * deltaSeconds)
           case Shooting => shootSnowball(sled)
         }
       }
