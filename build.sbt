@@ -33,11 +33,12 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
   )
 
 lazy val V = new Object {
-  val akka    = "2.4.9"
-  val scala   = "2.11.8"
-  val kamon   = "0.6.3"
-  val log4j   = "2.7"
-  val jackson = "2.8.4"
+  val akka     = "2.4.11"
+  val akkaHttp = "2.4.11"
+  val scala    = "2.11.8"
+  val kamon    = "0.6.3"
+  val log4j    = "2.7"
+  val jackson  = "2.8.4"
 }
 
 lazy val server = (project in file("server"))
@@ -65,7 +66,7 @@ lazy val server = (project in file("server"))
       "com.typesafe.scala-logging"       %% "scala-logging"          % "3.5.0",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
-      "com.typesafe.akka"                %% "akka-http-experimental" % V.akka,
+      "com.typesafe.akka"                %% "akka-http-experimental" % V.akkaHttp,
       "com.typesafe.akka"                %% "akka-slf4j"             % V.akka,
       "io.kamon"                         %% "kamon-core"             % V.kamon,
       "io.kamon"                         %% "kamon-system-metrics"   % V.kamon,
