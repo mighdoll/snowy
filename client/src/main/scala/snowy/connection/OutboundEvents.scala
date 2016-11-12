@@ -12,6 +12,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   var shooting: Boolean          = false
   var turning: Option[Direction] = None
   var speeding: Option[Speed]    = None
+  var turret: Option[Direction]  = None
   var mouseDir: Double           = 0
 
   sealed trait Direction
@@ -43,6 +44,14 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Stop(Slowing, gameTime))
         sendMessage(Start(Pushing, gameTime))
         speeding = Some(SpeedUp)
+      case Keys.TurretLeft() if !turret.contains(GoLeft) =>
+        sendMessage(Stop(TurretRight, gameTime))
+        sendMessage(Start(TurretLeft, gameTime))
+        turret = Some(GoLeft)
+      case Keys.TurretRight() if !turret.contains(GoRight) =>
+        sendMessage(Stop(TurretLeft, gameTime))
+        sendMessage(Start(TurretRight, gameTime))
+        turret = Some(GoRight)
       case Keys.Space() if !shooting =>
         sendMessage(Start(Shooting, gameTime))
         shooting = true
@@ -69,6 +78,15 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       case (Keys.Down(), Some(SlowDown)) =>
         sendMessage(Stop(Slowing, gameTime))
         speeding = None
+      case _ =>
+    }
+    (event.keyCode, turret) match {
+      case (Keys.TurretLeft(), Some(GoLeft)) =>
+        sendMessage(Stop(TurretLeft, gameTime))
+        turret = None
+      case (Keys.TurretRight(), Some(GoRight)) =>
+        sendMessage(Stop(TurretRight, gameTime))
+        turret = None
       case _ =>
     }
     event.keyCode match {

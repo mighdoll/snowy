@@ -38,12 +38,10 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
         app ! Open(connectionId, outRef)
       }
 
-    val bufferMessages = Flow[Message]
-      .foreach{_ =>
-        val size = inputBufferLevel.incrementAndGet()
-        if (size > 1) logger.info(s"input buffer size: $size")
-      }
-      .buffer(inputBufferSize, OverflowStrategy.dropBuffer)
+    val bufferMessages = Flow[Message].foreach { _ =>
+      val size = inputBufferLevel.incrementAndGet()
+      if (size > 1) logger.info(s"input buffer size: $size")
+    }.buffer(inputBufferSize, OverflowStrategy.dropBuffer)
       .foreach(_ => inputBufferLevel.decrementAndGet())
 
     // forward messages from the client, and note if the connection drops

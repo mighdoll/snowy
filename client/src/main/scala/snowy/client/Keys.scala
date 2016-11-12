@@ -8,13 +8,17 @@ object Keys {
       keys.contains(keyEvent)
   }
 
-  object Up extends KeyMatch(87, 38)
+  object Up extends KeyMatch(87, 38, 73)
 
-  object Down extends KeyMatch(83, 40)
+  object Down extends KeyMatch(83, 40, 75)
 
-  object Right extends KeyMatch(68, 39)
+  object Right extends KeyMatch(68, 39, 76)
 
-  object Left extends KeyMatch(65, 37)
+  object Left extends KeyMatch(65, 37, 74)
+
+  object TurretLeft extends KeyMatch(71)
+
+  object TurretRight extends KeyMatch(72)
 
   object Space extends KeyMatch(32)
 }

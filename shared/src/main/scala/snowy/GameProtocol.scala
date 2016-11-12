@@ -30,6 +30,10 @@ object GameServerProtocol {
 
   case object Pushing extends StartStopCommand
 
+  case object TurretLeft extends StartStopCommand
+
+  case object TurretRight extends StartStopCommand
+
   case object Shooting extends StartStopCommand
 
   case object Pong extends GameServerMessage
