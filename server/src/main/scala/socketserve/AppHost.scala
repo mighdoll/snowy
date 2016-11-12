@@ -17,7 +17,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
       case Open(id, out)                   => open(id, out)
       case Gone(id)                        => gone(id)
       case RegisterApp(newApp)             => app = Some(newApp)
-      case Turn                            => tickFn.map(fn => fn())
+      case Turn                            => tickFn.foreach(_())
     }
   }))
   private val connections = mutable.Map[ConnectionId, ActorRef]()
@@ -64,21 +64,21 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   }
 
   private def clientMessage(id: ConnectionId, text: String): Unit = {
-    app.map(_.message(id, text))
+    app.foreach(_.message(id, text))
   }
 
   private def binaryMessage(id: ConnectionId, binary: ByteString): Unit = {
-    app.map(_.binaryMessage(id, binary))
+    app.foreach(_.binaryMessage(id, binary))
   }
 
   private def open(id: ConnectionId, out: ActorRef): Unit = {
     connections += id -> out
-    app.map(_.open(id))
+    app.foreach(_.open(id))
   }
 
   private def gone(id: ConnectionId): Unit = {
     connections -= id
-    app.map(_.gone(id))
+    app.foreach(_.gone(id))
   }
 }
 
