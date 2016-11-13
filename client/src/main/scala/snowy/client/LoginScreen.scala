@@ -51,6 +51,7 @@ object LoginScreen {
     connected = None
 
     GameState.stopRedraw()
+    textInput.focus()
     drawLoop = Some(window.setInterval(tick, 10))
   }
 
@@ -77,6 +78,7 @@ object LoginScreen {
     }
   }
 
+  val textInput = document.getElementById("username").asInstanceOf[html.Input]
   val classText = document.querySelector("#class > .caption").asInstanceOf[html.Div]
   document
     .querySelector("#class > .container > :first-child")
@@ -147,6 +149,7 @@ object LoginScreen {
     switch(false)
 
     GameState.stopRedraw()
+    textInput.focus()
     drawLoop = Some(window.setInterval(tick, 10))
   }
 }
