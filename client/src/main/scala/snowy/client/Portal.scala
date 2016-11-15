@@ -27,7 +27,7 @@ class Portal(portalRect: Rect, screenSize: Vec2d, border: Vec2d) {
     }
   }
 
-  // TODO comment
+  /** @return a position mapped to portalrect coordinates */
   private def wrapInPlayfield(pos: Vec2d,
                               padding: Vec2d,
                               wrapRange: Vec2d): Option[Vec2d] = {

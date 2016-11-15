@@ -22,7 +22,8 @@ object GameState {
   private var turning: Turning                 = NoTurn
   var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
-  //When the client receives the state of canvas, draw all sleds
+  /** set the client state to the state from the server
+    * @param state the state sent from the server */
   def receivedState(state: State): Unit = {
     serverSnowballs = Store(state.snowballs)
     serverSleds = Store(state.sleds)
