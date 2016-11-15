@@ -124,7 +124,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
   private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
-    val deltaMicros = (deltaSeconds * secondsToMicros).toLong
+    val deltaMicros     = (deltaSeconds * secondsToMicros).toLong
     Perf.record("deltaSeconds", deltaMicros)
   }
 

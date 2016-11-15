@@ -22,7 +22,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   val tickSource =
     Source
       .tick[GameCommand](tickTime, tickTime, Turn)
-      .conflate(Keep.left)    // if we're behind on ticks, just skip one
+      .conflate(Keep.left) // if we're behind on ticks, just skip one
       .named("tickSource")
 
   val (internalMessages, messagesRefFuture) =

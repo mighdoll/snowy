@@ -22,10 +22,10 @@ import vector.Vec2d
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     extends AppController with GameState with StrictLogging {
-  override val turnPeriod   = 20 milliseconds
-  val messageIO   = new MessageIO(api)
-  val connections = mutable.Map[ConnectionId, ClientConnection]()
-  val gameTurns   = new GameTurn(this, turnPeriod)
+  override val turnPeriod = 20 milliseconds
+  val messageIO           = new MessageIO(api)
+  val connections         = mutable.Map[ConnectionId, ClientConnection]()
+  val gameTurns           = new GameTurn(this, turnPeriod)
 
   import gameStateImplicits._
   import gameTurns.gameTime
@@ -136,7 +136,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
-    logger.trace{
+    logger.trace {
       val clientTimeDelta = clientTime - System.currentTimeMillis()
       s"client $id time vs server time: $clientTimeDelta"
     }
