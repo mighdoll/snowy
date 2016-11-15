@@ -64,7 +64,7 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
       }
       val window = Flow[Long].sliding(pingWindowSize).map { seq =>
         minRecentRtt = seq.min
-        logger.debug(s"min ping time for $id is $minRecentRtt")
+        logger.trace(s"min ping time for $id is $minRecentRtt")
         minRecentRtt
       }
 

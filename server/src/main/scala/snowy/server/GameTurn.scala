@@ -124,11 +124,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
   private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
-    val offset          = 10 * secondsToMicros // library can't handle negative
-    Perf.record(
-      "turnJitter",
-      offset + (deltaSeconds * secondsToMicros).toLong - tickDelta.toMicros
-    )
+    val deltaMicros = (deltaSeconds * secondsToMicros).toLong
+    Perf.record("deltaSeconds", deltaMicros)
   }
 
 }

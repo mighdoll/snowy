@@ -2,6 +2,7 @@ package socketserve
 
 import scala.concurrent.duration.FiniteDuration
 import akka.util.ByteString
+import scala.concurrent.duration._
 
 /** An API for simple synchronous server apps that support multiple users over websockets.
   *
@@ -29,10 +30,15 @@ trait AppController {
 
   /** a binary message has been received */
   def binaryMessage(id: ConnectionId, msg: ByteString): Unit
+
+  /** called to process the next game turn */
+  def turn(): Unit = {}
+
+  /** period for game turns */
+  def turnPeriod: FiniteDuration = 0 seconds
 }
 
 trait AppHostApi {
-
   /** Broadcast a message to all clients */
   def sendAll(msg: String): Unit
 
@@ -41,7 +47,4 @@ trait AppHostApi {
 
   /** Send a binary message to one client */
   def sendBinary(msg: ByteString, id: ConnectionId): Unit
-
-  /** register a function to be called periodically */
-  def tick(time: FiniteDuration)(fn: => Unit)
 }

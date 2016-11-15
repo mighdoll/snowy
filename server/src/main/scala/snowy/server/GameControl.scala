@@ -22,15 +22,15 @@ import vector.Vec2d
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     extends AppController with GameState with StrictLogging {
-  val tickDelta   = 20 milliseconds
+  override val turnPeriod   = 20 milliseconds
   val messageIO   = new MessageIO(api)
   val connections = mutable.Map[ConnectionId, ClientConnection]()
-  val gameTurns   = new GameTurn(this, tickDelta)
+  val gameTurns   = new GameTurn(this, turnPeriod)
+
   import gameStateImplicits._
   import gameTurns.gameTime
   import messageIO.sendMessage
 
-  api.tick(tickDelta)(turn())
   robotSleds()
 
   /** a new player has connected */
@@ -44,7 +44,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** Called when a connection is dropped */
   override def gone(connectionId: ConnectionId): Unit = {
-    logger.trace(s"gone $connectionId")
+    logger.info(s"gone $connectionId")
     for {
       sledId <- sledMap.get(connectionId)
       sled   <- sledId.sled
@@ -67,7 +67,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Run the next game turn. (called on a periodic timer) */
-  private def turn(): Unit = {
+  override def turn(): Unit = {
     val deltaSeconds = gameTurns.nextTurn()
     logger.trace(s"tick $deltaSeconds")
     applyCommands(deltaSeconds)
@@ -136,7 +136,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
-    logger.info {
+    logger.trace{
       val clientTimeDelta = clientTime - System.currentTimeMillis()
       s"client $id time vs server time: $clientTimeDelta"
     }
