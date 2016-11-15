@@ -56,6 +56,18 @@ object ClientDraw {
           bodyRed)
       }
     }
+
+    ctx.fillStyle = "rgb(153, 153, 153)"
+    ctx.translate((size / 2).x, (size / 2).y)
+    ctx.rotate(-mySled.rotation)
+    ctx.beginPath()
+    ctx.moveTo(mySled.radius / 7, mySled.radius* 10/7)
+    ctx.lineTo(-mySled.radius / 7, mySled.radius * 10/7)
+    ctx.lineTo(0, mySled.radius * 12 / 7)
+    ctx.closePath()
+    ctx.fill()
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+
     DrawSled.draw(
       mySled.userName,
       size / 2,
