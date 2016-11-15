@@ -39,5 +39,5 @@ An experimental WebSocket game using [Scala](http://scala-lang.org) and [Scala.j
 #####This project is using YourKit: 
 
 YourKit supports open source projects with its full-featured Java Profiler.  
-YourKit, LLC is the creator of YourKit Java Profiler and YourKit .NET Profiler,  
+[YourKit, LLC](https://www.yourkit.com/) is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/index.jsp)and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp),  
 innovative and intelligent tools for profiling Java and .NET applications.  
