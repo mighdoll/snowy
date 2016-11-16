@@ -18,17 +18,17 @@ object LoadTest {
     basicArgs.conf.foreach(GlobalConfig.addConfigFiles(_))
 
     val actorSystem = ActorSystem()
+    import actorSystem.dispatcher
 
     val testDuration = 1 hour
 
-    val port       = GlobalConfig.config.getInt("snowy.server.port")
+    val config     = GlobalConfig.config
+    val port       = config.getInt("snowy.server.port")
     val wsUrl      = s"ws://localhost:${port}/game"
-    val numClients = 50
+    val numClients = config.getInt("snowy.load.clients")
     (1 to numClients).foreach { _ =>
       new SimulatedClient(wsUrl)
     }
     Thread.sleep(testDuration.toMillis)
   }
 }
-
-
