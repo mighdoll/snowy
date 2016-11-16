@@ -110,10 +110,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   private def sendUpdates(): Unit = {
     currentState().collect {
+      // TODO pickle sleds and snowall once, not once per connection
       case (id, state) if state.mySled.id.user.exists(!_.robot) =>
         sendMessage(state, id)
     }
-    sendScores()
+    sendScores()  // TODO send less often
   }
 
   /** Send the current score to the clients */
