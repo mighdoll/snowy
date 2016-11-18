@@ -35,11 +35,6 @@ An experimental WebSocket game using [Scala](http://scala-lang.org) and [Scala.j
 * [Coler706](https://github.com/coler706)
 * [{Name hidden}]()
 
-
-#####This project is using YourKit: 
-
-YourKit supports open source projects with its full-featured Java Profiler.  
-[YourKit, LLC](https://www.yourkit.com/) is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp),  
-innovative and intelligent tools for profiling Java and .NET applications.  
-
-![YourKit Logo](https://www.yourkit.com/images/yklogo.png)
+ 
+##### [![YourKit Logo](https://www.yourkit.com/images/yklogo.png)](https://yourkit.com)
+[YourKit](https://www.yourkit.com/) kindly supports open source projects with its full-featured [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) and [.NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp). We turn to YourKit's [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) as the standard reference for code performance, quickly monitoring garbage collection, leak analysis, and more. 
