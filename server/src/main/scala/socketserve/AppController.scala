@@ -39,6 +39,7 @@ trait AppController {
 }
 
 trait AppHostApi {
+
   /** Broadcast a message to all clients */
   def sendAll(msg: String): Unit
 

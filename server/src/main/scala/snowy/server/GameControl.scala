@@ -114,7 +114,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       case (id, state) if state.mySled.id.user.exists(!_.robot) =>
         sendMessage(state, id)
     }
-    sendScores()  // TODO send less often
+    sendScores() // TODO send less often
   }
 
   /** Send the current score to the clients */

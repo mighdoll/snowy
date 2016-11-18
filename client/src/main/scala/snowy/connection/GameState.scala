@@ -31,9 +31,7 @@ object GameState {
     gameTime = state.gameTime
   }
 
-  def startTurn(direction: Turning): Unit = {
-    turning = direction
-  }
+  def startTurn(direction: Turning): Unit = turning = direction
 
   def startRedraw(): Unit = {
     stopRedraw()
