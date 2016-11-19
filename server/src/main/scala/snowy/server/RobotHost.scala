@@ -1,5 +1,6 @@
 package snowy.server
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import snowy.GameConstants
 import snowy.GameServerProtocol.GameServerMessage
@@ -9,23 +10,28 @@ import socketserve.ConnectionId
 import vector.Vec2d
 
 class RobotHost(gameControl: GameControl) {
-  private val robots = ListBuffer[Robot]()
+  private val robots = mutable.Map[ConnectionId,Robot]()
 
   /** create a new robot */
   def createRobot(fn: RobotApi => Robot): Unit = {
     val id    = new ConnectionId()
     val api   = new OneRobotApi(gameControl, id)
     val robot = fn(api)
-    robots.append(robot)
+    robots(id) = robot
   }
 
   /** let all the robots update state and send commands */
   def robotsTurn(): Unit = {
     val state = new InternalRobotState(gameControl)
-    robots.foreach { robot =>
+    robots.values.foreach { robot =>
       robot.refresh(state)
     }
   }
+
+  def died(id: ConnectionId): Unit = {
+    robots.get(id).foreach(_.killed())
+  }
+
 }
 
 /** api interface provided to one server robot */

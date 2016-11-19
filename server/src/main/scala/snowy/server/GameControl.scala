@@ -217,9 +217,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reapSled(sledId: SledId): Unit = {
-    if (sledId.user.exists(!_.robot)) {
-      val connectionId = sledId.connectionId
-      connectionId.foreach(sendMessage(Died, _))
+    sledId.user.foreach {user =>
+      sledId.connectionId match {
+        case Some(connectionId) if !user.robot => sendMessage(Died, connectionId)
+        case Some(connectionId) if user.robot => robots.died(connectionId)
+        case None => logger.warn(s"reapSled connection not found for sled: $sledId")
+      }
     }
     sledId.sled.foreach(_.remove())
     logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
