@@ -1,43 +1,33 @@
+<!DOCTYPE html>
 <html class="fullscreen">
 <head>
   <title>Snowy Day</title>
-  <link rel="stylesheet" href="style.css">
+  <link href="style.css" rel="stylesheet">
 </head>
 <body class="fullscreen">
 <form id="login-form" name="login-form">
   <a class="button link" href="about.html">About</a>
   <a class="button link">How to play</a>
-  <input id="username" maxlength="15" placeholder="Your Name Here"> <button class="button" id="play">Join Game</button>
-  <div id="skis" class="splitter">
-    <div class="caption">
-      Color: Grey
-    </div>
+  <input id="username" maxlength="15" placeholder="Your Name Here">
+  <button class="button" id="play">Join Game</button>
+  <div class="splitter" id="skis">
+    <div class="caption">Color: Grey</div>
     <div class="container">
-      <span class="button">
-        &#9650;
-      </span>
-      <span class="button">
-        &#9660;
-      </span>
+      <span class="button">&#9650;</span>
+      <span class="button">&#9660;</span>
     </div>
   </div>
-  <div id="class" class="splitter">
-    <div class="caption">
-      Class: Basic
-    </div>
+  <div class="splitter" id="class">
+    <div class="caption">Class: Basic</div>
     <div class="container">
-      <span class="button">
-        &#9650;
-      </span>
-      <span class="button">
-        &#9660;
-      </span>
+      <span class="button">&#9650;</span>
+      <span class="button">&#9660;</span>
     </div>
   </div>
 </form>
 <div class="back fullscreen" id="game-div">
   <canvas id="game-c"></canvas>
-</div><!-- <script type="text/javascript" src="sock-client-jsdeps.js"></script> -->
+</div>
 <script src="sock-client-fastopt.js" type="text/javascript"></script>
 <script src="sock-client-launcher.js" type="text/javascript"></script>
 </body>
