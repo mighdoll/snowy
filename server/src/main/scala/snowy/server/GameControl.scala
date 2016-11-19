@@ -14,6 +14,7 @@ import snowy.GameServerProtocol._
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
 import snowy.playfield.{Sled, _}
+import snowy.robot.StationaryRobot
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
@@ -26,6 +27,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   val messageIO           = new MessageIO(api)
   val connections         = mutable.Map[ConnectionId, ClientConnection]()
   val gameTurns           = new GameTurn(this, turnPeriod)
+  val robots              = new RobotHost(this)
 
   import gameStateImplicits._
   import gameTurns.gameTime
@@ -70,6 +72,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   override def turn(): Unit = {
     val deltaSeconds = gameTurns.nextTurn()
     logger.trace(s"tick $deltaSeconds")
+    robots.robotsTurn()
     applyCommands(deltaSeconds)
     val died = gameTurns.turn(deltaSeconds)
     reapDead(died)
@@ -79,7 +82,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Process a GameServerMessage from the client */
-  private def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
+  def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind, skiColor) => userJoin(id, name, sledKind, skiColor)
@@ -96,16 +99,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 20).foreach { i =>
-      userJoin(
-        id = new ConnectionId,
-        userName = s"StationarySled:$i",
-        sledKind = StationaryTestSled,
-        skiColor = BasicSkis,
-        robot = true
-      )
+    (1 to 20).foreach { _ =>
+      robots.createRobot(StationaryRobot.apply)
     }
-
   }
 
   private def sendUpdates(): Unit = {
@@ -248,13 +244,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ConnectionId,
-                       userName: String,
-                       sledKind: SledKind,
-                       skiColor: SkiColor,
-                       robot: Boolean = false): Unit = {
+  def userJoin(id: ConnectionId,
+               userName: String,
+               sledKind: SledKind,
+               skiColor: SkiColor,
+               robot: Boolean = false): Sled = {
     logger.info(
-      s"user joined: $userName  kind: $sledKind  robot: $robot  userCount:${users.size}")
+      s"user joined: $userName  id:$id  kind: $sledKind  robot: $robot  userCount:${users.size}")
     val user =
       new User(
         userName,
@@ -266,22 +262,25 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     createSled(id, user, sledKind)
   }
 
-  private def rejoin(id: ConnectionId): Unit = {
+  def rejoin(id: ConnectionId): Option[Sled] = {
     users.get(id) match {
       case Some(user) =>
         logger.info(s"user rejoined: ${user.name}")
-        createSled(id, user, user.sledKind)
+        val sled = createSled(id, user, user.sledKind)
+        Some(sled)
       case None =>
         logger.warn(s"user not found to rejoin: $id")
+        None
     }
   }
 
   private def createSled(connctionId: ConnectionId,
                          user: User,
-                         sledKind: SledKind): Unit = {
+                         sledKind: SledKind): Sled = {
     val sled = newRandomSled(user.name, sledKind, user.skiColor)
     sleds = sleds.add(sled)
     sledMap(connctionId) = sled.id
+    sled
   }
 
   /** Rotate the turret on a sled */
