@@ -24,4 +24,3 @@ trait RobotState {
   def trees: Traversable[Tree]
   def playfield: Vec2d
 }
-

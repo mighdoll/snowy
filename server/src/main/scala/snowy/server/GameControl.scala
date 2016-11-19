@@ -18,7 +18,6 @@ import snowy.robot.StationaryRobot
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf.time
 import socketserve.{AppController, AppHostApi, ConnectionId}
-import upickle.default._
 import vector.Vec2d
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem)
@@ -59,12 +58,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** decode received binary message then pass on to handler */
-  override def message(id: ConnectionId, msg: String): Unit = {
-    handleMessage(id, read[GameServerMessage](msg))
-  }
-
-  /** decode received binary message then pass on to handler */
-  override def binaryMessage(id: ConnectionId, msg: ByteString): Unit = {
+  override def message(id: ConnectionId, msg: ByteString): Unit = {
     handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
   }
 

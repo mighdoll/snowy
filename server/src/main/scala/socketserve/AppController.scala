@@ -25,11 +25,8 @@ trait AppController {
   /** an existing connection is gone */
   def gone(id: ConnectionId): Unit
 
-  /** a text message has been received */
-  def message(id: ConnectionId, msg: String): Unit
-
   /** a binary message has been received */
-  def binaryMessage(id: ConnectionId, msg: ByteString): Unit
+  def message(id: ConnectionId, msg: ByteString): Unit
 
   /** called to process the next game turn */
   def turn(): Unit = {}

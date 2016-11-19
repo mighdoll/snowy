@@ -33,12 +33,11 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
 
   val handlerSink = Flow[GameCommand]
     .to(Sink.foreach {
-      case ClientMessage(id, text)         => clientMessage(id, text)
-      case ClientBinaryMessage(id, binary) => binaryMessage(id, binary)
-      case Open(id, out)                   => open(id, out)
-      case Gone(id)                        => gone(id)
-      case RegisterApp(newApp)             => app = Some(newApp)
-      case Turn                            => app.foreach(_.turn())
+      case ClientMessage(id, binary) => clientMessage(id, binary)
+      case Open(id, out)             => open(id, out)
+      case Gone(id)                  => gone(id)
+      case RegisterApp(newApp)       => app = Some(newApp)
+      case Turn                      => app.foreach(_.turn())
     })
     .named("handlerSink")
 
@@ -87,12 +86,8 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
     }
   }
 
-  private def clientMessage(id: ConnectionId, text: String): Unit = {
-    app.foreach(_.message(id, text))
-  }
-
-  private def binaryMessage(id: ConnectionId, binary: ByteString): Unit = {
-    app.foreach(_.binaryMessage(id, binary))
+  private def clientMessage(id: ConnectionId, binary: ByteString): Unit = {
+    app.foreach(_.message(id, binary))
   }
 
   private def open(id: ConnectionId, out: ActorRef): Unit = {
@@ -115,10 +110,7 @@ object AppHost {
 
     case class Open(id: ConnectionId, out: ActorRef) extends GameCommand
 
-    case class ClientMessage(id: ConnectionId, message: String) extends GameCommand
-
-    case class ClientBinaryMessage(id: ConnectionId, message: ByteString)
-        extends GameCommand
+    case class ClientMessage(id: ConnectionId, message: ByteString) extends GameCommand
 
     case class Gone(id: ConnectionId) extends GameCommand
 

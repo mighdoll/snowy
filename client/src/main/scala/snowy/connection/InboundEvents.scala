@@ -8,7 +8,6 @@ import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.client.LoginScreen
 import snowy.connection.GameState._
-import upickle.default._
 import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledKind}
 import vector.Vec2d
@@ -23,10 +22,6 @@ class InboundEvents(socket: NetworkSocket,
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
     val message    = Unpickle[GameClientMessage].fromBytes(byteBuffer)
     handleMessage(message)
-  }
-
-  def stringMessage(msg: String): Unit = {
-    handleMessage(read[GameClientMessage](msg))
   }
 
   socket.onOpen { _ =>
@@ -46,7 +41,6 @@ class InboundEvents(socket: NetworkSocket,
   socket.onMessage { event =>
     event.data match {
       case arrayBuffer: ArrayBuffer => arrayBufferMessage(arrayBuffer)
-      case msgString: String        => stringMessage(msgString)
       case x                        => console.log(s"unexpected message received: $x")
     }
   }

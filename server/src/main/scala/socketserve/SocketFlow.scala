@@ -66,8 +66,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
     // convert web socket messages into client controller messages
     val inputConverted: Flow[Message, GameCommand, NotUsed] =
       inputBuffered.collect {
-        case TextMessage.Strict(text)   => ClientMessage(connectionId, text)
-        case BinaryMessage.Strict(data) => ClientBinaryMessage(connectionId, data)
+        case BinaryMessage.Strict(data) => ClientMessage(connectionId, data)
       }.named("inputConverted")
 
     // target for sending connection open/close messages to the controller

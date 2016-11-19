@@ -6,7 +6,6 @@ lazy val root =
   (project in file(".")).aggregate(server, client).settings(commonSettings: _*)
 
 lazy val commonSettings = Seq(
-  // organization := "com.example",
   version := "0.1.0",
   scalaVersion := V.scala,
   scalacOptions ++= Seq(
@@ -115,8 +114,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "upickle"   % "0.4.1",
-      "me.chrons"   %%% "boopickle" % "1.2.4"
+      "me.chrons" %%% "boopickle" % "1.2.4"
     ),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )

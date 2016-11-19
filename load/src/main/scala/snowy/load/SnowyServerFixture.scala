@@ -15,7 +15,6 @@ import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
-import upickle.default._
 import snowy.playfield.Picklers._
 import snowy.server.GameControl
 
@@ -90,7 +89,6 @@ object SnowyServerFixture {
 
     val sinkFromServer = {
       val messageToGameMessage = Flow[Message].collect {
-        case TextMessage.Strict(msg) => read[GameClientMessage](msg)
         case BinaryMessage.Strict(msg) =>
           Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
       }
