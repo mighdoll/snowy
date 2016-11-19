@@ -10,7 +10,7 @@ import socketserve.ConnectionId
 import vector.Vec2d
 
 class RobotHost(gameControl: GameControl) {
-  private val robots = mutable.Map[ConnectionId,Robot]()
+  private val robots = mutable.Map[ConnectionId, Robot]()
 
   /** create a new robot */
   def createRobot(fn: RobotApi => Robot): Unit = {

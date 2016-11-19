@@ -217,11 +217,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reapSled(sledId: SledId): Unit = {
-    sledId.user.foreach {user =>
+    sledId.user.foreach { user =>
       sledId.connectionId match {
         case Some(connectionId) if !user.robot => sendMessage(Died, connectionId)
-        case Some(connectionId) if user.robot => robots.died(connectionId)
-        case None => logger.warn(s"reapSled connection not found for sled: $sledId")
+        case Some(connectionId) if user.robot  => robots.died(connectionId)
+        case None                              => logger.warn(s"reapSled connection not found for sled: $sledId")
       }
     }
     sledId.sled.foreach(_.remove())

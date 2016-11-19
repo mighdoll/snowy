@@ -3,7 +3,7 @@ package snowy.robot
 import java.util.concurrent.ThreadLocalRandom
 
 import snowy.GameServerProtocol._
-import snowy.playfield.{BasicSkis, BasicSled, Sled}
+import snowy.playfield._
 import vector.Vec2d
 
 object StationaryRobot {
@@ -16,7 +16,13 @@ object StationaryRobot {
 }
 
 class StationaryRobot(api: RobotApi, name: String) extends Robot {
-  var mySled = api.join(name, BasicSled, BasicSkis)
+  val allSkis = Seq(BasicSkis, GreenSkis, RedSkis, YellowSkis)
+  val mySkis  = allSkis(ThreadLocalRandom.current.nextInt(allSkis.length))
+
+  val allTypes = Seq(BasicSled, GunnerSled, TankSled, SpeedySled, SpikySled)
+  val myType   = allTypes(ThreadLocalRandom.current.nextInt(allTypes.length))
+
+  var mySled = api.join(name, myType, mySkis)
 
   def refresh(state: RobotState): Unit = {
     val gameTime = System.currentTimeMillis()
