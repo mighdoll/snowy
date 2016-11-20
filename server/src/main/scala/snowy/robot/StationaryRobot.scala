@@ -57,7 +57,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     }
     -(closest._position - mySled._position).angle(Vec2d.unitUp)*/
 
-    var closestBall = 10.0
+    var closestBall = mySled.radius + 10
     var ballAngle   = 0.0
     val closeSnowballs = snowballs
       .filterNot(ball => ball.ownerId == mySled.id)

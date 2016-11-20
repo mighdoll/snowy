@@ -72,13 +72,14 @@ sealed trait SledKind {
 }
 
 case object StationaryTestSled extends SledKind {
-  override val gravity: Double = 0
+  override val gravity = 0.0
 }
 
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity: Double = -100
+  override val gravity         = -100.0
+  override val maxHealth       = 2.0
   override val minRechargeTime = 1000
   override val bulletImpact    = 5.0
   override val bulletSpeed     = 200
@@ -101,9 +102,14 @@ case object GunnerSled extends SledKind {
 }
 
 case object SpeedySled extends SledKind {
-  override val gravity: Double = -500
+  override val gravity            = -500.0
+  override val healthRecoveryTime = 10.0
 }
 
 case object SpikySled extends SledKind {
-  override val maxImpactDamage = 1.0
+  override val gravity            = -100.0
+  override val maxHealth          = 2.0
+  override val maxImpactDamage    = 2.0
+  override val mass               = 2.0
+  override val healthRecoveryTime = 15.0
 }
