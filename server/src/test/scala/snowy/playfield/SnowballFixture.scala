@@ -13,6 +13,7 @@ object SnowballFixture {
     radius = 20,
     spawned = 0,
     impactDamage = 1,
+    lifetime = 1000,
     health =   .3
   )
 

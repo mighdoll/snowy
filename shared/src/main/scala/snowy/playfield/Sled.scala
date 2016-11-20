@@ -69,6 +69,8 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */
   def bulletHealth: Double = kind.bulletHealth
 
+  def bulletLifetime: Double = kind.bulletLifetime
+
   /** health of this sled. If it falls to zero, the sled dies. */
   def maxHealth: Double = kind.maxHealth
 

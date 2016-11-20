@@ -10,6 +10,7 @@ case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
                     radius: Double,
                     spawned: Long,
                     var health: Double,
+                    lifetime: Double,
                     override val impactDamage: Double)
     extends CircularObject {
   type MyType = Snowball

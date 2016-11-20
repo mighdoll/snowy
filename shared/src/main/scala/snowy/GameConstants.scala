@@ -25,10 +25,6 @@ object GameConstants {
   val treeSize = Vec2d(10, 40)
 
   object Bullet {
-
-    /** snowballs disappear after this many milliseconds */
-    val lifetime = 3500
-
     val averageRadius = 5
 
     val baseImpactFactor = 4

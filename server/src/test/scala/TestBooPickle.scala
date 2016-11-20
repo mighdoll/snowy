@@ -17,6 +17,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     speed = Vec2d.zero,
     spawned = 0,
     impactDamage = 0,
+    lifetime = 10,
     health = 1
   )
 

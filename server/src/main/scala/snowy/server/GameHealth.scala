@@ -28,7 +28,7 @@ class GameHealth(state: GameState) {
   def expireSnowballs(): Unit = {
     val now = System.currentTimeMillis()
     state.snowballs = state.snowballs.removeMatchingItems { snowball =>
-      now > snowball.spawned + Bullet.lifetime
+      now > snowball.spawned + snowball.lifetime * 1000
     }
   }
 

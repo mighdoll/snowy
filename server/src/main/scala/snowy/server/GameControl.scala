@@ -198,7 +198,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         radius = sled.bulletRadius,
         spawned = gameTime,
         impactDamage = sled.bulletImpactFactor,
-        health = sled.bulletHealth
+        health = sled.bulletHealth,
+        lifetime = sled.bulletLifetime
       )
       snowballs = snowballs.add(ball)
 

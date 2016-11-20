@@ -40,6 +40,9 @@ sealed trait SledKind {
   /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */
   def bulletHealth: Double = .3
 
+  /** Time before bullet expires in seconds */
+  def bulletLifetime: Double = 3.5
+
   /** health of this sled. If it falls to zero, the sled dies. */
   def maxHealth: Double = 1
 
@@ -71,23 +74,24 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity: Double    = -100
-  override val minRechargeTime    = 1000
-  override val bulletImpact       = 2.5
-  override val bulletSpeed        = 400
-  override val bulletRadius       = 10
-  override val bulletRecoil       = 120
-  override val mass               = 3.0
+  override val gravity: Double = -100
+  override val minRechargeTime = 1000
+  override val bulletImpact    = 5.0
+  override val bulletSpeed     = 200
+  override val bulletRadius    = 10
+  override val bulletRecoil    = 120
+  override val bulletLifetime  = 10.0
+  override val mass            = 3.0
 }
 
 case object GunnerSled extends SledKind {
-  override val maxSpeed           = 500
-  override val minRechargeTime    = 30
-  override val bulletSpeed        = 600
-  override val bulletRadius       = 5
-  override val bulletImpact       = .3
-  override val bulletRecoil       = 10
-  override val bulletHealth       = 1.0
+  override val maxSpeed        = 500
+  override val minRechargeTime = 100
+  override val bulletSpeed     = 300
+  override val bulletRadius    = 5
+  override val bulletImpact    = .9
+  override val bulletRecoil    = 10
+  override val bulletHealth    = 1.0
 }
 
 case object SpeedySled extends SledKind {
