@@ -16,11 +16,10 @@ object StationaryRobot {
 }
 
 class StationaryRobot(api: RobotApi, name: String) extends Robot {
-  val allSkis = Seq(BasicSkis, GreenSkis, RedSkis, YellowSkis)
-  val mySkis  = allSkis(ThreadLocalRandom.current.nextInt(allSkis.length))
-
-  val allTypes = Seq(BasicSled, GunnerSled, TankSled, SpeedySled, SpikySled)
-  val myType   = allTypes(ThreadLocalRandom.current.nextInt(allTypes.length))
+  val mySkis =
+    SkiColors.allSkis(ThreadLocalRandom.current.nextInt(SkiColors.allSkis.length))
+  val myType =
+    SledKinds.allSleds(ThreadLocalRandom.current.nextInt(SledKinds.allSleds.length))
 
   var mySled = api.join(name, myType, mySkis)
 

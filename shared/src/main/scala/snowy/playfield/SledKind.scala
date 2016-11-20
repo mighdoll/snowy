@@ -115,3 +115,7 @@ case object SpikySled extends SledKind {
   override val mass               = 2.0
   override val healthRecoveryTime = 15.0
 }
+
+object SledKinds {
+  val allSleds = Seq(BasicSled, TankSled, GunnerSled, SpeedySled, SpikySled)
+}

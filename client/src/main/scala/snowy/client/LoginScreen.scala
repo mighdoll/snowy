@@ -38,12 +38,7 @@ object LoginScreen {
   private var drawLoop: Option[Int]         = None
 
   private var skiColor: SkiColor = BasicSkis
-  private val skiColors: Seq[SkiColor] =
-    Seq(BasicSkis, GreenSkis, RedSkis, YellowSkis)
-
   private var sledKind: SledKind = BasicSled
-  private val sledKinds: Seq[SledKind] =
-    Seq(BasicSled, GunnerSled, TankSled, SpeedySled, SpikySled)
 
   def startPanel() {
     switch(false)
@@ -89,10 +84,11 @@ object LoginScreen {
     .querySelector("#class > .container > :first-child")
     .asInstanceOf[html.Span]
     .onclick = { event: Event =>
-    val currentIndex = sledKinds.indexOf(sledKind)
+    val currentIndex = SledKinds.allSleds.indexOf(sledKind)
     sledKind =
-      if (currentIndex < sledKinds.length - 1) sledKinds(currentIndex + 1)
-      else sledKinds.head
+      if (currentIndex < SledKinds.allSleds.length - 1)
+        SledKinds.allSleds(currentIndex + 1)
+      else SledKinds.allSleds.head
     classText.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
     clearConnection()
   }
@@ -100,8 +96,10 @@ object LoginScreen {
     .querySelector("#class > .container :last-child")
     .asInstanceOf[html.Span]
     .onclick = { event: Event =>
-    val currentIndex = sledKinds.indexOf(sledKind)
-    sledKind = if (currentIndex > 0) sledKinds(currentIndex - 1) else sledKinds.last
+    val currentIndex = SledKinds.allSleds.indexOf(sledKind)
+    sledKind =
+      if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
+      else SledKinds.allSleds.last
     classText.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
     clearConnection()
   }
@@ -111,10 +109,11 @@ object LoginScreen {
     .querySelector("#skis > .container > :first-child")
     .asInstanceOf[html.Span]
     .onclick = { event: Event =>
-    val currentIndex = skiColors.indexOf(skiColor)
+    val currentIndex = SkiColors.allSkis.indexOf(skiColor)
     skiColor =
-      if (currentIndex < skiColors.length - 1) skiColors(currentIndex + 1)
-      else skiColors.head
+      if (currentIndex < SkiColors.allSkis.length - 1)
+        SkiColors.allSkis(currentIndex + 1)
+      else SkiColors.allSkis.head
     colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
     clearConnection()
   }
@@ -122,8 +121,10 @@ object LoginScreen {
     .querySelector("#skis > .container :last-child")
     .asInstanceOf[html.Span]
     .onclick = { event: Event =>
-    val currentIndex = skiColors.indexOf(skiColor)
-    skiColor = if (currentIndex > 0) skiColors(currentIndex - 1) else skiColors.last
+    val currentIndex = SkiColors.allSkis.indexOf(skiColor)
+    skiColor =
+      if (currentIndex > 0) SkiColors.allSkis(currentIndex - 1)
+      else SkiColors.allSkis.last
     colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
     clearConnection()
   }
