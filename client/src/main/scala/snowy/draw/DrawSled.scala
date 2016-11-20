@@ -26,7 +26,6 @@ object DrawSled {
     ctx.strokeStyle = skiColor
     drawSkis(x, y, radius, rotation)
 
-
     //Global strokeStyle
     ctx.strokeStyle = lineColors.toString
 

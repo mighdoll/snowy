@@ -81,7 +81,7 @@ case object TankSled extends SledKind {
   override val gravity         = -100.0
   override val maxHealth       = 2.0
   override val minRechargeTime = 1000
-  override val bulletImpact    = 5.0
+  override val bulletImpact    = 1.25
   override val bulletSpeed     = 200
   override val bulletRadius    = 10
   override val bulletMass      = .5
@@ -92,13 +92,15 @@ case object TankSled extends SledKind {
 
 case object GunnerSled extends SledKind {
   override val maxSpeed        = 500
+  override val maxHealth       = .75
   override val minRechargeTime = 100
   override val bulletSpeed     = 300
   override val bulletRadius    = 5
-  override val bulletMass      = .05
-  override val bulletImpact    = .9
+  override val bulletMass      = .01
+  override val bulletImpact    = 4.5
   override val bulletRecoil    = 10
   override val bulletHealth    = 1.0
+  override val mass            = 2.0
 }
 
 case object SpeedySled extends SledKind {
