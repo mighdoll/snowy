@@ -80,6 +80,11 @@ object LoginScreen {
 
   val textInput = document.getElementById("username").asInstanceOf[html.Input]
   val classText = document.querySelector("#class > .caption").asInstanceOf[html.Div]
+
+  textInput.onkeydown = { _: Event =>
+    clearConnection()
+  }
+
   document
     .querySelector("#class > .container > :first-child")
     .asInstanceOf[html.Span]
@@ -89,6 +94,7 @@ object LoginScreen {
       if (currentIndex < sledKinds.length - 1) sledKinds(currentIndex + 1)
       else sledKinds.head
     classText.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
+    clearConnection()
   }
   document
     .querySelector("#class > .container :last-child")
@@ -97,6 +103,7 @@ object LoginScreen {
     val currentIndex = sledKinds.indexOf(sledKind)
     sledKind = if (currentIndex > 0) sledKinds(currentIndex - 1) else sledKinds.last
     classText.innerHTML = "Class: " + sledKind.toString.replace("Sled", "")
+    clearConnection()
   }
 
   val colorText = document.querySelector("#skis > .caption").asInstanceOf[html.Div]
@@ -109,6 +116,7 @@ object LoginScreen {
       if (currentIndex < skiColors.length - 1) skiColors(currentIndex + 1)
       else skiColors.head
     colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
+    clearConnection()
   }
   document
     .querySelector("#skis > .container :last-child")
@@ -117,8 +125,11 @@ object LoginScreen {
     val currentIndex = skiColors.indexOf(skiColor)
     skiColor = if (currentIndex > 0) skiColors(currentIndex - 1) else skiColors.last
     colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
+    clearConnection()
   }
-
+  def clearConnection(): Unit = {
+    connected = None
+  }
   //When the users sends the login form, send it as a username to the server
   document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
     event: Event =>
