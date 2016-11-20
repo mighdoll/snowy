@@ -108,7 +108,7 @@ object LoginScreen {
     skiColor =
       if (currentIndex < skiColors.length - 1) skiColors(currentIndex + 1)
       else skiColors.head
-    colorText.innerHTML = "Color: " + sledKind.toString.replace("Sled", "")
+    colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
   }
   document
     .querySelector("#skis > .container :last-child")
