@@ -27,8 +27,8 @@ object ClientDraw {
 
     val portal = new Portal(
       Rect(
-        mySled.pos - Vec2d(1000, 500),
-        Vec2d(2000, 1000)
+        mySled.pos - Vec2d(750, 375),
+        Vec2d(1500, 750)
       ),
       size,
       border

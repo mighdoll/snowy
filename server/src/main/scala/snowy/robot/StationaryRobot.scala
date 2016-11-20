@@ -73,7 +73,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
       }
       -ballAngle
     } else {
-      var closest = 1000.0
+      var closest = 1500.0
       var angle   = 0.0
       sleds.filterNot(sled => sled == mySled).foreach { sled =>
         val distance = sled._position - mySled._position
