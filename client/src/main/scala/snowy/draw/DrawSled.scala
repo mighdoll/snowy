@@ -19,9 +19,13 @@ object DrawSled {
     val y = pos.y
 
     ctx.lineCap = "round"
+    ctx.lineWidth = radius * 22 / 55
+    ctx.strokeStyle = lineColors.toString
+    drawSkis(x, y, radius, rotation)
     ctx.lineWidth = radius * 18 / 55
     ctx.strokeStyle = skiColor
     drawSkis(x, y, radius, rotation)
+
 
     //Global strokeStyle
     ctx.strokeStyle = lineColors.toString
