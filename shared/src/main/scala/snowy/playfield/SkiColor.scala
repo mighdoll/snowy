@@ -20,7 +20,7 @@ case object YellowSkis extends SkiColor {
   override val color = Color(237, 228, 52)
 }
 case object OrangeSkis extends SkiColor {
-  override val color = Color(232, 159, 33)
+  override val color = Color(237, 168, 57)
 }
 object SkiColors {
   val allSkis = Seq(BasicSkis, GreenSkis, RedSkis, YellowSkis, OrangeSkis)
