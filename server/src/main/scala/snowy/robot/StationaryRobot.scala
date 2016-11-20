@@ -27,7 +27,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
   def refresh(state: RobotState): Unit = {
     val gameTime = System.currentTimeMillis()
     val random   = ThreadLocalRandom.current.nextDouble()
-    val commands = Seq(TurretAngle(aimAtNearest(state.sleds))) ++ (random match {
+    val commands = random match {
       case _ if random < .005 => Seq(Start(Left, gameTime))
       case _ if random < .010 => Seq(Start(Right, gameTime))
       case _ if random < .030 => Seq(Stop(Right, gameTime), Stop(Left, gameTime))
@@ -35,24 +35,56 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
       case _ if random < .060 => Seq(Stop(Pushing, gameTime))
       case _ if random < .070 => Seq(Start(Shooting, gameTime))
       case _ if random < .090 => Seq(Stop(Shooting, gameTime))
-      case _                  => Seq()
-    })
+      case _ if random < .190 =>
+        Seq(TurretAngle(aimAtNearest(state.sleds, state.snowballs)))
+      case _ => Seq()
+    }
     commands.foreach { command =>
       api.sendToServer(command)
     }
   }
 
-  def aimAtNearest(sleds: Traversable[Sled]): Double = {
-    var closest = 1000.0
-    var angle   = 0.0
-    sleds.filterNot(elm => elm == mySled).foreach { sled =>
-      val distance = sled._position - mySled._position
-      if (distance.length <= closest) {
-        closest = distance.length
-        angle = distance.angle(Vec2d.unitUp)
-      }
+  def aimAtNearest(sleds: Traversable[Sled], snowballs: Traversable[Snowball]): Double = {
+    /*val failedDistance = Sled.dummy.copy(_position = mySled._position - Vec2d(0, 1000))
+    val closest: Sled = sleds.filterNot(sled => sled == mySled).fold(failedDistance) {
+      case (closest: Sled, next: Sled) =>
+        val distance        = next._position - mySled._position
+        val closestDistance = closest._position - mySled._position
+        if (distance.length <= closestDistance.length) {
+          next
+        } else closest
+      case _ => failedDistance
     }
-    -angle
+    -(closest._position - mySled._position).angle(Vec2d.unitUp)*/
+
+    var closestBall = 10.0
+    var ballAngle   = 0.0
+    val closeSnowballs = snowballs
+      .filterNot(ball => ball.ownerId == mySled.id)
+      .filter(
+        ball => (mySled._position - ball._position).length < closestBall
+      )
+    if (closeSnowballs.nonEmpty) {
+      snowballs.foreach { ball =>
+        val distance = ball._position - mySled._position
+        if (distance.length <= closestBall) {
+          closestBall = distance.length
+          ballAngle = distance.angle(Vec2d.unitUp)
+        }
+      }
+      -ballAngle
+    } else {
+      var closest = 1000.0
+      var angle   = 0.0
+      sleds.filterNot(sled => sled == mySled).foreach { sled =>
+        val distance = sled._position - mySled._position
+        if (distance.length <= closest) {
+          closest = distance.length
+          angle = distance.angle(Vec2d.unitUp)
+        }
+      }
+      -angle
+    }
   }
 
   //TODO: Call this
