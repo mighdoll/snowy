@@ -56,6 +56,9 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** radius in pixels */
   def bulletRadius: Int = kind.bulletRadius
 
+  /** */
+  def bulletMass: Double = kind.bulletMass
+
   /** acceleration due to recoil in pixels/sec/sec */
   def bulletRecoil: Int = kind.bulletRecoil
 
@@ -69,6 +72,7 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */
   def bulletHealth: Double = kind.bulletHealth
 
+  /** Time before a bullet expires in seconds */
   def bulletLifetime: Double = kind.bulletLifetime
 
   /** health of this sled. If it falls to zero, the sled dies. */

@@ -15,7 +15,7 @@ class TestGrid extends PropSpec with PropertyChecks {
     val ownerId = PlayfieldObject.nextId[Sled]()
     forAll(playfieldX, playfieldY, minSuccessful(200)) { (x, y) =>
       val ball =
-        Snowball(PlayfieldObject.nextId(), Vec2d(x, y), ownerId, Vec2d.zero, 10, 0, 1, 10, 1)
+        Snowball(PlayfieldObject.nextId(), Vec2d(x, y), ownerId, Vec2d.zero, 10, .1, 0, 1, 10, 1)
       grid.add(ball)
       grid.remove(ball)
       assert(grid.itemCount === 0)

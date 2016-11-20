@@ -196,6 +196,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         _position = wrapInPlayfield(sled.pos + launchPos), // TODO don't use _position
         speed = sled.speed + (direction * sled.bulletSpeed),
         radius = sled.bulletRadius,
+        mass = sled.bulletMass,
         spawned = gameTime,
         impactDamage = sled.bulletImpactFactor,
         health = sled.bulletHealth,

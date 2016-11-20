@@ -27,7 +27,11 @@ sealed trait SledKind {
   /** radius in pixels */
   def bulletRadius = GameConstants.Bullet.averageRadius
 
+  /** Bullet mass on collision */
+  def bulletMass = .1
+
   /** acceleration due to recoil in pixels/sec/sec */
+  // TODO: Bullet recoil should be a product of bulletMass
   def bulletRecoil = 30
 
   /** bullet begins its flight this pixel offset from the sled center
@@ -79,6 +83,7 @@ case object TankSled extends SledKind {
   override val bulletImpact    = 5.0
   override val bulletSpeed     = 200
   override val bulletRadius    = 10
+  override val bulletMass      = .5
   override val bulletRecoil    = 120
   override val bulletLifetime  = 10.0
   override val mass            = 3.0
@@ -89,6 +94,7 @@ case object GunnerSled extends SledKind {
   override val minRechargeTime = 100
   override val bulletSpeed     = 300
   override val bulletRadius    = 5
+  override val bulletMass      = .05
   override val bulletImpact    = .9
   override val bulletRecoil    = 10
   override val bulletHealth    = 1.0

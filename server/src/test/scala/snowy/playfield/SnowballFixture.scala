@@ -11,10 +11,11 @@ object SnowballFixture {
     ownerId = new SledId(-2),
     speed = Vec2d.zero,
     radius = 20,
+    mass = .1,
     spawned = 0,
     impactDamage = 1,
     lifetime = 1000,
-    health =   .3
+    health = .3
   )
 
 }
