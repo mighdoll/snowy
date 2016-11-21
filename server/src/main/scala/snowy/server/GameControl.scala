@@ -79,16 +79,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
-      case Join(name, sledKind, skiColor) => userJoin(id, name, sledKind, skiColor)
-      case TurretAngle(angle)             => rotateTurret(id, angle)
-      case Shoot(time)                    => id.sled.foreach(sled => shootSnowball(sled))
-      case Push(time)                     => id.sled.foreach(sled => pushSled(sled))
-      case Start(cmd, time)               => commands.startCommand(id, cmd, time)
-      case Stop(cmd, time)                => commands.stopCommand(id, cmd, time)
-      case Pong                           => connections(id).pongReceived()
-      case ReJoin                         => rejoin(id)
-      case TestDie                        => reapSled(sledMap(id))
-      case RequestGameTime(clientTime)    => reportGameTime(id, clientTime)
+      case Join(name, sledKind, skiColor) =>
+        userJoin(id, name.slice(0, 15), sledKind, skiColor)
+      case TurretAngle(angle)          => rotateTurret(id, angle)
+      case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
+      case Push(time)                  => id.sled.foreach(sled => pushSled(sled))
+      case Start(cmd, time)            => commands.startCommand(id, cmd, time)
+      case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
+      case Pong                        => connections(id).pongReceived()
+      case ReJoin                      => rejoin(id)
+      case TestDie                     => reapSled(sledMap(id))
+      case RequestGameTime(clientTime) => reportGameTime(id, clientTime)
     }
   }
 
