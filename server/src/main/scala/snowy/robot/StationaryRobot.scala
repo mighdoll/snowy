@@ -86,7 +86,6 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     }
   }
 
-  //TODO: Call this
   def killed(): Unit = {
     mySled = api.rejoin()
   }
