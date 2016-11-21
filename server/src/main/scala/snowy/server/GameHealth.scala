@@ -17,7 +17,7 @@ class GameHealth(state: GameState) {
 
   /** slowly recover some push energy */
   def recoverPushEnergy(deltaSeconds: Double): Unit = {
-    val deltaEnergy = deltaSeconds / PushEnergy.recoveryTime
+    val deltaEnergy = deltaSeconds * PushEnergy.maxAmount / (PushEnergy.recoveryTime * 10)
     state.sleds.items.foreach { sled =>
       val energy = min(1.0, sled.pushEnergy + deltaEnergy)
       sled.pushEnergy = energy

@@ -3,6 +3,7 @@ package snowy.client
 import org.scalajs.dom
 import org.scalajs.dom._
 import snowy.GameClientProtocol.Scoreboard
+import snowy.GameConstants.PushEnergy.maxAmount
 import snowy.draw.GameColors.Sled._
 import snowy.draw.GameColors.clearColor
 import snowy.draw._
@@ -89,7 +90,7 @@ object ClientDraw {
     new DrawMiniMap(border).draw(mySled, trees)
 
     val stats = Seq(
-      s"Push: ${math.floor(mySled.pushEnergy * 100) / 10.0}",
+      s"Pushes: ${math.floor(mySled.pushEnergy * maxAmount)}",
       s"Health: ${math.floor(mySled.health * 100) / 10.0}",
       s"Pos: (${mySled._position.x.toInt}, ${mySled._position.y.toInt})"
     )

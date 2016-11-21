@@ -82,6 +82,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       case Join(name, sledKind, skiColor) => userJoin(id, name, sledKind, skiColor)
       case TurretAngle(angle)             => rotateTurret(id, angle)
       case Shoot(time)                    => id.sled.foreach(sled => shootSnowball(sled))
+      case Push(time)                     => id.sled.foreach(sled => pushSled(sled))
       case Start(cmd, time)               => commands.startCommand(id, cmd, time)
       case Stop(cmd, time)                => commands.stopCommand(id, cmd, time)
       case Pong                           => connections(id).pongReceived()
@@ -157,11 +158,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
               -slowButtonFriction * deltaSeconds / sled.mass,
               sled.maxSpeed)
             sled.speed = slow(sled.speed)
-          case Pushing =>
-            val pushForceNow = PushEnergy.force * deltaSeconds / sled.mass
-            val pushEffort   = deltaSeconds / PushEnergy.maxTime
-            val push         = new InlineForce(pushForceNow, sled.maxSpeed)
-            pushSled(sled, pushForceNow, push, pushEffort)
           case TurretLeft =>
             id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
           case TurretRight =>
@@ -173,16 +169,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** apply a push to a sled */
-  private def pushSled(sled: Sled,
-                       pushForceNow: Double,
-                       push: InlineForce,
-                       effort: Double): Unit = {
-    if (effort < sled.pushEnergy) {
+  private def pushSled(sled: Sled): Unit = {
+
+    val pushForceNow = PushEnergy.force / sled.mass
+    val push         = new InlineForce(pushForceNow, sled.maxSpeed)
+
+    if (sled.pushEnergy >= (1.0 / PushEnergy.maxAmount)) {
       val speed =
         if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
         else push(sled.speed)
       sled.speed = speed
-      sled.pushEnergy = sled.pushEnergy - effort
+      sled.pushEnergy = sled.pushEnergy - (1.0 / PushEnergy.maxAmount)
     }
   }
 

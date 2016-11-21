@@ -11,18 +11,15 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   var shooting: Boolean          = false
   var turning: Option[Direction] = None
-  var speeding: Option[Speed]    = None
+  var slowing: Boolean           = false
+  var pushing: Boolean           = false
   var turret: Option[Direction]  = None
   var mouseDir: Double           = 0
 
   sealed trait Direction
-  sealed trait Speed
 
   object GoLeft  extends Direction
   object GoRight extends Direction
-
-  object SpeedUp  extends Speed
-  object SlowDown extends Speed
 
   window.onkeydown = { event: KeyboardEvent =>
     event.keyCode match {
@@ -36,14 +33,12 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Stop(Right, gameTime))
         sendMessage(Start(Left, gameTime))
         turning = Some(GoLeft)
-      case Keys.Down() if !speeding.contains(SlowDown) =>
-        sendMessage(Stop(Pushing, gameTime))
+      case Keys.Down() if !slowing =>
         sendMessage(Start(Slowing, gameTime))
-        speeding = Some(SlowDown)
-      case Keys.Up() if !speeding.contains(SpeedUp) =>
-        sendMessage(Stop(Slowing, gameTime))
-        sendMessage(Start(Pushing, gameTime))
-        speeding = Some(SpeedUp)
+        slowing = true
+      case Keys.Up() if !pushing =>
+        sendMessage(Push(gameTime))
+        pushing = true
       case Keys.TurretLeft() if !turret.contains(GoLeft) =>
         sendMessage(Stop(TurretRight, gameTime))
         sendMessage(Start(TurretLeft, gameTime))
@@ -71,13 +66,15 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         turning = None
       case _ =>
     }
-    (event.keyCode, speeding) match {
-      case (Keys.Up(), Some(SpeedUp)) =>
-        sendMessage(Stop(Pushing, gameTime))
-        speeding = None
-      case (Keys.Down(), Some(SlowDown)) =>
+    (event.keyCode, slowing) match {
+      case (Keys.Down(), true) =>
         sendMessage(Stop(Slowing, gameTime))
-        speeding = None
+        slowing = false
+      case _ =>
+    }
+    (event.keyCode, pushing) match {
+      case (Keys.Up(), true) =>
+        pushing = false
       case _ =>
     }
     (event.keyCode, turret) match {
@@ -107,6 +104,9 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   }
 
   window.onmousedown = { _: Event =>
-    sendMessage(Shoot(gameTime))
+    sendMessage(Start(Shooting, gameTime))
+  }
+  window.onmouseup = { _: Event =>
+    sendMessage(Stop(Shooting, gameTime))
   }
 }

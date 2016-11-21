@@ -45,13 +45,13 @@ object GameConstants {
   object PushEnergy {
 
     /** speedup from the push button. in pixels / second / second */
-    val force = 200.0
+    val force = 300.0
 
-    /** time in seconds to recover from using up all push energy */
-    val recoveryTime = 30.0
+    /** time in seconds to recover one push */
+    val recoveryTime = 3.0
 
-    /** max seconds of push energy available */
-    val maxTime = 5
+    /** max amount of pushes */
+    val maxAmount = 3
   }
 
   object Friction {
