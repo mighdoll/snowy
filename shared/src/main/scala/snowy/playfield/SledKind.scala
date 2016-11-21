@@ -107,6 +107,7 @@ case object SpeedySled extends SledKind {
   override val gravity            = -500.0
   override val healthRecoveryTime = 10.0
   override val mass               = .1
+  override val minRechargeTime    = 200
 }
 
 case object SpikySled extends SledKind {
