@@ -1,6 +1,7 @@
 package snowy.playfield
 
 import snowy.GameConstants
+import snowy.GameConstants.gameSpeed
 import vector.Vec2d
 
 sealed trait SledKind {
@@ -12,7 +13,7 @@ sealed trait SledKind {
   def maxSpeed: Int = 400
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime: Int = 300
+  def minRechargeTime: Int = (300 / gameSpeed).toInt
 
   /** factor increasing or decreasing damage from being hit with a snowball
     * beyond the mass and speed of the ball */
@@ -46,13 +47,13 @@ sealed trait SledKind {
   def bulletHealth: Double = .3
 
   /** Time before bullet expires in seconds */
-  def bulletLifetime: Double = 3.5
+  def bulletLifetime: Double = 3.5 / gameSpeed
 
   /** health of this sled. If it falls to zero, the sled dies. */
   def maxHealth: Double = 1
 
   /** time in seconds to recover 1 full point of health */
-  def healthRecoveryTime: Double = 25.0
+  def healthRecoveryTime: Double = 25.0 / gameSpeed
 
   /** deliver this amount of damage on collision with another sled at full speed */
   def maxImpactDamage: Double = .5
@@ -137,7 +138,7 @@ case object SpikySled extends SledKind {
   override val maxHealth          = 2.0
   override val maxImpactDamage    = 2.0
   override val mass               = 2.0
-  override val healthRecoveryTime = 15.0
+  override val healthRecoveryTime = 15.0 / gameSpeed
 }
 
 object SledKinds {

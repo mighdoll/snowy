@@ -3,14 +3,15 @@ package snowy
 import vector.Vec2d
 
 object GameConstants {
+  val gameSpeed = .5
 
   /** max speed of any sled in pixels per second */
-  val absoluteMaxSpeed = 1000
+  val absoluteMaxSpeed = 1000 * gameSpeed
 
   val playfield = Vec2d(2800, 4800)
 
   /** max seconds for a normal weight sled to complete a skid at full speed */
-  val maxSkidTime = .8
+  val maxSkidTime = .8 / gameSpeed
 
   /** stop pending commands after this many milliseconds */
   val maxCommandDuration = 2000
@@ -45,10 +46,10 @@ object GameConstants {
   object Friction {
 
     /** friction from ski angled away from direction of travel in pixels / second / second */
-    val maxFriction = 500.0
+    val maxFriction = 500.0 * gameSpeed
 
     /** friction from ski angled along direction of travel in pixels / second / second */
-    val minFriction = 50.0
+    val minFriction = 50.0 * gameSpeed
 
     /** higher means ski friction is mostly when skis are perpendicular to current direction */
     val brakeSteepness = .8

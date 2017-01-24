@@ -26,7 +26,11 @@ class Portal(portalRect: Rect, screenSize: Vec2d, border: Vec2d) {
       portalPosition * scale + portalToScreenOffset
     }
   }
-
+  def tryWrap(value: Double, max: Double, pad: Double, wrapSize: Double): Double = {
+      if (value > pad + max) value - wrapSize
+      else if (value < -pad) value + wrapSize
+      else value
+  }
   /** @return a position mapped to portalrect coordinates */
   private def wrapInPlayfield(pos: Vec2d,
                               padding: Vec2d,
@@ -34,10 +38,7 @@ class Portal(portalRect: Rect, screenSize: Vec2d, border: Vec2d) {
 
     /** TODO take min, max, wrapSize instead of pad? */
     def wrap(value: Double, max: Double, pad: Double, wrapSize: Double): Option[Double] = {
-      val wrapped =
-        if (value > pad + max) value - wrapSize
-        else if (value < -pad) value + wrapSize
-        else value
+      val wrapped = tryWrap(value, max, pad, wrapSize)
 
       if (wrapped > -pad && wrapped < pad + max)
         Some(wrapped)
