@@ -1,11 +1,11 @@
 package snowy.server
 
-import java.io.File
-import kamon.Kamon
+import com.typesafe.scalalogging.LazyLogging
 import snowy.server.CommandLine.BasicArgs
+import snowy.util.Perf
 import socketserve.WebServer.socketApplication
 
-object ServerMain {
+object ServerMain extends LazyLogging {
 
   val cmdLineParser = CommandLine.parser("snowy")
 
@@ -20,8 +20,10 @@ object ServerMain {
 
   def run(cmdLine: BasicArgs): Unit = {
     cmdLine.conf.foreach(GlobalConfig.addConfigFiles(_))
+    logger.info("starting server")
 
-    Kamon.start()
+    Perf.start()
+
     socketApplication { (api, system) =>
       new GameControl(api)(system)
     }
