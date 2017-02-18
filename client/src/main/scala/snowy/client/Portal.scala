@@ -27,10 +27,11 @@ class Portal(portalRect: Rect, screenSize: Vec2d, border: Vec2d) {
     }
   }
   def tryWrap(value: Double, max: Double, pad: Double, wrapSize: Double): Double = {
-      if (value > pad + max) value - wrapSize
-      else if (value < -pad) value + wrapSize
-      else value
+    if (value > pad + max) value - wrapSize
+    else if (value < -pad) value + wrapSize
+    else value
   }
+
   /** @return a position mapped to portalrect coordinates */
   private def wrapInPlayfield(pos: Vec2d,
                               padding: Vec2d,

@@ -47,7 +47,7 @@ sealed trait SledKind {
   def bulletHealth: Double = .3
 
   /** Time before bullet expires in seconds */
-  def bulletLifetime: Double = 3.5 / gameSpeed
+  def bulletLifetime: Double = 2 / gameSpeed
 
   /** health of this sled. If it falls to zero, the sled dies. */
   def maxHealth: Double = 1

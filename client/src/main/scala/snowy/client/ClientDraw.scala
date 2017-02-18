@@ -80,22 +80,20 @@ object ClientDraw {
       mySled.skiColor.color.toString,
       bodyGreen
     )
-    println("newtick")
-    trees.items.toSeq
-      .sortWith {
-        case (tree1: Tree, tree2: Tree) =>
-          val tree1p =
-            portal.tryWrap(tree1.pos.y - (mySled.pos.y - 375), 750, 200, border.y)
-          val tree2p =
-            portal.tryWrap(tree2.pos.y - (mySled.pos.y - 375), 750, 200, border.y)
-          tree1p < tree2p
+
+    trees.items.toSeq.sortWith {
+      case (tree1: Tree, tree2: Tree) =>
+        val tree1p =
+          portal.tryWrap(tree1.pos.y - (mySled.pos.y - 375), 750, 200, border.y)
+        val tree2p =
+          portal.tryWrap(tree2.pos.y - (mySled.pos.y - 375), 750, 200, border.y)
+        tree1p < tree2p
+    }.foreach { tree =>
+      val treePosition = portal.transformToScreen(tree.pos)
+      treePosition.foreach { pos =>
+        DrawTree.draw(pos, tree.size * 4 * portal.scale)
       }
-      .foreach { tree =>
-        val treePosition = portal.transformToScreen(tree.pos)
-        treePosition.foreach { pos =>
-          DrawTree.draw(pos, tree.size * 4 * portal.scale)
-        }
-      }
+    }
 
     new DrawMiniMap(border).draw(mySled, trees)
 
