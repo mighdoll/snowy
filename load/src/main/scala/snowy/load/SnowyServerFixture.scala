@@ -82,6 +82,10 @@ object SnowyServerFixture {
     }
   }
 
+  /** Connect to a Game server websocket.
+    * @param sink Sink to be materialized to accept messages from the server
+    * @return a Future containing a SourceQueue for sending messages to the server
+    */
   def connectSinkToServer[M](wsUrl: String, sink: Sink[GameClientMessage, M])
     : Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
     implicit val _       = ActorMaterializer()

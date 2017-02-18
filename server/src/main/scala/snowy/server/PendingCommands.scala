@@ -3,7 +3,7 @@ package snowy.server
 import scala.collection.mutable
 import snowy.GameConstants.maxCommandDuration
 import snowy.GameServerProtocol.StartStopCommand
-import socketserve.ConnectionId
+import socketserve.ClientId
 
 case class PendingCommand(start: Millis, command: StartStopCommand)
 
@@ -19,20 +19,20 @@ class PendingCommands {
 
   import scala.collection.mutable.{HashMap, MultiMap}
 
-  val commands = new HashMap[ConnectionId, mutable.Set[PendingCommand]]
-  with MultiMap[ConnectionId, PendingCommand]
+  val commands = new HashMap[ClientId, mutable.Set[PendingCommand]]
+  with MultiMap[ClientId, PendingCommand]
 
   /** record a pending command, replacing any previous matching command for this id.  */
-  def startCommand(id: ConnectionId, command: StartStopCommand, time: Long): Unit = {
+  def startCommand(id: ClientId, command: StartStopCommand, time: Long): Unit = {
     removeCommand(id, command)
     commands.addBinding(id, PendingCommand(command))
   }
 
   /** remove a pending command */
-  def stopCommand(id: ConnectionId, command: StartStopCommand, time: Long): Unit =
+  def stopCommand(id: ClientId, command: StartStopCommand, time: Long): Unit =
     removeCommand(id, command)
 
-  private def removeCommand(id: ConnectionId, command: StartStopCommand): Unit = {
+  private def removeCommand(id: ClientId, command: StartStopCommand): Unit = {
     commands.get(id).map { cmds =>
       cmds.filter(_.command == command).map(cmds.remove)
     }
@@ -58,7 +58,7 @@ class PendingCommands {
 //  }
 
   /** run a side effecting function on each pair */
-  def foreachCommand(fn: (ConnectionId, StartStopCommand, Millis) => Unit): Unit = {
+  def foreachCommand(fn: (ClientId, StartStopCommand, Millis) => Unit): Unit = {
     for {
       (id, set) <- commands
       value     <- set

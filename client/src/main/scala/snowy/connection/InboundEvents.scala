@@ -53,6 +53,7 @@ class InboundEvents(socket: NetworkSocket,
       case Died                        => LoginScreen.rejoinPanel()
       case Ping                        => sendMessage(Pong)
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
+      case MySled(sledId)              => mySledId = Some(sledId)
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
       case _                           => println(s"unexpected message: $message")
     }

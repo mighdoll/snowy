@@ -45,7 +45,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
   property("pickle state") {
     pickleUnpickle(
-      State(1L, sled, sleds = Seq(sled), snowballs = Seq(ball))
+      State(1L, sleds = Seq(sled), snowballs = Seq(ball))
     )
   }
   property("pickle scoreboard") {
@@ -61,7 +61,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
 
   property("pickle game client message State and Ping") {
-    val state      = State(1L, sled, sleds = Seq(sled), snowballs = Seq(ball))
+    val state      = State(1L, sleds = Seq(sled), snowballs = Seq(ball))
     val stateBytes = Pickle.intoBytes[GameClientMessage](state)
     val unpickledState: GameClientMessage =
       Unpickle[GameClientMessage].fromBytes(stateBytes)

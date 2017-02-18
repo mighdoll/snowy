@@ -6,17 +6,26 @@ import snowy.client.ClientDraw._
 import snowy.playfield._
 import vector.Vec2d
 import snowy.playfield.GameMotion._
+import snowy.playfield.PlayId.SledId
 
 object GameState {
   var gPlayField = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard = Scoreboard(0, Seq())
+  var mySledId: Option[SledId] = None
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees             = Store[Tree]()
   private var serverSnowballs = Store[Snowball]()
   private var serverSleds     = Store[Sled]()
-  private var serverMySled    = Sled.dummy
   var gameTime                = 0L
+
+  // TODO: return Option[Sled]. The server might send state before we join and have a sled
+  private def serverMySled: Option[Sled] = {
+    for {
+      id <- mySledId
+      sled <- serverSleds.items.find(_.id == id)
+    } yield sled
+  }
 
   private var gameLoop: Option[Int]            = None
   private var turning: Turning                 = NoTurn
@@ -27,7 +36,6 @@ object GameState {
   def receivedState(state: State): Unit = {
     serverSnowballs = Store(state.snowballs)
     serverSleds = Store(state.sleds)
-    serverMySled = state.mySled
     gameTime = state.gameTime
   }
 
@@ -58,8 +66,10 @@ object GameState {
 
   private def nextState(deltaSeconds: Double): Unit = {
     moveSnowballs(serverSnowballs.items, deltaSeconds)
-    applyTurn(serverMySled, deltaSeconds)
-    moveOneSled(serverMySled, deltaSeconds)
+    serverMySled.foreach{ mySled =>
+      applyTurn(mySled, deltaSeconds)
+      moveOneSled(mySled, deltaSeconds)
+    }
     moveSleds(serverSleds.items, deltaSeconds)
   }
 
@@ -78,13 +88,15 @@ object GameState {
     nextState(deltaSeconds)
 
     clearScreen()
-    drawState(
-      serverSnowballs,
-      serverSleds,
-      serverMySled,
-      serverTrees,
-      gPlayField,
-      scoreboard)
+    serverMySled.foreach { mySled =>
+      drawState(
+        serverSnowballs,
+        serverSleds,
+        mySled,
+        serverTrees,
+        gPlayField,
+        scoreboard
+      )
+    }
   }
-
 }

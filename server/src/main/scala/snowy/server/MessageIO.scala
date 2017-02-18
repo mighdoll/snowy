@@ -6,7 +6,7 @@ import boopickle.{BufferPool, EncoderSize}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.util.Perf.time
-import socketserve.{AppHostApi, ConnectionId}
+import socketserve.{AppHostApi, ClientId, ConnectionId}
 import snowy.playfield.Picklers._
 
 /** A GameClientMessage wrapper over the send/receive api */

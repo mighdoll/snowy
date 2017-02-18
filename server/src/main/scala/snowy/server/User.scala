@@ -16,7 +16,6 @@ import snowy.server.User._
   * Note that the user might not currently have a sled in the game
   * if they have been killed and not yet rejoined.  */
 class User(val name: String,
-           val robot: Boolean = false,
            val sledKind: SledKind,
            val skiColor: SkiColor,
            val createTime: Long) {

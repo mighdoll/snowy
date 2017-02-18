@@ -9,7 +9,7 @@ import boopickle.Default._
 import snowy.playfield.Picklers._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{GameClientMessage, GameTime, Ping}
-import socketserve.ConnectionId
+import socketserve.{ClientId, ConnectionId}
 
 object ClientConnection {
   val pingMessage = {

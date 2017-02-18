@@ -17,7 +17,7 @@ import snowy.playfield.{Sled, _}
 import snowy.robot.StationaryRobot
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.Perf.time
-import socketserve.{AppController, AppHostApi, ConnectionId}
+import socketserve._
 import vector.Vec2d
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem)
@@ -65,7 +65,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   /** Run the next game turn. (called on a periodic timer) */
   override def turn(): Unit = {
     val deltaSeconds = gameTurns.nextTurn()
-    logger.trace(s"tick $deltaSeconds")
     robots.robotsTurn()
     applyCommands(deltaSeconds)
     val died = gameTurns.turn(deltaSeconds)
@@ -75,38 +74,45 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  /** Process a GameServerMessage from the client */
-  def handleMessage(id: ConnectionId, msg: GameServerMessage): Unit = {
+  /** Process a GameServerMessage from a game client browser or robot */
+  def handleMessage(id: ClientId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind, skiColor) =>
-        userJoin(id, name.slice(0, 15), sledKind, skiColor)
+        val sled = userJoin(id, name.slice(0, 15), sledKind, skiColor)
+        reportJoinedSled(id, sled.id)
       case TurretAngle(angle)          => rotateTurret(id, angle)
       case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
       case Push(time)                  => id.sled.foreach(sled => pushSled(sled))
       case Start(cmd, time)            => commands.startCommand(id, cmd, time)
       case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
-      case Pong                        => connections(id).pongReceived()
+      case Pong                        => netIdForeach(id) (connections(_).pongReceived() )
       case ReJoin                      => rejoin(id)
       case TestDie                     => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) => reportGameTime(id, clientTime)
+      case RequestGameTime(clientTime) => netIdForeach(id) (reportGameTime(_, clientTime))
+    }
+  }
+
+  private def netIdForeach(id: ClientId)(fn: ConnectionId => Unit):Unit = {
+    id match {
+      case netId: ConnectionId     => fn(netId)
+      case i: RobotId =>
     }
   }
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 20).foreach { _ =>
+    (1 to 10).foreach { _ =>
       robots.createRobot(StationaryRobot.apply)
     }
   }
 
   private def sendUpdates(): Unit = {
-    currentState().collect {
-      // TODO pickle sleds and snowall once, not once per connection
-      case (id, state) if state.mySled.id.user.exists(!_.robot) =>
-        sendMessage(state, id)
+    val state = currentState()
+    connections.keys.foreach { connectionId =>
+      sendMessage(state, connectionId)
     }
-    sendScores() // TODO send less often
+    sendScores()
   }
 
   /** Send the current score to the clients */
@@ -121,27 +127,27 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       sorted.take(10)
     }
     users.collect {
-      case (id, user) if !user.robot && user.timeToSendScore(gameTime) =>
+      case (id: ConnectionId, user) if user.timeToSendScore(gameTime) =>
         user.scoreSent(gameTime)
         val scoreboard = Scoreboard(user.score, scores)
         sendMessage(scoreboard, id)
     }
   }
 
-  private def reportGameTime(id: ConnectionId, clientTime: Long): Unit = {
+  private def reportGameTime(netId: ConnectionId, clientTime: Long): Unit = {
     logger.trace {
       val clientTimeDelta = clientTime - System.currentTimeMillis()
-      s"client $id time vs server time: $clientTimeDelta"
+      s"client $netId time vs server time: $clientTimeDelta"
     }
 
-    connections.get(id) match {
+    connections.get(netId) match {
       case Some(connection) => reportGameTime(connection.roundTripTime)
-      case None             => logger.warn(s"reportGameTime: connection $id not fouud")
+      case None             => logger.warn(s"reportGameTime: connection $netId not fouud")
     }
 
     def reportGameTime(rtt: Long): Unit = {
       val msg = GameTime(System.currentTimeMillis(), (rtt / 2).toInt)
-      messageIO.sendMessage(msg, id)
+      messageIO.sendMessage(msg, netId)
     }
   }
 
@@ -217,15 +223,20 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   private def reapSled(sledId: SledId): Unit = {
-    sledId.user.foreach { user =>
-      sledId.connectionId match {
-        case Some(connectionId) if !user.robot => sendMessage(Died, connectionId)
-        case Some(connectionId) if user.robot  => robots.died(connectionId)
-        case None                              => logger.warn(s"reapSled connection not found for sled: $sledId")
-      }
+    sledId.connectionId match {
+      case Some(netId: ConnectionId)           => sendMessage(Died, netId)
+      case Some(robotId: RobotId) => robots.died(robotId)
+      case None                                => logger.warn(s"reapSled connection not found for sled: $sledId")
     }
     sledId.sled.foreach(_.remove())
     logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
+  }
+
+  private def reportJoinedSled(connectionId:ClientId, sledId:SledId): Unit = {
+    connectionId match {
+      case robotId:RobotId => robots.joined(robotId, sledId)
+      case netId:ConnectionId           => sendMessage(MySled(sledId), netId)
+    }
   }
 
   private def newRandomSled(userName: String,
@@ -241,25 +252,23 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Called when a user sends her name and starts in the game */
-  def userJoin(id: ConnectionId,
+  def userJoin(id: ClientId,
                userName: String,
                sledKind: SledKind,
-               skiColor: SkiColor,
-               robot: Boolean = false): Sled = {
+               skiColor: SkiColor): Sled = {
     logger.info(
-      s"user joined: $userName  id:$id  kind: $sledKind  robot: $robot  userCount:${users.size}")
+      s"user joined: $userName  id:$id  kind: $sledKind  sserCount:${users.size}")
     val user =
       new User(
         userName,
         createTime = gameTime,
         sledKind = sledKind,
-        skiColor = skiColor,
-        robot = robot)
+        skiColor = skiColor)
     users(id) = user
     createSled(id, user, sledKind)
   }
 
-  def rejoin(id: ConnectionId): Option[Sled] = {
+  def rejoin(id: ClientId): Option[Sled] = {
     users.get(id) match {
       case Some(user) =>
         logger.info(s"user rejoined: ${user.name}")
@@ -271,7 +280,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def createSled(connctionId: ConnectionId,
+  private def createSled(connctionId: ClientId,
                          user: User,
                          sledKind: SledKind): Sled = {
     val sled = newRandomSled(user.name, sledKind, user.skiColor)
@@ -281,7 +290,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Rotate the turret on a sled */
-  private def rotateTurret(id: ConnectionId, angle: Double): Unit = {
+  private def rotateTurret(id: ClientId, angle: Double): Unit = {
     id.sled.foreach(_.turretRotation = angle)
   }
 

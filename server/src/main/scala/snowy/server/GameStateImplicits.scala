@@ -2,7 +2,7 @@ package snowy.server
 
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
-import socketserve.ConnectionId
+import socketserve.ClientId
 
 /** Convenient ways to look up objects and users in the game state collections */
 class GameStateImplicits(state: GameState) {
@@ -14,7 +14,7 @@ class GameStateImplicits(state: GameState) {
 
     def user: Option[User] = id.connectionId.map(state.users(_))
 
-    def connectionId: Option[ConnectionId] = {
+    def connectionId: Option[ClientId] = {
       state.sledMap.collectFirst {
         case (connectionId, sledId) if id == sledId =>
           connectionId
@@ -22,12 +22,12 @@ class GameStateImplicits(state: GameState) {
     }
   }
 
-  implicit class ConnectionIdOps(id: ConnectionId) {
+  implicit class ConnectionIdOps(id: ClientId) {
     def sled: Option[Sled] = state.sledMap.get(id).flatMap(_.sled)
   }
 
   implicit class SledIndices(sled: Sled) {
-    def connectionId: Option[ConnectionId] = {
+    def connectionId: Option[ClientId] = {
       state.sledMap.collectFirst {
         case (connectionId, sledId) if sled.id == sledId =>
           connectionId

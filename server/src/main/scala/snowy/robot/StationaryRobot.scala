@@ -21,28 +21,35 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
   val myType =
     SledKinds.allSleds(ThreadLocalRandom.current.nextInt(SledKinds.allSleds.length))
 
-  var mySled = api.join(name, myType, mySkis)
+  api.sendToServer(Join(name, myType, mySkis))
 
-  def refresh(state: RobotState): Unit = {
-    val gameTime = System.currentTimeMillis()
-    val random   = ThreadLocalRandom.current.nextDouble()
-    val commands = random match {
-      case _ if random < .005 => Seq(Start(Left, gameTime))
-      case _ if random < .010 => Seq(Start(Right, gameTime))
-      case _ if random < .030 => Seq(Stop(Right, gameTime), Stop(Left, gameTime))
-      case _ if random < .040 => Seq(Push(gameTime))
-      case _ if random < .070 => Seq(Start(Shooting, gameTime))
-      case _ if random < .090 => Seq(Stop(Shooting, gameTime))
-      case _ if random < .190 =>
-        Seq(TurretAngle(aimAtNearest(state.sleds, state.snowballs)))
-      case _ => Seq()
-    }
-    commands.foreach { command =>
-      api.sendToServer(command)
+  var mySledOpt: Option[Sled] = None
+
+  def refresh(state: RobotGameState): Unit = {
+    mySledOpt = state.mySled
+
+    mySledOpt.foreach { mySled =>
+      val robotGameTime = System.currentTimeMillis()
+      val random   = ThreadLocalRandom.current.nextDouble()
+      val commands = random match {
+        case _ if random < .005 => Seq(Start(Left, robotGameTime))
+        case _ if random < .010 => Seq(Start(Right, robotGameTime))
+        case _ if random < .030 => Seq(Stop(Right, robotGameTime), Stop(Left, robotGameTime))
+        case _ if random < .040 => Seq(Push(robotGameTime))
+        case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
+        case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
+        case _ if random < .190 =>
+          Seq(TurretAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs)))
+        case _ => Seq()
+      }
+
+      commands.foreach { command =>
+        api.sendToServer(command)
+      }
     }
   }
 
-  def aimAtNearest(sleds: Traversable[Sled], snowballs: Traversable[Snowball]): Double = {
+  def aimAtNearest(mySled:Sled, sleds: Traversable[Sled], snowballs: Traversable[Snowball]): Double = {
     /*val failedDistance = Sled.dummy.copy(_position = mySled._position - Vec2d(0, 1000))
     val closest: Sled = sleds.filterNot(sled => sled == mySled).fold(failedDistance) {
       case (closest: Sled, next: Sled) =>
@@ -86,6 +93,6 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
   }
 
   def killed(): Unit = {
-    mySled = api.rejoin()
+    api.sendToServer(ReJoin)
   }
 }

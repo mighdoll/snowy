@@ -27,8 +27,9 @@ object LoadTest {
     val wsUrl      = s"ws://localhost:${port}/game"
     val numClients = config.getInt("snowy.load.clients")
     (1 to numClients).foreach { _ =>
-      new SimulatedClient(wsUrl)
+      new SingleLoadTestClient(wsUrl)
     }
     Thread.sleep(testDuration.toMillis)
   }
 }
+

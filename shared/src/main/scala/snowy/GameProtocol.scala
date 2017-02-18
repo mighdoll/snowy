@@ -1,5 +1,6 @@
 package snowy
 
+import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 
 /** messages sent to the server */
@@ -9,7 +10,8 @@ object GameServerProtocol {
 
   sealed trait StartStopCommand
 
-  case class Join(userName: String, sledKind: SledKind = BasicSled, skiColor: SkiColor = BasicSkis)
+  case class Join(userName: String, sledKind: SledKind = BasicSled,
+                  skiColor: SkiColor = BasicSkis)
       extends GameServerMessage
 
   case object ReJoin extends GameServerMessage
@@ -50,10 +52,11 @@ object GameClientProtocol {
   sealed abstract class GameClientMessage
 
   case class State(gameTime: Long,
-                   mySled: Sled,
                    sleds: Seq[Sled],
                    snowballs: Seq[Snowball])
       extends GameClientMessage
+
+  case class MySled(id: SledId) extends GameClientMessage
 
   case class Playfield(width: Int, height: Int) extends GameClientMessage
 

@@ -15,7 +15,7 @@ import socketserve.FlowImplicits._
 class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLogging {
   implicit val materializer              = ActorMaterializer()
   private var app: Option[AppController] = None
-  private val connections                = mutable.Map[ConnectionId, ActorRef]()
+  private val connections                = mutable.Map[ClientId, ActorRef]()
 
   val tickTime: FiniteDuration = 20 milliseconds // TODO get this from GameControl
 
@@ -57,7 +57,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   def send(msg: String, id: ConnectionId): Unit = {
     connections.get(id) match {
       case Some(out) => out ! TextMessage(msg)
-      case None      => logger.error(s"send to unknown connection id: $id")
+      case None      => logger.warn(s"send to unknown connection id: $id")
     }
   }
 
@@ -65,7 +65,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   def sendBinary(data: ByteString, id: ConnectionId): Unit = {
     connections.get(id) match {
       case Some(out) => out ! BinaryMessage(data)
-      case None      => logger.error(s"send to unknown connection id: $id")
+      case None      => logger.warn(s"send to unknown connection id: $id")
     }
   }
 
