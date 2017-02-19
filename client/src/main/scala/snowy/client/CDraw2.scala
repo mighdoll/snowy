@@ -1,6 +1,7 @@
 package snowy.client
 
-import minithree.THREE._
+import minithree.THREE
+
 import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js
@@ -9,7 +10,7 @@ import scala.scalajs.js.annotation.JSName
 
 @js.native
 @JSName("THREE.CylinderGeometry")
-class CylinderGeometry2 extends Geometry {
+class CylinderGeometry2 extends THREE.Geometry {
   def this(radiusTop: Double = js.native,
            radiusBottom: Double = js.native,
            height: Double = js.native,
@@ -31,46 +32,42 @@ class CylinderGeometry2 extends Geometry {
 
 object CDraw2 {
   def all(): Unit = {
-    val scene = new Scene()
+    val scene = new THREE.Scene()
     val camera =
-      new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    val renderer = new WebGLRenderer(
-      Dynamic
-        .literal(
-          antialias = true
-        )
-        .asInstanceOf[WebGLRendererParameters]
+      new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
+    val renderer = new THREE.WebGLRenderer(
+      Dynamic.literal(antialias = true).asInstanceOf[THREE.WebGLRendererParameters]
     )
     renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setClearColor(new Color(0xfff6e6), 1)
+    renderer.setClearColor(new THREE.Color(0xfff6e6), 1)
     document.body.appendChild(renderer.domElement)
 
     camera.position.set(200, 100, 200)
     camera.lookAt(scene.position)
 
-    val trunkGeo  = new BoxGeometry(1.5, 6.25, 1.5)
+    val trunkGeo  = new THREE.BoxGeometry(1.5, 6.25, 1.5)
     val leave1Geo = new CylinderGeometry2(0, 5, 7, 4, 1, false, 0.783, math.Pi * 2)
     val leave2Geo = new CylinderGeometry2(0, 3.5, 5, 4, 1, false, 0.8, math.Pi * 2)
 
-    val trunkMat = new MeshPhongMaterial {
-      color = new Color(0x502A2A)
-      shading = FlatShading
+    val trunkMat = new THREE.MeshPhongMaterial {
+      color = new THREE.Color(0x502A2A)
+      shading = THREE.FlatShading
     }
-    val leave1Mat = new MeshPhongMaterial {
-      color = new Color(0x658033)
-      shading = FlatShading
+    val leave1Mat = new THREE.MeshPhongMaterial {
+      color = new THREE.Color(0x658033)
+      shading = THREE.FlatShading
     }
-    val leave2Mat = new MeshPhongMaterial {
-      color = new Color(0x81A442)
-      shading = FlatShading
+    val leave2Mat = new THREE.MeshPhongMaterial {
+      color = new THREE.Color(0x81A442)
+      shading = THREE.FlatShading
     }
 
-    val trunk  = new Mesh(trunkGeo, trunkMat)
-    val leave1 = new Mesh(leave1Geo, leave1Mat)
-    val leave2 = new Mesh(leave2Geo, leave2Mat)
+    val trunk  = new THREE.Mesh(trunkGeo, trunkMat)
+    val leave1 = new THREE.Mesh(leave1Geo, leave1Mat)
+    val leave2 = new THREE.Mesh(leave2Geo, leave2Mat)
 
-    val amb   = new AmbientLight(0x888888)
-    val light = new DirectionalLight(0xffffff)
+    val amb   = new THREE.AmbientLight(0x888888)
+    val light = new THREE.DirectionalLight(0xffffff)
 
     light.position.set(0, 20, 10)
 

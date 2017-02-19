@@ -30,14 +30,14 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
   )
 
 lazy val V = new Object {
-  val scala    = "2.12.1"
-  val akka     = "2.4.12"
-  val akkaHttp = "10.0.3"
-  val log4j    = "2.7"
-  val jackson  = "2.8.4"
+  val scala      = "2.12.1"
+  val akka       = "2.4.12"
+  val akkaHttp   = "10.0.3"
+  val log4j      = "2.7"
+  val jackson    = "2.8.4"
   val scalacheck = "1.13.4"
-  val scalactic = "3.0.1"
-  val scalatest = "3.0.1"
+  val scalactic  = "3.0.1"
+  val scalatest  = "3.0.1"
 }
 
 lazy val server = (project in file("server"))
@@ -53,7 +53,8 @@ lazy val server = (project in file("server"))
       "-XX:+UseG1GC",
       "-XX:+UseCompressedOops",
       "-XX:+AggressiveOpts",
-      "-XX:MaxGCPauseMillis=10"),
+      "-XX:MaxGCPauseMillis=10"
+    ),
     javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
       "com.github.scopt"                 %% "scopt"                  % "3.5.0",
@@ -90,9 +91,10 @@ lazy val client = (project in file("client"))
     persistLauncher in Test := false,
     resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases"),
     libraryDependencies ++= Seq(
-      "org.scala-js"     %%% "scalajs-dom" % "0.9.1"
+      "org.scala-js" %%% "scalajs-dom" % "0.9.1"
 //      "org.singlespaced" %%% "scalajs-d3"  % "0.3.4"
-    )
+    ),
+    jsDependencies += "org.webjars" % "three.js" % "r77" / "r77/three.min.js"
   )
   .dependsOn(shared.js)
 

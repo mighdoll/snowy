@@ -1350,7 +1350,8 @@ class CompressedTexture(
       minFilter,
       format,
       `type`,
-      anisotropy) {
+      anisotropy
+    ) {
 
   override def clone(): CompressedTexture = js.native
 }
@@ -1376,7 +1377,8 @@ class CubeTexture(
       minFilter,
       format,
       `type`,
-      anisotropy) {
+      anisotropy
+    ) {
   def clone(texture: CubeTexture): CubeTexture = js.native
 }
 
@@ -1403,7 +1405,8 @@ class DataTexture(
       minFilter,
       format,
       `type`,
-      anisotropy) {
+      anisotropy
+    ) {
 
   override def clone(): DataTexture = js.native
 }
@@ -1855,7 +1858,8 @@ class CubeGeometry(width: Double,
       depth,
       widthSegments,
       heightSegments,
-      depthSegments)
+      depthSegments
+    )
 
 @js.native
 @JSName("THREE.CylinderGeometry")
