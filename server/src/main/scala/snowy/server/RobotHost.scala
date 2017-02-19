@@ -9,7 +9,7 @@ import socketserve.{ClientId, RobotId}
 
 /** */
 class RobotHost(gameControl: GameControl) {
-  private val robots = mutable.Map[RobotId, Robot]()
+  private val robots     = mutable.Map[RobotId, Robot]()
   private val robotSleds = mutable.Map[RobotId, SledId]()
 
   /** create a new robot */
@@ -24,7 +24,7 @@ class RobotHost(gameControl: GameControl) {
   def robotsTurn(): Unit = {
     for {
       (connectionId, robot) <- robots
-      sledId <- robotSleds.get(connectionId)
+      sledId                <- robotSleds.get(connectionId)
     } {
       val robotGameState = InternalRobotState.gameState(gameControl, sledId)
       robot.refresh(robotGameState)
@@ -35,7 +35,7 @@ class RobotHost(gameControl: GameControl) {
     robots.get(id).foreach(_.killed())
   }
 
-  def joined(connectionId: RobotId, sledId:SledId): Unit = {
+  def joined(connectionId: RobotId, sledId: SledId): Unit = {
     robotSleds(connectionId) = sledId
   }
 }
@@ -49,7 +49,7 @@ class OneRobotApi(gameControl: GameControl, id: ClientId) extends RobotApi {
 
 }
 
-object InternalRobotState{
+object InternalRobotState {
   def gameState(state: GameState, sledId: SledId): RobotGameState = {
     RobotGameState(
       mySledId = sledId,
@@ -60,4 +60,3 @@ object InternalRobotState{
     )
   }
 }
-

@@ -24,6 +24,7 @@ trait Robot {
 
 /** Raw information delivered to the robot */
 trait RobotGameStateInfo {
+
   /** Id of this robots sled.
     * The id may change if the robot is killed and rejoins.  */
   def mySledId: SledId
@@ -43,12 +44,12 @@ trait RobotGameStateInfo {
 }
 
 /** gaame state information packaged conveniently for the robot */
-case class RobotGameState( mySledId: SledId,
-                           allSleds: Traversable[Sled],
-                           snowballs: Traversable[Snowball],
-                           trees: Traversable[Tree],
-                           playfield: Vec2d ) {
-  lazy val (mySled:Option[Sled], otherSleds:Traversable[Sled]) = {
+case class RobotGameState(mySledId: SledId,
+                          allSleds: Traversable[Sled],
+                          snowballs: Traversable[Snowball],
+                          trees: Traversable[Tree],
+                          playfield: Vec2d) {
+  lazy val (mySled: Option[Sled], otherSleds: Traversable[Sled]) = {
     val (mine, otherSleds) = allSleds.partition(_.id == mySledId)
     (mine.headOption, otherSleds)
   }
@@ -57,4 +58,3 @@ case class RobotGameState( mySledId: SledId,
 object RobotGameState {
   val emptyGameState = RobotGameState(new SledId(-1), Set(), Set(), Set(), Vec2d.zero)
 }
-

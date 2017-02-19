@@ -30,11 +30,12 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
 
     mySledOpt.foreach { mySled =>
       val robotGameTime = System.currentTimeMillis()
-      val random   = ThreadLocalRandom.current.nextDouble()
+      val random        = ThreadLocalRandom.current.nextDouble()
       val commands = random match {
         case _ if random < .005 => Seq(Start(Left, robotGameTime))
         case _ if random < .010 => Seq(Start(Right, robotGameTime))
-        case _ if random < .030 => Seq(Stop(Right, robotGameTime), Stop(Left, robotGameTime))
+        case _ if random < .030 =>
+          Seq(Stop(Right, robotGameTime), Stop(Left, robotGameTime))
         case _ if random < .040 => Seq(Push(robotGameTime))
         case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
         case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
@@ -49,7 +50,9 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     }
   }
 
-  def aimAtNearest(mySled:Sled, sleds: Traversable[Sled], snowballs: Traversable[Snowball]): Double = {
+  def aimAtNearest(mySled: Sled,
+                   sleds: Traversable[Sled],
+                   snowballs: Traversable[Snowball]): Double = {
     /*val failedDistance = Sled.dummy.copy(_position = mySled._position - Vec2d(0, 1000))
     val closest: Sled = sleds.filterNot(sled => sled == mySled).fold(failedDistance) {
       case (closest: Sled, next: Sled) =>

@@ -9,8 +9,8 @@ import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
 
 object GameState {
-  var gPlayField = Vec2d(0, 0) // A playfield dummy until the game receives a different one
-  var scoreboard = Scoreboard(0, Seq())
+  var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
+  var scoreboard               = Scoreboard(0, Seq())
   var mySledId: Option[SledId] = None
 
   // TODO add a gametime timestamp to these, and organize together into a class
@@ -22,7 +22,7 @@ object GameState {
   // TODO: return Option[Sled]. The server might send state before we join and have a sled
   private def serverMySled: Option[Sled] = {
     for {
-      id <- mySledId
+      id   <- mySledId
       sled <- serverSleds.items.find(_.id == id)
     } yield sled
   }
@@ -66,7 +66,7 @@ object GameState {
 
   private def nextState(deltaSeconds: Double): Unit = {
     moveSnowballs(serverSnowballs.items, deltaSeconds)
-    serverMySled.foreach{ mySled =>
+    serverMySled.foreach { mySled =>
       applyTurn(mySled, deltaSeconds)
       moveOneSled(mySled, deltaSeconds)
     }
