@@ -1,7 +1,5 @@
 enablePlugins(JavaAppPackaging)
 
-scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
-
 lazy val root =
   (project in file(".")).aggregate(server, client).settings(commonSettings: _*)
 
@@ -16,28 +14,30 @@ lazy val commonSettings = Seq(
     "-language:postfixOps"
   ),
   libraryDependencies ++= Seq(
-    "org.scalacheck" %%% "scalacheck" % "1.13.2" % "test",
-    "org.scalactic"  %%% "scalactic"  % "3.0.0"  % "test",
-    "org.scalatest"  %%% "scalatest"  % "3.0.0"  % "test"
+    "org.scalacheck" %%% "scalacheck" % V.scalacheck % "test",
+    "org.scalactic"  %%% "scalactic"  % V.scalactic  % "test",
+    "org.scalatest"  %%% "scalatest"  % V.scalatest  % "test"
   ),
   test in assembly := {}
 )
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
     libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.13.2" % "it",
-      "org.scalactic"  %% "scalactic"  % "3.0.0"  % "it",
-      "org.scalatest"  %% "scalatest"  % "3.0.0"  % "it"
+      "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
+      "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
+      "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
     )
   )
 
 lazy val V = new Object {
-  val akka     = "2.4.11"
-  val akkaHttp = "2.4.11"
-  val scala    = "2.11.8"
-  val kamon    = "0.6.3"
+  val scala    = "2.12.1"
+  val akka     = "2.4.12"
+  val akkaHttp = "10.0.3"
   val log4j    = "2.7"
   val jackson  = "2.8.4"
+  val scalacheck = "1.13.4"
+  val scalactic = "3.0.1"
+  val scalatest = "3.0.1"
 }
 
 lazy val server = (project in file("server"))
@@ -65,11 +65,8 @@ lazy val server = (project in file("server"))
       "com.typesafe.scala-logging"       %% "scala-logging"          % "3.5.0",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
-      "com.typesafe.akka"                %% "akka-http-experimental" % V.akkaHttp,
-      "com.typesafe.akka"                %% "akka-slf4j"             % V.akka,
-      "io.kamon"                         %% "kamon-core"             % V.kamon,
-      "io.kamon"                         %% "kamon-system-metrics"   % V.kamon,
-      "io.kamon"                         %% "kamon-influxdb"         % V.kamon
+      "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
+      "com.typesafe.akka"                %% "akka-slf4j"             % V.akka
     ),
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data
@@ -91,8 +88,8 @@ lazy val client = (project in file("client"))
     persistLauncher in Compile := true,
     persistLauncher in Test := false,
     libraryDependencies ++= Seq(
-      "org.scala-js"     %%% "scalajs-dom" % "0.9.0",
-      "org.singlespaced" %%% "scalajs-d3"  % "0.3.3"
+      "org.scala-js"     %%% "scalajs-dom" % "0.9.1"
+//      "org.singlespaced" %%% "scalajs-d3"  % "0.3.4"
     )
   )
   .dependsOn(shared.js)
@@ -114,7 +111,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "me.chrons" %%% "boopickle" % "1.2.4"
+      "me.chrons" %%% "boopickle" % "1.2.5"
     ),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )

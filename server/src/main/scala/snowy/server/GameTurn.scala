@@ -57,12 +57,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       case Death(killed: Snowball, killer: Sled) =>
         state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
         None
+      case _ => ???
     }
 
     val snowballSnowballDeaths = CollideThings.collideCollection(state.snowballs.items)
     snowballSnowballDeaths.foreach {
       case Death(killed: Snowball, _) =>
         state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
+      case _ => ???
     }
 
     state.sleds.items.foreach(SledTree.collide(_, state.trees))
@@ -70,6 +72,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     val sledDeaths = CollideThings.collideCollection(state.sleds.items)
     val sledAwards = sledDeaths.map {
       case Death(killed: Sled, killer: Sled) => SledKill(killer.id, killed.id)
+      case _ => ???
     }
 
     state.snowballs = state.snowballs.removeMatchingItems(snowballTrees(_, state.trees))

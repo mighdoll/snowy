@@ -1,8 +1,5 @@
 package snowy.util
 
-import kamon.Kamon
-import kamon.Kamon.metrics.histogram
-import kamon.util.Latency
 import snowy.server.GlobalConfig
 
 object Perf {
@@ -10,7 +7,7 @@ object Perf {
   /** Measure the duration of a block of code and report to the monitoring system */
   def time[A](name: String)(fn: => A): A = {
     if (enabled) {
-      Latency.measure(histogram(name))(fn)
+      fn
     } else {
       fn
     }
@@ -18,7 +15,7 @@ object Perf {
 
   /** record a single value in a histogram */
   def record(name: String, value: Long): Unit = {
-    if (enabled) histogram(name).record(value)
+//    if (enabled) histogram(name).record(value)
   }
 
   /** True if performance tracking is enabled */
@@ -26,7 +23,7 @@ object Perf {
 
   /** start the performance tracking subsystem */
   def start(): Unit = {
-    if (enabled) Kamon.start()
+//    if (enabled) Kamon.start()
   }
 
 }

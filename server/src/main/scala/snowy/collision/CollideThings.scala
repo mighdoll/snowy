@@ -48,12 +48,12 @@ object CollideThings {
     * (the effects are deferred until all collisions are calculated) */
   private def applyTwoEffects[A <: CircularObject, B <: CircularObject](
         effectA: CollisionEffect[A],
-        effectB: CollisionEffect[B]): List[Death[_, _]] = {
+        effectB: CollisionEffect[B]): List[Death[CircularObject, CircularObject]] = {
     effectA.applyEffects()
     effectB.applyEffects()
     val a      = effectA.collided.movingCircle
     val b      = effectB.collided.movingCircle
-    val deaths = ListBuffer[Death[_, _]]()
+    val deaths = ListBuffer[Death[CircularObject, CircularObject]]()
     if (a.health <= 0) {
       deaths append Death(a, b)
     }
