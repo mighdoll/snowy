@@ -38,7 +38,7 @@ object CDraw2 {
     val renderer = new WebGLRenderer(
       Dynamic
         .literal(
-          antialias = false
+          antialias = true
         )
         .asInstanceOf[WebGLRendererParameters]
     )
