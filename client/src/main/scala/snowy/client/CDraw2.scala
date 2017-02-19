@@ -1,12 +1,11 @@
 package snowy.client
 
-import org.denigma.threejs._
-import org.scalajs.dom.raw.HTMLCanvasElement
+import minithree.THREE._
 import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
-import scala.scalajs.js.annotation.{JSName, ScalaJSDefined}
+import scala.scalajs.js.annotation.JSName
 
 @js.native
 @JSName("THREE.CylinderGeometry")
@@ -55,15 +54,15 @@ object CDraw2 {
 
     val trunkMat = new MeshPhongMaterial {
       color = new Color(0x502A2A)
-      shading = THREE.FlatShading
+      shading = FlatShading
     }
     val leave1Mat = new MeshPhongMaterial {
       color = new Color(0x658033)
-      shading = THREE.FlatShading
+      shading = FlatShading
     }
     val leave2Mat = new MeshPhongMaterial {
       color = new Color(0x81A442)
-      shading = THREE.FlatShading
+      shading = FlatShading
     }
 
     val trunk  = new Mesh(trunkGeo, trunkMat)
@@ -81,25 +80,17 @@ object CDraw2 {
     var x = 300
     var z = 200
 
-    trunk.position.y = 3.125
-    trunk.position.x = x
-    trunk.position.z = z
-
-    leave1.position.y = 9.75
-    leave1.position.x = x
-    leave1.position.z = z
-
-    leave2.position.y = 11.75
-    leave2.position.x = x
-    leave2.position.z = z
+    trunk.position.set(x, 3.125, z)
+    leave1.position.set(x, 9.75, z)
+    leave2.position.set(x, 11.75, z)
 
     scene.add(trunk)
     scene.add(leave1)
     scene.add(leave2)
 
     val time = 3233
-    camera.position.x = Math.cos(time / 5000) * 250 + 350
-    camera.position.z = Math.sin(time / 5000) * 50 + 250
+    camera.position.x = math.cos(time / 5000) * 250 + 350
+    camera.position.z = math.sin(time / 5000) * 50 + 250
 
     renderer.render(scene, camera)
   }
