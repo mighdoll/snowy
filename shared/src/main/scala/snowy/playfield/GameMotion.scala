@@ -21,8 +21,8 @@ object GameMotion {
   def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double): Unit = {
     snowballs.foreach { snowball =>
       val wrappedPos = {
-        val deltaPosition   = snowball.speed * deltaSeconds
-        val newPosition     = snowball.pos + deltaPosition
+        val deltaPosition = snowball.speed * deltaSeconds
+        val newPosition   = snowball.pos + deltaPosition
         wrapInPlayfield(newPosition)
       }
       snowball.updatePos(wrappedPos)

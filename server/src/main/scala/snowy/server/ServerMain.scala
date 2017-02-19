@@ -12,7 +12,8 @@ object ServerMain extends LazyLogging {
   def main(args: Array[String]): Unit = {
     System.setProperty(
       "java.util.logging.manager",
-      "org.apache.logging.log4j.jul.LogManager")
+      "org.apache.logging.log4j.jul.LogManager"
+    )
     cmdLineParser.parse(args, BasicArgs()).foreach { config =>
       run(config)
     }

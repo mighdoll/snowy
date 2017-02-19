@@ -18,7 +18,7 @@ class TestVec2d extends PropSpec with PropertyChecks {
   }
 
   property("unitUp.rotate is the same as fromRotation") {
-    forAll(chooseNum(-1e100, 1e100)) {radians =>
+    forAll(chooseNum(-1e100, 1e100)) { radians =>
       assert(Vec2d.fromRotation(radians) === Vec2d.unitUp.rotate(radians))
     }
   }

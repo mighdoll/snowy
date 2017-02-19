@@ -29,16 +29,19 @@ class DrawScoreBoard(scale: Double, myName: String) {
       ctx.fillText(
         index + 1 + ".",
         scorepos.x + fromLeft,
-        scorepos.y + fromTop + inbetween * index)
+        scorepos.y + fromTop + inbetween * index
+      )
       ctx.fillText(
         score.userName,
         scorepos.x + fromLeft * 4,
-        scorepos.y + fromTop + inbetween * index)
+        scorepos.y + fromTop + inbetween * index
+      )
       ctx.textAlign = "right"
       ctx.fillText(
         score.score.toInt.toString,
         scorepos.x + scorescaled.x - fromRight,
-        scorepos.y + fromTop + inbetween * index)
+        scorepos.y + fromTop + inbetween * index
+      )
     }
     ctx.textAlign = "left"
     ctx.fillText(myName, scorepos.x + fromLeft, scorepos.y + scorescaled.y - inbetween)
@@ -46,6 +49,7 @@ class DrawScoreBoard(scale: Double, myName: String) {
     ctx.fillText(
       scoreboard.myScore.toInt.toString,
       scorepos.x + scorescaled.x - fromRight,
-      scorepos.y + scorescaled.y - inbetween)
+      scorepos.y + scorescaled.y - inbetween
+    )
   }
 }

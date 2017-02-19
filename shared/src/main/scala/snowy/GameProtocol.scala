@@ -14,7 +14,8 @@ object GameServerProtocol {
 
   sealed trait PersistentControl extends StartStopControl
 
-  case class Join(userName: String, sledKind: SledKind = BasicSled,
+  case class Join(userName: String,
+                  sledKind: SledKind = BasicSled,
                   skiColor: SkiColor = BasicSkis)
       extends GameServerMessage
 
@@ -61,9 +62,7 @@ object GameClientProtocol {
 
   sealed abstract class GameClientMessage
 
-  case class State(gameTime: Long,
-                   sleds: Seq[Sled],
-                   snowballs: Seq[Snowball])
+  case class State(gameTime: Long, sleds: Seq[Sled], snowballs: Seq[Snowball])
       extends GameClientMessage
 
   case class MySled(id: SledId) extends GameClientMessage

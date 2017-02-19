@@ -23,7 +23,8 @@ object DrawTree {
       size * .75,
       size * .75,
       size * .75,
-      Color(129, 164, 66))
+      Color(129, 164, 66)
+    )
     drawPyramid(x, y - size * 1.25, size * .5, size * .5, size * .5, Color(155, 190, 91))
     drawPyramid(x, y - size * 2, size * .1, size * .1, size * .1, Color(245, 237, 0))
     drawPyramid(x, y - size * 2, size * .1, size * .1, -size * .1, Color(194, 187, 0))

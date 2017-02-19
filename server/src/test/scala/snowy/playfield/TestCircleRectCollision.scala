@@ -7,17 +7,20 @@ import vector.Vec2d
 class TestCircleRectCollision extends PropSpec {
   property("Encompassing circle") {
     assert(
-      circleRectCollide(Circle(Vec2d(0, 0), 20), Rect(Vec2d(-10, -10), Vec2d(20, 20))))
+      circleRectCollide(Circle(Vec2d(0, 0), 20), Rect(Vec2d(-10, -10), Vec2d(20, 20)))
+    )
   }
 
   property("Encompassing rect") {
     assert(
-      circleRectCollide(Circle(Vec2d(0, 0), 5), Rect(Vec2d(-10, -10), Vec2d(20, 20))))
+      circleRectCollide(Circle(Vec2d(0, 0), 5), Rect(Vec2d(-10, -10), Vec2d(20, 20)))
+    )
   }
 
   property("Circle size 0") {
     assert(
-      circleRectCollide(Circle(Vec2d(0, 0), 0), Rect(Vec2d(-10, -10), Vec2d(20, 20))))
+      circleRectCollide(Circle(Vec2d(0, 0), 0), Rect(Vec2d(-10, -10), Vec2d(20, 20)))
+    )
   }
 
   property("Rect size 0") {
@@ -41,8 +44,11 @@ class TestCircleRectCollision extends PropSpec {
   }
 
   property("Near y, far x, shouldn't intersect") {
-    assert(!circleRectCollide(
-      Circle(Vec2d(2478, 7998), 35),
-      Rect(Vec2d(728, 7928), Vec2d(10, 40))))
+    assert(
+      !circleRectCollide(
+        Circle(Vec2d(2478, 7998), 35),
+        Rect(Vec2d(728, 7928), Vec2d(10, 40))
+      )
+    )
   }
 }

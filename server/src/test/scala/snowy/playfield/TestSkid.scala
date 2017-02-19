@@ -74,7 +74,7 @@ class TestSkid extends PropSpec {
   }
   property("upscreen -45 at max speed, skis rotated straight up, 100% of skid => up") {
     val initialAngle = Pi + Pi / 4
-    val result = skidTest(Vec2d.fromRotation(initialAngle) * maxSpeed, Pi, 1)
+    val result       = skidTest(Vec2d.fromRotation(initialAngle) * maxSpeed, Pi, 1)
     assert(result.unit === Vec2d.unitDown)
   }
 

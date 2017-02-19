@@ -42,5 +42,5 @@ case class TestCircle(private val initialPosition: Vec2d, override var speed: Ve
 
   override def mass: Double = 1
 
-  override def toString():String = s"pos:$pos  speed:$speed"
+  override def toString(): String = s"pos:$pos  speed:$speed"
 }

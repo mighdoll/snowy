@@ -59,7 +59,8 @@ class DrawMiniMap(border: Vec2d) {
         newPos.x + size,
         newPos.y - size * 1.5,
         newPos.x,
-        newPos.y)
+        newPos.y
+      )
       ctx.closePath()
       ctx.fill()
 

@@ -30,7 +30,7 @@ trait PlayfieldObject {
 
   override def equals(that: Any): Boolean = that match {
     case that: PlayfieldObject => canEqual(that) && id == that.id
-    case _ => false
+    case _                     => false
   }
 }
 

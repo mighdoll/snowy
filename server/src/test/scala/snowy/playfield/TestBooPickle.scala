@@ -15,7 +15,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     ownerId = new SledId(1),
     _position = Vec2d.zero,
     radius = 1,
-    mass =   .1,
+    mass = .1,
     speed = Vec2d.zero,
     spawned = 0,
     impactDamage = 0,

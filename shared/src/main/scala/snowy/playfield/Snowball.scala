@@ -18,7 +18,8 @@ case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[MyType]
 
-  override def copyWithUpdatedPos(newPos: Vec2d): Snowball = this.copy(_position = newPos)
+  override def copyWithUpdatedPos(newPos: Vec2d): Snowball =
+    this.copy(_position = newPos)
 
   override def armor: Double = 1
 }

@@ -57,8 +57,7 @@ class LoadTestRobot(
 
 }
 
-class HostedRobotApi(sendQueue: SourceQueue[GameServerMessage])
-    extends RobotApi with StrictLogging {
+class HostedRobotApi(sendQueue: SourceQueue[GameServerMessage]) extends RobotApi {
   override def sendToServer(message: GameServerMessage): Unit = {
     logger.trace(s"HostedRobot sending message: $message")
     sendQueue.offer(message)

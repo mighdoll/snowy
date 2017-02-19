@@ -9,10 +9,8 @@ object SingleLoadTestClient {
 }
 import SingleLoadTestClient.nextUserId
 
-class SingleLoadTestClient(wsUrl:String)(implicit executionContext: ExecutionContext) {
-  val userName = s"loadTest-${nextUserId.getAndIncrement}"
-  val robotHost = new LoadTestRobot(wsUrl)(api =>
-    new StationaryRobot(api, userName)
-  )
+class SingleLoadTestClient(wsUrl: String)(implicit executionContext: ExecutionContext) {
+  val userName  = s"loadTest-${nextUserId.getAndIncrement}"
+  val robotHost = new LoadTestRobot(wsUrl)(api => new StationaryRobot(api, userName))
 
 }

@@ -29,7 +29,8 @@ object Collisions {
     */
   def collideCircles[A <: CircularObject, B <: CircularObject](
         a: A,
-        b: B): Option[(Collided[A], Collided[B])] = {
+        b: B
+  ): Option[(Collided[A], Collided[B])] = {
     val collisionDistance = a.radius + b.radius
     val collisionVector   = (a.pos - b.pos) // vector between the centers
     val distance          = collisionVector.length

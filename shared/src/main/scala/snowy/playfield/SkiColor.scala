@@ -11,7 +11,6 @@ case class Color(r: Int, g: Int, b: Int) {
   }
 }
 
-
 sealed trait SkiColor {
   def color = Color(100, 100, 100)
 }
@@ -32,5 +31,5 @@ case object BlueSkis extends SkiColor {
   override val color = Color(60, 142, 230)
 }
 object SkiColors {
-  val allSkis = Seq(BasicSkis, RedSkis,  OrangeSkis, YellowSkis, GreenSkis, BlueSkis)
+  val allSkis = Seq(BasicSkis, RedSkis, OrangeSkis, YellowSkis, GreenSkis, BlueSkis)
 }

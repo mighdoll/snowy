@@ -31,7 +31,8 @@ object LoginScreen {
       Math.PI / 2,
       sledKind,
       skiColor.color.toString,
-      "rgb(120, 201, 44)")
+      "rgb(120, 201, 44)"
+    )
   }
 
   private var connected: Option[Connection] = None
