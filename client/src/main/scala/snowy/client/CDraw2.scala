@@ -5,6 +5,7 @@ import org.scalajs.dom.raw.HTMLCanvasElement
 import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic
 import scala.scalajs.js.annotation.{JSName, ScalaJSDefined}
 
 @js.native
@@ -34,12 +35,13 @@ object CDraw2 {
     val scene = new Scene()
     val camera =
       new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000)
-    val renderer = new WebGLRenderer {
-      js.Dynamic.literal(
-        antialias = true,
-        alpha = true
-      ).asInstanceOf[WebGLRendererParameters]
-    }
+    val renderer = new WebGLRenderer(
+      Dynamic
+        .literal(
+          antialias = false
+        )
+        .asInstanceOf[WebGLRendererParameters]
+    )
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setClearColor(new Color(0xfff6e6), 1)
     renderer.shadowMapEnabled = true
@@ -71,29 +73,27 @@ object CDraw2 {
     val leave2 = new Mesh(leave2Geo, leave2Mat)
 
     val amb   = new AmbientLight(0x888888)
-    val light = new PointLight(0xffffff)
+    val light = new DirectionalLight(0xffffff)
 
-    light.position.set(200, 100, 200)
+    light.position.set(0, 20, 10)
+
     scene.add(amb)
     scene.add(light)
 
-    var x = Math.random() * 400
-    var z = Math.random() * 200
+    var x = 300
+    var z = 200
 
-    trunk.position.y = -5
+    trunk.position.y = 3.125
     trunk.position.x = x
     trunk.position.z = z
-    trunk.castShadow = true
 
-    leave1.position.y = 2.1
+    leave1.position.y = 9.75
     leave1.position.x = x
     leave1.position.z = z
-    leave1.castShadow = true
 
-    leave2.position.y = 4
+    leave2.position.y = 11.75
     leave2.position.x = x
     leave2.position.z = z
-    leave2.castShadow = true
 
     scene.add(trunk)
     scene.add(leave1)
@@ -102,8 +102,7 @@ object CDraw2 {
     val time = 3233
     camera.position.x = Math.cos(time / 5000) * 250 + 350
     camera.position.z = Math.sin(time / 5000) * 50 + 250
-    //light.position.x = camera.position.x
-    light.position.z = camera.position.z
+
     renderer.render(scene, camera)
   }
 
