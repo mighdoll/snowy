@@ -44,8 +44,6 @@ object CDraw2 {
     )
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setClearColor(new Color(0xfff6e6), 1)
-    renderer.shadowMapEnabled = true
-    renderer.shadowMapType = THREE.PCFSoftShadowMap
     document.body.appendChild(renderer.domElement)
 
     camera.position.set(200, 100, 200)
