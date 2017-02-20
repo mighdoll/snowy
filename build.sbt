@@ -66,7 +66,8 @@ lazy val server = (project in file("server"))
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
       "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
-      "com.typesafe.akka"                %% "akka-slf4j"             % V.akka
+      "com.typesafe.akka"                %% "akka-slf4j"             % V.akka,
+      "org.typelevel"                    %% "cats"                   % "0.9.0"
     ),
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data

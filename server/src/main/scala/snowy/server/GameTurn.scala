@@ -4,7 +4,7 @@ import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameConstants._
-import snowy.collision.{CollideThings, Death, SledTree}
+import snowy.collision.{CollideThings, Death, DeathList, SledTree}
 import snowy.playfield.GameMotion._
 import snowy.playfield.{Sled, _}
 import snowy.util.Perf
@@ -48,31 +48,30 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     import snowy.collision.GameCollide.snowballTrees
 
     // collide snowballs with sleds
-    val snowballDeaths =
+    val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideThings(state.sleds.items, state.snowballs.items)
 
-    val snowballAwards = snowballDeaths.flatMap {
+    val snowballAwards = sledSnowballDeaths.a.map {
       case Death(killed: Sled, killer: Snowball) =>
-        Some(SledKill(killer.ownerId, killed.id))
-      case Death(killed: Snowball, killer: Sled) =>
-        state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
-        None
-      case _ => ???
+        SledKill(killer.ownerId, killed.id)
     }
 
-    val snowballSnowballDeaths = CollideThings.collideCollection(state.snowballs.items)
-    snowballSnowballDeaths.foreach {
+    sledSnowballDeaths.b.map {
+      case Death(killed: Snowball, killer: Sled) =>
+        state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
+    }
+
+    val snowballDeaths = CollideThings.collideCollection(state.snowballs.items)
+    (snowballDeaths.a ++ snowballDeaths.b).map {
       case Death(killed: Snowball, _) =>
         state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
-      case _ => ???
     }
 
     state.sleds.items.foreach(SledTree.collide(_, state.trees))
 
     val sledDeaths = CollideThings.collideCollection(state.sleds.items)
-    val sledAwards = sledDeaths.map {
+    val sledAwards = (sledDeaths.a ++ sledDeaths.b).map {
       case Death(killed: Sled, killer: Sled) => SledKill(killer.id, killed.id)
-      case _ => ???
     }
 
     state.snowballs = state.snowballs.removeMatchingItems(snowballTrees(_, state.trees))

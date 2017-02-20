@@ -10,6 +10,7 @@ import snowy.playfield.Picklers._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{GameClientMessage, GameTime, Ping}
 import socketserve.{ClientId, ConnectionId}
+import socketserve.ActorUtil.materializerWithLogging
 
 object ClientConnection {
   val pingMessage = {
@@ -21,10 +22,10 @@ object ClientConnection {
 import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
-class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
-      implicit system: ActorSystem)
+class ClientConnection(id: ConnectionId,
+                       messageIO: MessageIO)(implicit system: ActorSystem)
     extends StrictLogging {
-  implicit val materializer = ActorMaterializer()
+  private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 
   private val pingFrequency  = 10 seconds

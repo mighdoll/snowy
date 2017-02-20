@@ -4,10 +4,11 @@ import scala.util.Properties
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import akka.stream.{ActorMaterializer, BindFailedException}
+import akka.stream.BindFailedException
 import com.typesafe.scalalogging.StrictLogging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
+import socketserve.ActorUtil.materializerWithLogging
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
@@ -15,8 +16,8 @@ import snowy.util.FutureAwaiting._
   */
 class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
     extends StrictLogging {
-  implicit val materializer     = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
+  private implicit val materializer     = materializerWithLogging(logger)
+  private implicit val executionContext = system.dispatcher
 
   val appHost    = new AppHost
   val socketFlow = new SocketFlow(appHost)

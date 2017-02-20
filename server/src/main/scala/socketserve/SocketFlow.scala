@@ -10,12 +10,13 @@ import akka.stream.scaladsl._
 import com.typesafe.scalalogging.StrictLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
+import ActorUtil.materializerWithLogging
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictLogging {
   val outputBufferSize = 1000
   val inputBufferSize  = 10
-
   val inputBufferLevel = new AtomicInteger()
+  private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 
   /** A flow for each connection received over the /game websocket
@@ -40,7 +41,8 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
     * inject GameCommand messages from outside the flow.)
     */
   private def setupInput(
-        connectionId: ConnectionId): (Sink[Message, NotUsed], Future[ActorRef]) = {
+        connectionId: ConnectionId
+  ): (Sink[Message, NotUsed], Future[ActorRef]) = {
     val internalMessagesBuffer = 100
 
     // watch for closing the socket
@@ -51,7 +53,9 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
     var lastBufferLevel = 0
     val inputBuffered: Flow[Message, Message, NotUsed] =
       inputNotifyDone
-        .mapMaterializedValue(_ => NotUsed)
+        .foreach { m =>
+          logger.trace(s"received message on $connectionId. message: $m")
+        }
         .foreach { _ =>
           val level = inputBufferLevel.incrementAndGet()
           if (level > 1 & level != lastBufferLevel) {
@@ -61,13 +65,18 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
         }
         .buffer(inputBufferSize, OverflowStrategy.dropBuffer)
         .foreach(_ => inputBufferLevel.decrementAndGet())
+        .mapMaterializedValue(_ => NotUsed)
         .named("inputBuffered")
 
     // convert web socket messages into client controller messages
     val inputConverted: Flow[Message, GameCommand, NotUsed] =
-      inputBuffered.collect {
-        case BinaryMessage.Strict(data) => ClientMessage(connectionId, data)
-      }.named("inputConverted")
+      inputBuffered
+        .collect {
+          case BinaryMessage.Strict(data) =>
+            logger.trace(s"received data on $connectionId. data: $data")
+            ClientMessage(connectionId, data)
+        }
+        .named("inputConverted")
 
     // target for sending connection open/close messages to the controller
     val (internalMessages, internalRefFuture) =
@@ -102,6 +111,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
       messagesRef <- messagesRefFuture
       outRef      <- outRefFuture
     } {
+      logger.info(s"reportOnOpen connection opened: $connectionId")
       messagesRef ! Open(connectionId, outRef)
     }
   }
@@ -115,11 +125,12 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
       terminationFuture <- terminationFutureMat
       messagesRef       <- internalRefFuture
     } {
-      terminationFuture.onComplete { _ =>
+      terminationFuture.onComplete { fDone =>
+        logger.info(s"reportOnClose closed: $connectionId  $fDone")
         messagesRef ! Gone(connectionId)
       }
       terminationFuture.failed.foreach { err =>
-        logger.warn(s"$connectionId didn't close normally: $err")
+        logger.warn(s"reportOnClose $connectionId didn't close normally: $err")
       }
     }
   }

@@ -46,6 +46,7 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   private def handleMessage(message: GameClientMessage): Unit = {
+    println(s"message received: $message")
     message match {
       case state: State                => receivedState(state)
       case Playfield(width, height)    => gPlayField = Vec2d(width, height)

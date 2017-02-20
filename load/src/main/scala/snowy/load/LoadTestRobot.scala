@@ -11,23 +11,23 @@ import snowy.playfield._
 import snowy.robot.{Robot, RobotApi, RobotGameState, RobotGameStateInfo}
 import vector.Vec2d
 
-
 /** Host for a single robot in a client, e.g. for a load test via a websocket.
   * Provides the RobotApi to the robot logic. Internally sends and
   * receives messages from the game server. */
-class LoadTestRobot(url: String)(createRobot:(RobotApi =>Robot))
-                   (implicit executionContext: ExecutionContext)
-  extends StrictLogging {
+class LoadTestRobot(
+      url: String
+)(createRobot: (RobotApi => Robot))(implicit executionContext: ExecutionContext)
+    extends StrictLogging {
 
   var promisedRobot = Promise[Robot]()
-  var promisedSend = Promise[SourceQueue[GameServerMessage]]()
-  var hostedState = RobotGameState.emptyGameState
+  var promisedSend  = Promise[SourceQueue[GameServerMessage]]()
+  var hostedState   = RobotGameState.emptyGameState
 
   val flow =
     Flow[GameClientMessage].map {
-      case Ping     =>
+      case Ping =>
         promisedSend.future.foreach(_.offer(Pong))
-      case Died     =>
+      case Died =>
         promisedRobot.future.foreach(_.killed())
       case Playfield(width, height) =>
         hostedState = hostedState.copy(playfield = Vec2d(width, height))
@@ -44,7 +44,7 @@ class LoadTestRobot(url: String)(createRobot:(RobotApi =>Robot))
         )
 
         promisedRobot.future.foreach(_.refresh(hostedState))
-      case _        =>
+      case _ =>
     }
 
   val sink: Sink[GameClientMessage, _] = flow.to(Sink.ignore)
@@ -52,15 +52,17 @@ class LoadTestRobot(url: String)(createRobot:(RobotApi =>Robot))
   connectSinkToServer(url, sink).foreach {
     case (sendQueue, m) =>
       promisedSend.success(sendQueue)
-      val api = new HostedRobotApi(sendQueue)
+      val api   = new HostedRobotApi(sendQueue)
       val robot = createRobot(api)
       promisedRobot.success(robot)
   }
 
 }
 
-class HostedRobotApi(sendQueue:SourceQueue[GameServerMessage]) extends RobotApi {
+class HostedRobotApi(sendQueue: SourceQueue[GameServerMessage])
+    extends RobotApi with StrictLogging {
   override def sendToServer(message: GameServerMessage): Unit = {
+    logger.trace(s"HostedRobot sending message: $message")
     sendQueue.offer(message)
   }
 }

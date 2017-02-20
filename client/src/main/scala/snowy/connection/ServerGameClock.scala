@@ -15,7 +15,6 @@ class ServerGameClock(sendMessage: GameServerMessage => Unit) {
   def updateClock(serverTime: Long, oneWayDelay: Int): Unit = {
     val now    = System.currentTimeMillis()
     val offset = (serverTime - now).toInt
-    println(s"updateClock clientClockOffset: $offset  was: $clientClockOffset")
     clientClockOffset = offset
   }
 

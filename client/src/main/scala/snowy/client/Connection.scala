@@ -29,6 +29,7 @@ class Connection(name: String, kind: SledKind, color: SkiColor) {
   new OutboundEvents(sendMessage)
 
   def sendMessage(item: GameServerMessage): Unit = {
+    println(s"sending message: $item")
     val bytes     = Pickle.intoBytes(item)
     val byteArray = bytes.typedArray().subarray(bytes.position, bytes.limit)
     socket.socket.send(byteArray.buffer)
