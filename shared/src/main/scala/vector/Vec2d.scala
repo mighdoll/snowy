@@ -1,4 +1,5 @@
 package vector
+import math.{sin,cos}
 
 case class Vec2d(x: Double, y: Double) {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)
@@ -42,10 +43,18 @@ case class Vec2d(x: Double, y: Double) {
   def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)
 
+  /** @return the vector rotated clockwise. assuming math (not 2d screen) coordinates (y is up)
+    */
   def rotate(radians: Double): Vec2d = {
-    val sin = math.sin(radians)
-    val cos = math.cos(radians)
-    Vec2d(cos * x - sin * y, sin * x + cos * y)
+    // project onto clockwise rotated x and y axes
+    // which is the equivalent of rotating this vector by -radians
+    // so we use -radians to invert direction so the result is clockwise by radians
+    val sin = math.sin(-radians)
+    val cos = math.cos(radians) // which is the same as cos(-radians)
+
+    val rotatedX = Vec2d(cos, -sin)
+    val rotatedY = Vec2d(sin, cos)
+    Vec2d(this dot rotatedX, this dot rotatedY)
   }
 
   def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
@@ -72,10 +81,10 @@ case class Vec2d(x: Double, y: Double) {
 
 object Vec2d {
 
-  /** @return a vector rotated from straight up vector.Vec2d(0,1)
+  /** @return a vector rotated clockwise from straight up vector.Vec2d(0,1)
     * @param angle in radians
     */
-  def fromRotation(angle: Double): Vec2d = Vec2d(math.sin(angle), math.cos(angle))
+  def fromRotation(angle: Double): Vec2d = Vec2d(sin(angle), cos(angle))
 
   val unitUp = Vec2d(0, 1)
 

@@ -38,7 +38,8 @@ sealed trait SledKind {
     * if the sled is shooting straight up */
   def bulletLaunchPosition = Vec2d(0, 30)
 
-  /** launch angle rotation from turret direction, e.g. for rear facing cannon */
+  /** launch angle rotation from turret direction, e.g. for rear facing cannon
+    * Angle is clockwise in screen coordinates (y is down) */
   def bulletLaunchAngle: Double = 0
 
   /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */

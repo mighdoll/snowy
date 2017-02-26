@@ -23,9 +23,11 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 var speed: Vec2d = Vec2d.zero,
                 kind: SledKind = BasicSled,
                 skiColor: SkiColor = BasicSkis,
+                /** angle of sled clockwise from screen coordinates of (0, 1) (down on screen)*/
                 var rotation: Double = downhillRotation,
                 var health: Double = 1,
                 impactDamage: Double = 1,
+               /** angle of turret clockwise in screen coordinates of (0, 1) down on screen */
                 var turretRotation: Double = downhillRotation,
                 var pushEnergy: Double = 1,
                 var lastShotTime: Long = 0)
