@@ -117,4 +117,5 @@ class WebGLRenderer(parameters: WebGLRendererParameters = js.native) extends Ren
                   blendDst: BlendingDstFactor): Unit    = js.native
   def setTexture(texture: Texture, slot: Double): Unit  = js.native
   def setRenderTarget(renderTarget: RenderTarget): Unit = js.native
+  def setPixelRatio(value: Double): Unit                = js.native
 }

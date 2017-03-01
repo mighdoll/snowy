@@ -50,7 +50,6 @@ object CDraw2 {
   val renderer = new THREE.WebGLRenderer(
     Dynamic.literal(antialias = false).asInstanceOf[WebGLRendererParameters]
   )
-  renderer.setSize(window.innerWidth, window.innerHeight)
   renderer.setClearColor(new THREE.Color(0xfff6e6), 1)
   document.body.appendChild(renderer.domElement)
 
@@ -264,10 +263,12 @@ object CDraw2 {
     resize()
   }
   def resize(): Unit = {
+    val DPR = if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1
     width = window.innerWidth
     height = window.innerHeight
     camera.aspect = Math.min(width / height, 3)
     camera.updateProjectionMatrix()
+    renderer.setPixelRatio(DPR)
     renderer.setSize(width, height)
     renderer.render(scene, camera)
   }
