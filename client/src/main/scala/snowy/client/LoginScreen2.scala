@@ -2,7 +2,10 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.MeshPhongMaterialParameters
-import snowy.client.CDraw2.{resize, scene}
+import org.scalajs.dom.{Event, document, html, window}
+import snowy.client.CDraw2._
+import snowy.connection.GameState
+import snowy.playfield.{BasicSkis, BasicSled, SkiColor, SledKind}
 
 import scala.scalajs.js.Dynamic
 
@@ -222,6 +225,68 @@ object LoginScreen2 {
     scene.add(Groups.selector)
     scene.add(Groups.snowyText)
 
-    resize()
+    renderer.render(scene, camera)
+  }
+
+  def removeFromScene(): Unit = {
+    scene.remove(amb)
+    scene.remove(light)
+    scene.remove(Groups.selector)
+    scene.remove(Groups.snowyText)
+
+    renderer.render(scene, camera)
+  }
+  private var connected: Option[Connection] = None
+
+  private var skiColor: SkiColor = BasicSkis
+  private var sledKind: SledKind = BasicSled
+
+  def switch(game: Boolean) {
+    game match {
+      case true =>
+        document
+          .getElementById("game-div")
+          .asInstanceOf[html.Div]
+          .classList
+          .remove("back")
+        document
+          .getElementById("login-form")
+          .asInstanceOf[html.Div]
+          .classList
+          .add("hide")
+      case false =>
+        document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
+        document
+          .getElementById("login-form")
+          .asInstanceOf[html.Div]
+          .classList
+          .remove("hide")
+    }
+  }
+
+  val textInput = document.getElementById("username").asInstanceOf[html.Input]
+
+  document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
+    event: Event =>
+      //Connect to the WebSocket server
+      connected match {
+        case x if x.isEmpty =>
+          connected = Some(
+            new Connection(
+              document.getElementById("username").asInstanceOf[html.Input].value,
+              sledKind,
+              skiColor
+            )
+          )
+        case x if x.isDefined => connected.get.reSpawn()
+        case _                =>
+      }
+
+      switch(true)
+      DrawState2.setup()
+      GameState.startRedraw()
+
+      //Do not redirect
+      false
   }
 }
