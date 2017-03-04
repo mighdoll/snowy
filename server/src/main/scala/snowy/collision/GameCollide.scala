@@ -6,7 +6,7 @@ import snowy.playfield.{Circle, Rect, Snowball, Tree}
 import vector.Vec2d
 
 object GameCollide {
-  val toTreeTopLeft = Vec2d(treeSize.x / 2, treeSize.y)
+  val toTreeTopLeft = Vec2d(treeSize.x / 2, treeSize.y / 2)
 
   /** Intersect a snowball with all potentially overlapping trees on the playfield.
     *

@@ -23,7 +23,7 @@ object GameConstants {
   val turnTime = .75
 
   /** size of the tree trunk in pixels */
-  val treeSize = Vec2d(10, 40)
+  val treeSize = Vec2d(10, 10)
 
   object Bullet {
     val averageRadius = 5
