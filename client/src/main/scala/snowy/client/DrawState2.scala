@@ -8,18 +8,17 @@ import snowy.client.CDraw2._
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
 
-import scala.scalajs.js
 import scala.scalajs.js.Dynamic
 
 object DrawState2 {
-  var sledGeo = new THREE.IcosahedronGeometry(1, 0)
+  var sledGeo = new THREE.BoxGeometry(2, 2, 2)
   var sledMat = new THREE.MeshPhongMaterial(
     Dynamic
       .literal(color = 0x2194ce, shading = THREE.FlatShading)
       .asInstanceOf[MeshPhongMaterialParameters]
   )
 
-  var turretGeo = new THREE.BoxGeometry(2, 2, 5)
+  var turretGeo = new THREE.BoxGeometry(4, 4, 20)
   var turretMat = new THREE.MeshPhongMaterial(
     Dynamic
       .literal(color = 0x222222, shading = THREE.FlatShading)
@@ -83,7 +82,7 @@ object DrawState2 {
   tree.add(trunk)
   tree.add(leave1)
   tree.add(leave2)
-  var snowballGeo = new THREE.BoxGeometry(10, 10, 10)
+  var snowballGeo = new THREE.BoxGeometry(2, 2, 2)
   var snowball    = new THREE.Mesh(snowballGeo, snowballMat)
   var csnowballs  = new THREE.Object3D()
   var csleds      = new THREE.Object3D()
@@ -111,7 +110,7 @@ object DrawState2 {
 
     scene.add(csleds)
   }
-
+  //TODO: Remove trees after dead
   def drawState(snowballs: Store[Snowball],
                 sleds: Store[Sled],
                 mySled: Sled,
@@ -119,6 +118,7 @@ object DrawState2 {
                 border: Vec2d,
                 scoreboard: Scoreboard): Unit = {
     trees.items.foreach { tree1 =>
+      //TODO: Make this functional
       var idExists = false
       ctrees.children.zipWithIndex.foreach {
         case (possibleTree, index) =>
@@ -154,40 +154,53 @@ object DrawState2 {
         var addSnowball: Object3D = snowball.clone()
         addSnowball.position.x = snowball1._position.x
         addSnowball.position.z = snowball1._position.y
+        addSnowball.scale.set(
+          snowball1.radius,
+          snowball1.radius,
+          snowball1.radius
+        )
         addSnowball.name = snowball1.id.id.toString
         csnowballs.add(addSnowball)
         println("adding snowball")
       }
     }
-    sleds.items.foreach { snowball1 =>
+    //TODO: Remove sleds after dead
+    sleds.items.foreach { sled1 =>
       //TODO: Make this functional
       var idExists = false
       csleds.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
-          if (aSnowball.name == snowball1.id.id.toString) {
+          if (aSnowball.name == sled1.id.id.toString) {
             println("moving snowball")
             idExists = true
-            csleds.children(index).children(1).scale.x = snowball1.radius
-            csleds.children(index).children(1).scale.y = snowball1.radius
-            csleds.children(index).children(1).scale.z = snowball1.radius
+            csleds
+              .children(index)
+              .children(1)
+              .setRotationFromAxisAngle(
+                new THREE.Vector3(0, 1, 0),
+                sled1.rotation
+              )
+            csleds.children(index).children(1).scale.x = sled1.radius
+            csleds.children(index).children(1).scale.y = sled1.radius
+            csleds.children(index).children(1).scale.z = sled1.radius
 
-            csleds.children(index).position.x = snowball1._position.x
-            csleds.children(index).position.z = snowball1._position.y
+            csleds.children(index).position.x = sled1._position.x
+            csleds.children(index).position.z = sled1._position.y
             csleds
               .children(index)
               .children(0)
               .setRotationFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
-                -snowball1.turretRotation
+                -sled1.turretRotation
               )
             csleds
               .children(index)
               .children(0)
               .position
               .set(
-                math.sin(-snowball1.turretRotation) * snowball1.radius,
+                math.sin(-sled1.turretRotation) * sled1.radius,
                 0,
-                math.cos(-snowball1.turretRotation) * snowball1.radius
+                math.cos(-sled1.turretRotation) * sled1.radius
               )
           }
       }
@@ -199,18 +212,19 @@ object DrawState2 {
         addSled.add(tur)
         addSled.add(body)
 
-        addSled.position.x = snowball1._position.x
-        addSled.position.z = snowball1._position.y
-        addSled.name = snowball1.id.id.toString
+        addSled.position.x = sled1._position.x
+        addSled.position.z = sled1._position.y
+        addSled.name = sled1.id.id.toString
         csleds.add(addSled)
-        println("adding snowball")
+        println("adding sled")
       }
     }
 
     mainBody.scale.x = mySled.radius
     mainBody.scale.y = mySled.radius
     mainBody.scale.z = mySled.radius
-    sled.position.set(mySled._position.x, -mySled.radius / 2, mySled._position.y)
+    mainBody.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), mySled.rotation)
+    sled.position.set(mySled._position.x, 0, mySled._position.y)
     turret.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), -mySled.turretRotation)
     turret.position.set(
       math.sin(-mySled.turretRotation) * mySled.radius,
