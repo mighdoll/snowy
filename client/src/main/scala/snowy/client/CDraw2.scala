@@ -1,7 +1,7 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{MeshPhongMaterialParameters, WebGLRendererParameters}
+import minithree.THREE.WebGLRendererParameters
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 
@@ -48,13 +48,17 @@ object CDraw2 {
   var height = window.innerHeight
 
   val renderer = new THREE.WebGLRenderer(
-    Dynamic.literal(antialias = false, canvas = document.getElementById("game-c")).asInstanceOf[WebGLRendererParameters]
+    Dynamic
+      .literal(antialias = false, canvas = document.getElementById("game-c"))
+      .asInstanceOf[WebGLRendererParameters]
   )
   renderer.setClearColor(new THREE.Color(0xfff6e6), 1)
-  renderer.setPixelRatio(if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1)
+  renderer.setPixelRatio(
+    if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1
+  )
 
   var scene  = new THREE.Scene()
-  var camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000)
+  var camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
   camera.position.set(0, 100, -100)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
