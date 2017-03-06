@@ -17,17 +17,17 @@ object LoginScreen2 {
     val cardBigGeo   = new THREE.BoxGeometry(5, 8, 1)
     val cardSmallGeo = new THREE.BoxGeometry(4, 6, 1)
 
-    var geoParams = Dynamic.literal(
+    val geoParams = Dynamic.literal(
       steps = 1,
       amount = 3,
       bevelEnabled = false
     )
 
-    var geoS = new THREE.ExtrudeGeometry(Shapes.shapeS, geoParams)
-    var geoN = new THREE.ExtrudeGeometry(Shapes.shapeN, geoParams)
-    var geoO = new THREE.ExtrudeGeometry(Shapes.shapeO, geoParams)
-    var geoW = new THREE.ExtrudeGeometry(Shapes.shapeW, geoParams)
-    var geoY = new THREE.ExtrudeGeometry(Shapes.shapeY, geoParams)
+    val geoS = new THREE.ExtrudeGeometry(Shapes.shapeS, geoParams)
+    val geoN = new THREE.ExtrudeGeometry(Shapes.shapeN, geoParams)
+    val geoO = new THREE.ExtrudeGeometry(Shapes.shapeO, geoParams)
+    val geoW = new THREE.ExtrudeGeometry(Shapes.shapeW, geoParams)
+    val geoY = new THREE.ExtrudeGeometry(Shapes.shapeY, geoParams)
   }
   object Mats {
     val trunkMat = new THREE.MeshPhongMaterial(
@@ -36,32 +36,32 @@ object LoginScreen2 {
         .asInstanceOf[MeshPhongMaterialParameters]
     )
 
-    var leave1Mat = new THREE.MeshPhongMaterial(
+    val leave1Mat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x658033, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    var leave2Mat = new THREE.MeshPhongMaterial(
+    val leave2Mat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x81A442, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    var cardMat = new THREE.MeshPhongMaterial(
+    val cardMat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xd8bc9d, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
 
-    var matLetters = new THREE.MeshPhongMaterial(
+    val matLetters = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xa3a3a3, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
   }
   object Shapes {
-    var s = 3
+    val s = 3
 
-    var shapeS = new THREE.Shape()
+    val shapeS = new THREE.Shape()
     shapeS.moveTo(s * 0 - s * 1.5, s * 0 - s * 2.5)
     shapeS.lineTo(s * 3 - s * 1.5, s * 0 - s * 2.5)
     shapeS.lineTo(s * 3 - s * 1.5, s * 1 - s * 2.5)
@@ -76,7 +76,7 @@ object LoginScreen2 {
     shapeS.lineTo(s * 0 - s * 1.5, s * 3 - s * 2.5)
     shapeS.lineTo(s * 0 - s * 1.5, s * 0 - s * 2.5)
 
-    var shapeN = new THREE.Shape()
+    val shapeN = new THREE.Shape()
     shapeN.moveTo(s * 0 - s * 2, s * 0 - s * 2.5)
     shapeN.lineTo(s * 2 - s * 2, s * 0 - s * 2.5)
     shapeN.lineTo(s * 3 - s * 2, s * 4 - s * 2.5)
@@ -89,7 +89,7 @@ object LoginScreen2 {
     shapeN.lineTo(s * 0 - s * 2, s * 5 - s * 2.5)
     shapeN.lineTo(s * 0 - s * 2, s * 0 - s * 2.5)
 
-    var shapeO = new THREE.Shape()
+    val shapeO = new THREE.Shape()
     shapeO.moveTo(s * 0 - s * 2, s * 0 - s * 2.5)
     shapeO.lineTo(s * 4 - s * 2, s * 0 - s * 2.5)
     shapeO.lineTo(s * 4 - s * 2, s * 5 - s * 2.5)
@@ -102,7 +102,7 @@ object LoginScreen2 {
     shapeO.lineTo(s * 1 - s * 2, s * 1 - s * 2.5)
     shapeO.lineTo(s * 0 - s * 2, s * 0 - s * 2.5)
 
-    var shapeW = new THREE.Shape()
+    val shapeW = new THREE.Shape()
     shapeW.moveTo(s * 0 - s * 2.5, s * 0 - s * 2.5)
     shapeW.lineTo(s * 1 - s * 2.5, s * 0 - s * 2.5)
     shapeW.lineTo(s * 1 - s * 2.5, s * 4 - s * 2.5)
@@ -117,7 +117,7 @@ object LoginScreen2 {
     shapeW.lineTo(s * 0 - s * 2.5, s * 5 - s * 2.5)
     shapeW.lineTo(s * 0 - s * 2.5, s * 0 - s * 2.5)
 
-    var shapeY = new THREE.Shape()
+    val shapeY = new THREE.Shape()
     shapeY.moveTo(s * 0 - s * 2, s * 0 - s * 2.5)
     shapeY.lineTo(s * 1 - s * 2, s * 0 - s * 2.5)
     shapeY.lineTo(s * 2 - s * 2, s * 2 - s * 2.5)
@@ -131,30 +131,30 @@ object LoginScreen2 {
   }
 
   object Meshes {
-    var trunk  = new THREE.Mesh(Geos.trunkGeo, Mats.trunkMat)
-    var leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
-    var leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
+    val trunk  = new THREE.Mesh(Geos.trunkGeo, Mats.trunkMat)
+    val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
+    val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
 
-    var card1 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
-    var card2 = new THREE.Mesh(Geos.cardBigGeo, Mats.cardMat)
-    var card3 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
+    val card1 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
+    val card2 = new THREE.Mesh(Geos.cardBigGeo, Mats.cardMat)
+    val card3 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
 
-    var meshS = new THREE.Mesh(Geos.geoS, Mats.matLetters)
-    var meshN = new THREE.Mesh(Geos.geoN, Mats.matLetters)
-    var meshO = new THREE.Mesh(Geos.geoO, Mats.matLetters)
-    var meshW = new THREE.Mesh(Geos.geoW, Mats.matLetters)
-    var meshY = new THREE.Mesh(Geos.geoY, Mats.matLetters)
+    val meshS = new THREE.Mesh(Geos.geoS, Mats.matLetters)
+    val meshN = new THREE.Mesh(Geos.geoN, Mats.matLetters)
+    val meshO = new THREE.Mesh(Geos.geoO, Mats.matLetters)
+    val meshW = new THREE.Mesh(Geos.geoW, Mats.matLetters)
+    val meshY = new THREE.Mesh(Geos.geoY, Mats.matLetters)
   }
 
   object Groups {
-    var selector  = new THREE.Object3D()
-    var tree      = new THREE.Object3D()
-    var tree2     = new THREE.Object3D()
-    var snowyText = new THREE.Object3D()
+    val selector  = new THREE.Object3D()
+    val tree      = new THREE.Object3D()
+    val tree2     = new THREE.Object3D()
+    val snowyText = new THREE.Object3D()
   }
 
-  var amb   = new THREE.AmbientLight(0x888888)
-  var light = new THREE.DirectionalLight(0xffffff)
+  val amb   = new THREE.AmbientLight(0x888888)
+  val light = new THREE.DirectionalLight(0xffffff)
 
   def positions(): Unit = {
     light.position.set(0, 20, 10)

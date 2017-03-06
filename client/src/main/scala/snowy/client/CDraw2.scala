@@ -57,7 +57,7 @@ object CDraw2 {
     if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1
   )
 
-  var scene  = new THREE.Scene()
+  val scene  = new THREE.Scene()
   var camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
   camera.position.set(0, 100, -100)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
