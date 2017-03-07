@@ -31,10 +31,10 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 
 lazy val V = new Object {
   val scala      = "2.12.1"
-  val akka       = "2.4.12"
-  val akkaHttp   = "10.0.3"
-  val log4j      = "2.7"
-  val jackson    = "2.8.4"
+  val akka       = "2.4.17"
+  val akkaHttp   = "10.0.4"
+  val log4j      = "2.8.1"
+  val jackson    = "2.8.7"
   val scalacheck = "1.13.4"
   val scalactic  = "3.0.1"
   val scalatest  = "3.0.1"
