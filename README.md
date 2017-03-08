@@ -23,18 +23,18 @@ An experimental WebSocket game using [Scala](http://scala-lang.org) and [Scala.j
 * Change port inside this file: `server/src/main/resources/application.conf`
 * Change game features in this file: `shared/src/main/scala/snowy/GameConstants.scala`
 
-###Credits
+### Credits
 
-#####This project was created by:
+**This project was created by:**
 
 * [Mighdoll](https://github.com/mighdoll)
 *  [ModderMe123](https://github.com/modderme123)
 
-#####With massive help from:
+**With massive help from:**
 
 * [Coler706](https://github.com/coler706)
 * [{Name hidden}]()
 
- 
+
 ##### [![YourKit Logo](https://www.yourkit.com/images/yklogo.png)](https://yourkit.com)
-[YourKit](https://www.yourkit.com/) kindly supports open source projects with its full-featured [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) and [.NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp). We turn to YourKit's [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) as the standard reference for code performance, leak analysis, and more. 
+[YourKit](https://www.yourkit.com/) kindly supports open source projects with its full-featured [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) and [.NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp). We turn to YourKit's [Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) as the standard reference for code performance, leak analysis, and more.
