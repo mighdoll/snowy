@@ -54,6 +54,7 @@ class InboundEvents(socket: NetworkSocket,
       case Ping                        => sendMessage(Pong)
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
+      case SledDeaths(sleds)           => println(s"died. sleds: $sleds ") // TODO use me
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
       case _                           => println(s"unexpected message: $message")
     }

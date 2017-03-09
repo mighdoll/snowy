@@ -164,7 +164,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
           case Slowing =>
             val slow = new InlineForce(
               -slowButtonFriction * deltaSeconds / sled.mass,
-              sled.maxSpeed)
+              sled.maxSpeed
+            )
             sled.speed = slow(sled.speed)
           case TurretLeft =>
             id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
@@ -182,7 +183,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
     if (sled.pushEnergy >= (1.0 / PushEnergy.maxAmount)) {
       val pushVector = Vec2d.fromRotation(-sled.turretRotation) * pushForceNow
-      val rawSpeed= sled.speed + pushVector
+      val rawSpeed   = sled.speed + pushVector
       sled.speed = rawSpeed.clipLength(sled.maxSpeed)
       sled.pushEnergy = sled.pushEnergy - (1.0 / PushEnergy.maxAmount)
     }
@@ -212,22 +213,36 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  /** Notify clients whose sleds have been killed, remove sleds from the game */
+  /** Notify clients about sleds that have been killed, remove sleds from the game */
   private def reapDead(dead: Traversable[SledDied]): Unit = {
-    dead.foreach {
-      case SledDied(sledId) =>
-        reapSled(sledId)
+    val deadSleds =
+      dead.map {
+        case SledDied(sledId) => sledId
+      }.toSeq
+
+    if (deadSleds.nonEmpty) {
+      val deaths = SledDeaths(deadSleds)
+      connections.keys.foreach(sendMessage(deaths, _))
+
+      for { sledId <- deadSleds; sled <- sledId.sled } {
+        sendDied(sledId)
+        logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
+        sled.remove()
+      }
     }
   }
 
   private def reapSled(sledId: SledId): Unit = {
+    sendDied(sledId)
+    sledId.sled.foreach(_.remove())
+  }
+
+  private def sendDied(sledId: SledId): Unit = {
     sledId.connectionId match {
       case Some(netId: ConnectionId) => sendMessage(Died, netId)
       case Some(robotId: RobotId)    => robots.died(robotId)
       case None                      => logger.warn(s"reapSled connection not found for sled: $sledId")
     }
-    sledId.sled.foreach(_.remove())
-    logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
   }
 
   private def reportJoinedSled(connectionId: ClientId, sledId: SledId): Unit = {
@@ -255,7 +270,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
                sledKind: SledKind,
                skiColor: SkiColor): Sled = {
     logger.info(
-      s"user joined: $userName  id:$id  kind: $sledKind  sserCount:${users.size}")
+      s"user joined: $userName  id:$id  kind: $sledKind  sserCount:${users.size}"
+    )
     val user =
       new User(userName, createTime = gameTime, sledKind = sledKind, skiColor = skiColor)
     users(id) = user
