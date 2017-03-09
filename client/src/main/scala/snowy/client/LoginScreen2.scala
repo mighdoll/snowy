@@ -283,6 +283,7 @@ object LoginScreen2 {
       }
 
       switch(true)
+      LoginScreen2.removeFromScene()
       DrawState2.setup()
       GameState.startRedraw()
 
