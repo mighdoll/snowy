@@ -99,6 +99,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
     if (math.abs(mouseDir - angle) > .05) {
       sendMessage(TurretAngle(angle))
+      sendMessage(TargetAngle(angle))
       mouseDir = angle
     }
   }

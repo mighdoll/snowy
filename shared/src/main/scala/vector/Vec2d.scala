@@ -28,6 +28,12 @@ case class Vec2d(x: Double, y: Double) {
 
   def rightPerpendicular: Vec2d = Vec2d(-y, x)
 
+  def clipLength(maxLength:Double): Vec2d = {
+    if (length > maxLength) {
+      this.unit * maxLength
+    } else this
+  }
+
   def unit: Vec2d = {
     val l = length
     if (l == 0) {
@@ -38,7 +44,7 @@ case class Vec2d(x: Double, y: Double) {
     }
   }
 
-  def zero: Boolean = (x == 0 && y == 0)
+  def zero: Boolean = {x == 0 && y == 0}
 
   def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)
@@ -84,7 +90,7 @@ object Vec2d {
   /** @return a vector rotated clockwise from straight up vector.Vec2d(0,1)
     * @param angle in radians
     */
-  def fromRotation(angle: Double): Vec2d = Vec2d(sin(angle), cos(angle))
+  def fromRotation(angle: Double) = Vec2d(sin(angle), cos(angle))
 
   val unitUp = Vec2d(0, 1)
 

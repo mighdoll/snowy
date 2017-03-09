@@ -35,7 +35,6 @@ object Friction {
   }
 }
 
-//TODO: Push sled in rotation that it is facing
 /** a force applied directly in the current direction of travel */
 class InlineForce(force: Double, maxSpeed: Double) {
   def apply(current: Vec2d): Vec2d = {

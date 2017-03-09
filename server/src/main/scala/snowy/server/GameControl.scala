@@ -82,6 +82,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         val sled = userJoin(id, name.slice(0, 15), sledKind, skiColor)
         reportJoinedSled(id, sled.id)
       case TurretAngle(angle)          => rotateTurret(id, angle)
+      case TargetAngle(angle)          => targetDirection(id, angle)
       case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
       case Push(time)                  => id.sled.foreach(sled => pushSled(sled))
       case Start(cmd, time)            => commands.startCommand(id, cmd, time)
@@ -177,15 +178,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** apply a push to a sled */
   private def pushSled(sled: Sled): Unit = {
-
     val pushForceNow = PushEnergy.force / sled.mass
-    val push         = new InlineForce(pushForceNow, sled.maxSpeed)
 
     if (sled.pushEnergy >= (1.0 / PushEnergy.maxAmount)) {
-      val speed =
-        if (sled.speed.zero) Vec2d.fromRotation(sled.rotation) * pushForceNow
-        else push(sled.speed)
-      sled.speed = speed
+      val pushVector = Vec2d.fromRotation(-sled.turretRotation) * pushForceNow
+      val rawSpeed= sled.speed + pushVector
+      sled.speed = rawSpeed.clipLength(sled.maxSpeed)
       sled.pushEnergy = sled.pushEnergy - (1.0 / PushEnergy.maxAmount)
     }
   }
@@ -276,16 +274,23 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def createSled(connctionId: ClientId, user: User, sledKind: SledKind): Sled = {
+  private def createSled(connectionId: ClientId, user: User, sledKind: SledKind): Sled = {
     val sled = newRandomSled(user.name, sledKind, user.skiColor)
     sleds = sleds.add(sled)
-    sledMap(connctionId) = sled.id
+    sledMap(connectionId) = sled.id
     sled
   }
 
   /** Rotate the turret on a sled */
   private def rotateTurret(id: ClientId, angle: Double): Unit = {
     id.sled.foreach(_.turretRotation = angle)
+  }
+
+  /** Point the sled in this direction */
+  private def targetDirection(id: ClientId, angle: Double): Unit = {
+    id.sled.foreach { sled =>
+      sled.rotation = -angle
+    }
   }
 
 }

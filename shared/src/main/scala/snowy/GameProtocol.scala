@@ -18,6 +18,8 @@ object GameServerProtocol {
 
   case class TurretAngle(angle: Double) extends GameServerMessage
 
+  case class TargetAngle(angle: Double) extends GameServerMessage
+
   case class Shoot(time: Long) extends GameServerMessage
 
   case class Push(time: Long) extends GameServerMessage
