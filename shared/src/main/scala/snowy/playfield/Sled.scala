@@ -89,6 +89,9 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** deliver this amount of damage on collision with another sled at full speed */
   def maxImpactDamage: Double = kind.maxImpactDamage
 
+  /** speedup from the push button. in pixels / second / second */
+  def pushForce: Double = kind.pushForce
+
   /** reduce impact by this factor in sled/sled collisions */
   override def armor: Double = kind.armor
 

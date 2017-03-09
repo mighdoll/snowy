@@ -42,18 +42,6 @@ object GameConstants {
     val sledLoss = .5
   }
 
-  object PushEnergy {
-
-    /** speedup from the push button. in pixels / second / second */
-    val force = 300.0
-
-    /** time in seconds to recover one push */
-    val recoveryTime = 3.0
-
-    /** max amount of pushes */
-    val maxAmount = 3
-  }
-
   object Friction {
 
     /** friction from the slowdown button. in pixels / second / second */

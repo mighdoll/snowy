@@ -21,38 +21,36 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   object GoLeft  extends Direction
   object GoRight extends Direction
 
-  window.addEventListener(
-    "keydown", { event: KeyboardEvent =>
-      event.keyCode match {
-        case Keys.Right() if !turning.contains(GoRight) =>
-          GameState.startTurn(RightTurn)
-          sendMessage(Stop(Left, gameTime))
-          sendMessage(Start(Right, gameTime))
-          turning = Some(GoRight)
-        case Keys.Left() if !turning.contains(GoLeft) =>
-          GameState.startTurn(LeftTurn)
-          sendMessage(Stop(Right, gameTime))
-          sendMessage(Start(Left, gameTime))
-          turning = Some(GoLeft)
-        case Keys.Down() if !slowing =>
-          sendMessage(Start(Slowing, gameTime))
-          slowing = true
-        case Keys.Up() if !pushing =>
-          sendMessage(Push(gameTime))
-          pushing = true
-        case Keys.TurretLeft() if !turret.contains(GoLeft) =>
-          sendMessage(Stop(TurretRight, gameTime))
-          sendMessage(Start(TurretLeft, gameTime))
-          turret = Some(GoLeft)
-        case Keys.TurretRight() if !turret.contains(GoRight) =>
-          sendMessage(Stop(TurretLeft, gameTime))
-          sendMessage(Start(TurretRight, gameTime))
-          turret = Some(GoRight)
-        case Keys.Space() if !shooting =>
-          sendMessage(Start(Shooting, gameTime))
-          shooting = true
-        case _ =>
-      }
+  window.onkeydown = { event: KeyboardEvent =>
+    event.keyCode match {
+      case Keys.Right() if !turning.contains(GoRight) =>
+        GameState.startTurn(RightTurn)
+        sendMessage(Stop(Left, gameTime))
+        sendMessage(Start(Right, gameTime))
+        turning = Some(GoRight)
+      case Keys.Left() if !turning.contains(GoLeft) =>
+        GameState.startTurn(LeftTurn)
+        sendMessage(Stop(Right, gameTime))
+        sendMessage(Start(Left, gameTime))
+        turning = Some(GoLeft)
+      case Keys.Down() if !slowing =>
+        sendMessage(Start(Slowing, gameTime))
+        slowing = true
+      case Keys.Up() if !pushing =>
+        sendMessage(Start(Pushing, gameTime))
+        pushing = true
+      case Keys.TurretLeft() if !turret.contains(GoLeft) =>
+        sendMessage(Stop(TurretRight, gameTime))
+        sendMessage(Start(TurretLeft, gameTime))
+        turret = Some(GoLeft)
+      case Keys.TurretRight() if !turret.contains(GoRight) =>
+        sendMessage(Stop(TurretLeft, gameTime))
+        sendMessage(Start(TurretRight, gameTime))
+        turret = Some(GoRight)
+      case Keys.Space() if !shooting =>
+        sendMessage(Start(Shooting, gameTime))
+        shooting = true
+      case _ =>
     }
   )
 
@@ -96,7 +94,34 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         case _ =>
       }
     }
-  )
+    (event.keyCode, slowing) match {
+      case (Keys.Down(), true) =>
+        sendMessage(Stop(Slowing, gameTime))
+        slowing = false
+      case _ =>
+    }
+    (event.keyCode, pushing) match {
+      case (Keys.Up(), true) =>
+        sendMessage(Stop(Pushing, gameTime))
+        pushing = false
+      case _ =>
+    }
+    (event.keyCode, turret) match {
+      case (Keys.TurretLeft(), Some(GoLeft)) =>
+        sendMessage(Stop(TurretLeft, gameTime))
+        turret = None
+      case (Keys.TurretRight(), Some(GoRight)) =>
+        sendMessage(Stop(TurretRight, gameTime))
+        turret = None
+      case _ =>
+    }
+    event.keyCode match {
+      case Keys.Space() =>
+        sendMessage(Stop(Shooting, gameTime))
+        shooting = false
+      case _ =>
+    }
+  }
 
   window.addEventListener(
     "mousemove", { e: MouseEvent =>

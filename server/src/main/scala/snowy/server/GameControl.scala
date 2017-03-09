@@ -84,7 +84,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       case TurretAngle(angle)          => rotateTurret(id, angle)
       case TargetAngle(angle)          => targetDirection(id, angle)
       case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
-      case Push(time)                  => id.sled.foreach(sled => pushSled(sled))
       case Start(cmd, time)            => commands.startCommand(id, cmd, time)
       case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
       case Pong                        => netIdForeach(id)(connections(_).pongReceived())
@@ -161,6 +160,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         command match {
           case Left  => turnSled(sled, LeftTurn, deltaSeconds)
           case Right => turnSled(sled, RightTurn, deltaSeconds)
+          case Pushing => pushSled(sled, deltaSeconds)
           case Slowing =>
             val slow = new InlineForce(
               -slowButtonFriction * deltaSeconds / sled.mass,
@@ -277,8 +277,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
                        sledKind: SledKind,
                        skiColor: SkiColor): Unit = {
     logger.info(
-      s"user joined: $userName  id:$id  kind: $sledKind  sserCount:${users.size}"
-    )
+      s"user joined: $userName  id: $id  kind: $sledKind  userCount:${users.size}")
     val user =
       new User(userName, createTime = gameTime, sledKind = sledKind, skiColor = skiColor)
     users(id) = user

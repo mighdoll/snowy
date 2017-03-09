@@ -22,8 +22,6 @@ object GameServerProtocol {
 
   case class Shoot(time: Long) extends GameServerMessage
 
-  case class Push(time: Long) extends GameServerMessage
-
   case class Start(cmd: StartStopCommand, time: Long) extends GameServerMessage
 
   case class Stop(cmd: StartStopCommand, time: Long) extends GameServerMessage
@@ -33,6 +31,8 @@ object GameServerProtocol {
   case object Right extends StartStopCommand
 
   case object Slowing extends StartStopCommand
+
+  case object Pushing extends StartStopCommand
 
   case object TurretLeft extends StartStopCommand
 

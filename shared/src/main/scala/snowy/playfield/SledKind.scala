@@ -6,7 +6,7 @@ import vector.Vec2d
 sealed trait SledKind {
 
   /** acceleration in pixels / second / second */
-  def gravity: Double = -250
+  def gravity: Double = 0
 
   /** max speed of sled in pixels per second */
   def maxSpeed: Int = 700
@@ -66,6 +66,9 @@ sealed trait SledKind {
   /** radius of the sled body */
   def radius: Double = 18
 
+  /** speedup from the push button. in pixels / second / second */
+  def pushForce: Double = 300
+
   /*
   TODO
  * penetration factor for bullets (off axis hits bounce off modulo this factor)
@@ -79,7 +82,7 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity         = -100.0
+  override val gravity         = 0
   override val maxHealth       = 2.0
   override val minRechargeTime = 1000
   override val bulletImpact    = 1.25
@@ -89,6 +92,7 @@ case object TankSled extends SledKind {
   override val bulletRecoil    = 120
   override val bulletLifetime  = 10.0
   override val mass            = 3.0
+  override val pushForce       = 500.0
 }
 
 case object GunnerSled extends SledKind {
@@ -105,14 +109,15 @@ case object GunnerSled extends SledKind {
 }
 
 case object SpeedySled extends SledKind {
-  override val gravity            = -500.0
+  override val gravity            = 0
+  override val pushForce          = 100.0
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val minRechargeTime    = 200
 }
 
 case object SpikySled extends SledKind {
-  override val gravity            = -100.0
+  override val gravity            = 0
   override val maxHealth          = 2.0
   override val maxImpactDamage    = 2.0
   override val mass               = 2.0

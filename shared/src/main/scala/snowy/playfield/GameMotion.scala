@@ -2,8 +2,7 @@ package snowy.playfield
 
 import scala.collection.mutable
 import snowy.Awards.Travel
-import snowy.GameConstants.playfield
-import snowy.GameConstants.turnTime
+import snowy.GameConstants.{playfield, turnTime}
 import vector.Vec2d
 import Friction.friction
 import Gravity.gravity
@@ -57,6 +56,14 @@ object GameMotion {
       else if (rotation < min) rotation - min
       else rotation
     sled.rotation = wrappedRotation
+  }
+
+  /** apply a push to a sled in the current direction of the turret */
+  def pushSled(sled:Sled, deltaSeconds: Double): Unit = {
+    val pushForceNow = (sled.pushForce / sled.mass) * deltaSeconds
+    val pushVector = Vec2d.fromRotation(-sled.turretRotation) * pushForceNow
+    val rawSpeed = sled.speed + pushVector
+    sled.speed = rawSpeed.clipLength(sled.maxSpeed)
   }
 
   /** Constrain a value between 0 and a max value.
