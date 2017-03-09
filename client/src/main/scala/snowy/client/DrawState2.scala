@@ -24,42 +24,41 @@ object DrawState2 {
       .literal(color = 0x222222, shading = THREE.FlatShading)
       .asInstanceOf[MeshPhongMaterialParameters]
   )
-  var skiGeo = new THREE.BoxGeometry(0.25, 0.125, 3-0.25)
-  var skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
-  
-  var skiMat = new THREE.MeshPhongMaterial(
+  val skiGeo    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
+  val skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
+
+  val skiMat = new THREE.MeshPhongMaterial(
     Dynamic
       .literal(color = 0x222222, shading = THREE.FlatShading)
       .asInstanceOf[MeshPhongMaterialParameters]
   )
 
-  var skiTipMat = new THREE.MeshPhongMaterial(
+  val skiTipMat = new THREE.MeshPhongMaterial(
     Dynamic
       .literal(color = 0xEE2222, shading = THREE.FlatShading)
       .asInstanceOf[MeshPhongMaterialParameters]
   )
 
-  var amb   = new THREE.AmbientLight(0x888888)
-  var light = new THREE.DirectionalLight(0xffffff)
-  var grid  = new THREE.GridHelper(4000, 50)
+  val amb   = new THREE.AmbientLight(0x888888)
+  val light = new THREE.DirectionalLight(0xffffff)
+  val grid  = new THREE.GridHelper(4000, 50)
 
-  var ctrees   = new THREE.Object3D()
-  var sled     = new THREE.Object3D()
-  var mainBody = new THREE.Mesh(sledGeo, sledMat)
-  var ski1 = new THREE.Mesh(skiGeo, skiMat)
-  var skiTip1 = new THREE.Mesh(skiTipGeo, skiTipMat)
-  var turret   = new THREE.Mesh(turretGeo, turretMat)
+  val ctrees   = new THREE.Object3D()
+  val sled     = new THREE.Object3D()
+  val mainBody = new THREE.Mesh(sledGeo, sledMat)
+  val ski1     = new THREE.Mesh(skiGeo, skiMat)
+  val skiTip1  = new THREE.Mesh(skiTipGeo, skiTipMat)
+  val turret   = new THREE.Mesh(turretGeo, turretMat)
   turret.translate(-5, new THREE.Vector3(0, 0, 1))
   sled.add(mainBody)
   sled.add(turret)
-  skiTip1.translate(1, new THREE.Vector3(0, 0, 1.5-0.25/2))
+  skiTip1.translate(1, new THREE.Vector3(0, 0, 1.5 - 0.25 / 2))
   ski1.add(skiTip1)
-  
-  ski1.translate(1, new THREE.Vector3(0, 0, -0.5/2))
-  var ski2=ski1.clone()
+
+  ski1.translate(1, new THREE.Vector3(0, 0, -0.5 / 2))
+  val ski2 = ski1.clone()
   ski1.translate(5, new THREE.Vector3(-0.25, -0.5, 0))
   ski2.translate(5, new THREE.Vector3(0.25, -0.5, 0))
-  
 
   mainBody.add(ski1)
   mainBody.add(ski2)
