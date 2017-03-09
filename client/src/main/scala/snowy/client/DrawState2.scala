@@ -11,107 +11,122 @@ import vector.Vec2d
 import scala.scalajs.js.Dynamic
 
 object DrawState2 {
-  var sledGeo = new THREE.BoxGeometry(2, 2, 2)
-  var sledMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(color = 0x2194ce, shading = THREE.FlatShading)
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
+  object Geos {
+    val sledGeo   = new THREE.BoxGeometry(2, 2, 2)
+    val turretGeo = new THREE.BoxGeometry(4, 4, 20)
+    val skiGeo    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
+    val skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
 
-  var turretGeo = new THREE.BoxGeometry(4, 4, 20)
-  var turretMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(color = 0x222222, shading = THREE.FlatShading)
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
-  val skiGeo    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
-  val skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
+    val trunkGeo  = new THREE.BoxGeometry(10, 40, 10)
+    val leave1Geo = new ConeGeometry(32, 32, 4, 1, false, 0.783, Math.PI * 2)
+    val leave2Geo = new ConeGeometry(24, 16, 4, 1, false, 0.8, Math.PI * 2)
 
-  val skiMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(color = 0x222222, shading = THREE.FlatShading)
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
+    val snowballGeo = new THREE.BoxGeometry(2, 2, 2)
+  }
+  object Mats {
+    val sledMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(color = 0x2194ce, shading = THREE.FlatShading)
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val turretMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(color = 0x222222, shading = THREE.FlatShading)
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val skiMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(color = 0x222222, shading = THREE.FlatShading)
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val skiTipMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(color = 0xEE2222, shading = THREE.FlatShading)
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val trunkMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(
+          color = 0x502A2A,
+          shading = THREE.FlatShading
+        )
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val leave1Mat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(
+          color = 0x658033,
+          shading = THREE.FlatShading
+        )
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val leave2Mat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(
+          color = 0x81A442,
+          shading = THREE.FlatShading
+        )
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
 
-  val skiTipMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(color = 0xEE2222, shading = THREE.FlatShading)
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
+    val snowballMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(
+          color = 0x222222,
+          shading = THREE.FlatShading
+        )
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+  }
+  object Meshes {
+    val mainBody = new THREE.Mesh(Geos.sledGeo, Mats.sledMat)
+    val ski1     = new THREE.Mesh(Geos.skiGeo, Mats.skiMat)
+    val skiTip1  = new THREE.Mesh(Geos.skiTipGeo, Mats.skiTipMat)
+
+    val turret = new THREE.Mesh(Geos.turretGeo, Mats.turretMat)
+
+    val trunk  = new THREE.Mesh(Geos.trunkGeo, Mats.trunkMat)
+    val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
+    val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
+
+    val snowball = new THREE.Mesh(Geos.snowballGeo, Mats.snowballMat)
+  }
+  object Bodies {
+    val sled = new THREE.Object3D()
+    val tree = new THREE.Object3D()
+
+  }
+  object Groups {
+    val ctrees     = new THREE.Object3D()
+    val csnowballs = new THREE.Object3D()
+    val csleds     = new THREE.Object3D()
+  }
 
   val amb   = new THREE.AmbientLight(0x888888)
   val light = new THREE.DirectionalLight(0xffffff)
   val grid  = new THREE.GridHelper(4000, 50)
 
-  val ctrees   = new THREE.Object3D()
-  val sled     = new THREE.Object3D()
-  val mainBody = new THREE.Mesh(sledGeo, sledMat)
-  val ski1     = new THREE.Mesh(skiGeo, skiMat)
-  val skiTip1  = new THREE.Mesh(skiTipGeo, skiTipMat)
-  val turret   = new THREE.Mesh(turretGeo, turretMat)
-  turret.translate(-5, new THREE.Vector3(0, 0, 1))
-  sled.add(mainBody)
-  sled.add(turret)
-  skiTip1.translate(1, new THREE.Vector3(0, 0, 1.5 - 0.25 / 2))
-  ski1.add(skiTip1)
+  Meshes.turret.translate(-5, new THREE.Vector3(0, 0, 1))
+  Bodies.sled.add(Meshes.mainBody)
+  Bodies.sled.add(Meshes.turret)
+  Meshes.skiTip1.translate(1, new THREE.Vector3(0, 0, 1.5 - 0.25 / 2))
+  Meshes.ski1.add(Meshes.skiTip1)
+  val ski2 = Meshes.ski1.clone()
 
-  ski1.translate(1, new THREE.Vector3(0, 0, -0.5 / 2))
-  val ski2 = ski1.clone()
-  ski1.translate(5, new THREE.Vector3(-0.25, -0.5, 0))
+  Meshes.ski1.translate(1, new THREE.Vector3(0, 0, -0.5 / 2))
+  Meshes.ski1.translate(5, new THREE.Vector3(-0.25, -0.5, 0))
   ski2.translate(5, new THREE.Vector3(0.25, -0.5, 0))
 
-  mainBody.add(ski1)
-  mainBody.add(ski2)
-  var trunkGeo  = new THREE.BoxGeometry(10, 40, 10)
-  var leave1Geo = new ConeGeometry(32, 32, 4, 1, false, 0.783, Math.PI * 2)
-  var leave2Geo = new ConeGeometry(24, 16, 4, 1, false, 0.8, Math.PI * 2)
-  var trunkMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(
-        color = 0x502A2A,
-        shading = THREE.FlatShading
-      )
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
-  var leave1Mat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(
-        color = 0x658033,
-        shading = THREE.FlatShading
-      )
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
-  var leave2Mat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(
-        color = 0x81A442,
-        shading = THREE.FlatShading
-      )
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
-  var trunk  = new THREE.Mesh(trunkGeo, trunkMat)
-  var leave1 = new THREE.Mesh(leave1Geo, leave1Mat)
-  var leave2 = new THREE.Mesh(leave2Geo, leave2Mat)
-  var tree   = new THREE.Object3D()
+  Meshes.mainBody.add(Meshes.ski1)
+  Meshes.mainBody.add(ski2)
 
-  trunk.position.y = 20;
-  leave1.position.y = 56;
-  leave2.position.y = 64;
-  var snowballMat = new THREE.MeshPhongMaterial(
-    Dynamic
-      .literal(
-        color = 0x222222,
-        shading = THREE.FlatShading
-      )
-      .asInstanceOf[MeshPhongMaterialParameters]
-  )
-  tree.add(trunk)
-  tree.add(leave1)
-  tree.add(leave2)
-  var snowballGeo = new THREE.BoxGeometry(2, 2, 2)
-  var snowball    = new THREE.Mesh(snowballGeo, snowballMat)
-  var csnowballs  = new THREE.Object3D()
-  var csleds      = new THREE.Object3D()
+  Meshes.trunk.position.y = 20
+  Meshes.leave1.position.y = 56
+  Meshes.leave2.position.y = 64
+
+  Bodies.tree.add(Meshes.trunk)
+  Bodies.tree.add(Meshes.leave1)
+  Bodies.tree.add(Meshes.leave2)
   def setup(): Unit = {
     scene.add(amb)
 
@@ -120,21 +135,21 @@ object DrawState2 {
 
     println("works")
 
-    sled.position.set(200, 100, -2.5)
-    scene.add(sled)
+    Bodies.sled.position.set(200, 100, -2.5)
+    scene.add(Bodies.sled)
 
-    camera.position.x = sled.position.x
-    camera.position.z = sled.position.z + 400
+    camera.position.x = Bodies.sled.position.x
+    camera.position.z = Bodies.sled.position.z + 400
     camera.position.y = 800
-    camera.lookAt(sled.position)
+    camera.lookAt(Bodies.sled.position)
 
     scene.add(grid)
 
-    scene.add(ctrees)
+    scene.add(Groups.ctrees)
 
-    scene.add(csnowballs)
+    scene.add(Groups.csnowballs)
 
-    scene.add(csleds)
+    scene.add(Groups.csleds)
   }
   //TODO: Remove trees after dead
   def drawState(snowballs: Store[Snowball],
@@ -146,20 +161,20 @@ object DrawState2 {
     trees.items.foreach { tree1 =>
       //TODO: Make this functional
       var idExists = false
-      ctrees.children.zipWithIndex.foreach {
+      Groups.ctrees.children.zipWithIndex.foreach {
         case (possibleTree, index) =>
           if (possibleTree.name == tree1.id.id.toString) {
             idExists = true
-            ctrees.children(index).position.x = tree1.pos.x
-            ctrees.children(index).position.z = tree1.pos.y
+            Groups.ctrees.children(index).position.x = tree1.pos.x
+            Groups.ctrees.children(index).position.z = tree1.pos.y
           }
       }
-      if (idExists == false) {
-        var addTree: Object3D = tree.clone()
+      if (!idExists) {
+        val addTree: Object3D = Bodies.tree.clone()
         addTree.position.x = tree1.pos.x
         addTree.position.z = tree1.pos.y
         addTree.name = tree1.id.id.toString
-        ctrees.add(addTree)
+        Groups.ctrees.add(addTree)
         println("adding tree")
       }
     }
@@ -167,17 +182,17 @@ object DrawState2 {
     snowballs.items.foreach { snowball1 =>
       //TODO: Make this functional
       var idExists = false
-      csnowballs.children.zipWithIndex.foreach {
+      Groups.csnowballs.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == snowball1.id.id.toString) {
             println("moving snowball")
             idExists = true
-            csnowballs.children(index).position.x = snowball1._position.x
-            csnowballs.children(index).position.z = snowball1._position.y
+            Groups.csnowballs.children(index).position.x = snowball1._position.x
+            Groups.csnowballs.children(index).position.z = snowball1._position.y
           }
       }
-      if (idExists == false) {
-        var addSnowball: Object3D = snowball.clone()
+      if (!idExists) {
+        val addSnowball: Object3D = Meshes.snowball.clone()
         addSnowball.position.x = snowball1._position.x
         addSnowball.position.z = snowball1._position.y
         addSnowball.scale.set(
@@ -186,7 +201,7 @@ object DrawState2 {
           snowball1.radius
         )
         addSnowball.name = snowball1.id.id.toString
-        csnowballs.add(addSnowball)
+        Groups.csnowballs.add(addSnowball)
         println("adding snowball")
       }
     }
@@ -194,32 +209,32 @@ object DrawState2 {
     sleds.items.foreach { sled1 =>
       //TODO: Make this functional
       var idExists = false
-      csleds.children.zipWithIndex.foreach {
+      Groups.csleds.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == sled1.id.id.toString) {
             println("moving snowball")
             idExists = true
-            csleds
+            Groups.csleds
               .children(index)
               .children(1)
               .setRotationFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
                 sled1.rotation
               )
-            csleds.children(index).children(1).scale.x = sled1.radius
-            csleds.children(index).children(1).scale.y = sled1.radius
-            csleds.children(index).children(1).scale.z = sled1.radius
+            Groups.csleds.children(index).children(1).scale.x = sled1.radius
+            Groups.csleds.children(index).children(1).scale.y = sled1.radius
+            Groups.csleds.children(index).children(1).scale.z = sled1.radius
 
-            csleds.children(index).position.x = sled1._position.x
-            csleds.children(index).position.z = sled1._position.y
-            csleds
+            Groups.csleds.children(index).position.x = sled1._position.x
+            Groups.csleds.children(index).position.z = sled1._position.y
+            Groups.csleds
               .children(index)
               .children(0)
               .setRotationFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
                 -sled1.turretRotation
               )
-            csleds
+            Groups.csleds
               .children(index)
               .children(0)
               .position
@@ -231,36 +246,37 @@ object DrawState2 {
           }
       }
 
-      if (idExists == false) {
-        var addSled: Object3D = new THREE.Object3D()
-        var body: Object3D    = mainBody.clone()
-        var tur: Object3D     = turret.clone()
+      if (!idExists) {
+        val addSled: Object3D = new THREE.Object3D()
+        val body: Object3D    = Meshes.mainBody.clone()
+        val tur: Object3D     = Meshes.turret.clone()
         addSled.add(tur)
         addSled.add(body)
 
         addSled.position.x = sled1._position.x
         addSled.position.z = sled1._position.y
         addSled.name = sled1.id.id.toString
-        csleds.add(addSled)
+        Groups.csleds.add(addSled)
         println("adding sled")
       }
     }
 
-    mainBody.scale.x = mySled.radius
-    mainBody.scale.y = mySled.radius
-    mainBody.scale.z = mySled.radius
-    mainBody.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), mySled.rotation)
-    sled.position.set(mySled._position.x, 0, mySled._position.y)
-    turret.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), -mySled.turretRotation)
-    turret.position.set(
+    Meshes.mainBody.scale.x = mySled.radius
+    Meshes.mainBody.scale.y = mySled.radius
+    Meshes.mainBody.scale.z = mySled.radius
+    Meshes.mainBody.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), mySled.rotation)
+    Bodies.sled.position.set(mySled._position.x, 0, mySled._position.y)
+    Meshes.turret
+      .setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), -mySled.turretRotation)
+    Meshes.turret.position.set(
       math.sin(-mySled.turretRotation) * mySled.radius,
       0,
       math.cos(-mySled.turretRotation) * mySled.radius
     )
 
-    camera.position.x = sled.position.x
-    camera.position.z = sled.position.z + 400
-    camera.lookAt(sled.position)
+    camera.position.x = Bodies.sled.position.x
+    camera.position.z = Bodies.sled.position.z + 400
+    camera.lookAt(Bodies.sled.position)
 
     renderer.setSize(width, height)
     renderer.render(scene, camera)
