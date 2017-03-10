@@ -19,7 +19,7 @@ sealed trait SledKind {
   def bulletImpactFactor: Double = GameConstants.Bullet.baseImpactFactor * bulletImpact
 
   /** factor increasing or decreasing damage from being hit with a snowball */
-  def bulletImpact: Double = 1.0
+  protected def bulletImpact: Double = 1.0
 
   /** speed of bullet in pixels/sec */
   def bulletSpeed = 400
@@ -32,7 +32,7 @@ sealed trait SledKind {
 
   /** acceleration due to recoil in pixels/sec/sec */
   // TODO: Bullet recoil should be a product of bulletMass
-  def bulletRecoil = 30
+  def bulletRecoil = 0//30
 
   /** bullet begins its flight this pixel offset from the sled center
     * if the sled is shooting straight up */
@@ -89,7 +89,7 @@ case object TankSled extends SledKind {
   override val bulletSpeed     = 200
   override val bulletRadius    = 10
   override val bulletMass      = .5
-  override val bulletRecoil    = 120
+  override val bulletRecoil    = 0//120
   override val bulletLifetime  = 10.0
   override val mass            = 3.0
   override val pushForce       = 500.0
@@ -100,12 +100,12 @@ case object GunnerSled extends SledKind {
   override val maxHealth       = .75
   override val minRechargeTime = 100
   override val bulletSpeed     = 300
-  override val bulletRadius    = 5
+  override val bulletRadius    = 3
   override val bulletMass      = .01
-  override val bulletImpact    = 4.5
-  override val bulletRecoil    = 10
+  override val bulletImpact    = 5.5
+  override val bulletRecoil    = 0//10
   override val bulletHealth    = 1.0
-  override val mass            = 2.0
+  override val mass            = 1.0
 }
 
 case object SpeedySled extends SledKind {
