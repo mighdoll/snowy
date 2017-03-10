@@ -13,42 +13,38 @@ import scala.scalajs.js.Dynamic
 
 object DrawState2 {
   object Geos {
-    val sledGeo   = new THREE.BoxGeometry(2, 2, 2)
-    val turretGeo = new THREE.BoxGeometry(4, 4, 20)
-    val skiGeo    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
-    val skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
+    val sled   = new THREE.BoxGeometry(2, 2, 2)
+    val turret = new THREE.BoxGeometry(4, 4, 20)
+    val ski    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
+    val skiTip = new THREE.BoxGeometry(0.25, 0.125, 0.25)
 
-    val trunkGeo  = new THREE.BoxGeometry(10, 200, 10)
-    val leave1Geo = new ConeGeometry(32, 32, 4, 1, false, 0.783, Math.PI * 2)
-    val leave2Geo = new ConeGeometry(24, 16, 4, 1, false, 0.8, Math.PI * 2)
-
-    val snowballGeo = new THREE.BoxGeometry(2, 2, 2)
+    val snowball = new THREE.BoxGeometry(2, 2, 2)
 
     val health = new THREE.BoxGeometry(64, 4, 16)
   }
   object Mats {
-    val sledMat = new THREE.MeshPhongMaterial(
+    val sled = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x2194ce, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val turretMat = new THREE.MeshPhongMaterial(
+    val turret = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x222222, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val skiMat = new THREE.MeshPhongMaterial(
+    val ski = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x222222, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val skiTipMat = new THREE.MeshPhongMaterial(
+    val skiTip = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xEE2222, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
 
-    val snowballMat = new THREE.MeshPhongMaterial(
+    val snowball = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(
           color = 0x222222,
@@ -56,37 +52,36 @@ object DrawState2 {
         )
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-
-    val healthBorderMat = new THREE.MeshPhongMaterial(
-      Dynamic
-        .literal(
-          color = 0x444444
-        )
-        .asInstanceOf[MeshPhongMaterialParameters]
-    )
-    val healthColorMat = new THREE.MeshPhongMaterial(
+    val healthColor = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(
           color = 0x21ce3a
         )
         .asInstanceOf[MeshPhongMaterialParameters]
     )
+    val enemyHealth = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(
+          color = 0xF43131
+        )
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
   }
   object Meshes {
-    val mainBody = new THREE.Mesh(Geos.sledGeo, Mats.sledMat)
-    val turret   = new THREE.Mesh(Geos.turretGeo, Mats.turretMat)
-    val ski1     = new THREE.Mesh(Geos.skiGeo, Mats.skiMat)
-    val skiTip1  = new THREE.Mesh(Geos.skiTipGeo, Mats.skiTipMat)
+    val mainBody = new THREE.Mesh(Geos.sled, Mats.sled)
+    val turret   = new THREE.Mesh(Geos.turret, Mats.turret)
+    val ski1     = new THREE.Mesh(Geos.ski, Mats.ski)
+    val skiTip1  = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
     val ski2     = Meshes.ski1.clone()
     val skiTip2  = Meshes.skiTip1.clone()
 
-    val snowball = new THREE.Mesh(Geos.snowballGeo, Mats.snowballMat)
+    val snowball = new THREE.Mesh(Geos.snowball, Mats.snowball)
 
-    val health = new THREE.Mesh(Geos.health, Mats.healthColorMat)
+    val health = new THREE.Mesh(Geos.health, Mats.healthColor)
   }
   object Bodies {
-    val sled   = new THREE.Object3D()
-    val tree   = ThreeTree.randomTree()
+    val sled = new THREE.Object3D()
+    val tree = ThreeTree.randomTree()
   }
   object Groups {
     val ctrees     = new THREE.Object3D()
@@ -113,7 +108,6 @@ object DrawState2 {
 
   Meshes.mainBody.add(Meshes.ski1)
   Meshes.mainBody.add(Meshes.ski2)
-
 
   scene.add(Meshes.health)
 
@@ -192,35 +186,34 @@ object DrawState2 {
       }
     }
     //TODO: Remove sleds after dead
-    sleds.items.foreach { sled1 =>
+    sleds.items.filter(_.id != mySled.id).foreach { sled1 =>
       //TODO: Make this functional
       var idExists = false
       Groups.csleds.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == sled1.id.id.toString) {
             idExists = true
-            Groups.csleds
-              .children(index)
+            val csled = Groups.csleds.children(index)
+
+            csled
               .children(1)
               .setRotationFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
                 sled1.rotation
               )
-            Groups.csleds.children(index).children(1).scale.x = sled1.radius
-            Groups.csleds.children(index).children(1).scale.y = sled1.radius
-            Groups.csleds.children(index).children(1).scale.z = sled1.radius
+            csled.children(1).scale.x = sled1.radius
+            csled.children(1).scale.y = sled1.radius
+            csled.children(1).scale.z = sled1.radius
 
-            Groups.csleds.children(index).position.x = sled1._position.x
-            Groups.csleds.children(index).position.z = sled1._position.y
-            Groups.csleds
-              .children(index)
+            csled.position.x = sled1._position.x
+            csled.position.z = sled1._position.y
+            csled
               .children(0)
               .setRotationFromAxisAngle(
                 new THREE.Vector3(0, 1, 0),
                 -sled1.turretRotation
               )
-            Groups.csleds
-              .children(index)
+            csled
               .children(0)
               .position
               .set(
@@ -228,6 +221,9 @@ object DrawState2 {
                 0,
                 math.cos(-sled1.turretRotation) * sled1.radius
               )
+
+            csled.children(2).scale.x = sled1.health / sled1.maxHealth
+
           }
       }
 
@@ -235,8 +231,13 @@ object DrawState2 {
         val addSled: Object3D = new THREE.Object3D()
         val body: Object3D    = Meshes.mainBody.clone()
         val tur: Object3D     = Meshes.turret.clone()
+        val health: Object3D  = new THREE.Mesh(Geos.health, Mats.enemyHealth)
+
+        health.position.z = -50
+
         addSled.add(tur)
         addSled.add(body)
+        addSled.add(health)
 
         addSled.position.x = sled1._position.x
         addSled.position.z = sled1._position.y
@@ -245,8 +246,8 @@ object DrawState2 {
       }
     }
 
-    Meshes.health.position.set(mySled._position.x, 0, mySled._position.y + 60)
-    Meshes.health.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), 1.8 * math.Pi)
+    Meshes.health.position.set(mySled._position.x, 0, mySled._position.y - 50)
+    Meshes.health.scale.x = mySled.health / mySled.maxHealth
 
     Meshes.mainBody.scale.x = mySled.radius
     Meshes.mainBody.scale.y = mySled.radius
