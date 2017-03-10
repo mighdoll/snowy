@@ -24,11 +24,11 @@ object DrawState2 {
 
     val snowballGeo = new THREE.BoxGeometry(2, 2, 2)
 
-    val healthLeft   = new THREE.CylinderGeometry(3.2, 3.2, 2, 12)
-    val healthMiddle = new THREE.BoxGeometry(64, 2, 6.4)
+    val healthLeft   = new THREE.CylinderGeometry(3.2, 3.2, 4, 12)
+    val healthMiddle = new THREE.BoxGeometry(64, 4, 6.4)
 
-    val healthLeft2   = new THREE.CylinderGeometry(1.6, 1.6, 4, 12)
-    val healthMiddle2 = new THREE.BoxGeometry(64, 4, 3.2)
+    val healthLeft2   = new THREE.CylinderGeometry(1.6, 1.6, 8, 12)
+    val healthMiddle2 = new THREE.BoxGeometry(64, 8, 3.2)
   }
   object Mats {
     val sledMat = new THREE.MeshPhongMaterial(
@@ -159,17 +159,17 @@ object DrawState2 {
   Meshes.leave2.position.y = 64
 
   Bodies.tree.add(Meshes.trunk)
-  for(i <- 1 to 50){
-    val size= math.random()*20+20
-  val leaveNGeo = new THREE.BoxGeometry(size,size,size)
-  val leaveN = new THREE.Mesh(leaveNGeo, Mats.leave1Mat)
-  leaveN.position.y = math.random()*100+30-size*(1+math.random())/2
-  if(math.random()>0.5){
-  leaveN.position.x = (math.random()*50-25)*(120-leaveN.position.y)/120*3
-  }else{
-  leaveN.position.z = (math.random()*50-25)*(120-leaveN.position.y)/120*3
-  }
-  Bodies.tree.add(leaveN)
+  for (i <- 1 to 5) {
+    val size      = math.random() * 20 + 20
+    val leaveNGeo = new THREE.BoxGeometry(size, size, size)
+    val leaveN    = new THREE.Mesh(leaveNGeo, Mats.leave1Mat)
+    leaveN.position.y = math.random() * 100 + 30 - size * (1 + math.random()) / 2
+    if (math.random() > 0.5) {
+      leaveN.position.x = (math.random() * 50 - 25) * (120 - leaveN.position.y) / 120 * 3
+    } else {
+      leaveN.position.z = (math.random() * 50 - 25) * (120 - leaveN.position.y) / 120 * 3
+    }
+    Bodies.tree.add(leaveN)
   }
   //Bodies.tree.add(Meshes.leave1)
   //Bodies.tree.add(Meshes.leave2)
@@ -324,8 +324,8 @@ object DrawState2 {
       }
     }
 
-    Bodies.health.position.set(mySled._position.x, -40, mySled._position.y+40)
-    Bodies.health.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), 0.1 * math.Pi)
+    Bodies.health.position.set(mySled._position.x, 0, mySled._position.y + 60)
+    Bodies.health.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), 1.8 * math.Pi)
 
     Meshes.mainBody.scale.x = mySled.radius
     Meshes.mainBody.scale.y = mySled.radius
