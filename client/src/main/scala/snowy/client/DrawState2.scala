@@ -18,7 +18,7 @@ object DrawState2 {
     val skiGeo    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
     val skiTipGeo = new THREE.BoxGeometry(0.25, 0.125, 0.25)
 
-    val trunkGeo  = new THREE.BoxGeometry(10, 40, 10)
+    val trunkGeo  = new THREE.BoxGeometry(10, 200, 10)
     val leave1Geo = new ConeGeometry(32, 32, 4, 1, false, 0.783, Math.PI * 2)
     val leave2Geo = new ConeGeometry(24, 16, 4, 1, false, 0.8, Math.PI * 2)
 
@@ -154,20 +154,40 @@ object DrawState2 {
   Meshes.mainBody.add(Meshes.ski1)
   Meshes.mainBody.add(Meshes.ski2)
 
-  Meshes.trunk.position.y = 20
+  Meshes.trunk.position.y = 100
   Meshes.leave1.position.y = 56
   Meshes.leave2.position.y = 64
 
+  val topSize = math.random() * 20 + 30
+  val topGeo  = new THREE.BoxGeometry(topSize, topSize, topSize)
+  val treeTop = new THREE.Mesh(topGeo, Mats.leave1Mat)
+  treeTop.position.y = 200
+  Bodies.tree.add(treeTop)
+
   Bodies.tree.add(Meshes.trunk)
-  for (i <- 1 to 5) {
-    val size      = math.random() * 20 + 20
+  for (_ <- 1 to 5) {
+    val size      = math.random() * 30 + 20
     val leaveNGeo = new THREE.BoxGeometry(size, size, size)
     val leaveN    = new THREE.Mesh(leaveNGeo, Mats.leave1Mat)
-    leaveN.position.y = math.random() * 100 + 30 - size * (1 + math.random()) / 2
+    leaveN.position.y = math.random() * 150 + 50
     if (math.random() > 0.5) {
-      leaveN.position.x = (math.random() * 50 - 25) * (120 - leaveN.position.y) / 120 * 3
+      leaveN.position.z = math.random * size - size / 2
+      leaveN.position.x = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
+
+      val branchGeo = new THREE.BoxGeometry(math.abs(leaveN.position.x), 2, 2)
+      val branch    = new THREE.Mesh(branchGeo, Mats.trunkMat)
+      branch.position.x = leaveN.position.x / 2
+      branch.position.y = leaveN.position.y
+      Bodies.tree.add(branch)
     } else {
-      leaveN.position.z = (math.random() * 50 - 25) * (120 - leaveN.position.y) / 120 * 3
+      leaveN.position.x = math.random * size - size / 2
+      leaveN.position.z = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
+
+      val branchGeo = new THREE.BoxGeometry(2, 2, math.abs(leaveN.position.z))
+      val branch    = new THREE.Mesh(branchGeo, Mats.trunkMat)
+      branch.position.z = leaveN.position.z / 2
+      branch.position.y = leaveN.position.y
+      Bodies.tree.add(branch)
     }
     Bodies.tree.add(leaveN)
   }
