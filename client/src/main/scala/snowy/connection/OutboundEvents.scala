@@ -8,8 +8,13 @@ import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 import snowy.connection.GameState.gameTime
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
+  sealed trait FiringState
+  case object Firing     extends FiringState
+  case object NotFiring  extends FiringState
+  case object AutoFiring extends FiringState
 
-  var shooting: Boolean          = false
+  var shooting: FiringState = NotFiring
+
   var turning: Option[Direction] = None
   var slowing: Boolean           = false
   var pushing: Boolean           = false
@@ -47,9 +52,16 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Stop(TurretLeft, gameTime))
         sendMessage(Start(TurretRight, gameTime))
         turret = Some(GoRight)
-      case Keys.Space() if !shooting =>
+      case Keys.Shoot() =>
+        shootPressed()
+      case Keys.AutoFire() if shooting == NotFiring =>
         sendMessage(Start(Shooting, gameTime))
-        shooting = true
+        shooting = AutoFiring
+      case Keys.AutoFire() if shooting == Firing =>
+        shooting = AutoFiring
+      case Keys.AutoFire() if shooting == AutoFiring =>
+        sendMessage(Stop(Shooting, gameTime))
+        shooting = NotFiring
       case _ =>
     }
   )
@@ -116,10 +128,8 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       case _ =>
     }
     event.keyCode match {
-      case Keys.Space() =>
-        sendMessage(Stop(Shooting, gameTime))
-        shooting = false
-      case _ =>
+      case Keys.Shoot() => shootReleased()
+      case _            =>
     }
   }
 
@@ -144,6 +154,27 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
     e.preventDefault()
   }, false)
 
+  window.onmousedown = { _ =>
+    shootPressed()
+  }
+
+  window.onmouseup = { _ =>
+    shootReleased()
+  }
+
+  def shootReleased(): Unit = {
+    if (shooting == Firing) {
+      sendMessage(Stop(Shooting, gameTime))
+      shooting = NotFiring
+    }
+  }
+
+  def shootPressed(): Unit = {
+    if (shooting == NotFiring) {
+      sendMessage(Start(Shooting, gameTime))
+      shooting = Firing
+    }
+  }
   window.addEventListener("contextmenu", { e: Event =>
     e.preventDefault()
   }, false)

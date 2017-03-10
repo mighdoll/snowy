@@ -10,6 +10,8 @@ object Keys {
 
   object Up extends KeyMatch(87, 38, 73)
 
+  object AutoFire extends KeyMatch(69, 191, 79)  // E, /, o
+
   object Down extends KeyMatch(83, 40, 75)
 
   object Right extends KeyMatch(68, 39, 76)
@@ -20,5 +22,5 @@ object Keys {
 
   object TurretRight extends KeyMatch(72)
 
-  object Space extends KeyMatch(32)
+  object Shoot extends KeyMatch(32) // space
 }
