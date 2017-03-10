@@ -113,11 +113,11 @@ object ClientDraw {
     ctx.fillRect(0, 0, size.x, size.y)
   }
 
-  window.onresize = (_: UIEvent) => {
+  /*window.onresize = (_: UIEvent) => {
     size = Vec2d(window.innerWidth, window.innerHeight)
     gameCanvas.width = size.x.toInt
     gameCanvas.height = size.y.toInt
 
     clearScreen()
-  }
+  }*/
 }

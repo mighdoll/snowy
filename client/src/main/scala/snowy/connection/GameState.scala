@@ -87,7 +87,6 @@ object GameState {
   private def refresh(deltaSeconds: Double): Unit = {
     nextState(deltaSeconds)
 
-    //clearScreen()
     serverMySled.foreach { mySled =>
       DrawState2.drawState(
         serverSnowballs,

@@ -6,7 +6,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.client.LoginScreen
+import snowy.client.{DrawState2, LoginScreen, LoginScreen2}
 import snowy.connection.GameState._
 import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledKind}
@@ -50,13 +50,13 @@ class InboundEvents(socket: NetworkSocket,
       case state: State                => receivedState(state)
       case Playfield(width, height)    => gPlayField = Vec2d(width, height)
       case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
-      case Died                        => LoginScreen.rejoinPanel()
+      case Died                        => LoginScreen2.rejoinPanel()
       case Ping                        => sendMessage(Pong)
       case ClientPong                  => // currently used only by the load test client
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
-      case SledDeaths(sleds)           => println(s"died. sleds: $sleds ") // TODO use me
       case SnowballDeaths(balls)       => println(s"died. snowballs: $balls") // TODO use me
+      case SledDeaths(sleds)           => DrawState2.removeSleds(sleds)
       case newScoreboard: Scoreboard   => scoreboard = newScoreboard
     }
   }

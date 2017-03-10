@@ -3,8 +3,9 @@ package snowy.client
 import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.MeshPhongMaterialParameters
-import snowy.GameClientProtocol.Scoreboard
+import snowy.GameClientProtocol.{Scoreboard, SledDeaths}
 import snowy.client.CDraw2._
+import snowy.playfield.PlayId.SledId
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
 
@@ -133,8 +134,6 @@ object DrawState2 {
     light.position.set(10, 20, 0)
     scene.add(light)
 
-    println("works")
-
     Bodies.sled.position.set(200, 100, -2.5)
     scene.add(Bodies.sled)
 
@@ -175,7 +174,6 @@ object DrawState2 {
         addTree.position.z = tree1.pos.y
         addTree.name = tree1.id.id.toString
         Groups.ctrees.add(addTree)
-        println("adding tree")
       }
     }
     //TODO: Remove snowballs after dead
@@ -185,7 +183,6 @@ object DrawState2 {
       Groups.csnowballs.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == snowball1.id.id.toString) {
-            println("moving snowball")
             idExists = true
             Groups.csnowballs.children(index).position.x = snowball1._position.x
             Groups.csnowballs.children(index).position.z = snowball1._position.y
@@ -202,7 +199,6 @@ object DrawState2 {
         )
         addSnowball.name = snowball1.id.id.toString
         Groups.csnowballs.add(addSnowball)
-        println("adding snowball")
       }
     }
     //TODO: Remove sleds after dead
@@ -212,7 +208,6 @@ object DrawState2 {
       Groups.csleds.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == sled1.id.id.toString) {
-            println("moving snowball")
             idExists = true
             Groups.csleds
               .children(index)
@@ -257,7 +252,6 @@ object DrawState2 {
         addSled.position.z = sled1._position.y
         addSled.name = sled1.id.id.toString
         Groups.csleds.add(addSled)
-        println("adding sled")
       }
     }
 
@@ -280,5 +274,20 @@ object DrawState2 {
 
     renderer.setSize(width, height)
     renderer.render(scene, camera)
+  }
+  def removeSleds(deaths: Seq[SledId]): Unit = {
+    val ids = deaths.map(_.id.toString)
+    Groups.csleds.children = Groups.csleds.children.filter { sled =>
+      !ids.contains(sled.name)
+    }
+  }
+  def removeAll(): Unit ={
+    scene.remove(amb)
+    scene.remove(light)
+    scene.remove(Bodies.sled)
+    scene.remove(grid)
+    scene.remove(Groups.ctrees)
+    scene.remove(Groups.csnowballs)
+    scene.remove(Groups.csleds)
   }
 }

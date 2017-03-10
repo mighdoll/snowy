@@ -1,3 +1,8 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
 .back {
   z-index: -1;
 }
@@ -26,6 +31,7 @@
   border: 0;
   font-size: 3vh;
   padding: 10px;
+  outline: none;
 }
 #username::-webkit-input-placeholder {
   color: rgb(120, 201, 44);

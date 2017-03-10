@@ -2,7 +2,7 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.MeshPhongMaterialParameters
-import org.scalajs.dom.{Event, document, html, window}
+import org.scalajs.dom.{document, html, window, Event}
 import snowy.client.CDraw2._
 import snowy.connection.GameState
 import snowy.playfield.{BasicSkis, BasicSled, SkiColor, SledKind}
@@ -28,6 +28,8 @@ object LoginScreen2 {
     val geoO = new THREE.ExtrudeGeometry(Shapes.shapeO, geoParams)
     val geoW = new THREE.ExtrudeGeometry(Shapes.shapeW, geoParams)
     val geoY = new THREE.ExtrudeGeometry(Shapes.shapeY, geoParams)
+
+    val inputGeo = new THREE.BoxGeometry(45, 10, 2)
   }
   object Mats {
     val trunkMat = new THREE.MeshPhongMaterial(
@@ -144,6 +146,8 @@ object LoginScreen2 {
     val meshO = new THREE.Mesh(Geos.geoO, Mats.matLetters)
     val meshW = new THREE.Mesh(Geos.geoW, Mats.matLetters)
     val meshY = new THREE.Mesh(Geos.geoY, Mats.matLetters)
+
+    val input = new THREE.Mesh(Geos.inputGeo, Mats.matLetters)
   }
 
   object Groups {
@@ -170,7 +174,7 @@ object LoginScreen2 {
     Meshes.card2.position.set(0, 5, 0)
     Meshes.card3.position.set(6, 4, 0)
 
-    Groups.selector.position.y = -50
+    Groups.selector.position.y = -70
     Groups.selector.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.3 * Math.PI)
     Groups.selector.scale.x = 2
     Groups.selector.scale.y = 2
@@ -191,6 +195,8 @@ object LoginScreen2 {
     Groups.snowyText.position.x = Shapes.s * 10
     Groups.snowyText.position.y = 48
     Groups.snowyText.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.3 * Math.PI)
+
+    Meshes.input.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.4 * Math.PI)
   }
 
   def addGroups(): Unit = {
@@ -216,25 +222,28 @@ object LoginScreen2 {
     Groups.snowyText.add(Meshes.meshY)
   }
 
-  def addToScene(): Unit = {
+  def setup(): Unit ={
     positions()
     addGroups()
 
+    addItems()
+  }
+  def addItems(): Unit = {
     scene.add(amb)
     scene.add(light)
     scene.add(Groups.selector)
     scene.add(Groups.snowyText)
+    scene.add(Meshes.input)
 
     renderer.render(scene, camera)
   }
 
-  def removeFromScene(): Unit = {
+  def removeAll(): Unit = {
     scene.remove(amb)
     scene.remove(light)
     scene.remove(Groups.selector)
     scene.remove(Groups.snowyText)
-
-    renderer.render(scene, camera)
+    scene.add(Meshes.input)
   }
   private var connected: Option[Connection] = None
 
@@ -266,28 +275,43 @@ object LoginScreen2 {
 
   val textInput = document.getElementById("username").asInstanceOf[html.Input]
 
-  document.getElementById("login-form").asInstanceOf[html.Form].onsubmit = {
-    event: Event =>
-      //Connect to the WebSocket server
-      connected match {
-        case x if x.isEmpty =>
-          connected = Some(
-            new Connection(
-              document.getElementById("username").asInstanceOf[html.Input].value,
-              sledKind,
-              skiColor
+  document
+    .getElementById("login-form")
+    .asInstanceOf[html.Form]
+    .addEventListener(
+      "submit", { e: Event =>
+        e.preventDefault()
+        //Connect to the WebSocket server
+        connected match {
+          case x if x.isEmpty =>
+            connected = Some(
+              new Connection(
+                document.getElementById("username").asInstanceOf[html.Input].value,
+                sledKind,
+                skiColor
+              )
             )
-          )
-        case x if x.isDefined => connected.get.reSpawn()
-        case _                =>
-      }
+          case x if x.isDefined => connected.get.reSpawn()
+          case _                =>
+        }
 
-      switch(true)
-      LoginScreen2.removeFromScene()
-      DrawState2.setup()
-      GameState.startRedraw()
-
-      //Do not redirect
+        switch(true)
+        LoginScreen2.removeAll()
+        DrawState2.setup()
+        GameState.startRedraw()
+        renderer.render(scene, camera)
+      },
       false
+    )
+
+  def rejoinPanel() {
+    switch(false)
+
+    GameState.stopRedraw()
+    DrawState2.removeAll()
+    textInput.focus()
+    camera.position.set(0, 100, -100)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    LoginScreen2.addItems()
   }
 }

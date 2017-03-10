@@ -81,7 +81,7 @@ object LoginScreen {
     clearConnection()
   }
 
-  document
+  /*document
     .querySelector("#class > .container > :first-child")
     .asInstanceOf[html.Span]
     .onclick = { event: Event =>
@@ -128,7 +128,7 @@ object LoginScreen {
       else SkiColors.allSkis.last
     colorText.innerHTML = "Color: " + skiColor.toString.replace("Skis", "")
     clearConnection()
-  }
+  }*/
   def clearConnection(): Unit = {
     connected = None
   }
