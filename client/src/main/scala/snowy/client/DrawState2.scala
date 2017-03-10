@@ -3,7 +3,7 @@ package snowy.client
 import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.MeshPhongMaterialParameters
-import snowy.GameClientProtocol.{Scoreboard, SledDeaths}
+import snowy.GameClientProtocol.Scoreboard
 import snowy.client.CDraw2._
 import snowy.playfield.PlayId.SledId
 import snowy.playfield.{Sled, Snowball, Store, Tree}
@@ -83,6 +83,8 @@ object DrawState2 {
     val mainBody = new THREE.Mesh(Geos.sledGeo, Mats.sledMat)
     val ski1     = new THREE.Mesh(Geos.skiGeo, Mats.skiMat)
     val skiTip1  = new THREE.Mesh(Geos.skiTipGeo, Mats.skiTipMat)
+    val ski2 = Meshes.ski1.clone()
+    val skiTip2  = Meshes.skiTip1.clone()
 
     val turret = new THREE.Mesh(Geos.turretGeo, Mats.turretMat)
 
@@ -107,19 +109,22 @@ object DrawState2 {
   val light = new THREE.DirectionalLight(0xffffff)
   val grid  = new THREE.GridHelper(4000, 50)
 
-  Meshes.turret.translate(-5, new THREE.Vector3(0, 0, 1))
+  Meshes.turret.position.set(0,0,-5)
   Bodies.sled.add(Meshes.mainBody)
   Bodies.sled.add(Meshes.turret)
-  Meshes.skiTip1.translate(1, new THREE.Vector3(0, 0, 1.5 - 0.25 / 2))
-  Meshes.ski1.add(Meshes.skiTip1)
-  val ski2 = Meshes.ski1.clone()
 
-  Meshes.ski1.translate(1, new THREE.Vector3(0, 0, -0.5 / 2))
-  Meshes.ski1.translate(5, new THREE.Vector3(-0.25, -0.5, 0))
-  ski2.translate(5, new THREE.Vector3(0.25, -0.5, 0))
+  Meshes.skiTip1.position.set(0, 0, 1.5 - 0.25 / 2)
+  Meshes.ski1.add(Meshes.skiTip1)
+
+  Meshes.skiTip2.position.set(0, 0, 1.5 - 0.25 / 2)
+  Meshes.ski2.add(Meshes.skiTip2)
+
+
+  Meshes.ski1.position.set(-1.25, -2.5, 0)
+  Meshes.ski2.position.set(1.25, -2.5, 0)
 
   Meshes.mainBody.add(Meshes.ski1)
-  Meshes.mainBody.add(ski2)
+  Meshes.mainBody.add(Meshes.ski2)
 
   Meshes.trunk.position.y = 20
   Meshes.leave1.position.y = 56

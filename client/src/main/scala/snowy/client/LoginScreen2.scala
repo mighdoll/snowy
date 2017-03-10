@@ -243,7 +243,7 @@ object LoginScreen2 {
     scene.remove(light)
     scene.remove(Groups.selector)
     scene.remove(Groups.snowyText)
-    scene.add(Meshes.input)
+    scene.remove(Meshes.input)
   }
   private var connected: Option[Connection] = None
 
