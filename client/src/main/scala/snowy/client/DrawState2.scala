@@ -159,11 +159,11 @@ object DrawState2 {
   Meshes.leave2.position.y = 64
 
   Bodies.tree.add(Meshes.trunk)
-  for(i <- 1 to 10){
-    val size= math.random()*20+10
+  for(i <- 1 to 50){
+    val size= math.random()*20+20
   val leaveNGeo = new THREE.BoxGeometry(size,size,size)
   val leaveN = new THREE.Mesh(leaveNGeo, Mats.leave1Mat)
-  leaveN.position.y = math.random()*100+20
+  leaveN.position.y = math.random()*100+30-size*(1+math.random())/2
   if(math.random()>0.5){
   leaveN.position.x = (math.random()*50-25)*(120-leaveN.position.y)/120*3
   }else{
