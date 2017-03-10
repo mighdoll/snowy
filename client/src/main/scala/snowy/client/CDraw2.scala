@@ -52,7 +52,7 @@ object CDraw2 {
       .literal(antialias = false, canvas = document.getElementById("game-c"))
       .asInstanceOf[WebGLRendererParameters]
   )
-  renderer.setClearColor(new THREE.Color(0xfff6e6), 1)
+  renderer.setClearColor(new THREE.Color(0xe7f1fd), 1)
   renderer.setPixelRatio(
     if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1
   )
