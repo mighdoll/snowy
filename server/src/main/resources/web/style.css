@@ -47,60 +47,6 @@ html, body {
   border: 0;
   font-size: 3vh;
 }
-#class {
-  top: 66vh;
-  left: 50vw;
-}
-#skis {
-  top: 33vh;
-  left: 50vw;
-}
-.splitter {
-  background: #eee;
-  position: absolute;
-  width: 17vh;
-  height: 7vh;
-  transform: translate(-50%, -50%);
-  border-radius: 100px;
-  padding-left: 10px;
-  font-family: Arial;
-}
-.caption {
-  position: absolute;
-  top: 0px;
-  height: 100%;
-  width: calc(100% - 32px);
-  font-size: 2vh;
-  line-height: 7vh;
-}
-.container {
-  position: absolute;
-  right: 0;
-  height: 100%;
-  width: 4vh;
-  border-left: 2px solid rgb(120, 201, 44);
-  font-size: 3vh;
-}
-.container :last-child {
-  position: absolute;
-  height: 50%;
-  width: 105%;
-  line-height: 4vh;
-  bottom: 0;
-  left: -1px;
-  border-top: 1px solid rgb(120, 201, 44);
-  border-bottom-right-radius: 100px;
-}
-.container :first-child {
-  position: absolute;
-  height: 50%;
-  width: 105%;
-  line-height: 3vh;
-  top: 0;
-  left: -1px;
-  border-bottom: 1px solid rgb(120, 201, 44);
-  border-top-right-radius: 100px;
-}
 .link {
   position: relative;
   border-radius: 100px;

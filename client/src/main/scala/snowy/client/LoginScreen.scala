@@ -1,39 +1,12 @@
 package snowy.client
 
 import org.scalajs.dom._
-import snowy.client.ClientDraw._
 import snowy.connection.GameState
-import snowy.draw.GameColors.lineColors
-import snowy.draw.{DrawSled, SnowFlake}
 import snowy.playfield._
-import vector.Vec2d
 
 object LoginScreen {
 
-  /** Create a loop that moves and draws the snowflakes every 10ms */
-  private val snowFlakes = (1 to size.x.toInt / 10).map { i =>
-    new SnowFlake(i * 10)
-  }
-  private val tick = () => {
-    clearScreen()
-
-    snowFlakes.foreach { flake =>
-      flake.move()
-      flake.draw()
-    }
-
-    DrawSled.draw(
-      "",
-      Vec2d(size.x / 2, size.y / 2),
-      size.y * 1 / 3,
-      1,
-      Math.PI * 3 / 2,
-      Math.PI / 2,
-      sledKind,
-      skiColor.color.toString,
-      "rgb(120, 201, 44)"
-    )
-  }
+  private val tick = () => {}
 
   private var connected: Option[Connection] = None
   private var drawLoop: Option[Int]         = None

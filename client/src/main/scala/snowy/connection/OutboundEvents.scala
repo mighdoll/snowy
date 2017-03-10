@@ -2,10 +2,9 @@ package snowy.connection
 
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
-import snowy.client.ClientDraw.size
 import snowy.client.Keys
-import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 import snowy.connection.GameState.gameTime
+import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
 class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   sealed trait FiringState
