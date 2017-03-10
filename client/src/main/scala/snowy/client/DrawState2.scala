@@ -24,11 +24,7 @@ object DrawState2 {
 
     val snowballGeo = new THREE.BoxGeometry(2, 2, 2)
 
-    val healthLeft   = new THREE.CylinderGeometry(3.2, 3.2, 4, 12)
-    val healthMiddle = new THREE.BoxGeometry(64, 4, 6.4)
-
-    val healthLeft2   = new THREE.CylinderGeometry(1.6, 1.6, 8, 12)
-    val healthMiddle2 = new THREE.BoxGeometry(64, 8, 3.2)
+    val health = new THREE.BoxGeometry(64, 4, 16)
   }
   object Mats {
     val sledMat = new THREE.MeshPhongMaterial(
@@ -49,30 +45,6 @@ object DrawState2 {
     val skiTipMat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xEE2222, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
-    )
-    val trunkMat = new THREE.MeshPhongMaterial(
-      Dynamic
-        .literal(
-          color = 0x502A2A,
-          shading = THREE.FlatShading
-        )
-        .asInstanceOf[MeshPhongMaterialParameters]
-    )
-    val leave1Mat = new THREE.MeshPhongMaterial(
-      Dynamic
-        .literal(
-          color = 0x658033,
-          shading = THREE.FlatShading
-        )
-        .asInstanceOf[MeshPhongMaterialParameters]
-    )
-    val leave2Mat = new THREE.MeshPhongMaterial(
-      Dynamic
-        .literal(
-          color = 0x81A442,
-          shading = THREE.FlatShading
-        )
         .asInstanceOf[MeshPhongMaterialParameters]
     )
 
@@ -102,31 +74,19 @@ object DrawState2 {
   }
   object Meshes {
     val mainBody = new THREE.Mesh(Geos.sledGeo, Mats.sledMat)
+    val turret   = new THREE.Mesh(Geos.turretGeo, Mats.turretMat)
     val ski1     = new THREE.Mesh(Geos.skiGeo, Mats.skiMat)
     val skiTip1  = new THREE.Mesh(Geos.skiTipGeo, Mats.skiTipMat)
     val ski2     = Meshes.ski1.clone()
     val skiTip2  = Meshes.skiTip1.clone()
 
-    val turret = new THREE.Mesh(Geos.turretGeo, Mats.turretMat)
-
-    val trunk  = new THREE.Mesh(Geos.trunkGeo, Mats.trunkMat)
-    val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
-    val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
-
     val snowball = new THREE.Mesh(Geos.snowballGeo, Mats.snowballMat)
 
-    val healthLeft   = new THREE.Mesh(Geos.healthLeft, Mats.healthBorderMat)
-    val healthRight  = healthLeft.clone()
-    val healthMiddle = new THREE.Mesh(Geos.healthMiddle, Mats.healthBorderMat)
-
-    val healthLeftIn   = new THREE.Mesh(Geos.healthLeft2, Mats.healthColorMat)
-    val healthRightIn  = healthLeftIn.clone()
-    val healthMiddleIn = new THREE.Mesh(Geos.healthMiddle2, Mats.healthColorMat)
+    val health = new THREE.Mesh(Geos.health, Mats.healthColorMat)
   }
   object Bodies {
     val sled   = new THREE.Object3D()
-    val tree   = new THREE.Object3D()
-    val health = new THREE.Object3D()
+    val tree   = ThreeTree.randomTree()
   }
   object Groups {
     val ctrees     = new THREE.Object3D()
@@ -154,67 +114,8 @@ object DrawState2 {
   Meshes.mainBody.add(Meshes.ski1)
   Meshes.mainBody.add(Meshes.ski2)
 
-  Meshes.trunk.position.y = 100
-  Meshes.leave1.position.y = 56
-  Meshes.leave2.position.y = 64
 
-  val topSize = math.random() * 20 + 30
-  val topGeo  = new THREE.BoxGeometry(topSize, topSize, topSize)
-  val treeTop = new THREE.Mesh(topGeo, Mats.leave1Mat)
-  treeTop.position.y = 200
-  Bodies.tree.add(treeTop)
-
-  Bodies.tree.add(Meshes.trunk)
-  for (_ <- 1 to 5) {
-    val size      = math.random() * 30 + 20
-    val leaveNGeo = new THREE.BoxGeometry(size, size, size)
-    val leaveN    = new THREE.Mesh(leaveNGeo, Mats.leave1Mat)
-    leaveN.position.y = math.random() * 150 + 50
-    if (math.random() > 0.5) {
-      leaveN.position.z = math.random * size - size / 2
-      leaveN.position.x = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
-
-      val branchGeo = new THREE.BoxGeometry(math.abs(leaveN.position.x), 2, 2)
-      val branch    = new THREE.Mesh(branchGeo, Mats.trunkMat)
-      branch.position.x = leaveN.position.x / 2
-      branch.position.y = leaveN.position.y
-      Bodies.tree.add(branch)
-    } else {
-      leaveN.position.x = math.random * size - size / 2
-      leaveN.position.z = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
-
-      val branchGeo = new THREE.BoxGeometry(2, 2, math.abs(leaveN.position.z))
-      val branch    = new THREE.Mesh(branchGeo, Mats.trunkMat)
-      branch.position.z = leaveN.position.z / 2
-      branch.position.y = leaveN.position.y
-      Bodies.tree.add(branch)
-    }
-    Bodies.tree.add(leaveN)
-  }
-  //Bodies.tree.add(Meshes.leave1)
-  //Bodies.tree.add(Meshes.leave2)
-
-  Meshes.healthLeft.position.x = -32 + 2
-  Meshes.healthRight.position.x = 32 - 2
-
-  Meshes.healthLeftIn.position.x = (-32 + 2) * 0.9
-  Meshes.healthRightIn.position.x = (32 - 2) * 0.9
-
-  Meshes.healthLeftIn.scale.set(0.9, 1, 0.9)
-  Meshes.healthMiddleIn.scale.set(0.9, 1, 0.9)
-  Meshes.healthRightIn.scale.set(0.9, 1, 0.9)
-
-  Bodies.health.add(Meshes.healthLeft)
-  Bodies.health.add(Meshes.healthMiddle)
-  Bodies.health.add(Meshes.healthRight)
-
-  Bodies.health.add(Meshes.healthLeftIn)
-  Bodies.health.add(Meshes.healthMiddleIn)
-  Bodies.health.add(Meshes.healthRightIn)
-
-  //Bodies.health.scale.set(0.4, 1, 0.4)
-
-  scene.add(Bodies.health)
+  scene.add(Meshes.health)
 
   def setup(): Unit = {
     scene.add(amb)
@@ -258,7 +159,7 @@ object DrawState2 {
           }
       }
       if (!idExists) {
-        val addTree: Object3D = Bodies.tree.clone()
+        val addTree: Object3D = ThreeTree.randomTree()
         addTree.position.x = tree1.pos.x
         addTree.position.z = tree1.pos.y
         addTree.name = tree1.id.id.toString
@@ -344,8 +245,8 @@ object DrawState2 {
       }
     }
 
-    Bodies.health.position.set(mySled._position.x, 0, mySled._position.y + 60)
-    Bodies.health.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), 1.8 * math.Pi)
+    Meshes.health.position.set(mySled._position.x, 0, mySled._position.y + 60)
+    Meshes.health.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), 1.8 * math.Pi)
 
     Meshes.mainBody.scale.x = mySled.radius
     Meshes.mainBody.scale.y = mySled.radius
