@@ -4,7 +4,7 @@ import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.MeshPhongMaterialParameters
 import snowy.GameClientProtocol.Scoreboard
-import snowy.client.CDraw2._
+import snowy.client.ThreeMain._
 import snowy.playfield.PlayId.SledId
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d

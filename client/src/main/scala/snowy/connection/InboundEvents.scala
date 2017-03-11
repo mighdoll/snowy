@@ -6,7 +6,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.client.{DrawState2, LoginScreen, LoginScreen2}
+import snowy.client.{DrawState2, LoginScreen, LoginScreen2, UpdateScoreboard}
 import snowy.connection.GameState._
 import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledKind}
@@ -57,7 +57,7 @@ class InboundEvents(socket: NetworkSocket,
       case MySled(sledId)              => mySledId = Some(sledId)
       case SnowballDeaths(balls)       => println(s"died. snowballs: $balls") // TODO use me
       case SledDeaths(sleds)           => DrawState2.removeSleds(sleds)
-      case newScoreboard: Scoreboard   => scoreboard = newScoreboard
+      case newScoreboard: Scoreboard   => UpdateScoreboard.newScoreboard(newScoreboard)
     }
   }
 

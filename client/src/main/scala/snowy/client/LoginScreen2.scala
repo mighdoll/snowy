@@ -2,12 +2,27 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.MeshPhongMaterialParameters
-import org.scalajs.dom.{document, html, window, Event}
-import snowy.client.CDraw2._
+import org.scalajs.dom.{document, html, Event}
+import snowy.client.ThreeMain._
 import snowy.connection.GameState
 import snowy.playfield.{BasicSkis, BasicSled, SkiColor, SledKind}
 
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic
+import scala.scalajs.js.annotation.JSName
+
+@js.native
+@JSName("THREE.ConeGeometry")
+class ConeGeometry(radius: Double = js.native,
+                   height: Double = js.native,
+                   radialSegments: Int = js.native,
+                   heightSegments: Int = js.native,
+                   openEnded: Boolean = js.native,
+                   thetaStart: Double = js.native,
+                   thetaLength: Double = js.native)
+    extends THREE.Geometry {
+  var parameters: js.Any = js.native
+}
 
 object LoginScreen2 {
   object Geos {
@@ -222,7 +237,7 @@ object LoginScreen2 {
     Groups.snowyText.add(Meshes.meshY)
   }
 
-  def setup(): Unit ={
+  def setup(): Unit = {
     positions()
     addGroups()
 
@@ -274,7 +289,7 @@ object LoginScreen2 {
   }
 
   val textInput = document.getElementById("username").asInstanceOf[html.Input]
-  val gameHud = document.getElementById("game-hud").asInstanceOf[html.Div]
+  val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
   document
     .getElementById("login-form")
     .asInstanceOf[html.Form]

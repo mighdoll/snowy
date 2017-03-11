@@ -44,7 +44,7 @@ lazy val server = (project in file("server"))
   .settings(commonSettings: _*)
   .settings(
     assemblyJarName in assembly := "full.jar",
-    herokuAppName in Compile := "superskier",
+    herokuAppName in Compile := "snowy-3d",
     herokuFatJar in Compile := Some((assemblyOutputPath in assembly).value),
     name := "server",
     javaOptions := Seq(
