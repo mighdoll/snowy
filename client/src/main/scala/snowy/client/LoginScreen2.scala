@@ -274,7 +274,7 @@ object LoginScreen2 {
   }
 
   val textInput = document.getElementById("username").asInstanceOf[html.Input]
-
+  val gameHud = document.getElementById("game-hud").asInstanceOf[html.Div]
   document
     .getElementById("login-form")
     .asInstanceOf[html.Form]
@@ -297,6 +297,7 @@ object LoginScreen2 {
 
         switch(true)
         LoginScreen2.removeAll()
+        gameHud.classList.remove("hide")
         DrawState2.setup()
         GameState.startRedraw()
         renderer.render(scene, camera)
@@ -309,6 +310,7 @@ object LoginScreen2 {
 
     GameState.stopRedraw()
     DrawState2.removeAll()
+    gameHud.classList.add("hide")
     textInput.focus()
     camera.position.set(0, 100, -100)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
