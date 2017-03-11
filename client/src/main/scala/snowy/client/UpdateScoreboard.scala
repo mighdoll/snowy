@@ -5,6 +5,7 @@ import org.scalajs.dom._
 object UpdateScoreboard {
   val scoreboardDiv = document.getElementById("scoreboard").asInstanceOf[html.Div]
   def newScoreboard(scoreboard: Scoreboard): Unit ={
+    //TODO: Use css classes instead of dom styling
     scoreboardDiv.innerHTML = ""
     scoreboardDiv.style.width = "150px"
     scoreboardDiv.style.height = "200px"
