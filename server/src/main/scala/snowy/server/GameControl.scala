@@ -79,8 +79,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
       case Join(name, sledKind, skiColor) =>
-        val sled = userJoin(id, name.slice(0, 15), sledKind, skiColor)
-        reportJoinedSled(id, sled.id)
+        userJoin(id, name.slice(0, 15), sledKind, skiColor)
       case TurretAngle(angle)          => rotateTurret(id, angle)
       case TargetAngle(angle)          => targetDirection(id, angle)
       case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
@@ -265,28 +264,28 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** Called when a user sends her name and starts in the game */
-  def userJoin(id: ClientId,
-               userName: String,
-               sledKind: SledKind,
-               skiColor: SkiColor): Sled = {
+  private def userJoin(id: ClientId,
+                       userName: String,
+                       sledKind: SledKind,
+                       skiColor: SkiColor): Unit = {
     logger.info(
       s"user joined: $userName  id:$id  kind: $sledKind  sserCount:${users.size}"
     )
     val user =
       new User(userName, createTime = gameTime, sledKind = sledKind, skiColor = skiColor)
     users(id) = user
-    createSled(id, user, sledKind)
+    val sled = createSled(id, user, sledKind)
+    reportJoinedSled(id, sled.id)
   }
 
-  def rejoin(id: ClientId): Option[Sled] = {
+  private def rejoin(id: ClientId): Unit = {
     users.get(id) match {
       case Some(user) =>
         logger.info(s"user rejoined: ${user.name}")
         val sled = createSled(id, user, user.sledKind)
-        Some(sled)
+        reportJoinedSled(id, sled.id)
       case None =>
         logger.warn(s"user not found to rejoin: $id")
-        None
     }
   }
 
