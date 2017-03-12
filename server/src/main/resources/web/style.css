@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: arial;
 }
 .back {
   z-index: -1;
@@ -35,6 +36,18 @@ html, body {
 }
 #username::-webkit-input-placeholder {
   color: rgb(120, 201, 44);
+}
+#chosen {
+  width: 100px;
+  height: 10px;
+  position: absolute;
+  top: 81.5vh;
+  color: #eeeeee;
+  transform: translate(-50%,-50%);
+  left: 50vw;
+  font-size: 10px;
+  text-align: center;
+  text-transform: uppercase;
 }
 #play {
   position: absolute;
