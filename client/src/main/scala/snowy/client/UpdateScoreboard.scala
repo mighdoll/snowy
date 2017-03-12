@@ -7,11 +7,8 @@ object UpdateScoreboard {
   def newScoreboard(scoreboard: Scoreboard): Unit ={
     //TODO: Use css classes instead of dom styling
     scoreboardDiv.innerHTML = ""
-    scoreboardDiv.style.width = "150px"
-    scoreboardDiv.style.height = "200px"
     scoreboard.scores.sortWith(_.score > _.score).map { score =>
       val scoreElement = document.createElement("div").asInstanceOf[html.Div]
-      scoreElement.style.width = "150px"
       scoreElement.style.height = "20px"
       val scoreName =  document.createElement("div").asInstanceOf[html.Div]
       val sledScore = document.createElement("div").asInstanceOf[html.Div]

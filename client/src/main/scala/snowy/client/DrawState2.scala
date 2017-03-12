@@ -259,7 +259,6 @@ object DrawState2 {
     camera.position.z = Bodies.sled.position.z + 400
     camera.lookAt(Bodies.sled.position)
 
-    renderer.setSize(width, height)
     renderer.render(scene, camera)
   }
   def removeSleds(deaths: Seq[SledId]): Unit = {
