@@ -5,7 +5,7 @@ import minithree.THREE.Object3D
 import minithree.raw.MeshPhongMaterialParameters
 import snowy.GameClientProtocol.Scoreboard
 import snowy.client.ThreeMain._
-import snowy.playfield.PlayId.SledId
+import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
 
@@ -265,6 +265,12 @@ object DrawState2 {
     val ids = deaths.map(_.id.toString)
     Groups.csleds.children = Groups.csleds.children.filter { sled =>
       !ids.contains(sled.name)
+    }
+  }
+  def removeSnowballs(deaths: Seq[BallId]): Unit = {
+    val ids = deaths.map(_.id.toString)
+    Groups.csnowballs.children = Groups.csnowballs.children.filter { snowball =>
+      !ids.contains(snowball.name)
     }
   }
   def removeAll(): Unit = {

@@ -55,7 +55,7 @@ class InboundEvents(socket: NetworkSocket,
       case ClientPong                  => // currently used only by the load test client
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
-      case SnowballDeaths(balls)       => println(s"died. snowballs: $balls") // TODO use me
+      case SnowballDeaths(balls)       => DrawState2.removeSnowballs(balls)
       case SledDeaths(sleds)           => DrawState2.removeSleds(sleds)
       case newScoreboard: Scoreboard   => UpdateScoreboard.newScoreboard(newScoreboard)
     }
