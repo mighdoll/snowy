@@ -52,8 +52,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(Stop(TurretLeft, gameTime))
         sendMessage(Start(TurretRight, gameTime))
         turret = Some(GoRight)
-      case Keys.Shoot() =>
-        shootPressed()
+      case Keys.Shoot() => shootPressed()
       case Keys.AutoFire() if shooting == NotFiring =>
         sendMessage(Start(Shooting, gameTime))
         shooting = AutoFiring
@@ -64,7 +63,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         shooting = NotFiring
       case _ =>
     }
-  )
+  }
 
   window.addEventListener(
     "keyup", { event: KeyboardEvent =>
@@ -100,38 +99,39 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         case _ =>
       }
       event.keyCode match {
-        case Keys.Space() =>
+        case Keys.Shoot() =>
           sendMessage(Stop(Shooting, gameTime))
-          shooting = false
+          shooting = NotFiring
         case _ =>
       }
+
+      (event.keyCode, slowing) match {
+        case (Keys.Down(), true) =>
+          sendMessage(Stop(Slowing, gameTime))
+          slowing = false
+        case _ =>
+      }
+      (event.keyCode, pushing) match {
+        case (Keys.Up(), true) =>
+          sendMessage(Stop(Pushing, gameTime))
+          pushing = false
+        case _ =>
+      }
+      (event.keyCode, turret) match {
+        case (Keys.TurretLeft(), Some(GoLeft)) =>
+          sendMessage(Stop(TurretLeft, gameTime))
+          turret = None
+        case (Keys.TurretRight(), Some(GoRight)) =>
+          sendMessage(Stop(TurretRight, gameTime))
+          turret = None
+        case _ =>
+      }
+      event.keyCode match {
+        case Keys.Shoot() => shootReleased()
+        case _            =>
+      }
     }
-    (event.keyCode, slowing) match {
-      case (Keys.Down(), true) =>
-        sendMessage(Stop(Slowing, gameTime))
-        slowing = false
-      case _ =>
-    }
-    (event.keyCode, pushing) match {
-      case (Keys.Up(), true) =>
-        sendMessage(Stop(Pushing, gameTime))
-        pushing = false
-      case _ =>
-    }
-    (event.keyCode, turret) match {
-      case (Keys.TurretLeft(), Some(GoLeft)) =>
-        sendMessage(Stop(TurretLeft, gameTime))
-        turret = None
-      case (Keys.TurretRight(), Some(GoRight)) =>
-        sendMessage(Stop(TurretRight, gameTime))
-        turret = None
-      case _ =>
-    }
-    event.keyCode match {
-      case Keys.Shoot() => shootReleased()
-      case _            =>
-    }
-  }
+  )
 
   window.addEventListener(
     "mousemove", { e: MouseEvent =>
@@ -146,13 +146,16 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
     false
   )
 
-  window.addEventListener("mousedown", { e: MouseEvent =>
-    e.button match {
-      case 0 => sendMessage(Start(Shooting, gameTime))
-      case 2 => sendMessage(Push(gameTime))
-    }
-    e.preventDefault()
-  }, false)
+  window.addEventListener(
+    "mousedown", { e: MouseEvent =>
+      e.button match {
+        case 0 => sendMessage(Start(Shooting, gameTime))
+        case 2 => sendMessage(Start(Pushing, gameTime))
+      }
+      e.preventDefault()
+    },
+    false
+  )
 
   window.onmousedown = { _ =>
     shootPressed()
