@@ -3,6 +3,8 @@ package snowy.server
 import scala.math.min
 import snowy.Awards._
 import snowy.GameConstants.{Bullet, PushEnergy}
+import snowy.playfield.PlayId.BallId
+import snowy.playfield.Snowball
 
 class GameHealth(state: GameState) {
 
@@ -25,11 +27,14 @@ class GameHealth(state: GameState) {
   }
 
   /** remove old snowballs */
-  def expireSnowballs(): Unit = {
+  def expireSnowballs(): Traversable[BallId] = {
     val now = System.currentTimeMillis()
-    state.snowballs = state.snowballs.removeMatchingItems { snowball =>
+    def expired(snowball:Snowball):Boolean =
       now > snowball.spawned + snowball.lifetime * 1000
-    }
+
+    val oldBalls = state.snowballs.items filter expired map (_.id)
+    state.snowballs = state.snowballs removeMatchingItems expired
+    oldBalls
   }
 
   /** @return the sleds with no health left */

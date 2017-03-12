@@ -6,6 +6,7 @@ import snowy.Awards._
 import snowy.GameConstants._
 import snowy.collision.{CollideThings, Death, DeathList, SledTree}
 import snowy.playfield.GameMotion._
+import snowy.playfield.PlayId.BallId
 import snowy.playfield.{Sled, _}
 import snowy.util.Perf
 import snowy.util.Perf.time
@@ -26,12 +27,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     deltaSeconds
   }
 
+  case class TurnDeaths(deadSleds:Traversable[SledDied], deadSnowBalls: Traversable[BallId])
+
   /** Called to update game state on a regular timer */
-  def turn(deltaSeconds: Double): Traversable[SledDied] = time("gameTurn") {
+  def turn(deltaSeconds: Double): TurnDeaths = time("gameTurn") {
 //    Thread.sleep(18)  // for simulating a slow server
     gameHealth.recoverHealth(deltaSeconds)
     gameHealth.recoverPushEnergy(deltaSeconds)
-    gameHealth.expireSnowballs()
+    val expiredBalls = gameHealth.expireSnowballs()
 
     moveSnowballs(state.snowballs.items, deltaSeconds)
 
@@ -40,7 +43,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     val died            = gameHealth.collectDead()
 
     updateScore(moveAwards.toSeq ++ collisionAwards ++ died)
-    died
+    TurnDeaths(died, expiredBalls)
   }
 
   /** check for collisions between the sled and trees or snowballs */

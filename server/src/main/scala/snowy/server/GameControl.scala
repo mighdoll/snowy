@@ -12,7 +12,7 @@ import snowy.GameConstants.Friction.slowButtonFriction
 import snowy.GameConstants._
 import snowy.GameServerProtocol._
 import snowy.playfield.GameMotion._
-import snowy.playfield.PlayId.SledId
+import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.StationaryRobot
 import snowy.server.GameSeeding.randomSpot
@@ -67,8 +67,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     val deltaSeconds = gameTurns.nextTurn()
     robots.robotsTurn()
     applyCommands(deltaSeconds)
-    val died = gameTurns.turn(deltaSeconds)
-    reapDead(died)
+    val turnDeaths = gameTurns.turn(deltaSeconds)
+    reapDead(turnDeaths.deadSleds)
+    reportExpiredSnowballs(turnDeaths.deadSnowBalls)
     time("sendUpdates") {
       sendUpdates()
     }
@@ -173,6 +174,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
           case Shooting => shootSnowball(sled)
         }
       }
+    }
+  }
+
+  private def reportExpiredSnowballs(balls:Traversable[BallId]): Unit = {
+    if (balls.nonEmpty) {
+      val deaths = SnowballDeaths(balls.toSeq)
+      connections.keys.foreach(sendMessage(deaths, _))
     }
   }
 
