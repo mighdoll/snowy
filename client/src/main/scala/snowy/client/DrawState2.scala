@@ -85,7 +85,8 @@ object DrawState2 {
   val gridSize = 4000
   val amb      = new THREE.AmbientLight(0x888888)
   val light    = new THREE.DirectionalLight(0xffffff)
-  val grid     = new THREE.GridHelper(gridSize, 50)
+  val grid =
+    new THREE.GridHelper(gridSize, 50, new THREE.Color(0x0), new THREE.Color(0x0))
 
   Meshes.turret.position.set(0, 0, -5)
   Bodies.sled.add(Meshes.mainBody)
