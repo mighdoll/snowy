@@ -1,9 +1,10 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.Object3D
+import minithree.THREE.{Object3D, Vector3}
 import minithree.raw.MeshPhongMaterialParameters
 import snowy.GameClientProtocol.Scoreboard
+import snowy.GameConstants
 import snowy.client.ThreeMain._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, Snowball, Store, Tree}
@@ -81,10 +82,10 @@ object DrawState2 {
     val csnowballs = new THREE.Object3D()
     val csleds     = new THREE.Object3D()
   }
-
-  val amb   = new THREE.AmbientLight(0x888888)
-  val light = new THREE.DirectionalLight(0xffffff)
-  val grid  = new THREE.GridHelper(4000, 50)
+  val gridSize = 4000
+  val amb      = new THREE.AmbientLight(0x888888)
+  val light    = new THREE.DirectionalLight(0xffffff)
+  val grid     = new THREE.GridHelper(gridSize, 50)
 
   Meshes.turret.position.set(0, 0, -5)
   Bodies.sled.add(Meshes.mainBody)
@@ -104,6 +105,14 @@ object DrawState2 {
 
   scene.add(Meshes.health)
 
+  // only x and z
+  def transformPositionMod(pos: Vector3, center: Vector3, mod: Vector3): Vector3 = {
+    new Vector3(
+      ((pos.x - center.x + mod.x / 2) % mod.x + mod.x) % mod.x + center.x - mod.x / 2,
+      pos.y,
+      ((pos.z - center.z + mod.z / 2) % mod.z + mod.z) % mod.z + center.z - mod.z / 2
+    )
+  }
   def setup(): Unit = {
     scene.add(amb)
 
@@ -141,14 +150,25 @@ object DrawState2 {
         case (possibleTree, index) =>
           if (possibleTree.name == tree1.id.id.toString) {
             idExists = true
-            Groups.ctrees.children(index).position.x = tree1.pos.x
-            Groups.ctrees.children(index).position.z = tree1.pos.y
+            val ctree = Groups.ctrees.children(index)
+            val newPos = transformPositionMod(
+              new Vector3(tree1.pos.x, 0, tree1.pos.y),
+              Bodies.sled.position,
+              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+            )
+            ctree.position.x = newPos.x
+            ctree.position.z = newPos.z
           }
       }
       if (!idExists) {
         val addTree: Object3D = ThreeTree.randomTree()
-        addTree.position.x = tree1.pos.x
-        addTree.position.z = tree1.pos.y
+        val newPos = transformPositionMod(
+          new Vector3(tree1.pos.x, 0, tree1.pos.y),
+          Bodies.sled.position,
+          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+        )
+        addTree.position.x = newPos.x
+        addTree.position.z = newPos.z
         addTree.name = tree1.id.id.toString
         Groups.ctrees.add(addTree)
       }
@@ -161,19 +181,30 @@ object DrawState2 {
         case (aSnowball, index) =>
           if (aSnowball.name == snowball1.id.id.toString) {
             idExists = true
-            Groups.csnowballs.children(index).position.x = snowball1._position.x
-            Groups.csnowballs.children(index).position.z = snowball1._position.y
+            val csnowball = Groups.csnowballs.children(index)
+            val newPos = transformPositionMod(
+              new Vector3(snowball1._position.x, 0, snowball1._position.y),
+              Bodies.sled.position,
+              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+            )
+            csnowball.position.x = newPos.x
+            csnowball.position.z = newPos.z
           }
       }
       if (!idExists) {
         val addSnowball: Object3D = Meshes.snowball.clone()
-        addSnowball.position.x = snowball1._position.x
-        addSnowball.position.z = snowball1._position.y
         addSnowball.scale.set(
           snowball1.radius,
           snowball1.radius,
           snowball1.radius
         )
+        var newPos = transformPositionMod(
+          new Vector3(snowball1._position.x, 0, snowball1._position.y),
+          Bodies.sled.position,
+          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+        )
+        addSnowball.position.x = newPos.x
+        addSnowball.position.z = newPos.z
         addSnowball.name = snowball1.id.id.toString
         Groups.csnowballs.add(addSnowball)
       }
@@ -198,8 +229,15 @@ object DrawState2 {
             csled.children(1).scale.y = sled1.radius
             csled.children(1).scale.z = sled1.radius
 
-            csled.position.x = sled1._position.x
-            csled.position.z = sled1._position.y
+            val newPos = transformPositionMod(
+              new Vector3(sled1.pos.x, 0, sled1.pos.y),
+              Bodies.sled.position,
+              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+            )
+
+            csled.position.x = newPos.x
+            csled.position.z = newPos.z
+
             csled
               .children(0)
               .setRotationFromAxisAngle(
@@ -232,8 +270,14 @@ object DrawState2 {
         addSled.add(body)
         addSled.add(health)
 
-        addSled.position.x = sled1._position.x
-        addSled.position.z = sled1._position.y
+        val newPos = transformPositionMod(
+          new Vector3(sled1.pos.x, 0, sled1.pos.y),
+          Bodies.sled.position,
+          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+        )
+
+        addSled.position.x = newPos.x
+        addSled.position.z = newPos.z
         addSled.name = sled1.id.id.toString
         Groups.csleds.add(addSled)
       }
