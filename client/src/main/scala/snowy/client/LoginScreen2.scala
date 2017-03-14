@@ -2,10 +2,10 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.MeshPhongMaterialParameters
-import org.scalajs.dom.{document, html, Event}
+import org.scalajs.dom._
 import snowy.client.ThreeMain._
 import snowy.connection.GameState
-import snowy.playfield.{BasicSkis, BasicSled, SkiColor, SledKind}
+import snowy.playfield._
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
@@ -152,6 +152,9 @@ object LoginScreen2 {
     val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
     val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
 
+    val arrow1 = leave1.clone()
+    val arrow2 = leave2.clone()
+
     val card1 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
     val card2 = new THREE.Mesh(Geos.cardBigGeo, Mats.cardMat)
     val card3 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
@@ -166,6 +169,7 @@ object LoginScreen2 {
   }
 
   object Groups {
+    val arrow     = new THREE.Object3D()
     val selector  = new THREE.Object3D()
     val tree      = new THREE.Object3D()
     val tree2     = new THREE.Object3D()
@@ -182,15 +186,15 @@ object LoginScreen2 {
     Meshes.leave1.position.y = 14
     Meshes.leave2.position.y = 16
 
-    Groups.tree.rotateOnAxis(new THREE.Vector3(0, 0, 1), 0.5 * Math.PI)
-    Groups.tree2.rotateOnAxis(new THREE.Vector3(0, 0, 1), 1.5 * Math.PI)
+    Groups.tree.rotation.z = 0.5 * Math.PI
+    Groups.tree2.rotation.z = 1.5 * Math.PI
 
     Meshes.card1.position.set(-6, 4, 0)
     Meshes.card2.position.set(0, 5, 0)
     Meshes.card3.position.set(6, 4, 0)
 
     Groups.selector.position.y = -70
-    Groups.selector.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.3 * Math.PI)
+    Groups.selector.rotation.x = 0.3 * Math.PI
     Groups.selector.scale.x = 2
     Groups.selector.scale.y = 2
     Groups.selector.scale.z = 2
@@ -201,17 +205,24 @@ object LoginScreen2 {
     Meshes.meshW.position.x = -Shapes.s * 14
     Meshes.meshY.position.x = -Shapes.s * 19
 
-    Meshes.meshW.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1 * Math.PI)
+    Meshes.meshW.rotation.x = 1 * Math.PI
     Meshes.meshW.position.z = 3
 
-    Meshes.meshY.rotateOnAxis(new THREE.Vector3(1, 0, 0), 1 * Math.PI)
+    Meshes.meshY.rotation.x = 1 * Math.PI
     Meshes.meshY.position.z = 3
 
     Groups.snowyText.position.x = Shapes.s * 10
     Groups.snowyText.position.y = 48
-    Groups.snowyText.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.3 * Math.PI)
 
-    Meshes.input.rotateOnAxis(new THREE.Vector3(1, 0, 0), 0.4 * Math.PI)
+    Groups.snowyText.rotation.x = 0.3 * Math.PI
+
+    Meshes.input.rotation.x = 0.4 * Math.PI
+
+    Meshes.arrow2.position.y = 2
+
+    Groups.arrow.position.x = -52
+    Groups.arrow.rotation.z = 0.5 * Math.PI
+    Groups.arrow.scale.set(3, 4, 3)
   }
 
   def addGroups(): Unit = {
@@ -222,6 +233,9 @@ object LoginScreen2 {
     Groups.tree2.add(Meshes.trunk.clone())
     Groups.tree2.add(Meshes.leave1.clone())
     Groups.tree2.add(Meshes.leave2.clone())
+
+    Groups.arrow.add(Meshes.arrow1)
+    Groups.arrow.add(Meshes.arrow2)
 
     Groups.selector.add(Groups.tree)
     Groups.selector.add(Groups.tree2)
@@ -238,6 +252,29 @@ object LoginScreen2 {
   }
 
   def setup(): Unit = {
+    val scen = new THREE.Scene()
+    val rend = new THREE.CSS3DRenderer()
+    rend.setSize(window.innerWidth, window.innerHeight)
+
+    document.getElementById("3d-elements").appendChild(rend.domElement)
+
+    val ob = new THREE.CSS3DObject(document.getElementById("play"))
+    ob.position.x = -60
+    ob.rotation.y = math.Pi
+    ob.rotation.x = 0.3 * math.Pi
+    ob.scale.set(0.1, 0.1, 0.1)
+    scen.add(ob)
+
+    rend.render(scen, camera)
+
+    window.addEventListener(
+      "resize", { e: Event =>
+        camera.aspect = Math.min(window.innerWidth / window.innerHeight, 3)
+        camera.updateProjectionMatrix()
+        rend.setSize(window.innerWidth, window.innerHeight)
+        rend.render(scen, camera)
+      }
+    )
     positions()
     addGroups()
 
@@ -249,6 +286,7 @@ object LoginScreen2 {
     scene.add(Groups.selector)
     scene.add(Groups.snowyText)
     scene.add(Meshes.input)
+    scene.add(Groups.arrow)
 
     renderer.render(scene, camera)
   }
@@ -259,11 +297,95 @@ object LoginScreen2 {
     scene.remove(Groups.selector)
     scene.remove(Groups.snowyText)
     scene.remove(Meshes.input)
+    scene.remove(Groups.arrow)
   }
   private var connected: Option[Connection] = None
 
   private var skiColor: SkiColor = BasicSkis
   private var sledKind: SledKind = BasicSled
+
+  val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
+
+  var raycaster = new THREE.Raycaster()
+  var mouse     = new THREE.Vector2()
+  var hover     = 0
+  window.addEventListener(
+    "mousemove", { e: MouseEvent =>
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+      mouse.y = (e.clientY / window.innerHeight) * -2 + 1
+
+      raycaster.setFromCamera(mouse, camera)
+
+      val intersects = raycaster.intersectObjects(
+        js.Array(
+          Groups.tree.children(1),
+          Groups.tree.children(2),
+          Groups.tree2.children(1),
+          Groups.tree2.children(2)
+        )
+      );
+
+      val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
+      val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
+
+      val leaf3 = Groups.tree2.children(1).asInstanceOf[THREE.Mesh]
+      val leaf4 = Groups.tree2.children(2).asInstanceOf[THREE.Mesh]
+      leaf1.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+      leaf2.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+      Groups.tree.children(1).name = "right"
+      Groups.tree.children(2).name = "right"
+      leaf3.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+      leaf4.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+      Groups.tree2.children(1).name = "left"
+      Groups.tree2.children(2).name = "left"
+
+      if (intersects.length > 0) {
+        val mat = leaf1.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
+        mat.emissive.setHex(0x222222)
+        mat.shading = THREE.FlatShading
+        val mat2 = leaf2.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
+        mat2.emissive.setHex(0x222222)
+        mat2.shading = THREE.FlatShading
+
+        if (intersects(0).`object`.name == "right") {
+          Groups.tree.children(1).asInstanceOf[THREE.Mesh].material = mat
+          Groups.tree.children(2).asInstanceOf[THREE.Mesh].material = mat2
+          hover = -1
+
+        } else {
+          Groups.tree2.children(1).asInstanceOf[THREE.Mesh].material = mat
+          Groups.tree2.children(2).asInstanceOf[THREE.Mesh].material = mat2
+          hover = 1
+
+        }
+      } else {
+        hover = 0
+      }
+
+      renderer.render(scene, camera)
+    },
+    false
+  )
+  document.addEventListener(
+    "mousedown", { e: Event =>
+      val currentIndex = SledKinds.allSleds.indexOf(sledKind)
+
+      hover match {
+        case -1 =>
+          sledKind =
+            if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
+            else SledKinds.allSleds.last
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+        case 1 =>
+          sledKind =
+            if (currentIndex < SledKinds.allSleds.length - 1)
+              SledKinds.allSleds(currentIndex + 1)
+            else SledKinds.allSleds.head
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+        case _ =>
+      }
+    }
+  )
 
   def switch(game: Boolean) {
     game match {

@@ -8,6 +8,35 @@ import scala.scalajs.js.annotation._
 import scala.scalajs.js.typedarray._
 
 @js.native
+@JSName("THREE.CSS3DSprite")
+class CSS3DSprite(val element: Element) extends CSS3DObject(element)
+
+@js.native
+@JSName("THREE.CSS3DObject")
+class CSS3DObject(element: Element) extends Object3D
+
+@js.native
+@JSName("THREE.CSS3DRenderer")
+class CSS3DRenderer extends Renderer {
+
+  //  def render(scene: Scene, camera: Camera): Unit = js.native
+  //  def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit = js.native
+  //  var domElement: HTMLCanvasElement = js.native
+  // def this(parameters: WebGLRendererParameters = js.native) = this()
+
+  def setSize(width: Double, height: Double): Unit = js.native
+
+  def epsilon(value: Double): Double = js.native
+
+  def getObjectCSSMatrix(matrix: Matrix3): String = js.native
+
+  def getCameraCSSMatrix(matrix: Matrix3): String = js.native
+
+  def renderObject(obj: CSS3DObject, camera: Camera): Unit = js.native
+
+}
+
+@js.native
 trait WebGLRenderingContext extends js.Object {}
 
 @js.native
@@ -949,28 +978,28 @@ trait MaterialParameters extends js.Object {
 @js.native
 @JSName("THREE.Material")
 class Material extends js.Object {
-  var id: Double                          = js.native
-  var uuid: String                        = js.native
-  var name: String                        = js.native
-  var side: Side                          = js.native
-  var opacity: Double                     = js.native
-  var transparent: Boolean                = js.native
-  var blending: Blending                  = js.native
-  var blendSrc: BlendingDstFactor         = js.native
-  var blendDst: BlendingSrcFactor         = js.native
-  var blendEquation: BlendingEquation     = js.native
-  var depthTest: Boolean                  = js.native
-  var depthWrite: Boolean                 = js.native
-  var polygonOffset: Boolean              = js.native
-  var polygonOffsetFactor: Double         = js.native
-  var polygonOffsetUnits: Double          = js.native
-  var alphaTest: Double                   = js.native
-  var overdraw: Double                    = js.native
-  var visible: Boolean                    = js.native
-  var needsUpdate: Boolean                = js.native
-  def setValues(values: Object): Unit     = js.native
-  def clone(material: Material): Material = js.native
-  def dispose(): Unit                     = js.native
+  var id: Double                      = js.native
+  var uuid: String                    = js.native
+  var name: String                    = js.native
+  var side: Side                      = js.native
+  var opacity: Double                 = js.native
+  var transparent: Boolean            = js.native
+  var blending: Blending              = js.native
+  var blendSrc: BlendingDstFactor     = js.native
+  var blendDst: BlendingSrcFactor     = js.native
+  var blendEquation: BlendingEquation = js.native
+  var depthTest: Boolean              = js.native
+  var depthWrite: Boolean             = js.native
+  var polygonOffset: Boolean          = js.native
+  var polygonOffsetFactor: Double     = js.native
+  var polygonOffsetUnits: Double      = js.native
+  var alphaTest: Double               = js.native
+  var overdraw: Double                = js.native
+  var visible: Boolean                = js.native
+  var needsUpdate: Boolean            = js.native
+  def setValues(values: Object): Unit = js.native
+  override def `clone`(): Material             = js.native
+  def dispose(): Unit                 = js.native
   def addEventListener(`type`: String, listener: js.Function1[js.Any, Unit]): Unit =
     js.native
   def hasEventListener(`type`: String, listener: js.Function1[js.Any, Unit]): Unit =

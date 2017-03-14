@@ -59,14 +59,19 @@ html, body {
 }
 #play {
   position: absolute;
-  height: 5vh;
-  width: 20vh;
-  left: calc(50vw + 45vh);
+  height: 100px;/*5vh;*/
+  width: 350px;/*30vh;*/
+  /*left: calc(50vw + 45vh);
   top: 50vh;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);*/
   border-radius: 10px;
   border: 0;
-  font-size: 3vh;
+  font-size: 40px;/*3vh;*/
+  background: #36441b;
+  color: white;
+}
+#play:hover {
+  background: rgb(120, 201, 44);
 }
 .link {
   position: relative;
