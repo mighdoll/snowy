@@ -36,8 +36,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
         case _ if random < .010 => Seq(Start(Right, robotGameTime))
         case _ if random < .030 =>
           Seq(Stop(Right, robotGameTime), Stop(Left, robotGameTime))
-        case _ if random < .035 => Seq(Start(Pushing, robotGameTime))
-        case _ if random < .040 => Seq(Stop(Pushing, robotGameTime))
+        case _ if random < .037 => Seq(Boost(robotGameTime))
         case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
         case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
         case _ if random < .190 =>

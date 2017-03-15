@@ -17,7 +17,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   var turning: Option[Direction] = None
   var slowing: Boolean           = false
-  var pushing: Boolean           = false
+  var coasting: Boolean          = false
   var turret: Option[Direction]  = None
   var mouseDir: Double           = 0
 
@@ -41,9 +41,8 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       case Keys.Down() if !slowing =>
         sendMessage(Start(Slowing, gameTime))
         slowing = true
-      case Keys.Up() if !pushing =>
-        sendMessage(Start(Pushing, gameTime))
-        pushing = true
+      case Keys.Up() =>
+        sendMessage(Boost(gameTime))
       case Keys.TurretLeft() if !turret.contains(GoLeft) =>
         sendMessage(Stop(TurretRight, gameTime))
         sendMessage(Start(TurretLeft, gameTime))
@@ -84,11 +83,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
           slowing = false
         case _ =>
       }
-      (event.keyCode, pushing) match {
-        case (Keys.Up(), true) =>
-          pushing = false
-        case _ =>
-      }
       (event.keyCode, turret) match {
         case (Keys.TurretLeft(), Some(GoLeft)) =>
           sendMessage(Stop(TurretLeft, gameTime))
@@ -109,12 +103,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         case (Keys.Down(), true) =>
           sendMessage(Stop(Slowing, gameTime))
           slowing = false
-        case _ =>
-      }
-      (event.keyCode, pushing) match {
-        case (Keys.Up(), true) =>
-          sendMessage(Stop(Pushing, gameTime))
-          pushing = false
         case _ =>
       }
       (event.keyCode, turret) match {
@@ -150,7 +138,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
     "mousedown", { e: MouseEvent =>
       e.button match {
         case 0 => sendMessage(Start(Shooting, gameTime))
-        case 2 => sendMessage(Start(Pushing, gameTime))
+        case 2 => sendMessage(Boost(gameTime))
       }
       e.preventDefault()
     },

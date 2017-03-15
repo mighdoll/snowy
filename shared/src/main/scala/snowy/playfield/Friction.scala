@@ -35,13 +35,3 @@ object Friction {
   }
 }
 
-/** a force applied directly in the current direction of travel */
-class InlineForce(force: Double, maxSpeed: Double) {
-  def apply(current: Vec2d): Vec2d = {
-    current.transform {
-      case _ if !current.zero =>
-        val speed = min(max(current.length + force, 0), maxSpeed)
-        current.unit * speed
-    }
-  }
-}

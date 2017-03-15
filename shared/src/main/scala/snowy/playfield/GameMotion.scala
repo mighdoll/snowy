@@ -58,14 +58,6 @@ object GameMotion {
     sled.rotation = wrappedRotation
   }
 
-  /** apply a push to a sled in the current direction of the turret */
-  def pushSled(sled:Sled, deltaSeconds: Double): Unit = {
-    val pushForceNow = (sled.pushForce / sled.mass) * deltaSeconds
-    val pushVector = Vec2d.fromRotation(-sled.turretRotation) * pushForceNow
-    val rawSpeed = sled.speed + pushVector
-    sled.speed = rawSpeed.clipLength(sled.maxSpeed)
-  }
-
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
     *

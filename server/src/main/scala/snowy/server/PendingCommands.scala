@@ -1,14 +1,13 @@
 package snowy.server
 
 import scala.collection.mutable
-import snowy.GameConstants.maxCommandDuration
-import snowy.GameServerProtocol.StartStopCommand
+import snowy.GameServerProtocol.PersistentControl
 import socketserve.ClientId
 
-case class PendingCommand(start: Millis, command: StartStopCommand)
+case class PendingCommand(start: Millis, command: PersistentControl)
 
 object PendingCommand {
-  def apply(command: StartStopCommand, time: Millis = Millis.now()): PendingCommand = {
+  def apply(command: PersistentControl, time: Millis = Millis.now()): PendingCommand = {
     PendingCommand(time, command)
   }
 }
@@ -23,42 +22,23 @@ class PendingCommands {
   with MultiMap[ClientId, PendingCommand]
 
   /** record a pending command, replacing any previous matching command for this id.  */
-  def startCommand(id: ClientId, command: StartStopCommand, time: Long): Unit = {
+  def startCommand(id: ClientId, command: PersistentControl, time: Long): Unit = {
     removeCommand(id, command)
     commands.addBinding(id, PendingCommand(command))
   }
 
   /** remove a pending command */
-  def stopCommand(id: ClientId, command: StartStopCommand, time: Long): Unit =
+  def stopCommand(id: ClientId, command: PersistentControl, time: Long): Unit =
     removeCommand(id, command)
 
-  private def removeCommand(id: ClientId, command: StartStopCommand): Unit = {
+  private def removeCommand(id: ClientId, command: PersistentControl): Unit = {
     commands.get(id).map { cmds =>
       cmds.filter(_.command == command).map(cmds.remove)
     }
   }
 
-//  /** remove all expired commands */
-//  def removeExpired(gameTime: Millis): Unit = {
-//    filterRemove { (_, command) =>
-//      command.start.time + maxCommandDuration < gameTime.time
-//    }
-//  }
-
-//  /** remove all pairs for which a function returns true */
-//  def filterRemove(fn: (ConnectionId, PendingCommand) => Boolean): Unit = {
-//    for {
-//      (id, set) <- commands
-//      value     <- set.toArray
-//      if fn(id, value)
-//    } {
-//      set.remove(value)
-//      if (set.isEmpty) commands.remove(id)
-//    }
-//  }
-
   /** run a side effecting function on each pair */
-  def foreachCommand(fn: (ClientId, StartStopCommand, Millis) => Unit): Unit = {
+  def foreachCommand(fn: (ClientId, PersistentControl, Millis) => Unit): Unit = {
     for {
       (id, set) <- commands
       value     <- set

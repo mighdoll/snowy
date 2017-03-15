@@ -29,14 +29,16 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 impactDamage: Double = 1,
                /** angle of turret clockwise in screen coordinates of (0, 1) down on screen */
                 var turretRotation: Double = downhillRotation,
-                var pushEnergy: Double = 1,
-                var lastShotTime: Long = 0)
+                var lastShotTime: Long = 0,
+                var lastBoostTime: Long = 0)
     extends CircularObject {
   type MyType = Sled
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Sled]
 
   override def copyWithUpdatedPos(newPos: Vec2d): Sled = this.copy(_position = newPos)
+
+  val driveMode = new SledDrive
 
   def radius: Double = kind.radius
 
@@ -89,8 +91,14 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** deliver this amount of damage on collision with another sled at full speed */
   def maxImpactDamage: Double = kind.maxImpactDamage
 
-  /** speedup from the push button. in pixels / second / second */
-  def pushForce: Double = kind.pushForce
+  /** speedup from the boost button. in pixels / second / second */
+  def boostAcceleration: Double = kind.boostAcceleration
+
+  /** minimum time between boosts, in seconds */
+  def boostRecoveryTime: Double = kind.boostRecoveryTime
+
+  /** speedup from drive mode. in pixels / second / second */
+  def driveAcceleration: Double = kind.driveAcceleration
 
   /** reduce impact by this factor in sled/sled collisions */
   override def armor: Double = kind.armor

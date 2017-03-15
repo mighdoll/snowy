@@ -66,6 +66,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   override def turn(): Unit = {
     val deltaSeconds = gameTurns.nextTurn()
     robots.robotsTurn()
+    applyDrive(deltaSeconds)
     applyCommands(deltaSeconds)
     val turnDeaths = gameTurns.turn(deltaSeconds)
     reapDead(turnDeaths.deadSleds)
@@ -83,15 +84,43 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         userJoin(id, name.slice(0, 15), sledKind, skiColor)
       case TurretAngle(angle)          => rotateTurret(id, angle)
       case TargetAngle(angle)          => targetDirection(id, angle)
-      case Shoot(time)                 => id.sled.foreach(sled => shootSnowball(sled))
-      case Start(cmd, time)            => commands.startCommand(id, cmd, time)
-      case Stop(cmd, time)             => commands.stopCommand(id, cmd, time)
+      case Shoot(time)                 => id.sled.foreach(shootSnowball(_))
+      case Start(cmd, time)            => startCommand(id, cmd, time)
+      case Stop(cmd, time)             => stopCommand(id, cmd, time)
+      case Boost(time)                 => id.sled.foreach(boostSled(_, time))
       case Pong                        => netIdForeach(id)(connections(_).pongReceived())
       case ReJoin                      => rejoin(id)
       case TestDie                     => reapSled(sledMap(id))
       case RequestGameTime(clientTime) => netIdForeach(id)(reportGameTime(_, clientTime))
     }
   }
+
+  private def startCommand(id: ClientId, cmd: StartStopCommand, time: Long): Unit = {
+    cmd match {
+      case persistentControl: PersistentControl =>
+        commands.startCommand(id, persistentControl, time)
+      case driveControl: DriveControl =>
+        for (sled <- id.sled) {
+          driveControl match {
+            case Coasting => sled.driveMode.driveMode(SledDrive.Coasting)
+            case Slowing => sled.driveMode.driveMode(SledDrive.Braking)
+          }
+        }
+    }
+  }
+
+  private def stopCommand(id: ClientId, cmd: StartStopCommand, time: Long): Unit = {
+    cmd match {
+      case persistentControl: PersistentControl =>
+        commands.stopCommand(id, persistentControl, time)
+      case driveControl: DriveControl =>
+        for (sled <- id.sled) {
+          sled.driveMode.driveMode(SledDrive.Driving)
+        }
+    }
+  }
+
+
 
   private def netIdForeach(id: ClientId)(fn: ConnectionId => Unit): Unit = {
     id match {
@@ -153,20 +182,21 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
+  private def applyDrive(deltaSeconds: Double): Unit = {
+    for (sled <- sleds.items) {
+      sled.driveMode.driveSled(sled, deltaSeconds)
+    }
+  }
+
+  /** apply any pending but not yet cancelled commands from user actions,
+    * e.g. turning or slowing */
   private def applyCommands(deltaSeconds: Double): Unit = {
 
     commands.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
-          case Left  => turnSled(sled, LeftTurn, deltaSeconds)
-          case Right => turnSled(sled, RightTurn, deltaSeconds)
-          case Pushing => pushSled(sled, deltaSeconds)
-          case Slowing =>
-            val slow = new InlineForce(
-              -slowButtonFriction * deltaSeconds / sled.mass,
-              sled.maxSpeed
-            )
-            sled.speed = slow(sled.speed)
+          case Left     => turnSled(sled, LeftTurn, deltaSeconds)
+          case Right    => turnSled(sled, RightTurn, deltaSeconds)
           case TurretLeft =>
             id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
           case TurretRight =>
@@ -177,7 +207,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def reportExpiredSnowballs(balls:Traversable[BallId]): Unit = {
+  private def reportExpiredSnowballs(balls: Traversable[BallId]): Unit = {
     if (balls.nonEmpty) {
       val deaths = SnowballDeaths(balls.toSeq)
       connections.keys.foreach(sendMessage(deaths, _))
@@ -185,14 +215,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
   }
 
   /** apply a push to a sled */
-  private def pushSled(sled: Sled): Unit = {
-    val pushForceNow = PushEnergy.force / sled.mass
-
-    if (sled.pushEnergy >= (1.0 / PushEnergy.maxAmount)) {
-      val pushVector = Vec2d.fromRotation(-sled.turretRotation) * pushForceNow
-      val rawSpeed   = sled.speed + pushVector
-      sled.speed = rawSpeed.clipLength(sled.maxSpeed)
-      sled.pushEnergy = sled.pushEnergy - (1.0 / PushEnergy.maxAmount)
+  private def boostSled(sled: Sled, clientTime: Long): Unit = {
+    if (gameTime - sled.lastBoostTime >= sled.boostRecoveryTime * 1000) {
+      sled.lastBoostTime = gameTime
+      SledDrive.accelerate(sled, sled.boostAcceleration)
     }
   }
 
@@ -277,7 +303,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
                        sledKind: SledKind,
                        skiColor: SkiColor): Unit = {
     logger.info(
-      s"user joined: $userName  id: $id  kind: $sledKind  userCount:${users.size}")
+      s"user joined: $userName  id: $id  kind: $sledKind  userCount:${users.size}"
+    )
     val user =
       new User(userName, createTime = gameTime, sledKind = sledKind, skiColor = skiColor)
     users(id) = user

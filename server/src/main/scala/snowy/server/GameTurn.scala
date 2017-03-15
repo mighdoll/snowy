@@ -32,7 +32,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   /** Called to update game state on a regular timer */
   def turn(deltaSeconds: Double): TurnDeaths = time("gameTurn") {
     gameHealth.recoverHealth(deltaSeconds)
-    gameHealth.recoverPushEnergy(deltaSeconds)
     val expiredBalls = gameHealth.expireSnowballs()
 
     moveSnowballs(state.snowballs.items, deltaSeconds)

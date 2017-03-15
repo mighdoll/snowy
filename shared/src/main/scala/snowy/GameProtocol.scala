@@ -10,6 +10,10 @@ object GameServerProtocol {
 
   sealed trait StartStopCommand
 
+  sealed trait DriveControl extends StartStopCommand
+
+  sealed trait PersistentControl extends StartStopCommand
+
   case class Join(userName: String, sledKind: SledKind = BasicSled,
                   skiColor: SkiColor = BasicSkis)
       extends GameServerMessage
@@ -22,23 +26,25 @@ object GameServerProtocol {
 
   case class Shoot(time: Long) extends GameServerMessage
 
+  case class Boost(time: Long) extends GameServerMessage
+
   case class Start(cmd: StartStopCommand, time: Long) extends GameServerMessage
 
   case class Stop(cmd: StartStopCommand, time: Long) extends GameServerMessage
 
-  case object Left extends StartStopCommand
+  case object Left extends PersistentControl
 
-  case object Right extends StartStopCommand
+  case object Right extends PersistentControl
 
-  case object Slowing extends StartStopCommand
+  case object Slowing extends DriveControl
 
-  case object Pushing extends StartStopCommand
+  case object Coasting extends DriveControl
 
-  case object TurretLeft extends StartStopCommand
+  case object TurretLeft extends PersistentControl
 
-  case object TurretRight extends StartStopCommand
+  case object TurretRight extends PersistentControl
 
-  case object Shooting extends StartStopCommand
+  case object Shooting extends PersistentControl
 
   case object Pong extends GameServerMessage
 

@@ -2,7 +2,6 @@ package snowy.server
 
 import scala.math.min
 import snowy.Awards._
-import snowy.GameConstants.{Bullet, PushEnergy}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
