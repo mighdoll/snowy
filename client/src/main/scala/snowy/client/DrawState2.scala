@@ -2,7 +2,7 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.{Object3D, Vector3}
-import minithree.raw.MeshPhongMaterialParameters
+import minithree.raw.{LineBasicMaterialParameters, MeshPhongMaterialParameters}
 import snowy.GameClientProtocol.Scoreboard
 import snowy.GameConstants
 import snowy.client.ThreeMain._
@@ -10,7 +10,9 @@ import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
 
+import scala.scalajs.js
 import scala.scalajs.js.Dynamic
+import scala.scalajs.js.typedarray.Float32Array
 
 object DrawState2 {
   object Geos {
@@ -78,15 +80,13 @@ object DrawState2 {
     val tree = ThreeTree.randomTree()
   }
   object Groups {
-    val ctrees     = new THREE.Object3D()
-    val csnowballs = new THREE.Object3D()
-    val csleds     = new THREE.Object3D()
+    val ctrees                  = new THREE.Object3D()
+    val csnowballs              = new THREE.Object3D()
+    val csleds                  = new THREE.Object3D()
+    var cgrid: Option[Object3D] = None
   }
-  val gridSize = 4000
-  val amb      = new THREE.AmbientLight(0x888888)
-  val light    = new THREE.DirectionalLight(0xffffff)
-  val grid =
-    new THREE.GridHelper(gridSize, 50, new THREE.Color(0x0), new THREE.Color(0x0))
+  val amb   = new THREE.AmbientLight(0x888888)
+  val light = new THREE.DirectionalLight(0xffffff)
 
   Meshes.turret.position.set(0, 0, -5)
   Bodies.sled.add(Meshes.mainBody)
@@ -114,6 +114,55 @@ object DrawState2 {
       ((pos.z - center.z + mod.z / 2) % mod.z + mod.z) % mod.z + center.z - mod.z / 2
     )
   }
+  def addGrid(): Object3D = {
+    val xSpacing = 50
+    val ySpacing = 50
+
+    val xAmount = math.ceil(GameConstants.playfield.x / xSpacing).toInt
+    val yAmount = math.ceil(GameConstants.playfield.y / ySpacing).toInt
+
+    val material = new THREE.LineBasicMaterial(
+      Dynamic
+        .literal(color = 0x0)
+        .asInstanceOf[LineBasicMaterialParameters]
+    )
+
+    val grid = new THREE.Object3D()
+    for (i <- 0 to xAmount) {
+      val geo = new THREE.BufferGeometry()
+      val vertices = new Float32Array(
+        js.Array(
+          i * xSpacing,
+          0,
+          yAmount * ySpacing,
+          i * xSpacing,
+          0,
+          0
+        )
+      )
+      geo.addAttribute("position", new THREE.BufferAttribute(vertices, 3))
+      val line = new THREE.Line(geo, material)
+      grid.add(line)
+    }
+
+    for (j <- 0 to yAmount) {
+      val geo = new THREE.BufferGeometry()
+      val vertices = new Float32Array(
+        js.Array(
+          0,
+          0,
+          j * ySpacing,
+          xAmount * xSpacing,
+          0,
+          j * ySpacing
+        )
+      )
+      geo.addAttribute("position", new THREE.BufferAttribute(vertices, 3))
+      val line = new THREE.Line(geo, material)
+      grid.add(line)
+    }
+    grid
+  }
   def setup(): Unit = {
     scene.add(amb)
 
@@ -128,12 +177,13 @@ object DrawState2 {
     camera.position.y = 800
     camera.lookAt(Bodies.sled.position)
 
-    scene.add(grid)
+    Groups.cgrid = Some(addGrid())
+    Groups.cgrid.foreach { grid =>
+      scene.add(grid)
+    }
 
     scene.add(Groups.ctrees)
-
     scene.add(Groups.csnowballs)
-
     scene.add(Groups.csleds)
 
   }
@@ -322,9 +372,11 @@ object DrawState2 {
     scene.remove(amb)
     scene.remove(light)
     scene.remove(Bodies.sled)
-    scene.remove(grid)
     scene.remove(Groups.ctrees)
     scene.remove(Groups.csnowballs)
     scene.remove(Groups.csleds)
+    Groups.cgrid.foreach { grid =>
+      scene.remove(grid)
+    }
   }
 }
