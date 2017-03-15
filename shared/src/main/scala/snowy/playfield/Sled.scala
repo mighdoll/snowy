@@ -100,6 +100,9 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
   /** speedup from drive mode. in pixels / second / second */
   def driveAcceleration: Double = kind.driveAcceleration
 
+  /** friction from the slowdown button. in pixels / second / second */
+  def brakeAcceleration: Double = kind.brakeAcceleration
+
   /** reduce impact by this factor in sled/sled collisions */
   override def armor: Double = kind.armor
 

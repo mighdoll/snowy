@@ -44,9 +44,6 @@ object GameConstants {
 
   object Friction {
 
-    /** friction from the slowdown button. in pixels / second / second */
-    val slowButtonFriction = 400
-
     /** friction from ski angled away from direction of travel in pixels / second / second */
     val maxFriction = 500.0
 

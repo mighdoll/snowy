@@ -6,7 +6,7 @@ import vector.Vec2d
 sealed trait SledKind {
 
   /** acceleration in pixels / second / second */
-  def gravity: Double = 0
+  def gravity: Double = -150
 
   /** max speed of sled in pixels per second */
   def maxSpeed: Int = 400
@@ -77,10 +77,9 @@ sealed trait SledKind {
 
   /** maximum time for a boost, in seconds */
   def boostMaxDuration: Double = 1
-  /*
-  TODO
- * penetration factor for bullets (off axis hits bounce off modulo this factor)
- */
+
+  /** friction from the slowdown button. in pixels / second / second */
+  def brakeAcceleration: Double = 450
 }
 
 case object StationaryTestSled extends SledKind {
@@ -90,7 +89,9 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity           = 0
+  override val gravity           = BasicSled.gravity * .5
+  override val driveAcceleration = BasicSled.driveAcceleration * .5
+  override val boostAcceleration = BasicSled.boostAcceleration * .5
   override val maxHealth         = 2.0
   override val minRechargeTime   = 1000
   override val bulletImpact      = 1.25
@@ -100,11 +101,12 @@ case object TankSled extends SledKind {
   override val bulletRecoil      = 0 //120
   override val bulletLifetime    = 10.0
   override val mass              = 3.0
-  override val boostAcceleration = BasicSled.boostAcceleration * .5
-  override val driveAcceleration = BasicSled.driveAcceleration * .5
 }
 
 case object GunnerSled extends SledKind {
+  override val gravity           = BasicSled.gravity * .8
+  override val driveAcceleration = BasicSled.driveAcceleration * .8
+  override val boostAcceleration = BasicSled.boostAcceleration * .8
   override val maxSpeed          = 350
   override val maxHealth         = .75
   override val minRechargeTime   = 100
@@ -115,28 +117,27 @@ case object GunnerSled extends SledKind {
   override val bulletRecoil      = 0 //10
   override val bulletHealth      = 1.0
   override val mass              = 1.0
-  override val boostAcceleration = BasicSled.boostAcceleration * .8
-  override val driveAcceleration = BasicSled.driveAcceleration * .8
 }
 
 case object SpeedySled extends SledKind {
-  override val gravity            = 0
+  override val gravity            = BasicSled.gravity * 1.5
+  override val driveAcceleration  = BasicSled.driveAcceleration * 2.5
+  override val boostAcceleration  = BasicSled.boostAcceleration * 2.5
+  override val brakeAcceleration  = BasicSled.brakeAcceleration * 2.5
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val minRechargeTime    = 200
-  override val boostAcceleration  = BasicSled.boostAcceleration * 2.5
-  override val driveAcceleration  = BasicSled.driveAcceleration * 2.5
   override val maxSpeed           = 500
 }
 
 case object SpikySled extends SledKind {
-  override val gravity            = 0
+  override val gravity            = BasicSled.gravity * .65
+  override val boostAcceleration  = BasicSled.boostAcceleration * .65
+  override val driveAcceleration  = BasicSled.driveAcceleration * .65
   override val maxHealth          = 2.0
   override val maxImpactDamage    = 2.0
   override val mass               = 2.0
   override val healthRecoveryTime = 15.0
-  override val boostAcceleration  = BasicSled.boostAcceleration * .65
-  override val driveAcceleration  = BasicSled.driveAcceleration * .65
 }
 
 object SledKinds {

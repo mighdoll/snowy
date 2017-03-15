@@ -1,5 +1,4 @@
 package snowy.playfield
-import snowy.GameConstants.Friction.slowButtonFriction
 import vector.Vec2d
 import snowy.util.DoubleUtil._
 
@@ -19,7 +18,7 @@ object SledDrive {
   def brake(sled: Sled, acceleration: Double): Unit = {
     sled.speed.transform {
       case speed if !speed.zero =>
-        val speedLength = (speed.length + acceleration).clip(0, sled.maxSpeed)
+        val speedLength = (speed.length - acceleration).clip(0, sled.maxSpeed)
         speed.unit * speedLength
     }
   }
@@ -27,18 +26,21 @@ object SledDrive {
 
 import SledDrive._
 
+/** driving mode of the sled: coasting, driving, or braking */
 class SledDrive {
 
   private var drive: Drive = Driving
 
+  /** accelerate or decelerate the sled based on the driving mode */
   def driveSled(sled: Sled, deltaSeconds: Double): Unit = {
     drive match {
       case Coasting => // nothing to do
       case Driving  => accelerate(sled, sled.driveAcceleration * deltaSeconds)
-      case Braking  => brake(sled, -slowButtonFriction * deltaSeconds / sled.mass)
+      case Braking  => brake(sled, sled.brakeAcceleration * deltaSeconds / sled.mass)
     }
   }
 
+  /** set the driving mode of the sled */
   def driveMode(mode: Drive): Unit = {
     drive = mode
   }
