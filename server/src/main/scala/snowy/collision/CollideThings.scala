@@ -35,19 +35,23 @@ object CollideThings {
     * @return a list of any killed objects */
   def collideCollection[A <: CircularObject](
         collection: Traversable[A]
-  ): DeathList[A, A] = {
+  ): Traversable[Death[A, A]] = {
     val combinations = collection.toList.combinations(2)
     val effectPairs: Iterator[(CollisionEffect[A], CollisionEffect[A])] =
       combinations.flatMap {
         case List(a, b) => collide2(a, b)
       }
 
-    val deaths: Iterator[DeathList[A, A]] = effectPairs.map {
+    val deathLists: Iterator[DeathList[A, A]] = effectPairs.map {
       case (effectA, effectB) =>
         applyTwoEffects(effectA, effectB)
     }
 
-    Monoid.combineAll(deaths)
+    val deaths: Iterator[Death[A, A]] = deathLists.flatMap { deathList =>
+      deathList.a ++ deathList.b
+    }
+
+    deaths.toSeq
   }
 
   /** Modify two objects with the effects of a collision.

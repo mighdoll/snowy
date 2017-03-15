@@ -27,7 +27,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     deltaSeconds
   }
 
-  case class TurnDeaths(deadSleds:Traversable[SledDied], deadSnowBalls: Traversable[BallId])
+  case class TurnDeaths(deadSleds: Traversable[SledDied],
+                        deadSnowBalls: Traversable[BallId])
 
   /** Called to update game state on a regular timer */
   def turn(deltaSeconds: Double): TurnDeaths = time("gameTurn") {
@@ -36,48 +37,65 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     moveSnowballs(state.snowballs.items, deltaSeconds)
 
-    val moveAwards      = time("moveSleds")(moveSleds(state.sleds.items, deltaSeconds))
-    val collisionAwards = time("checkCollisions")(checkCollisions())
-    val died            = gameHealth.collectDead()
+    val moveAwards = time("moveSleds")(moveSleds(state.sleds.items, deltaSeconds))
+    val collided   = time("checkCollisions")(checkCollisions())
+    val died       = gameHealth.collectDead()
 
-    updateScore(moveAwards.toSeq ++ collisionAwards ++ died)
-    TurnDeaths(died, expiredBalls)
+    updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
+    TurnDeaths(died, expiredBalls ++ collided.killedSnowballs)
   }
 
+  case class CollisionResult(killedSleds: Traversable[SledKill],
+                             killedSnowballs: Traversable[BallId])
+
   /** check for collisions between the sled and trees or snowballs */
-  private def checkCollisions(): Traversable[SledKill] = {
+  private def checkCollisions(): CollisionResult = {
     import snowy.collision.GameCollide.snowballTrees
 
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideThings(state.sleds.items, state.snowballs.items)
 
-    val snowballAwards = sledSnowballDeaths.a.map {
-      case Death(killed: Sled, killer: Snowball) =>
-        SledKill(killer.ownerId, killed.id)
+    for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b) {
+      state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
     }
 
-    sledSnowballDeaths.b.map {
-      case Death(killed: Snowball, killer: Sled) =>
-        state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
-    }
+    // collide snowballs with trees
+    val snowballTreeDeaths = state.snowballs.items.filter(snowballTrees(_, state.trees))
+    for (ball <- snowballTreeDeaths)
+      state.snowballs = state.snowballs.remove(ball)
 
+    // collide snowballs with each other
     val snowballDeaths = CollideThings.collideCollection(state.snowballs.items)
-    (snowballDeaths.a ++ snowballDeaths.b).map {
-      case Death(killed: Snowball, _) =>
-        state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
+
+    for (Death(killed: Snowball, _) <- snowballDeaths) {
+      state.snowballs = state.snowballs.removeMatchingItems(_.id == killed.id)
     }
 
+    // collide sleds with trees
     state.sleds.items.foreach(SledTree.collide(_, state.trees))
 
+    // collide sleds with each other
     val sledDeaths = CollideThings.collideCollection(state.sleds.items)
-    val sledAwards = (sledDeaths.a ++ sledDeaths.b).map {
+
+    // accumulate awards
+    val snowballAwards =
+      for (Death(killed: Sled, killer: Snowball) <- sledSnowballDeaths.a)
+        yield SledKill(killer.ownerId, killed.id)
+
+    val sledAwards = sledDeaths.map {
       case Death(killed: Sled, killer: Sled) => SledKill(killer.id, killed.id)
     }
 
-    state.snowballs = state.snowballs.removeMatchingItems(snowballTrees(_, state.trees))
+    val deadSnowballs = {
+      val bySled =
+        for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b)
+          yield killed.id
 
-    snowballAwards ++ sledAwards
+      snowballDeaths.map(_.killed.id) ++ bySled ++ snowballTreeDeaths.map(_.id)
+    }
+
+    CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
   }
 
   /** update the score based on sled travel distance, sleds killed, etc. */
