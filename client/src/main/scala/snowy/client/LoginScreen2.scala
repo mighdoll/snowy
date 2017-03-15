@@ -152,8 +152,8 @@ object LoginScreen2 {
     val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
     val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
 
-    val arrow1 = leave1.clone()
-    val arrow2 = leave2.clone()
+    val arrow1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
+    val arrow2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave1Mat)
 
     val card1 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
     val card2 = new THREE.Mesh(Geos.cardBigGeo, Mats.cardMat)
