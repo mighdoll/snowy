@@ -252,29 +252,6 @@ object LoginScreen2 {
   }
 
   def setup(): Unit = {
-    val scen = new THREE.Scene()
-    val rend = new THREE.CSS3DRenderer()
-    rend.setSize(window.innerWidth, window.innerHeight)
-
-    document.getElementById("3d-elements").appendChild(rend.domElement)
-
-    val ob = new THREE.CSS3DObject(document.getElementById("play"))
-    ob.position.x = -60
-    ob.rotation.y = math.Pi
-    ob.rotation.x = 0.3 * math.Pi
-    ob.scale.set(0.1, 0.1, 0.1)
-    scen.add(ob)
-
-    rend.render(scen, camera)
-
-    window.addEventListener(
-      "resize", { e: Event =>
-        camera.aspect = Math.min(window.innerWidth / window.innerHeight, 3)
-        camera.updateProjectionMatrix()
-        rend.setSize(window.innerWidth, window.innerHeight)
-        rend.render(scen, camera)
-      }
-    )
     positions()
     addGroups()
 
@@ -367,7 +344,7 @@ object LoginScreen2 {
     false
   )
   document.addEventListener(
-    "mousedown", { e: Event =>
+    "mousedown", { _: Event =>
       val currentIndex = SledKinds.allSleds.indexOf(sledKind)
 
       hover match {
@@ -388,25 +365,24 @@ object LoginScreen2 {
   )
 
   def switch(game: Boolean) {
-    game match {
-      case true =>
-        document
-          .getElementById("game-div")
-          .asInstanceOf[html.Div]
-          .classList
-          .remove("back")
-        document
-          .getElementById("login-form")
-          .asInstanceOf[html.Div]
-          .classList
-          .add("hide")
-      case false =>
-        document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
-        document
-          .getElementById("login-form")
-          .asInstanceOf[html.Div]
-          .classList
-          .remove("hide")
+    if (game) {
+      document
+        .getElementById("game-div")
+        .asInstanceOf[html.Div]
+        .classList
+        .remove("back")
+      document
+        .getElementById("login-form")
+        .asInstanceOf[html.Div]
+        .classList
+        .add("hide")
+    } else {
+      document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
+      document
+        .getElementById("login-form")
+        .asInstanceOf[html.Div]
+        .classList
+        .remove("hide")
     }
   }
 

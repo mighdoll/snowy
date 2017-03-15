@@ -100,10 +100,6 @@ object THREE {
   @inline def LinePieces: LineType     = raw.jsThree.LinePieces
   @inline def ShaderChunk: ShaderChunk = raw.jsThree.ShaderChunk
 
-  type CSS3DSprite = raw.CSS3DSprite
-  type CSS3DObject = raw.CSS3DObject
-  type CSS3DRenderer = raw.CSS3DRenderer
-
   type AmbientLight = raw.AmbientLight
   type Animation = raw.Animation
   type AnimationData = raw.AnimationData

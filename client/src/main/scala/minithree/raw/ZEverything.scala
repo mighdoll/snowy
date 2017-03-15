@@ -8,35 +8,6 @@ import scala.scalajs.js.annotation._
 import scala.scalajs.js.typedarray._
 
 @js.native
-@JSName("THREE.CSS3DSprite")
-class CSS3DSprite(val element: Element) extends CSS3DObject(element)
-
-@js.native
-@JSName("THREE.CSS3DObject")
-class CSS3DObject(element: Element) extends Object3D
-
-@js.native
-@JSName("THREE.CSS3DRenderer")
-class CSS3DRenderer extends Renderer {
-
-  //  def render(scene: Scene, camera: Camera): Unit = js.native
-  //  def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit = js.native
-  //  var domElement: HTMLCanvasElement = js.native
-  // def this(parameters: WebGLRendererParameters = js.native) = this()
-
-  def setSize(width: Double, height: Double): Unit = js.native
-
-  def epsilon(value: Double): Double = js.native
-
-  def getObjectCSSMatrix(matrix: Matrix3): String = js.native
-
-  def getCameraCSSMatrix(matrix: Matrix3): String = js.native
-
-  def renderObject(obj: CSS3DObject, camera: Camera): Unit = js.native
-
-}
-
-@js.native
 trait WebGLRenderingContext extends js.Object {}
 
 @js.native
