@@ -8,11 +8,11 @@ object GameServerProtocol {
 
   sealed trait GameServerMessage
 
-  sealed trait StartStopCommand
+  sealed trait StartStopControl
 
-  sealed trait DriveControl extends StartStopCommand
+  sealed trait DriveControl extends StartStopControl
 
-  sealed trait PersistentControl extends StartStopCommand
+  sealed trait PersistentControl extends StartStopControl
 
   case class Join(userName: String, sledKind: SledKind = BasicSled,
                   skiColor: SkiColor = BasicSkis)
@@ -28,9 +28,9 @@ object GameServerProtocol {
 
   case class Boost(time: Long) extends GameServerMessage
 
-  case class Start(cmd: StartStopCommand, time: Long) extends GameServerMessage
+  case class Start(cmd: StartStopControl, time: Long) extends GameServerMessage
 
-  case class Stop(cmd: StartStopCommand, time: Long) extends GameServerMessage
+  case class Stop(cmd: StartStopControl, time: Long) extends GameServerMessage
 
   case object Left extends PersistentControl
 

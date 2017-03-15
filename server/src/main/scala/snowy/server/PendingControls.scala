@@ -4,27 +4,27 @@ import scala.collection.mutable
 import snowy.GameServerProtocol.PersistentControl
 import socketserve.ClientId
 
-case class PendingCommand(start: Millis, command: PersistentControl)
+case class PendingControl(start: Millis, command: PersistentControl)
 
-object PendingCommand {
-  def apply(command: PersistentControl, time: Millis = Millis.now()): PendingCommand = {
-    PendingCommand(time, command)
+object PendingControl {
+  def apply(command: PersistentControl, time: Millis = Millis.now()): PendingControl = {
+    PendingControl(time, command)
   }
 }
 
 /** a collection of pending commands indexed by ConnectionId.
   * At most one per StartStopCommand is retained per ConnectionId. */
-class PendingCommands {
+class PendingControls {
 
   import scala.collection.mutable.{HashMap, MultiMap}
 
-  val commands = new HashMap[ClientId, mutable.Set[PendingCommand]]
-  with MultiMap[ClientId, PendingCommand]
+  val commands = new HashMap[ClientId, mutable.Set[PendingControl]]
+  with MultiMap[ClientId, PendingControl]
 
   /** record a pending command, replacing any previous matching command for this id.  */
   def startCommand(id: ClientId, command: PersistentControl, time: Long): Unit = {
     removeCommand(id, command)
-    commands.addBinding(id, PendingCommand(command))
+    commands.addBinding(id, PendingControl(command))
   }
 
   /** remove a pending command */

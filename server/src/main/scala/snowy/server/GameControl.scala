@@ -52,7 +52,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       sled.remove()
     }
     users.remove(connectionId)
-    commands.commands.remove(connectionId)
+    pendingControls.commands.remove(connectionId)
     connections.remove(connectionId)
   }
 
@@ -84,8 +84,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       case TurretAngle(angle)          => rotateTurret(id, angle)
       case TargetAngle(angle)          => targetDirection(id, angle)
       case Shoot(time)                 => id.sled.foreach(shootSnowball(_))
-      case Start(cmd, time)            => startCommand(id, cmd, time)
-      case Stop(cmd, time)             => stopCommand(id, cmd, time)
+      case Start(cmd, time)            => startControl(id, cmd, time)
+      case Stop(cmd, time)             => stopControl(id, cmd, time)
       case Boost(time)                 => id.sled.foreach(boostSled(_, time))
       case Pong                        => netIdForeach(id)(connections(_).pongReceived())
       case ReJoin                      => rejoin(id)
@@ -94,10 +94,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def startCommand(id: ClientId, cmd: StartStopCommand, time: Long): Unit = {
+  private def startControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
     cmd match {
       case persistentControl: PersistentControl =>
-        commands.startCommand(id, persistentControl, time)
+        pendingControls.startCommand(id, persistentControl, time)
       case driveControl: DriveControl =>
         for (sled <- id.sled) {
           driveControl match {
@@ -108,10 +108,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def stopCommand(id: ClientId, cmd: StartStopCommand, time: Long): Unit = {
+  private def stopControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
     cmd match {
       case persistentControl: PersistentControl =>
-        commands.stopCommand(id, persistentControl, time)
+        pendingControls.stopCommand(id, persistentControl, time)
       case driveControl: DriveControl =>
         for (sled <- id.sled) {
           sled.driveMode.driveMode(SledDrive.Driving)
@@ -191,7 +191,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     * e.g. turning or slowing */
   private def applyCommands(deltaSeconds: Double): Unit = {
 
-    commands.foreachCommand { (id, command, time) =>
+    pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
           case Left     => turnSled(sled, LeftTurn, deltaSeconds)

@@ -14,11 +14,10 @@ trait GameState { self: GameControl =>
   val trees: Set[Tree]   = randomTrees()
   val users              = mutable.Map[ClientId, User]()
   val sledMap            = mutable.Map[ClientId, SledId]()
-  val commands           = new PendingCommands
+  val pendingControls    = new PendingControls
   val gameStateImplicits = new GameStateImplicits(this)
   var sleds              = Store[Sled]()
   var snowballs          = Store[Snowball]()
-  import gameStateImplicits._
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
