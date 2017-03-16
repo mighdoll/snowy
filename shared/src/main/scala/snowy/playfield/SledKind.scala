@@ -7,10 +7,10 @@ import vector.Vec2d
 sealed trait SledKind {
 
   /** acceleration in pixels / second / second */
-  def gravity: Double = -150
+  def gravity: Double = -100
 
   /** max speed of sled in pixels per second */
-  def maxSpeed: Int = 400
+  def maxSpeed: Int = 750
 
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = (300 / gameSpeed).toInt
@@ -68,10 +68,10 @@ sealed trait SledKind {
   def radius: Double = 18
 
   /** speedup from drive mode. in pixels / second / second */
-  def driveAcceleration: Double = 200
+  def driveAcceleration: Double = 150
 
   /** speedup from the boost button. in pixels / second / second */
-  def boostAcceleration: Double = 150
+  def boostAcceleration: Double = 400
 
   /** minimum time between boosts, in seconds */
   def boostRecoveryTime: Double = 1

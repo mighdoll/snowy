@@ -252,11 +252,15 @@ object LoginScreen2 {
   }
 
   def setup(): Unit = {
+    connected = None
+
     positions()
     addGroups()
-
     addItems()
+
+    textInput.focus()
   }
+
   def addItems(): Unit = {
     scene.add(amb)
     scene.add(light)
@@ -276,6 +280,7 @@ object LoginScreen2 {
     scene.remove(Meshes.input)
     scene.remove(Groups.arrow)
   }
+
   private var connected: Option[Connection] = None
 
   private var skiColor: SkiColor = BasicSkis

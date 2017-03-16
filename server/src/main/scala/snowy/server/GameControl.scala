@@ -140,7 +140,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 10).foreach { _ =>
+    (1 to 4).foreach { _ =>
       robots.createRobot(StationaryRobot.apply)
     }
   }
