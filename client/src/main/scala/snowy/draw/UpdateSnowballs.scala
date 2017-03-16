@@ -1,15 +1,16 @@
 package snowy.draw
 
+import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.Vector3
 import snowy.GameConstants
 import snowy.client.DrawState2
-import snowy.client.DrawState2.{Bodies, Groups, Meshes}
+import snowy.client.DrawState2.{Geos, Groups, Mats}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
 object UpdateSnowballs {
-  def updateCsnowballs(snowballs: Set[Snowball]): Unit = {
+  def updateCsnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       var idExists = false
       Groups.csnowballs.children.zipWithIndex.foreach {
@@ -19,7 +20,7 @@ object UpdateSnowballs {
             val csnowball = Groups.csnowballs.children(index)
             val newPos = DrawState2.transformPositionMod(
               new Vector3(snowball1._position.x, 0, snowball1._position.y),
-              Bodies.sled.position,
+              myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
             )
             csnowball.position.x = newPos.x
@@ -27,13 +28,13 @@ object UpdateSnowballs {
           }
       }
       if (!idExists) {
-        addSnowball(snowball1)
+        addSnowball(snowball1, myPos)
       }
     }
   }
 
-  def addSnowball(snowball: Snowball): Unit = {
-    val newSnowball: Object3D = Meshes.snowball.clone()
+  def addSnowball(snowball: Snowball, myPos: Vector3): Unit = {
+    val newSnowball: Object3D = new THREE.Mesh(Geos.snowball, Mats.snowball)
     newSnowball.scale.set(
       snowball.radius,
       snowball.radius,
@@ -41,7 +42,7 @@ object UpdateSnowballs {
     )
     val newPos = DrawState2.transformPositionMod(
       new Vector3(snowball._position.x, 0, snowball._position.y),
-      Bodies.sled.position,
+      myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
     )
     newSnowball.position.x = newPos.x

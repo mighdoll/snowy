@@ -3,12 +3,12 @@ package snowy.draw
 import minithree.THREE.Object3D
 import minithree.raw.Vector3
 import snowy.GameConstants
-import snowy.client.DrawState2.{Bodies, Groups}
+import snowy.client.DrawState2.Groups
 import snowy.client.{DrawState2, ThreeTree}
 import snowy.playfield.Tree
 
 object UpdateTrees {
-  def updateCtrees(trees: Set[Tree]): Unit = {
+  def updateCtrees(trees: Set[Tree], myPos: Vector3): Unit = {
     trees.foreach { tree1 =>
       var idExists = false
       Groups.ctrees.children.zipWithIndex.foreach {
@@ -18,7 +18,7 @@ object UpdateTrees {
             val ctree = Groups.ctrees.children(index)
             val newPos = DrawState2.transformPositionMod(
               new Vector3(tree1.pos.x, 0, tree1.pos.y),
-              Bodies.sled.position,
+              myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
             )
             ctree.position.x = newPos.x
@@ -26,15 +26,15 @@ object UpdateTrees {
           }
       }
       if (!idExists) {
-        addTree(tree1)
+        addTree(tree1, myPos)
       }
     }
   }
-  def addTree(tree: Tree): Unit = {
+  def addTree(tree: Tree, myPos: Vector3): Unit = {
     val newTree: Object3D = ThreeTree.randomTree()
     val newPos = DrawState2.transformPositionMod(
       new Vector3(tree.pos.x, 0, tree.pos.y),
-      Bodies.sled.position,
+      myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
     )
     newTree.position.x = newPos.x

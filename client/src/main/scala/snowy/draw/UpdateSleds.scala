@@ -6,12 +6,13 @@ import snowy.GameConstants
 import snowy.client.DrawState2
 import snowy.client.DrawState2._
 import snowy.playfield.PlayId.SledId
-import snowy.playfield.Sled
+import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 
 object UpdateSleds {
-  def updateCsleds(sleds: Set[Sled]): Unit = {
+  def updateCsleds(sleds: Set[Sled], mySled: Sled): Unit = {
+    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
     sleds.foreach { sled1 =>
       var idExists = false
       Groups.csleds.children.zipWithIndex.foreach {
@@ -32,19 +33,15 @@ object UpdateSleds {
 
             val newPos = transformPositionMod(
               new Vector3(sled1.pos.x, 0, sled1.pos.y),
-              Bodies.sled.position,
+              myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
             )
 
             csled.position.x = newPos.x
             csled.position.z = newPos.z
 
-            csled
-              .children(0)
-              .setRotationFromAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                -sled1.turretRotation
-              )
+            csled.children(0).rotation.y = -sled1.turretRotation
+
             csled
               .children(0)
               .position
@@ -59,31 +56,51 @@ object UpdateSleds {
       }
 
       if (!idExists) {
-        addSled(sled1)
+        addSled(sled1, sled1.id == mySled.id, myPos)
       }
     }
   }
 
-  def addSled(sled: Sled): Unit = {
+  def addSled(sled: Sled, friendly: Boolean, myPos: Vector3): Unit = {
     val newSled = new THREE.Object3D()
 
-    val skiColor = new THREE.MeshPhongMaterial(
+    val skiMat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = sled.skiColor.color.to0x(), shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
 
-    val body   = new THREE.Mesh(Geos.sled, Mats.sled)
-    val tur    = new THREE.Mesh(Geos.turret, Mats.turret)
-    val health = new THREE.Mesh(Geos.health, Mats.enemyHealth)
+    val bodyColor = sled.kind match {
+      case BasicSled  => 0x00FFFF
+      case TankSled   => 0xFF0000
+      case GunnerSled => 0x0000FF
+      case SpeedySled => 0x00FF00
+      case SpikySled  => 0x888888
+      case _          => 0xFFFFFF
+    }
+    val bodyMat = new THREE.MeshPhongMaterial(
+      Dynamic
+        .literal(color = bodyColor, shading = THREE.FlatShading)
+        .asInstanceOf[MeshPhongMaterialParameters]
+    )
+    val body = new THREE.Mesh(Geos.sled, bodyMat)
+    val tur  = new THREE.Mesh(Geos.turret, Mats.turret)
+    val health =
+      new THREE.Mesh(Geos.health, if (friendly) Mats.healthColor else Mats.enemyHealth)
 
-    val ski1 = new THREE.Mesh(Geos.ski, skiColor)
-    val ski2 = new THREE.Mesh(Geos.ski, skiColor)
+    val ski1 = new THREE.Mesh(Geos.ski, skiMat)
+    val ski2 = new THREE.Mesh(Geos.ski, skiMat)
+
+    val skiTip1 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
+    val skiTip2 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
 
     health.position.z = -50
 
-    ski1.add(Meshes.skiTip1.clone())
-    ski2.add(Meshes.skiTip2.clone())
+    skiTip1.position.z = 1.5 - 0.25 / 2
+    skiTip2.position.z = 1.5 - 0.25 / 2
+
+    ski1.add(skiTip1)
+    ski2.add(skiTip2)
 
     ski1.position.set(-1.25, -2.5, 0)
     ski2.position.set(1.25, -2.5, 0)
@@ -97,7 +114,7 @@ object UpdateSleds {
 
     val newPos = DrawState2.transformPositionMod(
       new Vector3(sled.pos.x, 0, sled.pos.y),
-      Bodies.sled.position,
+      myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
     )
 

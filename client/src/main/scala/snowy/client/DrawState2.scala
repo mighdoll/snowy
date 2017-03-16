@@ -22,6 +22,7 @@ object DrawState2 {
 
     val health = new THREE.BoxGeometry(64, 4, 16)
   }
+
   object Mats {
     val sled = new THREE.MeshPhongMaterial(
       Dynamic
@@ -60,22 +61,7 @@ object DrawState2 {
         .asInstanceOf[MeshPhongMaterialParameters]
     )
   }
-  object Meshes {
-    val mainBody = new THREE.Mesh(Geos.sled, Mats.sled)
-    val turret   = new THREE.Mesh(Geos.turret, Mats.turret)
-    val ski1     = new THREE.Mesh(Geos.ski, Mats.ski)
-    val skiTip1  = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
-    val ski2     = Meshes.ski1.clone()
-    val skiTip2  = Meshes.skiTip1.clone()
 
-    val snowball = new THREE.Mesh(Geos.snowball, Mats.snowball)
-
-    val health = new THREE.Mesh(Geos.health, Mats.healthColor)
-  }
-  object Bodies {
-    val sled = new THREE.Object3D()
-    val tree = ThreeTree.randomTree()
-  }
   object Groups {
     val ctrees                  = new THREE.Object3D()
     val csnowballs              = new THREE.Object3D()
@@ -84,24 +70,6 @@ object DrawState2 {
   }
   val amb   = new THREE.AmbientLight(0x888888)
   val light = new THREE.DirectionalLight(0xffffff)
-
-  Meshes.turret.position.set(0, 0, -5)
-  Bodies.sled.add(Meshes.mainBody)
-  Bodies.sled.add(Meshes.turret)
-
-  Meshes.skiTip1.position.set(0, 0, 1.5 - 0.25 / 2)
-  Meshes.ski1.add(Meshes.skiTip1)
-
-  Meshes.skiTip2.position.set(0, 0, 1.5 - 0.25 / 2)
-  Meshes.ski2.add(Meshes.skiTip2)
-
-  Meshes.ski1.position.set(-1.25, -2.5, 0)
-  Meshes.ski2.position.set(1.25, -2.5, 0)
-
-  Meshes.mainBody.add(Meshes.ski1)
-  Meshes.mainBody.add(Meshes.ski2)
-
-  scene.add(Meshes.health)
 
   // only x and z
   def transformPositionMod(pos: Vector3, center: Vector3, mod: Vector3): Vector3 = {
@@ -118,13 +86,7 @@ object DrawState2 {
     light.position.set(10, 20, 0)
     scene.add(light)
 
-    Bodies.sled.position.set(200, 100, -2.5)
-    scene.add(Bodies.sled)
-
-    camera.position.x = Bodies.sled.position.x
-    camera.position.z = Bodies.sled.position.z + 400
     camera.position.y = 800
-    camera.lookAt(Bodies.sled.position)
 
     Groups.cgrid = Some(AddGrid.createGrid())
     Groups.cgrid.foreach { grid =>
@@ -143,29 +105,14 @@ object DrawState2 {
                 trees: Store[Tree],
                 border: Vec2d,
                 scoreboard: Scoreboard): Unit = {
-    UpdateTrees.updateCtrees(trees.items)
-    UpdateSnowballs.updateCsnowballs(snowballs.items)
-    UpdateSleds.updateCsleds(sleds.items.filter(_.id != mySled.id))
+    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
+    UpdateTrees.updateCtrees(trees.items, myPos)
+    UpdateSnowballs.updateCsnowballs(snowballs.items, myPos)
+    UpdateSleds.updateCsleds(sleds.items, mySled)
 
-    Meshes.health.position.set(mySled._position.x, 0, mySled._position.y - 50)
-    Meshes.health.scale.x = mySled.health / mySled.maxHealth
-
-    Meshes.mainBody.scale.x = mySled.radius
-    Meshes.mainBody.scale.y = mySled.radius
-    Meshes.mainBody.scale.z = mySled.radius
-    Meshes.mainBody.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), mySled.rotation)
-    Bodies.sled.position.set(mySled._position.x, 0, mySled._position.y)
-    Meshes.turret
-      .setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), -mySled.turretRotation)
-    Meshes.turret.position.set(
-      math.sin(-mySled.turretRotation) * mySled.radius,
-      0,
-      math.cos(-mySled.turretRotation) * mySled.radius
-    )
-
-    camera.position.x = Bodies.sled.position.x
-    camera.position.z = Bodies.sled.position.z + 400
-    camera.lookAt(Bodies.sled.position)
+    camera.position.x = mySled._position.x
+    camera.position.z = mySled._position.y + 400
+    camera.lookAt(new THREE.Vector3(mySled._position.x, 0, mySled._position.y))
 
     renderer.render(scene, camera)
   }
@@ -173,7 +120,6 @@ object DrawState2 {
   def removeAll(): Unit = {
     scene.remove(amb)
     scene.remove(light)
-    scene.remove(Bodies.sled)
     scene.remove(Groups.ctrees)
     scene.remove(Groups.csnowballs)
     scene.remove(Groups.csleds)
