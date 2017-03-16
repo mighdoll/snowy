@@ -9,6 +9,8 @@ case class Color(r: Int, g: Int, b: Int) {
     val amt = (2.55 * percent).toInt
     Color(r + amt, g + amt, b + amt)
   }
+
+  def to0x(): Int = (r << 16) + (g << 8) + b
 }
 
 sealed trait SkiColor {

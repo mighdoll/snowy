@@ -129,6 +129,11 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(TargetAngle(angle))
         mouseDir = angle
       }
+      if(math.pow(e.clientX - window.innerWidth / 2, 2) + math.pow(e.clientY - window.innerHeight / 2,2) < math.pow(20,2)){
+        sendMessage(Start(Slowing, gameTime))
+      } else {
+        sendMessage(Stop(Slowing, gameTime))
+      }
     },
     false
   )
@@ -136,17 +141,13 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
   window.addEventListener(
     "mousedown", { e: MouseEvent =>
       e.button match {
-        case 0 => sendMessage(Start(Shooting, gameTime))
+        case 0 => shootPressed()
         case 2 => sendMessage(Boost(gameTime))
       }
       e.preventDefault()
     },
     false
   )
-
-  window.onmousedown = { _ =>
-    shootPressed()
-  }
 
   window.onmouseup = { _ =>
     shootReleased()

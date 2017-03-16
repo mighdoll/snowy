@@ -6,6 +6,7 @@ import minithree.raw.{LineBasicMaterialParameters, MeshPhongMaterialParameters}
 import snowy.GameClientProtocol.Scoreboard
 import snowy.GameConstants
 import snowy.client.ThreeMain._
+import snowy.draw.{UpdateSleds, UpdateSnowballs, UpdateTrees}
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
@@ -187,152 +188,16 @@ object DrawState2 {
     scene.add(Groups.csleds)
 
   }
-  //TODO: Remove trees after dead
+
   def drawState(snowballs: Store[Snowball],
                 sleds: Store[Sled],
                 mySled: Sled,
                 trees: Store[Tree],
                 border: Vec2d,
                 scoreboard: Scoreboard): Unit = {
-    trees.items.foreach { tree1 =>
-      //TODO: Make this functional
-      var idExists = false
-      Groups.ctrees.children.zipWithIndex.foreach {
-        case (possibleTree, index) =>
-          if (possibleTree.name == tree1.id.id.toString) {
-            idExists = true
-            val ctree = Groups.ctrees.children(index)
-            val newPos = transformPositionMod(
-              new Vector3(tree1.pos.x, 0, tree1.pos.y),
-              Bodies.sled.position,
-              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-            )
-            ctree.position.x = newPos.x
-            ctree.position.z = newPos.z
-          }
-      }
-      if (!idExists) {
-        val addTree: Object3D = ThreeTree.randomTree()
-        val newPos = transformPositionMod(
-          new Vector3(tree1.pos.x, 0, tree1.pos.y),
-          Bodies.sled.position,
-          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-        )
-        addTree.position.x = newPos.x
-        addTree.position.z = newPos.z
-        addTree.name = tree1.id.id.toString
-        Groups.ctrees.add(addTree)
-      }
-    }
-    //TODO: Remove snowballs after dead
-    snowballs.items.foreach { snowball1 =>
-      //TODO: Make this functional
-      var idExists = false
-      Groups.csnowballs.children.zipWithIndex.foreach {
-        case (aSnowball, index) =>
-          if (aSnowball.name == snowball1.id.id.toString) {
-            idExists = true
-            val csnowball = Groups.csnowballs.children(index)
-            val newPos = transformPositionMod(
-              new Vector3(snowball1._position.x, 0, snowball1._position.y),
-              Bodies.sled.position,
-              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-            )
-            csnowball.position.x = newPos.x
-            csnowball.position.z = newPos.z
-          }
-      }
-      if (!idExists) {
-        val addSnowball: Object3D = Meshes.snowball.clone()
-        addSnowball.scale.set(
-          snowball1.radius,
-          snowball1.radius,
-          snowball1.radius
-        )
-        var newPos = transformPositionMod(
-          new Vector3(snowball1._position.x, 0, snowball1._position.y),
-          Bodies.sled.position,
-          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-        )
-        addSnowball.position.x = newPos.x
-        addSnowball.position.z = newPos.z
-        addSnowball.name = snowball1.id.id.toString
-        Groups.csnowballs.add(addSnowball)
-      }
-    }
-    //TODO: Remove sleds after dead
-    sleds.items.filter(_.id != mySled.id).foreach { sled1 =>
-      //TODO: Make this functional
-      var idExists = false
-      Groups.csleds.children.zipWithIndex.foreach {
-        case (aSnowball, index) =>
-          if (aSnowball.name == sled1.id.id.toString) {
-            idExists = true
-            val csled = Groups.csleds.children(index)
-
-            csled
-              .children(1)
-              .setRotationFromAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                sled1.rotation
-              )
-            csled.children(1).scale.x = sled1.radius
-            csled.children(1).scale.y = sled1.radius
-            csled.children(1).scale.z = sled1.radius
-
-            val newPos = transformPositionMod(
-              new Vector3(sled1.pos.x, 0, sled1.pos.y),
-              Bodies.sled.position,
-              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-            )
-
-            csled.position.x = newPos.x
-            csled.position.z = newPos.z
-
-            csled
-              .children(0)
-              .setRotationFromAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                -sled1.turretRotation
-              )
-            csled
-              .children(0)
-              .position
-              .set(
-                math.sin(-sled1.turretRotation) * sled1.radius,
-                0,
-                math.cos(-sled1.turretRotation) * sled1.radius
-              )
-
-            csled.children(2).scale.x = sled1.health / sled1.maxHealth
-
-          }
-      }
-
-      if (!idExists) {
-        val addSled: Object3D = new THREE.Object3D()
-        val body: Object3D    = Meshes.mainBody.clone()
-        val tur: Object3D     = Meshes.turret.clone()
-        val health: Object3D  = new THREE.Mesh(Geos.health, Mats.enemyHealth)
-
-        health.position.z = -50
-
-        addSled.add(tur)
-        addSled.add(body)
-        addSled.add(health)
-
-        val newPos = transformPositionMod(
-          new Vector3(sled1.pos.x, 0, sled1.pos.y),
-          Bodies.sled.position,
-          new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-        )
-
-        addSled.position.x = newPos.x
-        addSled.position.z = newPos.z
-        addSled.name = sled1.id.id.toString
-        Groups.csleds.add(addSled)
-      }
-    }
+    UpdateTrees.updateCtrees(trees.items)
+    UpdateSnowballs.updateCsnowballs(snowballs.items)
+    UpdateSleds.updateCsleds(sleds.items.filter(_.id != mySled.id))
 
     Meshes.health.position.set(mySled._position.x, 0, mySled._position.y - 50)
     Meshes.health.scale.x = mySled.health / mySled.maxHealth
@@ -356,18 +221,7 @@ object DrawState2 {
 
     renderer.render(scene, camera)
   }
-  def removeSleds(deaths: Seq[SledId]): Unit = {
-    val ids = deaths.map(_.id.toString)
-    Groups.csleds.children = Groups.csleds.children.filter { sled =>
-      !ids.contains(sled.name)
-    }
-  }
-  def removeSnowballs(deaths: Seq[BallId]): Unit = {
-    val ids = deaths.map(_.id.toString)
-    Groups.csnowballs.children = Groups.csnowballs.children.filter { snowball =>
-      !ids.contains(snowball.name)
-    }
-  }
+
   def removeAll(): Unit = {
     scene.remove(amb)
     scene.remove(light)

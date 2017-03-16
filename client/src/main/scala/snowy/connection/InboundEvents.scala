@@ -8,6 +8,7 @@ import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.client.{DrawState2, LoginScreen, LoginScreen2, UpdateScoreboard}
 import snowy.connection.GameState._
+import snowy.draw.{UpdateSleds, UpdateSnowballs}
 import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledKind}
 import vector.Vec2d
@@ -55,8 +56,8 @@ class InboundEvents(socket: NetworkSocket,
       case ClientPong                  => // currently used only by the load test client
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
-      case SnowballDeaths(balls)       => DrawState2.removeSnowballs(balls)
-      case SledDeaths(sleds)           => DrawState2.removeSleds(sleds)
+      case SnowballDeaths(balls)       => UpdateSnowballs.removeSnowballs(balls)
+      case SledDeaths(sleds)           => UpdateSleds.removeSleds(sleds)
       case newScoreboard: Scoreboard   => UpdateScoreboard.newScoreboard(newScoreboard)
     }
   }
