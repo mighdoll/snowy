@@ -129,6 +129,8 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         sendMessage(TargetAngle(angle))
         mouseDir = angle
       }
+      // TODO replace magic numbers e.g. '20'
+      // TODO make a function for this, e.g. 'mouseNearCenter'
       if(math.pow(e.clientX - window.innerWidth / 2, 2) + math.pow(e.clientY - window.innerHeight / 2,2) < math.pow(20,2)){
         sendMessage(Start(Slowing, gameTime))
       } else {
