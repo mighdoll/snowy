@@ -1,5 +1,6 @@
 package minithree.raw
 
+// TODO rename this file
 import org.scalajs.dom._
 import org.scalajs.dom.raw.{HTMLCanvasElement, HTMLElement, HTMLImageElement}
 

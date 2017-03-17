@@ -8,6 +8,7 @@ import snowy.client.{DrawState, ThreeTree}
 import snowy.playfield.Tree
 
 object UpdateTrees {
+  // TODO See comments  in UpdateSled, UpdateSnowballs
   def updateCtrees(trees: Set[Tree], myPos: Vector3): Unit = {
     trees.foreach { tree1 =>
       var idExists = false

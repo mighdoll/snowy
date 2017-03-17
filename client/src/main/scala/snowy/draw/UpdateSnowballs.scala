@@ -10,6 +10,8 @@ import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
 object UpdateSnowballs {
+  // TODO rename
+  // TODO see comments in UpdateSleds
   def updateCsnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       var idExists = false
@@ -19,6 +21,7 @@ object UpdateSnowballs {
             idExists = true
             val csnowball = Groups.threeSnowballs.children(index)
             val newPos = DrawState.playfieldWrap(
+            // TODO Vector3 should have an apply initializer (so you don't need new)
               new Vector3(snowball1._position.x, 0, snowball1._position.y),
               myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
