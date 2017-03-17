@@ -17,9 +17,7 @@ object DrawState {
     val turret = new THREE.BoxGeometry(4, 4, 20)
     val ski    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
     val skiTip = new THREE.BoxGeometry(0.25, 0.125, 0.25)
-
     val snowball = new THREE.BoxGeometry(2, 2, 2)
-
     val health = new THREE.BoxGeometry(64, 4, 16)
   }
 
@@ -63,6 +61,7 @@ object DrawState {
   }
 
   object Groups {
+    // TODO what does c-prefix mean here? rename?
     val ctrees                  = new THREE.Object3D()
     val csnowballs              = new THREE.Object3D()
     val csleds                  = new THREE.Object3D()
@@ -72,6 +71,7 @@ object DrawState {
   val light = new THREE.DirectionalLight(0xffffff)
 
   // only x and z
+  // TODO what does this do? rename?
   def transformPositionMod(pos: Vector3, center: Vector3, mod: Vector3): Vector3 = {
     new Vector3(
       ((pos.x - center.x + mod.x / 2) % mod.x + mod.x) % mod.x + center.x - mod.x / 2,
@@ -99,6 +99,7 @@ object DrawState {
 
   }
 
+  // TODO time to rename drawState? It's no longer in response to State messages..
   def drawState(snowballs: Store[Snowball],
                 sleds: Store[Sled],
                 mySled: Sled,
@@ -118,6 +119,8 @@ object DrawState {
   }
 
   def removeAll(): Unit = {
+    // TODO consider creeating your own list of things added to the scene
+    // so that you don't have to carefully match what you add with what you remove
     scene.remove(amb)
     scene.remove(light)
     scene.remove(Groups.ctrees)
