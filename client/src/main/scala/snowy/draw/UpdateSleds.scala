@@ -1,7 +1,7 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{MeshPhongMaterialParameters, Vector3}
+import minithree.THREE.{MeshPhongMaterialParameters, Object3D, Vector3}
 import snowy.GameConstants
 import snowy.client.DrawState
 import snowy.client.DrawState._
@@ -15,11 +15,11 @@ object UpdateSleds {
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
     sleds.foreach { sled1 =>
       var idExists = false
-      Groups.csleds.children.zipWithIndex.foreach {
+      Groups.threeSleds.children.zipWithIndex.foreach {
         case (aSled, index) =>
           if (aSled.name == sled1.id.id.toString) {
             idExists = true
-            val csled = Groups.csleds.children(index)
+            val csled = Groups.threeSleds.children(index)
 
             csled
               .children(1)
@@ -31,7 +31,7 @@ object UpdateSleds {
             csled.children(1).scale.y = sled1.radius
             csled.children(1).scale.z = sled1.radius
 
-            val newPos = transformPositionMod(
+            val newPos = playfieldWrap(
               new Vector3(sled1.pos.x, 0, sled1.pos.y),
               myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
@@ -56,12 +56,12 @@ object UpdateSleds {
       }
 
       if (!idExists) {
-        addSled(sled1, sled1.id == mySled.id, myPos)
+        Groups.threeSleds.add(createSled(sled1, sled1.id == mySled.id, myPos))
       }
     }
   }
 
-  def addSled(sled: Sled, friendly: Boolean, myPos: Vector3): Unit = {
+  def createSled(sled: Sled, friendly: Boolean, myPos: Vector3): Object3D = {
     val newSled = new THREE.Object3D()
 
     val skiMat = new THREE.MeshPhongMaterial(
@@ -112,7 +112,7 @@ object UpdateSleds {
     newSled.add(body)
     newSled.add(health)
 
-    val newPos = DrawState.transformPositionMod(
+    val newPos = DrawState.playfieldWrap(
       new Vector3(sled.pos.x, 0, sled.pos.y),
       myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
@@ -121,12 +121,12 @@ object UpdateSleds {
     newSled.position.x = newPos.x
     newSled.position.z = newPos.z
     newSled.name = sled.id.id.toString
-    Groups.csleds.add(newSled)
+    newSled
   }
 
   def removeSleds(deaths: Seq[SledId]): Unit = {
     val ids = deaths.map(_.id.toString)
-    Groups.csleds.children = Groups.csleds.children.filter { sled =>
+    Groups.threeSleds.children = Groups.threeSleds.children.filter { sled =>
       !ids.contains(sled.name)
     }
   }

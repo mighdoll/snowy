@@ -26,11 +26,10 @@ class ConeGeometry(radius: Double = js.native,
 
 object LoginScreen {
   object Geos {
-    val trunkGeo     = new THREE.BoxGeometry(2, 10, 2)
-    val leave1Geo    = new ConeGeometry(4, 8, 4, 1, false, 0.783, Math.PI * 2)
-    val leave2Geo    = new ConeGeometry(3, 4, 4, 1, false, 0.8, Math.PI * 2)
-    val cardBigGeo   = new THREE.BoxGeometry(5, 8, 1)
-    val cardSmallGeo = new THREE.BoxGeometry(4, 6, 1)
+    val trunkGeo  = new THREE.BoxGeometry(2, 10, 2)
+    val leave1Geo = new ConeGeometry(4, 8, 4, 1, false, 0.783, Math.PI * 2)
+    val leave2Geo = new ConeGeometry(3, 4, 4, 1, false, 0.8, Math.PI * 2)
+    val cardGeo   = new THREE.BoxGeometry(16, 8, 1)
 
   // TODO use typed version
     val geoParams = Dynamic.literal(
@@ -156,9 +155,7 @@ object LoginScreen {
     val arrow1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
     val arrow2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave1Mat)
 
-    val card1 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
-    val card2 = new THREE.Mesh(Geos.cardBigGeo, Mats.cardMat)
-    val card3 = new THREE.Mesh(Geos.cardSmallGeo, Mats.cardMat)
+    val card = new THREE.Mesh(Geos.cardGeo, Mats.cardMat)
 
     val meshS = new THREE.Mesh(Geos.geoS, Mats.matLetters)
     val meshN = new THREE.Mesh(Geos.geoN, Mats.matLetters)
@@ -190,9 +187,7 @@ object LoginScreen {
     Groups.tree.rotation.z = 0.5 * Math.PI
     Groups.tree2.rotation.z = 1.5 * Math.PI
 
-    Meshes.card1.position.set(-6, 4, 0)
-    Meshes.card2.position.set(0, 5, 0)
-    Meshes.card3.position.set(6, 4, 0)
+    Meshes.card.position.y = 5
 
     Groups.selector.position.y = -70
     Groups.selector.rotation.x = 0.3 * Math.PI
@@ -241,9 +236,7 @@ object LoginScreen {
     Groups.selector.add(Groups.tree)
     Groups.selector.add(Groups.tree2)
 
-    Groups.selector.add(Meshes.card1)
-    Groups.selector.add(Meshes.card2)
-    Groups.selector.add(Meshes.card3)
+    Groups.selector.add(Meshes.card)
 
     Groups.snowyText.add(Meshes.meshS)
     Groups.snowyText.add(Meshes.meshN)

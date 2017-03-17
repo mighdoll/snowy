@@ -13,12 +13,12 @@ object UpdateSnowballs {
   def updateCsnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       var idExists = false
-      Groups.csnowballs.children.zipWithIndex.foreach {
+      Groups.threeSnowballs.children.zipWithIndex.foreach {
         case (aSnowball, index) =>
           if (aSnowball.name == snowball1.id.id.toString) {
             idExists = true
-            val csnowball = Groups.csnowballs.children(index)
-            val newPos = DrawState.transformPositionMod(
+            val csnowball = Groups.threeSnowballs.children(index)
+            val newPos = DrawState.playfieldWrap(
               new Vector3(snowball1._position.x, 0, snowball1._position.y),
               myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
@@ -28,19 +28,19 @@ object UpdateSnowballs {
           }
       }
       if (!idExists) {
-        addSnowball(snowball1, myPos)
+        Groups.threeSnowballs.add(createSnowball(snowball1, myPos))
       }
     }
   }
 
-  def addSnowball(snowball: Snowball, myPos: Vector3): Unit = {
+  def createSnowball(snowball: Snowball, myPos: Vector3): Object3D = {
     val newSnowball: Object3D = new THREE.Mesh(Geos.snowball, Mats.snowball)
     newSnowball.scale.set(
       snowball.radius,
       snowball.radius,
       snowball.radius
     )
-    val newPos = DrawState.transformPositionMod(
+    val newPos = DrawState.playfieldWrap(
       new Vector3(snowball._position.x, 0, snowball._position.y),
       myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
@@ -48,12 +48,12 @@ object UpdateSnowballs {
     newSnowball.position.x = newPos.x
     newSnowball.position.z = newPos.z
     newSnowball.name = snowball.id.id.toString
-    Groups.csnowballs.add(newSnowball)
+    newSnowball
   }
 
   def removeSnowballs(deaths: Seq[BallId]): Unit = {
     val ids = deaths.map(_.id.toString)
-    Groups.csnowballs.children = Groups.csnowballs.children.filter { snowball =>
+    Groups.threeSnowballs.children = Groups.threeSnowballs.children.filter { snowball =>
       !ids.contains(snowball.name)
     }
   }

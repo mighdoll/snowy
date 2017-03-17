@@ -13,12 +13,12 @@ import scala.scalajs.js.Dynamic
 
 object DrawState {
   object Geos {
-    val sled   = new THREE.BoxGeometry(2, 2, 2)
-    val turret = new THREE.BoxGeometry(4, 4, 20)
-    val ski    = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
-    val skiTip = new THREE.BoxGeometry(0.25, 0.125, 0.25)
+    val sled     = new THREE.BoxGeometry(2, 2, 2)
+    val turret   = new THREE.BoxGeometry(4, 4, 20)
+    val ski      = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
+    val skiTip   = new THREE.BoxGeometry(0.25, 0.125, 0.25)
     val snowball = new THREE.BoxGeometry(2, 2, 2)
-    val health = new THREE.BoxGeometry(64, 4, 16)
+    val health   = new THREE.BoxGeometry(64, 4, 16)
   }
 
   object Mats {
@@ -61,22 +61,27 @@ object DrawState {
   }
 
   object Groups {
-    // TODO what does c-prefix mean here? rename?
-    val ctrees                  = new THREE.Object3D()
-    val csnowballs              = new THREE.Object3D()
-    val csleds                  = new THREE.Object3D()
-    var cgrid: Option[Object3D] = None
+    val threeTrees                  = new THREE.Object3D()
+    val threeSnowballs              = new THREE.Object3D()
+    val threeSleds                  = new THREE.Object3D()
+    var threeGrid: Option[Object3D] = None
   }
   val amb   = new THREE.AmbientLight(0x888888)
   val light = new THREE.DirectionalLight(0xffffff)
 
-  // only x and z
-  // TODO what does this do? rename?
-  def transformPositionMod(pos: Vector3, center: Vector3, mod: Vector3): Vector3 = {
+  /** if the object's position is closer to the wrapped side
+    * returns the position with */
+  def playfieldWrap(pos: Vector3, mySled: Vector3, wrap: Vector3): Vector3 = {
+
+    /** Return coord or wrapped coord depending on which is closer to center */
+    def wrapAxis(coord: Double, center: Double, max: Double): Double = {
+      ((coord - center + max / 2) % max + max) % max + center - max / 2
+    }
+
     new Vector3(
-      ((pos.x - center.x + mod.x / 2) % mod.x + mod.x) % mod.x + center.x - mod.x / 2,
+      wrapAxis(pos.x, mySled.x, wrap.x),
       pos.y,
-      ((pos.z - center.z + mod.z / 2) % mod.z + mod.z) % mod.z + center.z - mod.z / 2
+      wrapAxis(pos.z, mySled.z, wrap.z)
     )
   }
 
@@ -88,14 +93,14 @@ object DrawState {
 
     camera.position.y = 800
 
-    Groups.cgrid = Some(AddGrid.createGrid())
-    Groups.cgrid.foreach { grid =>
+    Groups.threeGrid = Some(AddGrid.createGrid())
+    Groups.threeGrid.foreach { grid =>
       scene.add(grid)
     }
 
-    scene.add(Groups.ctrees)
-    scene.add(Groups.csnowballs)
-    scene.add(Groups.csleds)
+    scene.add(Groups.threeTrees)
+    scene.add(Groups.threeSnowballs)
+    scene.add(Groups.threeSleds)
 
   }
 
@@ -123,10 +128,10 @@ object DrawState {
     // so that you don't have to carefully match what you add with what you remove
     scene.remove(amb)
     scene.remove(light)
-    scene.remove(Groups.ctrees)
-    scene.remove(Groups.csnowballs)
-    scene.remove(Groups.csleds)
-    Groups.cgrid.foreach { grid =>
+    scene.remove(Groups.threeTrees)
+    scene.remove(Groups.threeSnowballs)
+    scene.remove(Groups.threeSleds)
+    Groups.threeGrid.foreach { grid =>
       scene.remove(grid)
     }
   }
