@@ -3,8 +3,8 @@ package snowy.draw
 import minithree.THREE
 import minithree.THREE.{MeshPhongMaterialParameters, Vector3}
 import snowy.GameConstants
-import snowy.client.DrawState2
-import snowy.client.DrawState2._
+import snowy.client.DrawState
+import snowy.client.DrawState._
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 
@@ -112,7 +112,7 @@ object UpdateSleds {
     newSled.add(body)
     newSled.add(health)
 
-    val newPos = DrawState2.transformPositionMod(
+    val newPos = DrawState.transformPositionMod(
       new Vector3(sled.pos.x, 0, sled.pos.y),
       myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)

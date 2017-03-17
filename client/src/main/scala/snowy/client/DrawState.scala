@@ -11,7 +11,7 @@ import vector.Vec2d
 
 import scala.scalajs.js.Dynamic
 
-object DrawState2 {
+object DrawState {
   object Geos {
     val sled   = new THREE.BoxGeometry(2, 2, 2)
     val turret = new THREE.BoxGeometry(4, 4, 20)

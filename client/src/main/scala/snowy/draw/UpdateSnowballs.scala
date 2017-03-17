@@ -4,8 +4,8 @@ import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.Vector3
 import snowy.GameConstants
-import snowy.client.DrawState2
-import snowy.client.DrawState2.{Geos, Groups, Mats}
+import snowy.client.DrawState
+import snowy.client.DrawState.{Geos, Groups, Mats}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
@@ -18,7 +18,7 @@ object UpdateSnowballs {
           if (aSnowball.name == snowball1.id.id.toString) {
             idExists = true
             val csnowball = Groups.csnowballs.children(index)
-            val newPos = DrawState2.transformPositionMod(
+            val newPos = DrawState.transformPositionMod(
               new Vector3(snowball1._position.x, 0, snowball1._position.y),
               myPos,
               new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
@@ -40,7 +40,7 @@ object UpdateSnowballs {
       snowball.radius,
       snowball.radius
     )
-    val newPos = DrawState2.transformPositionMod(
+    val newPos = DrawState.transformPositionMod(
       new Vector3(snowball._position.x, 0, snowball._position.y),
       myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
