@@ -47,6 +47,7 @@ object ThreeTree {
     tree.add(treeTop)
 
 
+  // TODO replace magic numbers with constants: 30, 50, 150 200, 5, etc.
     for (_ <- 1 to 5) {
       val size      = math.random() * 30 + 20
       val leaveNGeo = new THREE.BoxGeometry(size, size, size)

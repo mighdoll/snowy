@@ -3,7 +3,9 @@ package snowy.client
 import snowy.GameClientProtocol.Scoreboard
 import org.scalajs.dom._
 object UpdateScoreboard {
+  // TODO make private?
   val scoreboardDiv = document.getElementById("scoreboard").asInstanceOf[html.Div]
+  // TODO rename? 'new' sounds like you'd only create a scoreboard once per game..
   def newScoreboard(scoreboard: Scoreboard): Unit ={
     //TODO: Use css classes instead of dom styling
     scoreboardDiv.innerHTML = ""

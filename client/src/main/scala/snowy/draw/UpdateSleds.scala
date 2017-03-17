@@ -10,15 +10,20 @@ import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 
+// TODO rename? it's not just about update, right?
 object UpdateSleds {
+// TODO rename 'C', add comment
   def updateCsleds(sleds: Set[Sled], mySled: Sled): Unit = {
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
-    sleds.foreach { sled1 =>
-      var idExists = false
+    sleds.foreach { sled1 =>  // TODO rename sled1, aSled, cSled, etc.
+      var idExists = false  // TODO var, egads!
+      // TODO use a Map from SledID instead of searching through the threeSleds collection?
       Groups.threeSleds.children.zipWithIndex.foreach {
         case (aSled, index) =>
           if (aSled.name == sled1.id.id.toString) {
             idExists = true
+
+            // TODO move threeSled creation from a Sled to its own function.
             val csled = Groups.threeSleds.children(index)
 
             csled
@@ -44,8 +49,7 @@ object UpdateSleds {
 
             csled
               .children(0)
-              .position
-              .set(
+              .position.set(
                 math.sin(-sled1.turretRotation) * sled1.radius,
                 0,
                 math.cos(-sled1.turretRotation) * sled1.radius
@@ -61,6 +65,7 @@ object UpdateSleds {
     }
   }
 
+  // TODO comment
   def createSled(sled: Sled, friendly: Boolean, myPos: Vector3): Object3D = {
     val newSled = new THREE.Object3D()
 

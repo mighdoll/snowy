@@ -7,7 +7,13 @@ import org.scalajs.dom.{document, window}
 
 import scala.scalajs.js.Dynamic
 
+// TODO comment.
+// TODO rename from 'Main'? usually reserve Main for objects with a method that can be program entry points
+// TODO global singleton object that runs code is a concern. Make this an instance (class) instead?
+// TODO Are you certain that the code initialization will run at the right time compared to other classes and objects?
 object ThreeMain {
+
+  // TODO public vars are risky. Consider private state var and a def for reading
   var width  = window.innerWidth
   var height = window.innerHeight
 
@@ -22,6 +28,8 @@ object ThreeMain {
   )
 
   val scene  = new THREE.Scene()
+
+  // TODO why var?
   var camera = new THREE.PerspectiveCamera(45, width / height, 1, 5000)
   camera.position.set(0, 100, -100)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
