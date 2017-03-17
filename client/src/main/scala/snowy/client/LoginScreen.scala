@@ -32,6 +32,7 @@ object LoginScreen {
     val cardBigGeo   = new THREE.BoxGeometry(5, 8, 1)
     val cardSmallGeo = new THREE.BoxGeometry(4, 6, 1)
 
+  // TODO use typed version
     val geoParams = Dynamic.literal(
       steps = 1,
       amount = 3,
@@ -291,7 +292,10 @@ object LoginScreen {
   var raycaster = new THREE.Raycaster()
   var mouse     = new THREE.Vector2()
   var hover     = 0
+
+  // TODO consider making a typed wrapper: e.g. AddMouseMoveListener
   window.addEventListener(
+    // TODO make this a separate function
     "mousemove", { e: MouseEvent =>
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1
       mouse.y = (e.clientY / window.innerHeight) * -2 + 1
@@ -306,7 +310,6 @@ object LoginScreen {
           Groups.tree2.children(2)
         )
       );
-
       val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
       val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
 
@@ -369,6 +372,7 @@ object LoginScreen {
     }
   )
 
+// TODO comment. rename?
   def switch(game: Boolean) {
     if (game) {
       document
@@ -391,17 +395,20 @@ object LoginScreen {
     }
   }
 
+  // TODO move vals to top?
   val textInput = document.getElementById("username").asInstanceOf[html.Input]
   val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
+  // TODO move code to function?
   document
     .getElementById("login-form")
     .asInstanceOf[html.Form]
     .addEventListener(
       "submit", { e: Event =>
+        // TODO make this a function
         e.preventDefault()
         //Connect to the WebSocket server
         connected match {
-          case x if x.isEmpty =>
+          case x if x.isEmpty =>  // TODO don't normally check x.isEmpty. map, or match Some()
             connected = Some(
               new Connection(
                 document.getElementById("username").asInstanceOf[html.Input].value,

@@ -3,6 +3,7 @@ package snowy
 import vector.Vec2d
 
 object GameConstants {
+  // TODO add comment
   val gameSpeed = .5
 
   /** max speed of any sled in pixels per second */
@@ -23,7 +24,7 @@ object GameConstants {
   val turnTime = .75
 
   /** size of the tree trunk in pixels */
-  val treeSize = Vec2d(10, 10)
+  val treeSize = Vec2d(10, 10)    // TODO aren't tree trunks taller then wide?
 
   object Bullet {
     val averageRadius = 5

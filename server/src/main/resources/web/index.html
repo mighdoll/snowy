@@ -18,6 +18,7 @@
   <div id="scoreboard"></div>
 </div>
 
+<!-- TODO wrap this in scala.js? turn off for production builds? -->
 <script>(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()</script>
 <script src="sock-client-jsdeps.js" type="text/javascript"></script>
 <script src="sock-client-fastopt.js" type="text/javascript"></script>
