@@ -1,6 +1,5 @@
 package minithree.raw
 
-// TODO rename this file
 import org.scalajs.dom._
 import org.scalajs.dom.raw.{HTMLCanvasElement, HTMLElement, HTMLImageElement}
 
@@ -970,7 +969,7 @@ class Material extends js.Object {
   var visible: Boolean                = js.native
   var needsUpdate: Boolean            = js.native
   def setValues(values: Object): Unit = js.native
-  override def `clone`(): Material             = js.native
+  override def `clone`(): Material    = js.native
   def dispose(): Unit                 = js.native
   def addEventListener(`type`: String, listener: js.Function1[js.Any, Unit]): Unit =
     js.native
