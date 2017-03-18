@@ -87,12 +87,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
       case Start(cmd, time)            => startControl(id, cmd, time)
       case Stop(cmd, time)             => stopControl(id, cmd, time)
       case Boost(time)                 => id.sled.foreach(boostSled(_, time))
-      case Pong                        => netIdForeach(id)(connections(_).pongReceived())
+      case Pong                        => optNetId(id).foreach(pong(_))
       case ReJoin                      => rejoin(id)
       case TestDie                     => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) => netIdForeach(id)(reportGameTime(_, clientTime))
+      case RequestGameTime(clientTime) => optNetId(id).foreach(reportGameTime(_, clientTime))
     }
   }
+
 
   private def startControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
     cmd match {
@@ -119,13 +120,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-
-
-  private def netIdForeach(id: ClientId)(fn: ConnectionId => Unit): Unit = {
+  private def optNetId(id:ClientId):Option[ConnectionId] = {
     id match {
-      case netId: ConnectionId => fn(netId)
-      case i: RobotId          =>
+      case netId: ConnectionId => Some(netId)
+      case i: RobotId          => None
     }
+  }
+
+  private def pong(netId:ConnectionId):Unit = {
+    connections.get(netId).foreach(_.pongReceived())
   }
 
   /** Add some autonomous players to the game */
