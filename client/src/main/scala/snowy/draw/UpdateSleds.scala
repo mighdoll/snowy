@@ -15,8 +15,8 @@ object UpdateSleds {
 // TODO rename 'C', add comment
   def updateCsleds(sleds: Set[Sled], mySled: Sled): Unit = {
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
-    sleds.foreach { sled1 =>  // TODO rename sled1, aSled, cSled, etc.
-      var idExists = false  // TODO var, egads!
+    sleds.foreach { sled1 => // TODO rename sled1, aSled, cSled, etc.
+      var idExists = false // TODO var, egads!
       // TODO use a Map from SledID instead of searching through the threeSleds collection?
       Groups.threeSleds.children.zipWithIndex.foreach {
         case (aSled, index) =>
@@ -26,15 +26,9 @@ object UpdateSleds {
             // TODO move threeSled creation from a Sled to its own function.
             val csled = Groups.threeSleds.children(index)
 
-            csled
-              .children(1)
-              .setRotationFromAxisAngle(
-                new THREE.Vector3(0, 1, 0),
-                sled1.rotation
-              )
-            csled.children(1).scale.x = sled1.radius
-            csled.children(1).scale.y = sled1.radius
-            csled.children(1).scale.z = sled1.radius
+            csled.children(1).rotation.y = sled1.rotation
+
+            csled.children(1).scale.set(sled1.radius, sled1.radius, sled1.radius)
 
             val newPos = playfieldWrap(
               new Vector3(sled1.pos.x, 0, sled1.pos.y),
@@ -49,7 +43,8 @@ object UpdateSleds {
 
             csled
               .children(0)
-              .position.set(
+              .position
+              .set(
                 math.sin(-sled1.turretRotation) * sled1.radius,
                 0,
                 math.cos(-sled1.turretRotation) * sled1.radius
@@ -112,6 +107,8 @@ object UpdateSleds {
 
     body.add(ski1)
     body.add(ski2)
+
+    body.scale.set(sled.radius, sled.radius, sled.radius)
 
     newSled.add(tur)
     newSled.add(body)

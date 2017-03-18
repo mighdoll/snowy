@@ -35,9 +35,9 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   socket.onClose { _ =>
-    console.log(s"socket closed ")
-    LoginScreen.removeAll()
-    LoginScreen.setup()
+    console.log(s"socket closed")
+    LoginScreen.clearConnection()
+    LoginScreen.renderLoginScreen()
   }
 
   socket.onMessage { event =>
