@@ -4,12 +4,11 @@ import minithree.THREE.Object3D
 import minithree.raw.Vector3
 import snowy.GameConstants
 import snowy.client.DrawState.Groups
-import snowy.client.{DrawState, ThreeTree}
+import snowy.client.{DrawState, CreateTree}
 import snowy.playfield.Tree
 
-object UpdateTrees {
-  // TODO See comments  in UpdateSled, UpdateSnowballs
-  def updateCtrees(trees: Set[Tree], myPos: Vector3): Unit = {
+object ThreeTrees {
+  def updateThreeTrees(trees: Set[Tree], myPos: Vector3): Unit = {
     trees.foreach { tree1 =>
       var idExists = false
       Groups.threeTrees.children.zipWithIndex.foreach {
@@ -32,7 +31,7 @@ object UpdateTrees {
     }
   }
   def createTree(tree: Tree, myPos: Vector3): Object3D = {
-    val newTree: Object3D = ThreeTree.randomTree()
+    val newTree: Object3D = CreateTree.randomTree()
     val newPos = DrawState.playfieldWrap(
       new Vector3(tree.pos.x, 0, tree.pos.y),
       myPos,

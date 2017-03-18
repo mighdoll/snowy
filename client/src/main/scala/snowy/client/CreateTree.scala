@@ -5,7 +5,7 @@ import minithree.raw.{MeshPhongMaterialParameters, Object3D}
 
 import scala.scalajs.js.Dynamic
 
-object ThreeTree {
+object CreateTree {
   val trunkGeo  = new THREE.BoxGeometry(10, 200, 10)
 
   val trunkMat = new THREE.MeshPhongMaterial(

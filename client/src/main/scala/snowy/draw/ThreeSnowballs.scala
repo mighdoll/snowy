@@ -9,10 +9,8 @@ import snowy.client.DrawState.{Geos, Groups, Mats}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
-object UpdateSnowballs {
-  // TODO rename
-  // TODO see comments in UpdateSleds
-  def updateCsnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
+object ThreeSnowballs {
+  def updateThreeSnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       var idExists = false
       Groups.threeSnowballs.children.zipWithIndex.foreach {

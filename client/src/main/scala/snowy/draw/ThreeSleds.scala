@@ -10,10 +10,8 @@ import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 
-// TODO rename? it's not just about update, right?
-object UpdateSleds {
-// TODO rename 'C', add comment
-  def updateCsleds(sleds: Set[Sled], mySled: Sled): Unit = {
+object ThreeSleds {
+  def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
     sleds.foreach { sled1 => // TODO rename sled1, aSled, cSled, etc.
       var idExists = false // TODO var, egads!

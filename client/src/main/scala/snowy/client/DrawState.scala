@@ -8,7 +8,7 @@ import org.scalajs.dom.window
 import snowy.GameClientProtocol.Scoreboard
 import snowy.client.ThreeMain._
 import snowy.connection.GameState
-import snowy.draw.{AddGrid, UpdateSleds, UpdateSnowballs, UpdateTrees}
+import snowy.draw.{AddGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield.{Sled, Snowball, Store, Tree}
 import vector.Vec2d
 
@@ -65,9 +65,9 @@ object DrawState {
                 border: Vec2d,
                 scoreboard: Scoreboard): Unit = {
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
-    UpdateTrees.updateCtrees(trees.items, myPos)
-    UpdateSnowballs.updateCsnowballs(snowballs.items, myPos)
-    UpdateSleds.updateCsleds(sleds.items, mySled)
+    ThreeTrees.updateThreeTrees(trees.items, myPos)
+    ThreeSnowballs.updateThreeSnowballs(snowballs.items, myPos)
+    ThreeSleds.updateThreeSleds(sleds.items, mySled)
 
     camera.position.x = mySled._position.x
     camera.position.z = mySled._position.y + 400

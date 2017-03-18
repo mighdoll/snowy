@@ -6,7 +6,7 @@ import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
 import snowy.client.ThreeMain._
 import snowy.connection.GameState
-import snowy.draw.UpdateSleds
+import snowy.draw.ThreeSleds
 import snowy.playfield._
 import vector.Vec2d
 
@@ -44,7 +44,7 @@ object LoginScreen {
   private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
   private val sled       = Sled("", Vec2d(0, 0), sledKind, skiColor)
   private var threeSled =
-    UpdateSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
+    ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
 
   private val textInput = document.getElementById("username").asInstanceOf[html.Input]
   private val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
@@ -173,7 +173,7 @@ object LoginScreen {
     scene.remove(threeSled)
 
     val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
-    threeSled = UpdateSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
+    threeSled = ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
     threeSled.scale.multiplyScalar(0.2)
 
     threeSled.position.y = -52
