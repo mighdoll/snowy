@@ -1,8 +1,7 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{Camera, Scene, WebGLRendererParameters}
-import minithree.raw.PerspectiveCamera
+import minithree.THREE.WebGLRendererParameters
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 
@@ -28,17 +27,17 @@ object ThreeMain {
   renderer.setPixelRatio(
     if (!window.devicePixelRatio.isNaN) window.devicePixelRatio else 1
   )
-  renderer.setSize(getWidth, getHeight)
-
-  window.addEventListener("resize", { _: Event =>
-    resize()
-  }, false)
+  renderer.setSize(getWidth(), getHeight())
 
   def resize(): Unit = {
     width = window.innerWidth
     height = window.innerHeight
 
-    renderer.setSize(getWidth, getHeight)
-    renderer.setViewport(0, 0, getWidth, getHeight)
+    renderer.setSize(getWidth(), getHeight())
+    renderer.setViewport(0, 0, getWidth(), getHeight())
   }
+
+  window.addEventListener("resize", { _: Event =>
+    resize()
+  }, false)
 }

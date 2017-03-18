@@ -28,29 +28,30 @@ class ConeGeometry(radius: Double = js.native,
 }
 
 object LoginScreen {
-  val scene = new THREE.Scene()
-  val camera =
+  private val scene = new THREE.Scene()
+  private val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
   camera.position.set(0, 100, 100)
   camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-  val amb   = new THREE.AmbientLight(0x555555)
-  val light = new THREE.DirectionalLight(0xBBBBBB)
+  private val amb   = new THREE.AmbientLight(0x555555)
+  private val light = new THREE.DirectionalLight(0xBBBBBB)
 
   private var connected: Option[Connection] = None
   private var skiColor: SkiColor            = BasicSkis
   private var sledKind: SledKind            = BasicSled
 
-  val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
-  val sled       = Sled("", Vec2d(0, 0), sledKind, skiColor)
-  var threeSled  = UpdateSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
+  private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
+  private val sled       = Sled("", Vec2d(0, 0), sledKind, skiColor)
+  private var threeSled =
+    UpdateSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
 
-  val textInput = document.getElementById("username").asInstanceOf[html.Input]
-  val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
+  private val textInput = document.getElementById("username").asInstanceOf[html.Input]
+  private val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
 
-  var raycaster = new THREE.Raycaster()
-  var mouse     = new THREE.Vector2()
-  var hover     = 0
+  private var raycaster = new THREE.Raycaster()
+  private var mouse     = new THREE.Vector2()
+  private var hover     = 0
 
   def setup(): Unit = {
     positions()
@@ -175,7 +176,7 @@ object LoginScreen {
     threeSled = UpdateSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
     threeSled.scale.multiplyScalar(0.2)
 
-    threeSled.position.y = -50
+    threeSled.position.y = -52
 
     threeSled.lookAt(camera.position)
     threeSled.rotation.x += 0.5 * math.Pi
@@ -189,8 +190,8 @@ object LoginScreen {
   window.addEventListener(
     // TODO make this a separate function
     "mousemove", { e: MouseEvent =>
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1
-      mouse.y = (e.clientY / window.innerHeight) * -2 + 1
+      mouse.x = (e.clientX / getWidth) * 2 - 1
+      mouse.y = (e.clientY / getHeight) * -2 + 1
 
       raycaster.setFromCamera(mouse, camera)
 
@@ -346,7 +347,6 @@ object LoginScreen {
         .literal(color = 0x502A2A, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-
     val leave1Mat = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0x658033, shading = THREE.FlatShading)
@@ -362,7 +362,6 @@ object LoginScreen {
         .literal(color = 0xd8bc9d, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-
     val matLetters = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xa3a3a3, shading = THREE.FlatShading)

@@ -3,6 +3,7 @@ package snowy.connection
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.client.Keys
+import snowy.client.ThreeMain.{getHeight, getWidth}
 import snowy.connection.GameState.gameTime
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
@@ -122,7 +123,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   window.addEventListener(
     "mousemove", { e: MouseEvent =>
-      val angle = -Math.atan2(e.clientX - window.innerWidth / 2, e.clientY - window.innerHeight / 2)
+      val angle = -Math.atan2(e.clientX - getWidth / 2, e.clientY - getHeight / 2)
 
       if (math.abs(mouseDir - angle) > .05) {
         sendMessage(TurretAngle(angle))
@@ -131,7 +132,8 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       }
       // TODO replace magic numbers e.g. '20'
       // TODO make a function for this, e.g. 'mouseNearCenter'
-      if(math.pow(e.clientX - window.innerWidth / 2, 2) + math.pow(e.clientY - window.innerHeight / 2,2) < math.pow(20,2)){
+      if (math.pow(e.clientX - getWidth / 2, 2) + math
+            .pow(e.clientY - getHeight / 2, 2) < math.pow(20, 2)) {
         sendMessage(Start(Slowing, gameTime))
       } else {
         sendMessage(Stop(Slowing, gameTime))

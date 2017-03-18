@@ -59,7 +59,7 @@ class InboundEvents(socket: NetworkSocket,
       case MySled(sledId)              => mySledId = Some(sledId)
       case SnowballDeaths(balls)       => UpdateSnowballs.removeSnowballs(balls)
       case SledDeaths(sleds)           => UpdateSleds.removeSleds(sleds)
-      case newScoreboard: Scoreboard   => UpdateScoreboard.newScoreboard(newScoreboard)
+      case newScoreboard: Scoreboard   => UpdateScoreboard.updateScoreboard(newScoreboard)
     }
   }
 

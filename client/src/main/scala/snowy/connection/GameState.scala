@@ -64,6 +64,7 @@ object GameState {
     moveSleds(List(sled), deltaSeconds)
   }
 
+  // TODO Use the same turns that the server does
   private def nextState(deltaSeconds: Double): Unit = {
     moveSnowballs(serverSnowballs.items, deltaSeconds)
     serverMySled.foreach { mySled =>
