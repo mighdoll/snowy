@@ -2191,6 +2191,10 @@ class Vector2 extends Vector {
   override def clone(): Vector2                                 = js.native
 }
 
+object Vector3 {
+  def apply(x: Double, y: Double, z: Double): Vector3 = new Vector3(x, y, z)
+}
+
 @js.native
 @JSName("THREE.Vector3")
 class Vector3 extends Vector {

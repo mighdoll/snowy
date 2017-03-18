@@ -53,6 +53,8 @@ object LoginScreen {
   private var mouse     = new THREE.Vector2()
   private var hover     = 0
 
+  private var rejoinScreen = false
+
   def setup(): Unit = {
     positions()
     addGroups()
@@ -149,7 +151,7 @@ object LoginScreen {
   }
 
   def renderLoginScreen(): Unit = {
-    if (GameState.mySledId.isEmpty) renderer.render(scene, camera)
+    if (GameState.mySledId.isEmpty || rejoinScreen) renderer.render(scene, camera)
   }
 
   def updateSelector(): Unit = {
@@ -202,7 +204,7 @@ object LoginScreen {
           Groups.tree2.children(1),
           Groups.tree2.children(2)
         )
-      );
+      )
       val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
       val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
 
@@ -275,6 +277,7 @@ object LoginScreen {
 
         switch(true)
 
+        rejoinScreen = false
         gameHud.classList.remove("hide")
         DrawState.setup()
         GameState.startRedraw()
@@ -292,6 +295,7 @@ object LoginScreen {
     GameState.stopRedraw()
     gameHud.classList.add("hide")
     textInput.focus()
+    rejoinScreen = true
 
     renderLoginScreen()
   }

@@ -1,59 +1,48 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{MeshPhongMaterialParameters, Object3D, Vector3}
-import snowy.GameConstants
-import snowy.client.DrawState
+import minithree.THREE.{MeshPhongMaterialParameters, Object3D}
+import minithree.raw.Vector3
 import snowy.client.DrawState._
+import snowy.client.{DrawState, UpdateGroup}
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 
 object ThreeSleds {
+  val sledGroup = new UpdateGroup[Sled](Groups.threeSleds)
+
+  /** Revise position, etc. of a three js sled to match a playfield sled */
+  def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
+    DrawState.setThreePosition(threeSled, playfieldSled, myPos)
+
+    val body            = threeSled.children(1)
+    val threeSledTurret = threeSled.children(0)
+    val threeSledHealth = threeSled.children(2)
+
+    body.rotation.y = playfieldSled.rotation
+    body.scale.set(playfieldSled.radius, playfieldSled.radius, playfieldSled.radius)
+
+    threeSledTurret.rotation.y = -playfieldSled.turretRotation
+    threeSledTurret.position.set(
+      math.sin(-playfieldSled.turretRotation) * playfieldSled.radius,
+      0,
+      math.cos(-playfieldSled.turretRotation) * playfieldSled.radius
+    )
+
+    threeSledHealth.scale.x = playfieldSled.health / playfieldSled.maxHealth
+  }
+
   def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {
-    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
-    sleds.foreach { sled1 => // TODO rename sled1, aSled, cSled, etc.
-      var idExists = false // TODO var, egads!
-      // TODO use a Map from SledID instead of searching through the threeSleds collection?
-      Groups.threeSleds.children.zipWithIndex.foreach {
-        case (aSled, index) =>
-          if (aSled.name == sled1.id.id.toString) {
-            idExists = true
+    val myPos = Vector3(mySled.pos.x, 0, mySled.pos.y)
 
-            // TODO move threeSled creation from a Sled to its own function.
-            val csled = Groups.threeSleds.children(index)
+    // map of threeJs sleds, indexed by snowy sled id
 
-            csled.children(1).rotation.y = sled1.rotation
-
-            csled.children(1).scale.set(sled1.radius, sled1.radius, sled1.radius)
-
-            val newPos = playfieldWrap(
-              new Vector3(sled1.pos.x, 0, sled1.pos.y),
-              myPos,
-              new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-            )
-
-            csled.position.x = newPos.x
-            csled.position.z = newPos.z
-
-            csled.children(0).rotation.y = -sled1.turretRotation
-
-            csled
-              .children(0)
-              .position
-              .set(
-                math.sin(-sled1.turretRotation) * sled1.radius,
-                0,
-                math.cos(-sled1.turretRotation) * sled1.radius
-              )
-
-            csled.children(2).scale.x = sled1.health / sled1.maxHealth
-          }
-      }
-
-      if (!idExists) {
-        Groups.threeSleds.add(createSled(sled1, sled1.id == mySled.id, myPos))
+    sleds.foreach { sled1 =>
+      sledGroup.map.get(sled1.id) match {
+        case Some(sled) => updateSled(sled1, sled, myPos)
+        case None       => sledGroup.add(createSled(sled1, sled1.id == mySled.id, myPos))
       }
     }
   }
@@ -112,22 +101,11 @@ object ThreeSleds {
     newSled.add(body)
     newSled.add(health)
 
-    val newPos = DrawState.playfieldWrap(
-      new Vector3(sled.pos.x, 0, sled.pos.y),
-      myPos,
-      new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-    )
+    DrawState.setThreePosition(newSled, sled, myPos)
 
-    newSled.position.x = newPos.x
-    newSled.position.z = newPos.z
     newSled.name = sled.id.id.toString
     newSled
   }
 
-  def removeSleds(deaths: Seq[SledId]): Unit = {
-    val ids = deaths.map(_.id.toString)
-    Groups.threeSleds.children = Groups.threeSleds.children.filter { sled =>
-      !ids.contains(sled.name)
-    }
-  }
+  def removeSleds(deaths: Seq[SledId]): Unit = removeDeaths[Sled](sledGroup, deaths)
 }

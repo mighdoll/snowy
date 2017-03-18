@@ -6,13 +6,28 @@ import minithree.raw.MeshPhongMaterialParameters
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.window
 import snowy.GameClientProtocol.Scoreboard
+import snowy.GameConstants
 import snowy.client.ThreeMain._
 import snowy.connection.GameState
 import snowy.draw.{AddGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
-import snowy.playfield.{Sled, Snowball, Store, Tree}
+import snowy.playfield._
 import vector.Vec2d
 
+import scala.collection.mutable
 import scala.scalajs.js.Dynamic
+
+class UpdateGroup[A](group: Object3D) {
+  private val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item)
+  val map           = mutable.HashMap(items: _*)
+  def add(item: Object3D): Unit = {
+    group.add(item)
+    map += (new PlayId[A](item.name.toInt) -> item)
+  }
+  def remove(item: Object3D): Unit = {
+    group.remove(item)
+    map -= new PlayId[A](item.name.toInt)
+  }
+}
 
 object DrawState {
   val scene = new THREE.Scene()
@@ -37,6 +52,28 @@ object DrawState {
       pos.y,
       wrapAxis(pos.z, mySled.z, wrap.z)
     )
+  }
+
+  def setThreePosition(obj: Object3D,
+                       playfieldObject: PlayfieldObject,
+                       myPos: Vector3): Unit = {
+    val newPos = playfieldWrap(
+      new Vector3(playfieldObject.pos.x, 0, playfieldObject.pos.y),
+      myPos,
+      new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+    )
+    obj.position.x = newPos.x
+    obj.position.z = newPos.z
+  }
+
+  def removeDeaths[A](group: UpdateGroup[A], deaths: Seq[PlayId[A]]): Unit = {
+    for {
+      death <- deaths
+      id = death.id
+      sled <- group.map.get(new PlayId[A](id))
+    } {
+      group.remove(sled)
+    }
   }
 
   def setup(): Unit = {
