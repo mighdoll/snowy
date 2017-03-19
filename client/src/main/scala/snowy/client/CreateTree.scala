@@ -6,7 +6,7 @@ import minithree.raw.{MeshPhongMaterialParameters, Object3D}
 import scala.scalajs.js.Dynamic
 
 object CreateTree {
-  val trunkGeo  = new THREE.BoxGeometry(10, 200, 10)
+  val trunkGeo = new THREE.BoxGeometry(10, 200, 10)
 
   val trunkMat = new THREE.MeshPhongMaterial(
     Dynamic
@@ -32,44 +32,59 @@ object CreateTree {
       )
       .asInstanceOf[MeshPhongMaterialParameters]
   )
+
+  def randBetween(max: Double, min: Double): Double = math.random() * (max - min) + min
+
   def randomTree(): Object3D = {
-    var tree = new THREE.Object3D
+    val tree = new THREE.Object3D
 
     val trunk = new THREE.Mesh(trunkGeo, trunkMat)
     trunk.position.y = 100
     tree.add(trunk)
 
-
-    val topSize = math.random() * 20 + 30
+    val topSize = randBetween(50, 30)
     val topGeo  = new THREE.BoxGeometry(topSize, topSize, topSize)
     val treeTop = new THREE.Mesh(topGeo, leafMat)
     treeTop.position.y = 200
     tree.add(treeTop)
 
+    val leafAmount    = 5
+    val leafSizeMax   = 50
+    val leafSizeMin   = 20
+    val leafHeightMax = 200
+    val leafHeightMin = 50
+    for (_ <- 1 to leafAmount) {
+      val size        = randBetween(leafSizeMax, leafSizeMin)
+      val leaveHeight = randBetween(leafHeightMax, leafHeightMin)
 
-  // TODO replace magic numbers with constants: 30, 50, 150 200, 5, etc.
-    for (_ <- 1 to 5) {
-      val size      = math.random() * 30 + 20
+      val offsetDirection  = math.round(math.random) * 2 - 1 // Either 1 or -1
+      val offsetFromTrunk  = offsetDirection * (leafHeightMax - leaveHeight) / 2
+      val offsetFromBranch = math.random * size - size / 2
+
       val leaveNGeo = new THREE.BoxGeometry(size, size, size)
       val leaveN    = new THREE.Mesh(leaveNGeo, leafMat)
-      leaveN.position.y = math.random() * 150 + 50
-      if (math.random() > 0.5) {
-        leaveN.position.z = math.random * size - size / 2
-        leaveN.position.x = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
 
-        val branchGeo = new THREE.BoxGeometry(math.abs(leaveN.position.x), 2, 2)
-        val branch    = new THREE.Mesh(branchGeo, trunkMat)
-        branch.position.x = leaveN.position.x / 2
-        branch.position.y = leaveN.position.y
+      val branchGeo = new THREE.BoxGeometry(2, 2, 2)
+      val branch    = new THREE.Mesh(branchGeo, trunkMat)
+
+      leaveN.position.y = leaveHeight
+      branch.position.y = leaveHeight
+
+      if (math.random() > 0.5) {
+        leaveN.position.z = offsetFromBranch
+        leaveN.position.x = offsetFromTrunk
+
+        branch.scale.x = math.abs(offsetFromTrunk) / 2
+
+        branch.position.x = offsetFromTrunk / 2
         tree.add(branch)
       } else {
-        leaveN.position.x = math.random * size - size / 2
-        leaveN.position.z = (math.round(math.random) * 2 - 1) * (200 - leaveN.position.y) / 2
+        leaveN.position.x = offsetFromBranch
+        leaveN.position.z = offsetFromTrunk
 
-        val branchGeo = new THREE.BoxGeometry(2, 2, math.abs(leaveN.position.z))
-        val branch    = new THREE.Mesh(branchGeo, trunkMat)
-        branch.position.z = leaveN.position.z / 2
-        branch.position.y = leaveN.position.y
+        branch.scale.z = math.abs(offsetFromTrunk) / 2
+
+        branch.position.z = offsetFromTrunk / 2
         tree.add(branch)
       }
       tree.add(leaveN)
