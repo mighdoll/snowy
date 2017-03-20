@@ -40,6 +40,7 @@ object DrawState {
   val light = new THREE.DirectionalLight(0xffffff)
 
   val stats = new Stats()
+
   /** if the object's position is closer to the wrapped side
     * returns the position with */
   def playfieldWrap(pos: Vector3, mySled: Vector3, wrap: Vector3): Vector3 = {
@@ -79,7 +80,7 @@ object DrawState {
   }
 
   def setup(): Unit = {
-    stats.showPanel(1)
+    stats.showPanel(0)
     document.body.appendChild(stats.dom)
 
     scene.add(amb)

@@ -43,14 +43,15 @@ object GameState {
 
   def startRedraw(): Unit = {
     stopRedraw()
-    val loop = window.setInterval(() => {
+    def animate(timestamp: Double): Unit = {
       val deltaSeconds = nextTimeSlice()
       refresh(math.max(deltaSeconds, 0))
-    }, 20)
-    gameLoop = Some(loop)
+      gameLoop = Some(window.requestAnimationFrame(animate))
+    }
+    gameLoop = Some(window.requestAnimationFrame(animate))
   }
 
-  def stopRedraw(): Unit = gameLoop.foreach(id => window.clearInterval(id))
+  def stopRedraw(): Unit = gameLoop.foreach(id => window.cancelAnimationFrame(id))
 
   private def applyTurn(sled: Sled, deltaSeconds: Double): Unit = {
     turning match {
