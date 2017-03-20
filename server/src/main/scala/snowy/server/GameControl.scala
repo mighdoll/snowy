@@ -192,6 +192,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
+  private def applyTurn(deltaSeconds: Double): Unit = {
+    for (sled <- sleds.items) {
+      // TODO remove jiggle
+      val distanceBetween = sled.targetRotation - sled.rotation
+      val tau             = math.Pi * 2
+      val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
+      sled.rotation += sled.kind.rotationSpeed * deltaSeconds * wrapping
+    }
+  }
+
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   private def applyDrive(deltaSeconds: Double): Unit = {
@@ -351,7 +361,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   /** Point the sled in this direction */
   private def targetDirection(id: ClientId, angle: Double): Unit = {
     id.sled.foreach { sled =>
-      sled.rotation = -angle
+      sled.targetRotation = -angle
     }
   }
 

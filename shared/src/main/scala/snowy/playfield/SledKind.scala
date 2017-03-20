@@ -67,6 +67,9 @@ sealed trait SledKind {
   /** radius of the sled body */
   def radius: Double = 18
 
+  /** Speed at which the sled should rotate. in radians / second */
+  def rotationSpeed: Double = 1 * math.Pi
+
   /** speedup from drive mode. in pixels / second / second */
   def driveAcceleration: Double = 150
 
