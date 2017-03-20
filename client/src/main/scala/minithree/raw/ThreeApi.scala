@@ -4039,3 +4039,12 @@ object ShaderFlares extends js.Object {
   var lensFlareVertexTexture: js.Any = js.native
   var lensFlare: js.Any              = js.native
 }
+
+@js.native
+@JSName("Stats")
+class Stats extends js.Object {
+  def showPanel(i: Int): Unit = js.native
+  def begin(): js.Any         = js.native
+  def end(): js.Any           = js.native
+  var dom: HTMLElement        = js.native
+}

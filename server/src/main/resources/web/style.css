@@ -23,10 +23,22 @@ html, body {
 #scoreboard {
   position: absolute;
   width: 150px;
-  height: 200px;
+  height: 220px;
   background: rgba(170, 170, 170, 0.5);
   right: 0px;
   top: 0px;
+}
+#score-title {
+  text-align: center;
+}
+.score-element {
+  height: 20px;
+}
+.score-name {
+  float: left;
+}
+.score-value {
+  float: right;
 }
 #username {
   width: 35vh;

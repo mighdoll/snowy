@@ -188,109 +188,101 @@ object LoginScreen {
     renderLoginScreen()
   }
 
-  // TODO consider making a typed wrapper: e.g. AddMouseMoveListener
-  window.addEventListener(
-    // TODO make this a separate function
-    "mousemove", { e: MouseEvent =>
-      mouse.x = (e.clientX / getWidth) * 2 - 1
-      mouse.y = (e.clientY / getHeight) * -2 + 1
+  def selectorHover(e: MouseEvent): Unit = {
+    mouse.x = (e.clientX / getWidth) * 2 - 1
+    mouse.y = (e.clientY / getHeight) * -2 + 1
 
-      raycaster.setFromCamera(mouse, camera)
+    raycaster.setFromCamera(mouse, camera)
 
-      val intersects = raycaster.intersectObjects(
-        js.Array(
-          Groups.tree.children(1),
-          Groups.tree.children(2),
-          Groups.tree2.children(1),
-          Groups.tree2.children(2)
-        )
+    val intersects = raycaster.intersectObjects(
+      js.Array(
+        Groups.tree.children(1),
+        Groups.tree.children(2),
+        Groups.tree2.children(1),
+        Groups.tree2.children(2)
       )
-      val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
-      val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
+    )
+    val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
+    val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
 
-      val leaf3 = Groups.tree2.children(1).asInstanceOf[THREE.Mesh]
-      val leaf4 = Groups.tree2.children(2).asInstanceOf[THREE.Mesh]
-      leaf1.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-      leaf2.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-      Groups.tree.children(1).name = "right"
-      Groups.tree.children(2).name = "right"
-      leaf3.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-      leaf4.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-      Groups.tree2.children(1).name = "left"
-      Groups.tree2.children(2).name = "left"
+    val leaf3 = Groups.tree2.children(1).asInstanceOf[THREE.Mesh]
+    val leaf4 = Groups.tree2.children(2).asInstanceOf[THREE.Mesh]
+    leaf1.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+    leaf2.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+    Groups.tree.children(1).name = "right"
+    Groups.tree.children(2).name = "right"
+    leaf3.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+    leaf4.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
+    Groups.tree2.children(1).name = "left"
+    Groups.tree2.children(2).name = "left"
 
-      if (intersects.length > 0) {
-        val mat = leaf1.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
-        mat.emissive.setHex(0x222222)
-        mat.shading = THREE.FlatShading
-        val mat2 = leaf2.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
-        mat2.emissive.setHex(0x222222)
-        mat2.shading = THREE.FlatShading
+    if (intersects.length > 0) {
+      val mat = leaf1.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
+      mat.emissive.setHex(0x222222)
+      mat.shading = THREE.FlatShading
+      val mat2 = leaf2.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
+      mat2.emissive.setHex(0x222222)
+      mat2.shading = THREE.FlatShading
 
-        if (intersects(0).`object`.name == "right") {
-          Groups.tree.children(1).asInstanceOf[THREE.Mesh].material = mat
-          Groups.tree.children(2).asInstanceOf[THREE.Mesh].material = mat2
-          hover = -1
+      if (intersects(0).`object`.name == "right") {
+        Groups.tree.children(1).asInstanceOf[THREE.Mesh].material = mat
+        Groups.tree.children(2).asInstanceOf[THREE.Mesh].material = mat2
+        hover = -1
 
-        } else {
-          Groups.tree2.children(1).asInstanceOf[THREE.Mesh].material = mat
-          Groups.tree2.children(2).asInstanceOf[THREE.Mesh].material = mat2
-          hover = 1
-
-        }
       } else {
-        hover = 0
+        Groups.tree2.children(1).asInstanceOf[THREE.Mesh].material = mat
+        Groups.tree2.children(2).asInstanceOf[THREE.Mesh].material = mat2
+        hover = 1
+
       }
-
-      renderLoginScreen()
-    },
-    false
-  )
-
-  document.addEventListener(
-    "mousedown", { _: Event =>
-      updateSelector()
+    } else {
+      hover = 0
     }
-  )
 
-  // TODO move code to function?
+    renderLoginScreen()
+  }
+
+  // TODO consider making a typed wrapper: e.g. AddMouseMoveListener
+  window.addEventListener("mousemove", selectorHover, false)
+  document.addEventListener("mousedown", { _: Event =>
+    updateSelector()
+  }, false)
+
+  def checkConnection(e: Event): Unit = {
+    e.preventDefault()
+    //Connect to the WebSocket server
+    connected match {
+      case None =>
+        connected = Some(
+          new Connection(
+            document.getElementById("username").asInstanceOf[html.Input].value,
+            sledKind,
+            skiColor
+          )
+        )
+      case Some(x) => x.reSpawn()
+      case _       =>
+    }
+
+    swapScreen(true)
+
+    rejoinScreen = false
+    gameHud.classList.remove("hide")
+    DrawState.setup()
+    GameState.startRedraw()
+  }
+
   document
     .getElementById("login-form")
     .asInstanceOf[html.Form]
-    .addEventListener(
-      "submit", { e: Event =>
-        // TODO make this a function
-        e.preventDefault()
-        //Connect to the WebSocket server
-        connected match {
-          case None =>
-            connected = Some(
-              new Connection(
-                document.getElementById("username").asInstanceOf[html.Input].value,
-                sledKind,
-                skiColor
-              )
-            )
-          case Some(x) => x.reSpawn()
-          case _       =>
-        }
-
-        switch(true)
-
-        rejoinScreen = false
-        gameHud.classList.remove("hide")
-        DrawState.setup()
-        GameState.startRedraw()
-      },
-      false
-    )
+    .addEventListener("submit", checkConnection, false)
 
   def clearConnection(): Unit = {
     connected = None
   }
 
   def rejoinPanel() {
-    switch(false)
+    swapScreen(false)
 
     GameState.stopRedraw()
     gameHud.classList.add("hide")
@@ -300,8 +292,8 @@ object LoginScreen {
     renderLoginScreen()
   }
 
-  // TODO comment. rename?
-  def switch(game: Boolean) {
+  /** Swap the login screen and game panel */
+  def swapScreen(game: Boolean) {
     if (game) {
       document
         .getElementById("game-div")

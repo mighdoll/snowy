@@ -15,11 +15,54 @@
   <canvas id="game-c"></canvas>
 </div>
 <div class="fullscreen hide" id="game-hud">
-  <div id="scoreboard"></div>
+  <div id="scoreboard">
+    <div id="score-title">Scoreboard</div>
+    <div id="scores">
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+      <div class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- TODO wrap this in scala.js? turn off for production builds? -->
-<script>(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()</script>
+<script src="https://cdn.rawgit.com/mrdoob/stats.js/master/build/stats.min.js"></script>
 <script src="sock-client-jsdeps.js" type="text/javascript"></script>
 <script src="sock-client-fastopt.js" type="text/javascript"></script>
 <script src="sock-client-launcher.js" type="text/javascript"></script>

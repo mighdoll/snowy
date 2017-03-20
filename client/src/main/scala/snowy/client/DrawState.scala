@@ -2,7 +2,8 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.{Object3D, Vector3}
-import minithree.raw.MeshPhongMaterialParameters
+import minithree.raw.{MeshPhongMaterialParameters, Stats}
+import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.window
 import snowy.GameClientProtocol.Scoreboard
@@ -38,6 +39,7 @@ object DrawState {
   val amb   = new THREE.AmbientLight(0x888888)
   val light = new THREE.DirectionalLight(0xffffff)
 
+  val stats = new Stats()
   /** if the object's position is closer to the wrapped side
     * returns the position with */
   def playfieldWrap(pos: Vector3, mySled: Vector3, wrap: Vector3): Vector3 = {
@@ -77,6 +79,9 @@ object DrawState {
   }
 
   def setup(): Unit = {
+    stats.showPanel(1)
+    document.body.appendChild(stats.dom)
+
     scene.add(amb)
 
     light.position.set(10, 20, 0)
@@ -101,6 +106,7 @@ object DrawState {
                 trees: Store[Tree],
                 border: Vec2d,
                 scoreboard: Scoreboard): Unit = {
+    stats.begin()
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
     ThreeTrees.updateThreeTrees(trees.items, myPos)
     ThreeSnowballs.updateThreeSnowballs(snowballs.items, myPos)
@@ -111,6 +117,7 @@ object DrawState {
     camera.lookAt(new THREE.Vector3(mySled._position.x, 0, mySled._position.y))
 
     renderState()
+    stats.end()
   }
 
   def renderState(): Unit = {
