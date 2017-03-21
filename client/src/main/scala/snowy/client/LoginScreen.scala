@@ -4,7 +4,7 @@ import minithree.THREE
 import minithree.THREE.{MeshPhongMaterialParameters, Vector3}
 import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
-import snowy.client.ThreeMain._
+import snowy.client.ThreeRenderer._
 import snowy.connection.GameState
 import snowy.draw.ThreeSleds
 import snowy.playfield._

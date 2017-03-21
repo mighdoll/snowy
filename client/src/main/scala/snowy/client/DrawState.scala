@@ -8,7 +8,7 @@ import org.scalajs.dom.raw.Event
 import org.scalajs.dom.window
 import snowy.GameClientProtocol.Scoreboard
 import snowy.GameConstants
-import snowy.client.ThreeMain._
+import snowy.client.ThreeRenderer._
 import snowy.connection.GameState
 import snowy.draw.{AddGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield._

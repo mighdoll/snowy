@@ -8,10 +8,9 @@ import org.scalajs.dom.{document, window}
 import scala.scalajs.js.Dynamic
 
 // TODO comment.
-// TODO rename from 'Main'? usually reserve Main for objects with a method that can be program entry points
 // TODO global singleton object that runs code is a concern. Make this an instance (class) instead?
 // TODO Are you certain that the code initialization will run at the right time compared to other classes and objects?
-object ThreeMain {
+object ThreeRenderer {
   private var width  = window.innerWidth
   private var height = window.innerHeight
 
