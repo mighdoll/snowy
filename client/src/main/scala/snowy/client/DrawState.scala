@@ -158,7 +158,7 @@ object DrawState {
 
     val snowball = new THREE.MeshPhongMaterial(
       Dynamic
-        .literal(color = 0x222222, shading = THREE.FlatShading)
+        .literal(color = 0x1878f0, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
     val healthColor = new THREE.MeshPhongMaterial(
