@@ -12,10 +12,10 @@ import vector.Vec2d
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
-import scala.scalajs.js.annotation.JSName
+import scala.scalajs.js.annotation.JSGlobal
 
 @js.native
-@JSName("THREE.ConeGeometry")
+@JSGlobal("THREE.ConeGeometry")
 class ConeGeometry(radius: Double = js.native,
                    height: Double = js.native,
                    radialSegments: Int = js.native,

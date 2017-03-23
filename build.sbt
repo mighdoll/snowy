@@ -32,10 +32,10 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 lazy val V = new Object {
   val scala      = "2.12.1"
   val akka       = "2.4.17"
-  val akkaHttp   = "10.0.4"
+  val akkaHttp   = "10.0.5"
   val log4j      = "2.8.1"
   val jackson    = "2.8.7"
-  val scalacheck = "1.13.4"
+  val scalacheck = "1.13.5"
   val scalactic  = "3.0.1"
   val scalatest  = "3.0.1"
 }
@@ -73,9 +73,8 @@ lazy val server = (project in file("server"))
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
-      val f2          = (packageScalaJSLauncher in Compile in client).value.data
-      val f3          = (packageJSDependencies in Compile in client).value
-      Seq(f1, f1SourceMap, f2, f3)
+      val f2          = (packageJSDependencies in Compile in client).value
+      Seq(f1, f1SourceMap, f2)
     }.taskValue,
     watchSources ++= (watchSources in client).value
   )
@@ -87,8 +86,7 @@ lazy val client = (project in file("client"))
   .settings(commonSettings: _*)
   .settings(
     name := "Sock Client",
-    persistLauncher in Compile := true,
-    persistLauncher in Test := false,
+    scalaJSUseMainModuleInitializer := true,
     resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases"),
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"

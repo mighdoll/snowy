@@ -1,10 +1,10 @@
 package minithree.raw
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSName
+import scala.scalajs.js.annotation.JSGlobal
 
 @js.native
-@JSName("THREE")
+@JSGlobal("THREE")
 object jsThree extends js.Object {
   var REVISION: String                               = js.native
   var CullFaceNone: CullFace                         = js.native
