@@ -131,7 +131,7 @@ object DrawState {
     val ski      = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
     val skiTip   = new THREE.BoxGeometry(0.25, 0.125, 0.25)
     val snowball = new THREE.BoxGeometry(2, 2, 2)
-    val health   = new THREE.BoxGeometry(64, 4, 16)
+    val health   = new THREE.PlaneGeometry(64, 16)
   }
 
   object Mats {
@@ -163,12 +163,12 @@ object DrawState {
     )
     val healthColor = new THREE.MeshPhongMaterial(
       Dynamic
-        .literal(color = 0x7AF431, shading = THREE.FlatShading)
+        .literal(color = 0x59B224, shading = THREE.FlatShading, transparent = true, depthTest = false)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
     val enemyHealth = new THREE.MeshPhongMaterial(
       Dynamic
-        .literal(color = 0xF43131, shading = THREE.FlatShading)
+        .literal(color = 0xF43131, shading = THREE.FlatShading, transparent = true, depthTest = false)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
   }
