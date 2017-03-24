@@ -31,13 +31,12 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   socket.onError { event =>
-    console.log(s"Failed: code: $event")
+    window.alert(s"Failed: code: $event")
   }
 
-  socket.onClose { _ =>
-    console.log(s"socket closed")
-    LoginScreen.clearConnection()
-    LoginScreen.renderLoginScreen()
+  socket.onClose { event =>
+    window.alert(s"Socket closed: $event. The server is probably dead. Reloading")
+    window.location.reload()
   }
 
   socket.onMessage { event =>

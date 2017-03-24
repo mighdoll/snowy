@@ -194,11 +194,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def applyTurn(deltaSeconds: Double): Unit = {
     for (sled <- sleds.items) {
-      // TODO remove jiggle
       val distanceBetween = sled.targetRotation - sled.rotation
       val tau             = math.Pi * 2
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-      sled.rotation += sled.kind.rotationSpeed * deltaSeconds * wrapping
+      sled.rotation += deltaSeconds * wrapping /  sled.kind.rotationSpeed
     }
   }
 
@@ -268,6 +267,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
+  // TODO Notify clients who they kill, and who killed them
   /** Notify clients about sleds that have been killed, remove sleds from the game */
   private def reapDead(dead: Traversable[SledDied]): Unit = {
     val deadSleds =

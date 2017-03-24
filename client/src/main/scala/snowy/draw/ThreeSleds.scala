@@ -22,12 +22,21 @@ object ThreeSleds {
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
     DrawState.setThreePosition(threeSled, playfieldSled, myPos)
 
-    val body            = threeSled.children(1)
+    val threeSledBody   = threeSled.children(1)
     val threeSledTurret = threeSled.children(0)
     val threeSledHealth = threeSled.children(2)
 
-    body.rotation.y = playfieldSled.rotation
-    body.scale.set(playfieldSled.radius, playfieldSled.radius, playfieldSled.radius)
+    val distanceBetween = playfieldSled.targetRotation - playfieldSled.rotation
+    val tau             = math.Pi * 2
+    val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
+    threeSledBody.rotation.z = -wrapping / 6
+
+    threeSledBody.rotation.y = playfieldSled.rotation
+    threeSledBody.scale.set(
+      playfieldSled.radius,
+      playfieldSled.radius,
+      playfieldSled.radius
+    )
 
     threeSledTurret.rotation.y = -playfieldSled.turretRotation
     threeSledTurret.position.set(

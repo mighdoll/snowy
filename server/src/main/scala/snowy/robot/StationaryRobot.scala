@@ -1,6 +1,7 @@
 package snowy.robot
 
 import java.util.concurrent.ThreadLocalRandom
+import scala.util.Random
 
 import snowy.GameServerProtocol._
 import snowy.playfield._
@@ -11,7 +12,7 @@ object StationaryRobot {
 
   def apply(api: RobotApi): StationaryRobot = {
     id = id + 1
-    new StationaryRobot(api, s"Stay$id")
+    new StationaryRobot(api, RobotNames.allNames(Random.nextInt(RobotNames.allNames.size)))
   }
 }
 

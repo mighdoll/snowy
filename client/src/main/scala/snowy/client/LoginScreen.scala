@@ -157,19 +157,23 @@ object LoginScreen {
   def updateSelector(): Unit = {
     val currentIndex = SledKinds.allSleds.indexOf(sledKind)
 
-    hover match {
-      case -1 =>
-        sledKind =
-          if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
-          else SledKinds.allSleds.last
-        chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-      case 1 =>
-        sledKind =
-          if (currentIndex < SledKinds.allSleds.length - 1)
-            SledKinds.allSleds(currentIndex + 1)
-          else SledKinds.allSleds.head
-        chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-      case _ =>
+    if(GameState.mySledId.isEmpty || rejoinScreen) {
+      hover match {
+        case -1 =>
+          sledKind =
+            if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
+            else SledKinds.allSleds.last
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+          clearConnection()
+        case 1 =>
+          sledKind =
+            if (currentIndex < SledKinds.allSleds.length - 1)
+              SledKinds.allSleds(currentIndex + 1)
+            else SledKinds.allSleds.head
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+          clearConnection()
+        case _ =>
+      }
     }
 
     scene.remove(threeSled)
