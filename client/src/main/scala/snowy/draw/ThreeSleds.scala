@@ -8,8 +8,8 @@ import minithree.THREE.{
 }
 import minithree.raw.Vector3
 import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
-import snowy.client.DrawState._
-import snowy.client.{DrawState, UpdateGroup}
+import snowy.client.DrawPlayfield._
+import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 
@@ -20,7 +20,7 @@ object ThreeSleds {
 
   /** Revise position, etc. of a three js sled to match a playfield sled */
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
-    DrawState.setThreePosition(threeSled, playfieldSled, myPos)
+    DrawPlayfield.setThreePosition(threeSled, playfieldSled, myPos)
 
     val threeSledBody   = threeSled.children(1)
     val threeSledTurret = threeSled.children(0)
@@ -121,7 +121,7 @@ object ThreeSleds {
 
     newSled.add(text)
 
-    DrawState.setThreePosition(newSled, sled, myPos)
+    DrawPlayfield.setThreePosition(newSled, sled, myPos)
 
     newSled.name = sled.id.id.toString
     newSled

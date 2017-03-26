@@ -3,8 +3,8 @@ package snowy.draw
 import minithree.THREE
 import minithree.THREE.Object3D
 import minithree.raw.Vector3
-import snowy.client.DrawState.{removeDeaths, Geos, Groups, Mats}
-import snowy.client.{DrawState, UpdateGroup}
+import snowy.client.DrawPlayfield.{removeDeaths, Geos, Groups, Mats}
+import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
@@ -13,7 +13,7 @@ object ThreeSnowballs {
   def updateThreeSnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       snowballGroup.map.get(snowball1.id) match {
-        case Some(snowball) => DrawState.setThreePosition(snowball, snowball1, myPos)
+        case Some(snowball) => DrawPlayfield.setThreePosition(snowball, snowball1, myPos)
         case None           => snowballGroup.add(createSnowball(snowball1, myPos))
       }
     }
@@ -27,7 +27,7 @@ object ThreeSnowballs {
       snowball.radius
     )
 
-    DrawState.setThreePosition(newSnowball, snowball, myPos)
+    DrawPlayfield.setThreePosition(newSnowball, snowball, myPos)
 
     newSnowball.name = snowball.id.id.toString
     newSnowball

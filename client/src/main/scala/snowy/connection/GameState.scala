@@ -2,7 +2,7 @@ package snowy.connection
 
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
-import snowy.client.DrawState
+import snowy.client.DrawPlayfield
 import snowy.playfield._
 import vector.Vec2d
 import snowy.playfield.GameMotion._
@@ -90,13 +90,12 @@ object GameState {
     nextState(deltaSeconds)
 
     serverMySled.foreach { mySled =>
-      DrawState.drawState(
+      DrawPlayfield.drawPlayfield(
         serverSnowballs,
         serverSleds,
         mySled,
         serverTrees,
-        gPlayField,
-        scoreboard
+        gPlayField
       )
     }
   }

@@ -157,7 +157,7 @@ object LoginScreen {
   def updateSelector(): Unit = {
     val currentIndex = SledKinds.allSleds.indexOf(sledKind)
 
-    if(GameState.mySledId.isEmpty || rejoinScreen) {
+    if (GameState.mySledId.isEmpty || rejoinScreen) {
       hover match {
         case -1 =>
           sledKind =
@@ -272,7 +272,7 @@ object LoginScreen {
 
     rejoinScreen = false
     gameHud.classList.remove("hide")
-    DrawState.setup()
+    DrawPlayfield.setup()
     GameState.startRedraw()
   }
 

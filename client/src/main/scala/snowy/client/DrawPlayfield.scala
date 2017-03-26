@@ -30,7 +30,7 @@ class UpdateGroup[A](group: Object3D) {
   }
 }
 
-object DrawState {
+object DrawPlayfield {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
@@ -100,13 +100,12 @@ object DrawState {
     scene.add(Groups.threeSleds)
   }
 
-  // TODO time to rename drawState? It's no longer in response to State messages..
-  def drawState(snowballs: Store[Snowball],
-                sleds: Store[Sled],
-                mySled: Sled,
-                trees: Store[Tree],
-                border: Vec2d,
-                scoreboard: Scoreboard): Unit = {
+  /** Update the positions of all the three playfield items, then draw to screen */
+  def drawPlayfield(snowballs: Store[Snowball],
+                    sleds: Store[Sled],
+                    mySled: Sled,
+                    trees: Store[Tree],
+                    border: Vec2d): Unit = {
     stats.begin()
     val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
     ThreeTrees.updateThreeTrees(trees.items, myPos)
