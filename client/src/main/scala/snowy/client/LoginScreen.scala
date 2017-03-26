@@ -31,8 +31,6 @@ object LoginScreen {
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
-  camera.position.set(0, 100, 100)
-  camera.lookAt(new THREE.Vector3(0, 0, 0))
 
   private val amb   = new THREE.AmbientLight(0x555555)
   private val light = new THREE.DirectionalLight(0xBBBBBB)
@@ -64,6 +62,9 @@ object LoginScreen {
   }
 
   def positions(): Unit = {
+    camera.position.set(0, 100, 100)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
     light.position.set(0, 20, 10)
 
     Meshes.trunk.position.y = 5
@@ -246,7 +247,6 @@ object LoginScreen {
     renderLoginScreen()
   }
 
-  // TODO consider making a typed wrapper: e.g. AddMouseMoveListener
   window.addEventListener("mousemove", selectorHover, false)
   document.addEventListener("mousedown", { _: Event =>
     updateSelector()

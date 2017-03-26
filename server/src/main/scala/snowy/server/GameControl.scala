@@ -194,10 +194,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def applyTurn(deltaSeconds: Double): Unit = {
     for (sled <- sleds.items) {
-      val distanceBetween = sled.targetRotation - sled.rotation
       val tau             = math.Pi * 2
+      val distanceBetween = (sled.targetRotation - sled.rotation) % tau
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-      sled.rotation += deltaSeconds * wrapping /  sled.kind.rotationSpeed
+      val dir             = math.round(wrapping * 10).signum // precision of when to stop
+      sled.rotation += deltaSeconds * dir * sled.kind.rotationSpeed
     }
   }
 

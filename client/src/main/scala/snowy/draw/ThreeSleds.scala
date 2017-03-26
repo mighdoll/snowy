@@ -29,7 +29,7 @@ object ThreeSleds {
     val distanceBetween = playfieldSled.targetRotation - playfieldSled.rotation
     val tau             = math.Pi * 2
     val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-    threeSledBody.rotation.z = -wrapping / 6
+    threeSledBody.rotation.z = -math.sin(wrapping) * math.Pi / 6
 
     threeSledBody.rotation.y = playfieldSled.rotation
     threeSledBody.scale.set(
