@@ -35,9 +35,8 @@ case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
                 var rotation: Double = downhillRotation,
                 var health: Double = 1,
                 impactDamage: Double = 1,
-               /** angle of turret clockwise in screen coordinates of (0, 1) down on screen */
+                /** angle of turret clockwise in screen coordinates of (0, 1) down on screen */
                 var turretRotation: Double = downhillRotation,
-                var targetRotation: Double = downhillRotation,
                 var lastShotTime: Long = 0,
                 var lastBoostTime: Long = 0)
     extends CircularObject {

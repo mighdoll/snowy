@@ -21,8 +21,6 @@ object GameServerProtocol {
 
   case object ReJoin extends GameServerMessage
 
-  case class TurretAngle(angle: Double) extends GameServerMessage
-
   case class TargetAngle(angle: Double) extends GameServerMessage
 
   case class Shoot(time: Long) extends GameServerMessage
@@ -40,10 +38,6 @@ object GameServerProtocol {
   case object Slowing extends DriveControl
 
   case object Coasting extends DriveControl
-
-  case object TurretLeft extends PersistentControl
-
-  case object TurretRight extends PersistentControl
 
   case object Shooting extends PersistentControl
 

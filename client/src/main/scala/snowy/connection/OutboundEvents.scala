@@ -44,14 +44,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
           slowing = true
         case Keys.Up() =>
           sendMessage(Boost(gameTime))
-        case Keys.TurretLeft() if !turret.contains(GoLeft) =>
-          sendMessage(Stop(TurretRight, gameTime))
-          sendMessage(Start(TurretLeft, gameTime))
-          turret = Some(GoLeft)
-        case Keys.TurretRight() if !turret.contains(GoRight) =>
-          sendMessage(Stop(TurretLeft, gameTime))
-          sendMessage(Start(TurretRight, gameTime))
-          turret = Some(GoRight)
         case Keys.Shoot() => shootPressed()
         case Keys.AutoFire() if shooting == NotFiring =>
           sendMessage(Start(Shooting, gameTime))
@@ -86,15 +78,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
           slowing = false
         case _ =>
       }
-      (event.keyCode, turret) match {
-        case (Keys.TurretLeft(), Some(GoLeft)) =>
-          sendMessage(Stop(TurretLeft, gameTime))
-          turret = None
-        case (Keys.TurretRight(), Some(GoRight)) =>
-          sendMessage(Stop(TurretRight, gameTime))
-          turret = None
-        case _ =>
-      }
       event.keyCode match {
         case Keys.Shoot() =>
           sendMessage(Stop(Shooting, gameTime))
@@ -108,15 +91,6 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
           slowing = false
         case _ =>
       }
-      (event.keyCode, turret) match {
-        case (Keys.TurretLeft(), Some(GoLeft)) =>
-          sendMessage(Stop(TurretLeft, gameTime))
-          turret = None
-        case (Keys.TurretRight(), Some(GoRight)) =>
-          sendMessage(Stop(TurretRight, gameTime))
-          turret = None
-        case _ =>
-      }
       event.keyCode match {
         case Keys.Shoot() => shootReleased()
         case _            =>
@@ -127,10 +101,9 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   window.addEventListener(
     "mousemove", { e: MouseEvent =>
-      val angle = -Math.atan2(e.clientX - getWidth / 2, e.clientY - getHeight / 2)
+      val angle = -math.atan2(e.clientX - getWidth / 2, e.clientY - getHeight / 2)
 
       if (math.abs(mouseDir - angle) > .05) {
-        sendMessage(TurretAngle(angle))
         sendMessage(TargetAngle(angle))
         mouseDir = angle
       }

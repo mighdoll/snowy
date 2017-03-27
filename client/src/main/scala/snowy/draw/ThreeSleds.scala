@@ -26,7 +26,7 @@ object ThreeSleds {
     val threeSledTurret = threeSled.children(0)
     val threeSledHealth = threeSled.children(2)
 
-    val distanceBetween = playfieldSled.targetRotation - playfieldSled.rotation
+    val distanceBetween = playfieldSled.turretRotation - playfieldSled.rotation
     val tau             = math.Pi * 2
     val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
     threeSledBody.rotation.z = -math.sin(wrapping) * math.Pi / 6
@@ -38,11 +38,11 @@ object ThreeSleds {
       playfieldSled.radius
     )
 
-    threeSledTurret.rotation.y = -playfieldSled.turretRotation
+    threeSledTurret.rotation.y = playfieldSled.turretRotation
     threeSledTurret.position.set(
-      math.sin(-playfieldSled.turretRotation) * playfieldSled.radius,
+      math.sin(playfieldSled.turretRotation) * playfieldSled.radius,
       0,
-      math.cos(-playfieldSled.turretRotation) * playfieldSled.radius
+      math.cos(playfieldSled.turretRotation) * playfieldSled.radius
     )
 
     threeSledHealth.scale.x = playfieldSled.health / playfieldSled.maxHealth
@@ -97,7 +97,7 @@ object ThreeSleds {
     val skiTip2 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
 
     health.position.z = -50
-    text.position.z = -80
+    text.position.z = -70
 
     health.rotation.x = 1.5 * math.Pi
 
@@ -141,7 +141,6 @@ object ThreeSleds {
     newCanvas
   }
 
-  // TODO Fix resizing
   def createText(text: String, scale: Double): Object3D = {
     val canvas = document.createElement("canvas").asInstanceOf[html.Canvas]
     val ctx    = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]

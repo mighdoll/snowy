@@ -41,7 +41,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
         case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
         case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
         case _ if random < .190 =>
-          Seq(TurretAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs)))
+          Seq(TargetAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs)))
         case _ => Seq()
       }
 

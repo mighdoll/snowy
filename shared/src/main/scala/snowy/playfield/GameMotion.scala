@@ -50,12 +50,12 @@ object GameMotion {
     val turnDelta = direction.rotationSign * (math.Pi / turnTime) * deltaSeconds
     val max       = math.Pi * 2
     val min       = -math.Pi * 2
-    val rotation  = sled.targetRotation + turnDelta
+    val rotation  = sled.turretRotation + turnDelta
     val wrappedRotation =
       if (rotation > max) rotation - max
       else if (rotation < min) rotation - min
       else rotation
-    sled.targetRotation = wrappedRotation
+    sled.turretRotation = wrappedRotation
   }
 
   /** Constrain a value between 0 and a max value.

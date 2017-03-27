@@ -85,18 +85,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     msg match {
       case Join(name, sledKind, skiColor) =>
         userJoin(id, name.slice(0, 15), sledKind, skiColor)
-      case TurretAngle(angle) => rotateTurret(id, angle)
-      case TargetAngle(angle) => targetDirection(id, angle)
-      case Shoot(time)        => id.sled.foreach(shootSnowball(_))
-      case Start(cmd, time)   => startControl(id, cmd, time)
-      case Stop(cmd, time)    => stopControl(id, cmd, time)
-      case Boost(time)        => id.sled.foreach(boostSled(_, time))
-      case Pong               => optNetId(id).foreach(pong(_))
-      case ReJoin             => rejoin(id)
+      case TargetAngle(angle)          => targetDirection(id, angle)
+      case Shoot(time)                 => id.sled.foreach(shootSnowball(_))
+      case Start(cmd, time)            => startControl(id, cmd, time)
+      case Stop(cmd, time)             => stopControl(id, cmd, time)
+      case Boost(time)                 => id.sled.foreach(boostSled(_, time))
+      case Pong                        => optNetId(id).foreach(pong(_))
+      case ReJoin                      => rejoin(id)
+      case TestDie                     => reapSled(sledMap(id))
+      case RequestGameTime(clientTime) => optNetId(id).foreach(reportGameTime(_, clientTime))
       case ClientPing         => optNetId(id).foreach(sendMessage(ClientPong, _))
-      case TestDie            => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) =>
-        optNetId(id).foreach(reportGameTime(_, clientTime))
     }
   }
 
@@ -195,7 +193,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   private def applyTurn(deltaSeconds: Double): Unit = {
     for (sled <- sleds.items) {
       val tau             = math.Pi * 2
-      val distanceBetween = (sled.targetRotation - sled.rotation) % tau
+      val distanceBetween = (sled.turretRotation - sled.rotation) % tau
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
       val dir             = math.round(wrapping * 10).signum // precision of when to stop
       sled.rotation += deltaSeconds * dir * sled.kind.rotationSpeed
@@ -219,10 +217,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
         command match {
           case Left  => turnSled(sled, LeftTurn, deltaSeconds)
           case Right => turnSled(sled, RightTurn, deltaSeconds)
-          case TurretLeft =>
-            id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
-          case TurretRight =>
-            id.sled.foreach(_.turretRotation += (math.Pi / turnTime) * deltaSeconds)
           case Shooting => shootSnowball(sled)
         }
       }
@@ -247,8 +241,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   private def shootSnowball(sled: Sled): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
       val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
-      val launchPos   = sled.bulletLaunchPosition.rotate(-sled.turretRotation)
-      val direction   = Vec2d.fromRotation(-launchAngle)
+      val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
+      val direction   = Vec2d.fromRotation(launchAngle)
       val ball = Snowball(
         ownerId = sled.id,
         _position = wrapInPlayfield(sled.pos + launchPos), // TODO don't use _position
@@ -354,15 +348,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     sled
   }
 
-  /** Rotate the turret on a sled */
-  private def rotateTurret(id: ClientId, angle: Double): Unit = {
-    id.sled.foreach(_.turretRotation = angle)
-  }
-
   /** Point the sled in this direction */
   private def targetDirection(id: ClientId, angle: Double): Unit = {
     id.sled.foreach { sled =>
-      sled.targetRotation = -angle
+      sled.turretRotation = -angle
     }
   }
 
