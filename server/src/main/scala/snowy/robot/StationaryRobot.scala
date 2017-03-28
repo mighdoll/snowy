@@ -1,8 +1,10 @@
 package snowy.robot
 
 import java.util.concurrent.ThreadLocalRandom
-import scala.util.Random
 
+import snowy.GameConstants
+
+import scala.util.Random
 import snowy.GameServerProtocol._
 import snowy.playfield._
 import vector.Vec2d
@@ -32,18 +34,12 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     mySledOpt.foreach { mySled =>
       val robotGameTime = System.currentTimeMillis()
       val random        = ThreadLocalRandom.current.nextDouble()
-      val commands = random match {
-        case _ if random < .005 => Seq(Start(Left, robotGameTime))
-        case _ if random < .010 => Seq(Start(Right, robotGameTime))
-        case _ if random < .030 =>
-          Seq(Stop(Right, robotGameTime), Stop(Left, robotGameTime))
+      val commands = Seq(TargetAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs))) ++ (random match {
         case _ if random < .037 => Seq(Boost(robotGameTime))
         case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
         case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
-        case _ if random < .190 =>
-          Seq(TargetAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs)))
         case _ => Seq()
-      }
+      })
 
       commands.foreach { command =>
         api.sendToServer(command)
@@ -54,19 +50,8 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
   def aimAtNearest(mySled: Sled,
                    sleds: Traversable[Sled],
                    snowballs: Traversable[Snowball]): Double = {
-    /*val failedDistance = Sled.dummy.copy(_position = mySled._position - Vec2d(0, 1000))
-    val closest: Sled = sleds.filterNot(sled => sled == mySled).fold(failedDistance) {
-      case (closest: Sled, next: Sled) =>
-        val distance        = next._position - mySled._position
-        val closestDistance = closest._position - mySled._position
-        if (distance.length <= closestDistance.length) {
-          next
-        } else closest
-      case _ => failedDistance
-    }
-    -(closest._position - mySled._position).angle(Vec2d.unitUp)*/
 
-    var closestBall = mySled.radius + 10
+    var closestBall = mySled.bulletLaunchPosition.length
     var ballAngle   = 0.0
     val closeSnowballs = snowballs
       .filterNot(ball => ball.ownerId == mySled.id)
