@@ -48,6 +48,8 @@ object GameServerProtocol {
 
   case object Pong extends GameServerMessage
 
+  case object ClientPing extends GameServerMessage
+
   case object TestDie extends GameServerMessage
 
   case class RequestGameTime(clientTime: Long) extends GameServerMessage
@@ -81,6 +83,8 @@ object GameClientProtocol {
   case class Scoreboard(myScore: Double, scores: Seq[Score]) extends GameClientMessage
 
   case object Ping extends GameClientMessage
+
+  case object ClientPong extends GameClientMessage
 
   case class GameTime(millis: Long, oneWayDelay: Int) extends GameClientMessage
 

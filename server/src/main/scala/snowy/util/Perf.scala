@@ -27,3 +27,13 @@ object Perf {
   }
 
 }
+
+class Timer(name:String) {
+  private val start = System.nanoTime()
+
+  def stop(): Unit = {
+    val time = System.nanoTime() - start
+    Perf.record(name, time)
+  }
+
+}

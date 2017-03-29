@@ -1,14 +1,12 @@
 package snowy.load
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
-import akka.stream.scaladsl.{Flow, Sink, SourceQueue, SourceQueueWithComplete}
+import scala.concurrent.{ExecutionContext, Promise}
+import akka.stream.scaladsl.{Flow, Sink, SourceQueue}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
-import snowy.GameServerProtocol.{GameServerMessage, Join, Pong, ReJoin}
+import snowy.GameServerProtocol.{GameServerMessage, Pong}
 import snowy.load.SnowyServerFixture.connectSinkToServer
-import snowy.playfield.PlayId.SledId
-import snowy.playfield._
-import snowy.robot.{Robot, RobotApi, RobotGameState, RobotGameStateInfo}
+import snowy.robot.{Robot, RobotApi, RobotGameState}
 import vector.Vec2d
 
 /** Host for a single robot in a client, e.g. for a load test via a websocket.
