@@ -1,8 +1,9 @@
+package snowy.playfield
+
 import org.scalacheck._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameConstants.playfield
-import snowy.playfield.{Grid, PlayfieldObject, Sled, Snowball}
 import vector.Vec2d
 
 class TestGrid extends PropSpec with PropertyChecks {

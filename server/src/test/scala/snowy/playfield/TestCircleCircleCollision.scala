@@ -1,6 +1,7 @@
+package snowy.playfield
+
 import org.scalatest.PropSpec
 import snowy.collision.CollideThings.collideCollection
-import snowy.playfield.{CircularObject, PlayId, PlayfieldObject, Sled}
 import snowy.playfield.SnowballFixture.testball
 import vector.Vec2d
 

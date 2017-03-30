@@ -1,7 +1,8 @@
+package snowy.playfield
+
 import org.scalacheck._
 import org.scalatest._
 import org.scalatest.prop._
-import snowy.playfield.GameMotion
 
 class TestGameMotion extends PropSpec with PropertyChecks {
 

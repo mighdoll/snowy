@@ -1,8 +1,7 @@
-import org.scalacheck.Prop._
-import org.scalacheck._
+package snowy.playfield
+
 import org.scalatest.PropSpec
 import snowy.collision.Collisions._
-import snowy.playfield.{Circle, Rect}
 import vector.Vec2d
 
 class TestCircleRectCollision extends PropSpec {

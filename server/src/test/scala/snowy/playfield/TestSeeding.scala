@@ -1,3 +1,5 @@
+package snowy.playfield
+
 import org.scalatest.PropSpec
 import snowy.server.GameSeeding.randomTrees
 

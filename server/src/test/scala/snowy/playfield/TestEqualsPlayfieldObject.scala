@@ -1,8 +1,9 @@
+package snowy.playfield
+
 import org.scalatest.PropSpec
-import snowy.playfield.{Sled, Snowball}
-import vector.Vec2d
-import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.PlayId.BallId
 import snowy.playfield.SnowballFixture.testball
+import vector.Vec2d
 
 class TestEqualsPlayfieldObject extends PropSpec {
   property("different sleds with same id are =") {

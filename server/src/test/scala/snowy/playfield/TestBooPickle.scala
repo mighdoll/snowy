@@ -1,10 +1,11 @@
+package snowy.playfield
+
 import boopickle.Default._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, SledId}
-import snowy.playfield.{GunnerSled, Sled, Snowball}
 import vector.Vec2d
 
 class TestBooPickle extends PropSpec with PropertyChecks {

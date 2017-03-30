@@ -1,3 +1,5 @@
+package snowy.playfield
+
 import scala.math.Pi
 import org.scalactic.Equality
 import org.scalactic.Tolerance._
