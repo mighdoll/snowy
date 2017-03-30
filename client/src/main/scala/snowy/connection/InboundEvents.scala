@@ -52,6 +52,7 @@ class InboundEvents(socket: NetworkSocket,
       case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
       case Died                        => LoginScreen.rejoinPanel()
       case Ping                        => sendMessage(Pong)
+      case ClientPong                  => // currently used only by the load test client
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
       case SledDeaths(sleds)           => println(s"died. sleds: $sleds ") // TODO use me

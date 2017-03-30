@@ -81,20 +81,22 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     msg match {
       case Join(name, sledKind, skiColor) =>
         userJoin(id, name.slice(0, 15), sledKind, skiColor)
-      case TurretAngle(angle)          => rotateTurret(id, angle)
-      case TargetAngle(angle)          => targetDirection(id, angle)
-      case Shoot(time)                 => id.sled.foreach(shootSnowball(_))
-      case Start(cmd, time)            => startControl(id, cmd, time)
-      case Stop(cmd, time)             => stopControl(id, cmd, time)
-      case Boost(time)                 => id.sled.foreach(boostSled(_, time))
-      case Pong                        => optNetId(id).foreach(pong(_))
-      case ReJoin                      => rejoin(id)
-      case TestDie                     => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) => optNetId(id).foreach(reportGameTime(_, clientTime))
+      case TurretAngle(angle) => rotateTurret(id, angle)
+      case TargetAngle(angle) => targetDirection(id, angle)
+      case Shoot(time)        => id.sled.foreach(shootSnowball(_))
+      case Start(cmd, time)   => startControl(id, cmd, time)
+      case Stop(cmd, time)    => stopControl(id, cmd, time)
+      case Boost(time)        => id.sled.foreach(boostSled(_, time))
+      case Pong               => optNetId(id).foreach(pong(_))
+      case ReJoin             => rejoin(id)
+      case ClientPing         => optNetId(id).foreach(sendMessage(ClientPong, _))
+      case TestDie            => reapSled(sledMap(id))
+      case RequestGameTime(clientTime) =>
+        optNetId(id).foreach(reportGameTime(_, clientTime))
     }
   }
 
-
+  /** client has started to operate a sled control. e.g. shooting, braking */
   private def startControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
     cmd match {
       case persistentControl: PersistentControl =>
@@ -103,12 +105,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
         for (sled <- id.sled) {
           driveControl match {
             case Coasting => sled.driveMode.driveMode(SledDrive.Coasting)
-            case Slowing => sled.driveMode.driveMode(SledDrive.Braking)
+            case Slowing  => sled.driveMode.driveMode(SledDrive.Braking)
           }
         }
     }
   }
 
+  /** client has stopped a sled control. e.g. shooting, braking */
   private def stopControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
     cmd match {
       case persistentControl: PersistentControl =>
@@ -120,14 +123,14 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     }
   }
 
-  private def optNetId(id:ClientId):Option[ConnectionId] = {
+  private def optNetId(id: ClientId): Option[ConnectionId] = {
     id match {
       case netId: ConnectionId => Some(netId)
       case i: RobotId          => None
     }
   }
 
-  private def pong(netId:ConnectionId):Unit = {
+  private def pong(netId: ConnectionId): Unit = {
     connections.get(netId).foreach(_.pongReceived())
   }
 
@@ -197,8 +200,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
     pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
-          case Left     => turnSled(sled, LeftTurn, deltaSeconds)
-          case Right    => turnSled(sled, RightTurn, deltaSeconds)
+          case Left  => turnSled(sled, LeftTurn, deltaSeconds)
+          case Right => turnSled(sled, RightTurn, deltaSeconds)
           case TurretLeft =>
             id.sled.foreach(_.turretRotation -= (math.Pi / turnTime) * deltaSeconds)
           case TurretRight =>

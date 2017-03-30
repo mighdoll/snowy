@@ -3,6 +3,9 @@ package snowy.util
 /** microseconds since midnight January 1, 1970 UTC */
 case class EpochMicroseconds(value: Long) extends AnyVal
 
+/** an interval in nanoseconds */
+case class Nanoseconds(value: Long) extends AnyVal
+
 /** An microsecond clock aligned within 1msec of the system clock.
   *
   * The jvm provides real time clock to milliseconds and an interval
