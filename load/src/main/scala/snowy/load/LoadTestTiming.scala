@@ -24,7 +24,7 @@ class LoadTestTiming[E: EC: ACT: MR](url: String) extends StrictLogging {
 
   val sink = Sink.foreach[GameClientMessage] {
     case ClientPong =>
-      logger.info("ClientPong received")
+      logger.trace("ClientPong received")
       span.finish()
       timePing()
     case _ =>
@@ -40,7 +40,7 @@ class LoadTestTiming[E: EC: ACT: MR](url: String) extends StrictLogging {
   def timePing(): Unit = {
     implicitly[ActorSystem].scheduler.scheduleOnce(period) {
       span = span.restart()
-      logger.info("ClientPing sent")
+      logger.trace("ClientPing sent")
       send.foreach(_.offer(ClientPing))
     }
   }
