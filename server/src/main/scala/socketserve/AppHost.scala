@@ -41,7 +41,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
     })
     .named("handlerSink")
 
-  // TODO use mergePreferred ticks and internalMessages
+  // LATER use mergePreferred ticks and internalMessages
   val mergeSink = MergeHub
     .source[GameCommand]
     .merge(tickSource)
