@@ -27,7 +27,7 @@ class ConeGeometry(radius: Double = js.native,
   var parameters: js.Any = js.native
 }
 
-object LoginScreen {
+class LoginScreen() {
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
@@ -272,8 +272,8 @@ object LoginScreen {
 
     rejoinScreen = false
     gameHud.classList.remove("hide")
-    DrawPlayfield.setup()
-    GameState.startRedraw()
+    ClientMain.setupPlayfield()
+    ClientMain.startRedraw()
   }
 
   document
@@ -288,7 +288,7 @@ object LoginScreen {
   def rejoinPanel() {
     swapScreen(false)
 
-    GameState.stopRedraw()
+    ClientMain.stopRedraw()
     gameHud.classList.add("hide")
     textInput.focus()
     rejoinScreen = true
@@ -325,7 +325,7 @@ object LoginScreen {
     val leave2Geo = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
     val cardGeo   = new THREE.BoxGeometry(16, 8, 1)
 
-    // TODO use typed version
+    // LATER use typed version
     val geoParams = Dynamic.literal(
       steps = 1,
       amount = Shapes.s,

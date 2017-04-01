@@ -61,7 +61,7 @@ object ThreeSleds {
     }
   }
 
-  // TODO comment
+  /** @return a threejs sled containing body, skis, health, and name */
   def createSled(sled: Sled, friendly: Boolean, myPos: Vector3): Object3D = {
     val newSled = new THREE.Object3D()
 

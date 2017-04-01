@@ -1,13 +1,15 @@
 package snowy.connection
 
-import org.scalajs.dom._
 import snowy.GameClientProtocol._
-import snowy.client.DrawPlayfield
 import snowy.playfield._
 import vector.Vec2d
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
-
+case class PlayfieldState(mySled: Sled,
+                          sleds: Set[Sled],
+                          snowballs: Set[Snowball],
+                          trees: Set[Tree],
+                          playfield: Vec2d)
 object GameState {
   var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard               = Scoreboard(0, Seq())
@@ -20,16 +22,17 @@ object GameState {
   var gameTime                = 0L
 
   // TODO: return Option[Sled]. The server might send state before we join and have a sled
-  private def serverMySled: Option[Sled] = {
+  def serverMySled: Option[Sled] = {
     for {
       id   <- mySledId
       sled <- serverSleds.items.find(_.id == id)
     } yield sled
   }
 
-  private var gameLoop: Option[Int]            = None
-  private var turning: Turning                 = NoTurn
-  var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
+  private var gameLoop: Option[Int] = None
+  private var turning: Turning      = NoTurn
+  var serverGameClock
+    : Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
   /** set the client state to the state from the server
     * @param state the state sent from the server */
@@ -40,18 +43,6 @@ object GameState {
   }
 
   def startTurn(direction: Turning): Unit = turning = direction
-
-  def startRedraw(): Unit = {
-    stopRedraw()
-    def animate(timestamp: Double): Unit = {
-      val deltaSeconds = nextTimeSlice()
-      refresh(math.max(deltaSeconds, 0))
-      gameLoop = Some(window.requestAnimationFrame(animate))
-    }
-    gameLoop = Some(window.requestAnimationFrame(animate))
-  }
-
-  def stopRedraw(): Unit = gameLoop.foreach(id => window.cancelAnimationFrame(id))
 
   private def applyTurn(sled: Sled, deltaSeconds: Double): Unit = {
     turning match {
@@ -66,37 +57,30 @@ object GameState {
   }
 
   // TODO Use the same turns that the server does
-  private def nextState(deltaSeconds: Double): Unit = {
+  def nextState(deltaSeconds: Double): PlayfieldState = {
     moveSnowballs(serverSnowballs.items, deltaSeconds)
     serverMySled.foreach { mySled =>
       applyTurn(mySled, deltaSeconds)
       moveOneSled(mySled, deltaSeconds)
     }
     moveSleds(serverSleds.items, deltaSeconds)
+    PlayfieldState(
+      serverMySled.getOrElse(Sled.dummy),
+      serverSleds.items,
+      serverSnowballs.items,
+      serverTrees.items,
+      gPlayField
+    )
   }
 
   /** Advance to the next game simulation frame.
     *
     * @return the time in seconds since the last frame */
-  private def nextTimeSlice(): Double = {
+  def nextTimeSlice(): Double = {
     val newTurn =
       serverGameClock.map(_.serverGameTime).getOrElse(System.currentTimeMillis())
     val deltaSeconds = (newTurn - gameTime) / 1000.0
     gameTime = newTurn
     deltaSeconds
-  }
-
-  private def refresh(deltaSeconds: Double): Unit = {
-    nextState(deltaSeconds)
-
-    serverMySled.foreach { mySled =>
-      DrawPlayfield.drawPlayfield(
-        serverSnowballs,
-        serverSleds,
-        mySled,
-        serverTrees,
-        gPlayField
-      )
-    }
   }
 }

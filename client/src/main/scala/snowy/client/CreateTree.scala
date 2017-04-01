@@ -35,6 +35,7 @@ object CreateTree {
 
   def randBetween(max: Double, min: Double): Double = math.random() * (max - min) + min
 
+  /** @return a three tree with a random shape at position (0, 0) */
   def randomTree(): Object3D = {
     val tree = new THREE.Object3D
 
@@ -48,12 +49,12 @@ object CreateTree {
     treeTop.position.y = 200
     tree.add(treeTop)
 
-    val leafAmount    = 5
-    val leafSizeMax   = 50
-    val leafSizeMin   = 20
-    val leafHeightMax = 200
-    val leafHeightMin = 50
-    for (_ <- 1 to leafAmount) {
+    val leafBlocksPerTree = 5
+    val leafSizeMax       = 50
+    val leafSizeMin       = 20
+    val leafHeightMax     = 200
+    val leafHeightMin     = 50
+    for (_ <- 1 to leafBlocksPerTree) {
       val size        = randBetween(leafSizeMax, leafSizeMin)
       val leaveHeight = randBetween(leafHeightMax, leafHeightMin)
 
