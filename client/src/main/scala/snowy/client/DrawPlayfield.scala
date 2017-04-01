@@ -3,9 +3,8 @@ package snowy.client
 import minithree.THREE
 import minithree.THREE.{Object3D, Vector3}
 import minithree.raw.{MeshPhongMaterialParameters, Stats}
-import org.scalajs.dom.document
 import org.scalajs.dom.raw.Event
-import org.scalajs.dom.window
+import org.scalajs.dom.{document, window}
 import snowy.GameConstants
 import snowy.client.ThreeRenderer._
 import snowy.connection.GameState
@@ -17,8 +16,11 @@ import scala.collection.mutable
 import scala.scalajs.js.Dynamic
 
 class UpdateGroup[A](group: Object3D) {
-  private val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item)
-  val map           = mutable.HashMap(items: _*)
+  val map = {
+    val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item)
+    mutable.HashMap(items: _*)
+  }
+
   def add(item: Object3D): Unit = {
     group.add(item)
     map += (new PlayId[A](item.name.toInt) -> item)
@@ -28,7 +30,20 @@ class UpdateGroup[A](group: Object3D) {
     map -= new PlayId[A](item.name.toInt)
   }
 }
+
 object DrawPlayfield {
+
+  def setThreePosition(obj: Object3D,
+                       playfieldObject: PlayfieldObject,
+                       myPos: Vector3): Unit = {
+    val newPos = playfieldWrap(
+      new Vector3(playfieldObject.pos.x, 0, playfieldObject.pos.y),
+      myPos,
+      new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+    )
+    obj.position.x = newPos.x
+    obj.position.z = newPos.z
+  }
 
   /** if the object's position is closer to the wrapped side
     * returns the position with */
@@ -46,18 +61,6 @@ object DrawPlayfield {
     )
   }
 
-  def setThreePosition(obj: Object3D,
-                       playfieldObject: PlayfieldObject,
-                       myPos: Vector3): Unit = {
-    val newPos = playfieldWrap(
-      new Vector3(playfieldObject.pos.x, 0, playfieldObject.pos.y),
-      myPos,
-      new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
-    )
-    obj.position.x = newPos.x
-    obj.position.z = newPos.z
-  }
-
   def removeDeaths[A](group: UpdateGroup[A], deaths: Seq[PlayId[A]]): Unit = {
     for {
       death <- deaths
@@ -67,6 +70,7 @@ object DrawPlayfield {
       group.remove(sled)
     }
   }
+
   object Geos {
     val sled     = new THREE.BoxGeometry(2, 2, 2)
     val turret   = new THREE.BoxGeometry(4, 4, 20)

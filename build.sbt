@@ -22,12 +22,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
-    libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
-      "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
-      "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
-    )
+  libraryDependencies ++= Seq(
+    "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
+    "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
+    "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
   )
+)
 
 lazy val V = new Object {
   val scala      = "2.12.1"
@@ -91,7 +91,10 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
     ),
-    jsDependencies += "org.webjars" % "three.js" % "r77" / "r77/three.min.js"
+    jsDependencies ++= Seq(
+      "org.webjars.bower" % "three.js"                   % "0.82.0" / "0.82.0/three.min.js",
+      "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
+    )
   )
   .dependsOn(shared.js)
 

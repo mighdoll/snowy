@@ -1,15 +1,17 @@
 package snowy.connection
 
 import snowy.GameClientProtocol._
-import snowy.playfield._
-import vector.Vec2d
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.SledId
+import snowy.playfield._
+import vector.Vec2d
+
 case class PlayfieldState(mySled: Sled,
                           sleds: Set[Sled],
                           snowballs: Set[Snowball],
                           trees: Set[Tree],
                           playfield: Vec2d)
+
 object GameState {
   var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard               = Scoreboard(0, Seq())
