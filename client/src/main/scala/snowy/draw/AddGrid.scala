@@ -1,8 +1,7 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.Object3D
-import minithree.raw.LineBasicMaterialParameters
+import minithree.THREE.{LineBasicMaterialParameters, Object3D}
 import snowy.GameConstants
 
 import scala.scalajs.js

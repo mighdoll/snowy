@@ -1,8 +1,7 @@
 package snowy.client
 
-import minithree.THREE
-import minithree.THREE.{Object3D, Vector3}
-import minithree.raw.{MeshPhongMaterialParameters, Stats}
+import minithree.{Stats, THREE}
+import minithree.THREE.{MeshPhongMaterialParameters, Object3D, Vector3}
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants

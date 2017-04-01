@@ -1,13 +1,8 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{
-  MeshBasicMaterialParameters,
-  MeshPhongMaterialParameters,
-  Object3D
-}
-import minithree.raw.Vector3
-import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
+import minithree.THREE.{MeshBasicMaterialParameters, MeshPhongMaterialParameters, Object3D, Vector3}
+import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
 import snowy.client.DrawPlayfield._
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.SledId
@@ -49,7 +44,7 @@ object ThreeSleds {
   }
 
   def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {
-    val myPos = Vector3(mySled.pos.x, 0, mySled.pos.y)
+    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
 
     // map of threeJs sleds, indexed by snowy sled id
 

@@ -1,7 +1,7 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.raw.{MeshPhongMaterialParameters, Object3D}
+import minithree.THREE.{MeshPhongMaterialParameters, Object3D}
 
 import scala.scalajs.js.Dynamic
 

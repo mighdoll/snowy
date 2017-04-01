@@ -1,7 +1,6 @@
 package snowy.draw
 
-import minithree.THREE.Object3D
-import minithree.raw.Vector3
+import minithree.THREE.{Object3D, Vector3}
 import snowy.client.DrawPlayfield.Groups
 import snowy.client.{CreateTree, DrawPlayfield, UpdateGroup}
 import snowy.playfield.Tree
