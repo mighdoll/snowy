@@ -10,10 +10,13 @@ import scala.scalajs.js.typedarray._
 @js.native
 @JSGlobal("Stats")
 class Stats extends js.Object {
-  def showPanel(i: Int): Unit = js.native
-  def begin(): js.Any         = js.native
-  def end(): js.Any           = js.native
   var dom: HTMLElement        = js.native
+
+  def showPanel(i: Int): Unit = js.native
+
+  def begin(): js.Any         = js.native
+
+  def end(): js.Any           = js.native
 }
 
 @js.native
@@ -100,9 +103,6 @@ object THREE extends js.Object {
   var ShaderChunk: ShaderChunk                       = js.native
 
   @js.native
-  trait WebGLRenderingContext extends js.Object {}
-
-  @js.native
   sealed trait CullFace extends js.Object {}
 
   @js.native
@@ -139,9 +139,6 @@ object THREE extends js.Object {
   sealed trait Mapping extends js.Object {}
 
   @js.native
-  trait MappingConstructor extends js.Object {}
-
-  @js.native
   sealed trait Wrapping extends js.Object {}
 
   @js.native
@@ -158,6 +155,611 @@ object THREE extends js.Object {
 
   @js.native
   sealed trait CompressedPixelFormat extends js.Object {}
+
+  @js.native
+  sealed trait LineType extends js.Object {}
+
+  @js.native
+  sealed trait PathActions extends js.Object {}
+
+  @js.native
+  trait WebGLRenderingContext extends js.Object {}
+
+  @js.native
+  trait MappingConstructor extends js.Object {}
+
+  @js.native
+  trait MorphTarget extends js.Object {
+    var name: String                = js.native
+    var vertices: js.Array[Vector3] = js.native
+  }
+
+  @js.native
+  trait MorphColor extends js.Object {
+    var name: String            = js.native
+    var colors: js.Array[Color] = js.native
+  }
+
+  @js.native
+  trait MorphNormals extends js.Object {
+    var name: String               = js.native
+    var normals: js.Array[Vector3] = js.native
+  }
+
+  @js.native
+  trait BoundingBox3D extends js.Object {
+    var min: Vector3 = js.native
+    var max: Vector3 = js.native
+  }
+
+  @js.native
+  trait BoundingSphere extends js.Object {
+    var radius: Double = js.native
+  }
+
+  @js.native
+  trait Intersection extends js.Object {
+    var distance: Double   = js.native
+    var point: Vector3     = js.native
+    var face: Face3        = js.native
+    var `object`: Object3D = js.native
+  }
+
+  @js.native
+  trait RaycasterParameters extends js.Object {
+    var Sprite: js.Any = js.native
+    var Mesh: js.Any   = js.native
+    var Points: js.Any = js.native
+    var LOD: js.Any    = js.native
+    var Line: js.Any   = js.native
+  }
+
+  @js.native
+  trait Progress extends js.Object {
+    var total: Double  = js.native
+    var loaded: Double = js.native
+  }
+
+  @js.native
+  trait LoaderHandler extends js.Object {
+    var handlers: js.Array[js.Any] = js.native
+
+    def add(regex: String, loader: Loader): Unit = js.native
+
+    def get(file: String): Loader = js.native
+  }
+
+  @js.native
+  trait JSonLoaderResultGeometry extends Geometry {
+    var animation: AnimationData = js.native
+  }
+
+  @js.native
+  trait MaterialParameters extends js.Object {
+    var name: String                    = js.native
+    var side: Side                      = js.native
+    var opacity: Double                 = js.native
+    var transparent: Boolean            = js.native
+    var blending: Blending              = js.native
+    var blendSrc: BlendingDstFactor     = js.native
+    var blendDst: BlendingSrcFactor     = js.native
+    var blendEquation: BlendingEquation = js.native
+    var depthTest: Boolean              = js.native
+    var depthWrite: Boolean             = js.native
+    var polygonOffset: Boolean          = js.native
+    var polygonOffsetFactor: Double     = js.native
+    var polygonOffsetUnits: Double      = js.native
+    var alphaTest: Double               = js.native
+    var overdraw: Double                = js.native
+    var visible: Boolean                = js.native
+    var needsUpdate: Boolean            = js.native
+  }
+
+  @js.native
+  trait LineBasicMaterialParameters extends MaterialParameters {
+    var color: Double        = js.native
+    var linewidth: Double    = js.native
+    var linecap: String      = js.native
+    var linejoin: String     = js.native
+    var vertexColors: Colors = js.native
+    var fog: Boolean         = js.native
+  }
+
+  @js.native
+  trait LineMaterial extends Material
+
+  @js.native
+  trait LineDashedMaterialParameters extends MaterialParameters {
+    var color: Double        = js.native
+    var linewidth: Double    = js.native
+    var scale: Double        = js.native
+    var dashSize: Double     = js.native
+    var gapSize: Double      = js.native
+    var vertexColors: Colors = js.native
+    var fog: Boolean         = js.native
+  }
+
+  @js.native
+  trait MeshBasicMaterialParameters extends MaterialParameters {
+    var color: Double              = js.native
+    var map: Texture               = js.native
+    var lightMap: Texture          = js.native
+    var specularMap: Texture       = js.native
+    var alphaMap: Texture          = js.native
+    var envMap: Texture            = js.native
+    var combine: Combine           = js.native
+    var reflectivity: Double       = js.native
+    var refractionRatio: Double    = js.native
+    var fog: Boolean               = js.native
+    var shading: Shading           = js.native
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+    var wireframeLinecap: String   = js.native
+    var wireframeLinejoin: String  = js.native
+    var vertexColors: Colors       = js.native
+    var skinning: Boolean          = js.native
+    var morphTargets: Boolean      = js.native
+  }
+
+  @js.native
+  trait MeshDepthMaterialParameters extends MaterialParameters {
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+  }
+
+  @js.native
+  trait MeshLambertMaterialParameters extends MaterialParameters {
+    var color: Double              = js.native
+    var ambient: Double            = js.native
+    var emissive: Double           = js.native
+    var wrapAround: Boolean        = js.native
+    var wrapRGB: Vector3           = js.native
+    var map: Texture               = js.native
+    var lightMap: Texture          = js.native
+    var specularMap: Texture       = js.native
+    var alphaMap: Texture          = js.native
+    var envMap: Texture            = js.native
+    var combine: Combine           = js.native
+    var reflectivity: Double       = js.native
+    var refractionRatio: Double    = js.native
+    var fog: Boolean               = js.native
+    var shading: Shading           = js.native
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+    var wireframeLinecap: String   = js.native
+    var wireframeLinejoin: String  = js.native
+    var vertexColors: Colors       = js.native
+    var skinning: Boolean          = js.native
+    var morphTargets: Boolean      = js.native
+    var morphNormals: Boolean      = js.native
+  }
+
+  @js.native
+  trait MeshNormalMaterialParameters extends MaterialParameters {
+    var shading: Shading           = js.native
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+    var morphTargets: Boolean      = js.native
+  }
+
+  @js.native
+  trait MeshPhongMaterialParameters extends MaterialParameters {
+    var color: Double              = js.native
+    var emissive: Double           = js.native
+    var specular: Double           = js.native
+    var shininess: Double          = js.native
+    var wrapAround: Boolean        = js.native
+    var wrapRGB: Vector3           = js.native
+    var map: Texture               = js.native
+    var lightMap: Texture          = js.native
+    var bumpMap: Texture           = js.native
+    var bumpScale: Double          = js.native
+    var normalMap: Texture         = js.native
+    var normalScale: Vector2       = js.native
+    var specularMap: Texture       = js.native
+    var alphaMap: Texture          = js.native
+    var envMap: Texture            = js.native
+    var combine: Combine           = js.native
+    var reflectivity: Double       = js.native
+    var refractionRatio: Double    = js.native
+    var fog: Boolean               = js.native
+    var shading: Shading           = js.native
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+    var wireframeLinecap: String   = js.native
+    var wireframeLinejoin: String  = js.native
+    var vertexColors: Colors       = js.native
+    var skinning: Boolean          = js.native
+    var morphTargets: Boolean      = js.native
+    var morphNormals: Boolean      = js.native
+  }
+
+  @js.native
+  trait PointsMaterialParameters extends MaterialParameters {
+    var color: Double            = js.native
+    var map: Texture             = js.native
+    var size: Double             = js.native
+    var sizeAttenuation: Boolean = js.native
+    var vertexColors: Colors     = js.native
+    var fog: Boolean             = js.native
+  }
+
+  @js.native
+  trait ShaderMaterialParameters extends MaterialParameters {
+    var defines: js.Any            = js.native
+    var uniforms: js.Any           = js.native
+    var attributes: js.Any         = js.native
+    var vertexShader: String       = js.native
+    var fragmentShader: String     = js.native
+    var shading: Shading           = js.native
+    var linewidth: Double          = js.native
+    var wireframe: Boolean         = js.native
+    var wireframeLinewidth: Double = js.native
+    var fog: Boolean               = js.native
+    var lights: Boolean            = js.native
+    var vertexColors: Colors       = js.native
+    var skinning: Boolean          = js.native
+    var morphTargets: Boolean      = js.native
+    var morphNormals: Boolean      = js.native
+  }
+
+  @js.native
+  trait SpriteCanvasMaterialParameters extends MaterialParameters {
+    var color: Double = js.native
+  }
+
+  @js.native
+  trait SpriteMaterialParameters extends MaterialParameters {
+    var color: Double    = js.native
+    var map: Texture     = js.native
+    var rotation: Double = js.native
+    var fog: Boolean     = js.native
+  }
+
+  @js.native
+  trait HSL extends js.Object {
+    var h: Double = js.native
+    var s: Double = js.native
+    var l: Double = js.native
+  }
+
+  @js.native
+  trait Math extends js.Object {
+    def generateUUID(): String = js.native
+
+    def clamp(x: Double, a: Double, b: Double): Double = js.native
+
+    def mapLinear(x: Double, a1: Double, a2: Double, b1: Double, b2: Double): Double =
+      js.native
+
+    def smoothstep(x: Double, min: Double, max: Double): Double = js.native
+
+    def smootherstep(x: Double, min: Double, max: Double): Double = js.native
+
+    def random16(): Double = js.native
+
+    def randInt(low: Double, high: Double): Double = js.native
+
+    def randFloat(low: Double, high: Double): Double = js.native
+
+    def randFloatSpread(range: Double): Double = js.native
+
+    def sign(x: Double): Double = js.native
+
+    def degToRad(degrees: Double): Double = js.native
+
+    def radToDeg(radians: Double): Double = js.native
+
+    def isPowerOfTwo(value: Double): Boolean = js.native
+  }
+
+  @js.native
+  trait Matrix extends js.Object {
+    var elements: scala.scalajs.js.typedarray.Float32Array = js.native
+
+    def identity(): Matrix = js.native
+
+    def copy(m: Matrix): Matrix = js.native
+
+    def multiplyScalar(s: Double): Matrix = js.native
+
+    def determinant(): Double = js.native
+
+    def getInverse(matrix: Matrix, throwOnInvertible: Boolean = js.native): Matrix =
+      js.native
+
+    def transpose(): Matrix = js.native
+
+    override def clone(): Matrix = js.native
+  }
+
+  @js.native
+  trait SplineControlPoint extends js.Object {
+    var x: Double = js.native
+    var y: Double = js.native
+    var z: Double = js.native
+  }
+
+  @js.native
+  trait Vector extends js.Object {
+    def setComponent(index: Double, value: Double): Unit = js.native
+
+    def getComponent(index: Double): Double = js.native
+
+    def copy(v: Vector): Vector = js.native
+
+    def add(v: Vector): Vector = js.native
+
+    def addVectors(a: Vector, b: Vector): Vector = js.native
+
+    def sub(v: Vector): Vector = js.native
+
+    def subVectors(a: Vector, b: Vector): Vector = js.native
+
+    def multiplyScalar(s: Double): Vector = js.native
+
+    def divideScalar(s: Double): Vector = js.native
+
+    def negate(): Vector = js.native
+
+    def dot(v: Vector): Double = js.native
+
+    def lengthSq(): Double = js.native
+
+    def length(): Double = js.native
+
+    def normalize(): Vector = js.native
+
+    def distanceTo(v: Vector): Double = js.native
+
+    def distanceToSquared(v: Vector): Double = js.native
+
+    def setLength(l: Double): Vector = js.native
+
+    def lerp(v: Vector, alpha: Double): Vector = js.native
+
+    def equals(v: Vector): Boolean = js.native
+
+    override def clone(): Vector = js.native
+  }
+
+  @js.native
+  trait Renderer extends js.Object {
+    var domElement: HTMLCanvasElement = js.native
+    var pixelRatio: Double            = js.native
+
+    def render(scene: Scene, camera: Camera): Unit = js.native
+
+    def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit =
+      js.native
+
+    def getPixelRatio(): Double = js.native
+
+    def setPixelRatio(value: Double): Unit = js.native
+  }
+
+  @js.native
+  trait CanvasRendererParameters extends js.Object {
+    var canvas: HTMLCanvasElement = js.native
+    var pixelRatio: Double        = js.native
+  }
+
+  @js.native
+  trait RendererPlugin extends js.Object {
+    def init(renderer: WebGLRenderer): Unit = js.native
+
+    def render(scene: Scene,
+               camera: Camera,
+               currentWidth: Double,
+               currentHeight: Double): Unit = js.native
+  }
+
+  @js.native
+  trait WebGLRendererParameters extends js.Object {
+    var canvas: HTMLCanvasElement      = js.native
+    var precision: String              = js.native
+    var alpha: Boolean                 = js.native
+    var premultipliedAlpha: Boolean    = js.native
+    var antialias: Boolean             = js.native
+    var stencil: Boolean               = js.native
+    var preserveDrawingBuffer: Boolean = js.native
+    var clearColor: Double             = js.native
+    var clearAlpha: Double             = js.native
+  }
+
+  @js.native
+  trait WebGLRendererShadowMap extends js.Object {
+    var enabled: Boolean        = js.native
+    var autoUpdate: Boolean     = js.native
+    var `type`: ShadowMapType   = js.native
+    var cullFace: CullFace      = js.native
+    var debug: Boolean          = js.native
+    var cascade: Boolean        = js.native
+    var plugin: ShadowMapPlugin = js.native
+  }
+
+  @js.native
+  trait RenderTarget extends js.Object {}
+
+  @js.native
+  trait WebGLRenderTargetOptions extends js.Object {
+    var wrapS: Wrapping          = js.native
+    var wrapT: Wrapping          = js.native
+    var magFilter: TextureFilter = js.native
+    var minFilter: TextureFilter = js.native
+    var anisotropy: Double       = js.native
+    var format: Double           = js.native
+    var `type`: TextureDataType  = js.native
+    var depthBuffer: Boolean     = js.native
+    var stencilBuffer: Boolean   = js.native
+  }
+
+  @js.native
+  trait ShaderChunk extends js.Object {
+    var alphamap_fragment: String          = js.native
+    var alphamap_pars_fragment: String     = js.native
+    var alphatest_fragment: String         = js.native
+    var bumpmap_pars_fragment: String      = js.native
+    var color_fragment: String             = js.native
+    var color_pars_fragment: String        = js.native
+    var color_pars_vertex: String          = js.native
+    var color_vertex: String               = js.native
+    var default_vertex: String             = js.native
+    var defaultnormal_vertex: String       = js.native
+    var envmap_fragment: String            = js.native
+    var envmap_pars_fragment: String       = js.native
+    var envmap_pars_vertex: String         = js.native
+    var envmap_vertex: String              = js.native
+    var fog_fragment: String               = js.native
+    var fog_pars_fragment: String          = js.native
+    var lightmap_fragment: String          = js.native
+    var lightmap_pars_fragment: String     = js.native
+    var lightmap_pars_vertex: String       = js.native
+    var lightmap_vertex: String            = js.native
+    var lights_lambert_pars_vertex: String = js.native
+    var lights_lambert_vertex: String      = js.native
+    var lights_phong_fragment: String      = js.native
+    var lights_phong_pars_fragment: String = js.native
+    var lights_phong_pars_vertex: String   = js.native
+    var lights_phong_vertex: String        = js.native
+    var linear_to_gamma_fragment: String   = js.native
+    var logdepthbuf_fragment: String       = js.native
+    var logdepthbuf_pars_fragment: String  = js.native
+    var logdepthbuf_pars_vertex: String    = js.native
+    var logdepthbuf_vertex: String         = js.native
+    var map_fragment: String               = js.native
+    var map_pars_fragment: String          = js.native
+    var map_pars_vertex: String            = js.native
+    var map_particle_fragment: String      = js.native
+    var map_particle_pars_fragment: String = js.native
+    var map_vertex: String                 = js.native
+    var morphnormal_vertex: String         = js.native
+    var morphtarget_pars_vertex: String    = js.native
+    var morphtarget_vertex: String         = js.native
+    var normalmap_pars_fragment: String    = js.native
+    var shadowmap_fragment: String         = js.native
+    var shadowmap_pars_fragment: String    = js.native
+    var shadowmap_pars_vertex: String      = js.native
+    var shadowmap_vertex: String           = js.native
+    var skinbase_vertex: String            = js.native
+    var skinning_pars_vertex: String       = js.native
+    var skinning_vertex: String            = js.native
+    var skinnormal_vertex: String          = js.native
+    var specularmap_fragment: String       = js.native
+    var specularmap_pars_fragment: String  = js.native
+    var worldpos_vertex: String            = js.native
+
+    @JSBracketAccess
+    def apply(name: String): String = js.native
+
+    @JSBracketAccess
+    def update(name: String, v: String): Unit = js.native
+  }
+
+  @js.native
+  trait Shader extends js.Object {
+    var uniforms: js.Any       = js.native
+    var vertexShader: String   = js.native
+    var fragmentShader: String = js.native
+  }
+
+  @js.native
+  trait IFog extends js.Object {
+    var name: String = js.native
+    var color: Color = js.native
+
+    override def clone(): IFog = js.native
+  }
+
+  @js.native
+  trait TypefaceData extends js.Object {
+    var familyName: String    = js.native
+    var cssFontWeight: String = js.native
+    var cssFontStyle: String  = js.native
+  }
+
+  @js.native
+  trait KeyFrame extends js.Object {
+    var pos: js.Array[Double] = js.native
+    var rot: js.Array[Double] = js.native
+    var scl: js.Array[Double] = js.native
+    var time: Double          = js.native
+  }
+
+  @js.native
+  trait KeyFrames extends js.Object {
+    var keys: js.Array[KeyFrame] = js.native
+    var parent: Double           = js.native
+  }
+
+  @js.native
+  trait AnimationData extends js.Object {
+    var JIT: Double                    = js.native
+    var fps: Double                    = js.native
+    var hierarchy: js.Array[KeyFrames] = js.native
+    var length: Double                 = js.native
+    var name: String                   = js.native
+  }
+
+  @js.native
+  trait BoundingBox extends js.Object {
+    var minX: Double     = js.native
+    var minY: Double     = js.native
+    var maxX: Double     = js.native
+    var maxY: Double     = js.native
+    var centroid: Vector = js.native
+  }
+
+  @js.native
+  trait PathAction extends js.Object {
+    var action: PathActions = js.native
+    var args: js.Any        = js.native
+  }
+
+  @js.native
+  trait TextGeometryParameters extends js.Object {
+    var size: Double           = js.native
+    var height: Double         = js.native
+    var curveSegments: Double  = js.native
+    var font: String           = js.native
+    var weight: String         = js.native
+    var style: String          = js.native
+    var bevelEnabled: Boolean  = js.native
+    var bevelThickness: Double = js.native
+    var bevelSize: Double      = js.native
+  }
+
+  @js.native
+  trait LensFlareProperty extends js.Object {
+    var texture: Texture   = js.native
+    var size: Double       = js.native
+    var distance: Double   = js.native
+    var x: Double          = js.native
+    var y: Double          = js.native
+    var z: Double          = js.native
+    var scale: Double      = js.native
+    var rotation: Double   = js.native
+    var opacity: Double    = js.native
+    var color: Color       = js.native
+    var blending: Blending = js.native
+  }
+
+  @js.native
+  trait MorphBlendMeshAnimation extends js.Object {
+    var startFrame: Double          = js.native
+    var endFrame: Double            = js.native
+    var length: Double              = js.native
+    var fps: Double                 = js.native
+    var duration: Double            = js.native
+    var lastFrame: Double           = js.native
+    var currentFrame: Double        = js.native
+    var active: Boolean             = js.native
+    var time: Double                = js.native
+    var direction: Double           = js.native
+    var weight: Double              = js.native
+    var directionBackwards: Boolean = js.native
+    var mirroredLoop: Boolean       = js.native
+  }
 
   @js.native
   class Camera extends Object3D {
@@ -427,35 +1029,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait MorphTarget extends js.Object {
-    var name: String                = js.native
-    var vertices: js.Array[Vector3] = js.native
-  }
-
-  @js.native
-  trait MorphColor extends js.Object {
-    var name: String            = js.native
-    var colors: js.Array[Color] = js.native
-  }
-
-  @js.native
-  trait MorphNormals extends js.Object {
-    var name: String               = js.native
-    var normals: js.Array[Vector3] = js.native
-  }
-
-  @js.native
-  trait BoundingBox3D extends js.Object {
-    var min: Vector3 = js.native
-    var max: Vector3 = js.native
-  }
-
-  @js.native
-  trait BoundingSphere extends js.Object {
-    var radius: Double = js.native
-  }
-
-  @js.native
   class Geometry extends js.Object {
     var id: Double                                           = js.native
     var uuid: String                                         = js.native
@@ -618,28 +1191,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  object Object3D extends js.Object {
-    var DefaultUp: Vector3 = js.native
-  }
-
-  @js.native
-  trait Intersection extends js.Object {
-    var distance: Double   = js.native
-    var point: Vector3     = js.native
-    var face: Face3        = js.native
-    var `object`: Object3D = js.native
-  }
-
-  @js.native
-  trait RaycasterParameters extends js.Object {
-    var Sprite: js.Any = js.native
-    var Mesh: js.Any   = js.native
-    var Points: js.Any = js.native
-    var LOD: js.Any    = js.native
-    var Line: js.Any   = js.native
-  }
-
-  @js.native
   class Raycaster extends js.Object {
     var ray: Ray                    = js.native
     var near: Double                = js.native
@@ -784,12 +1335,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait Progress extends js.Object {
-    var total: Double  = js.native
-    var loaded: Double = js.native
-  }
-
-  @js.native
   class Loader extends js.Object {
     var showStatus: Boolean                = js.native
     var statusDomElement: HTMLElement      = js.native
@@ -809,20 +1354,6 @@ object THREE extends js.Object {
     def needsTangents(materials: js.Array[Material]): Boolean = js.native
 
     def createMaterial(m: Material, texturePath: String): Boolean = js.native
-  }
-
-  @js.native
-  object Loader extends js.Object {
-    var Handlers: LoaderHandler = js.native
-  }
-
-  @js.native
-  trait LoaderHandler extends js.Object {
-    var handlers: js.Array[js.Any] = js.native
-
-    def add(regex: String, loader: Loader): Unit = js.native
-
-    def get(file: String): Loader = js.native
   }
 
   @js.native
@@ -885,11 +1416,6 @@ object THREE extends js.Object {
       js.native
 
     def parse(json: String, texturePath: String): js.Dynamic = js.native
-  }
-
-  @js.native
-  trait JSonLoaderResultGeometry extends Geometry {
-    var animation: AnimationData = js.native
   }
 
   @js.native
@@ -966,27 +1492,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait MaterialParameters extends js.Object {
-    var name: String                    = js.native
-    var side: Side                      = js.native
-    var opacity: Double                 = js.native
-    var transparent: Boolean            = js.native
-    var blending: Blending              = js.native
-    var blendSrc: BlendingDstFactor     = js.native
-    var blendDst: BlendingSrcFactor     = js.native
-    var blendEquation: BlendingEquation = js.native
-    var depthTest: Boolean              = js.native
-    var depthWrite: Boolean             = js.native
-    var polygonOffset: Boolean          = js.native
-    var polygonOffsetFactor: Double     = js.native
-    var polygonOffsetUnits: Double      = js.native
-    var alphaTest: Double               = js.native
-    var overdraw: Double                = js.native
-    var visible: Boolean                = js.native
-    var needsUpdate: Boolean            = js.native
-  }
-
-  @js.native
   class Material extends js.Object {
     var id: Double                      = js.native
     var uuid: String                    = js.native
@@ -1027,19 +1532,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait LineBasicMaterialParameters extends MaterialParameters {
-    var color: Double        = js.native
-    var linewidth: Double    = js.native
-    var linecap: String      = js.native
-    var linejoin: String     = js.native
-    var vertexColors: Colors = js.native
-    var fog: Boolean         = js.native
-  }
-
-  @js.native
-  trait LineMaterial extends Material
-
-  @js.native
   class LineBasicMaterial extends LineMaterial {
     var color: Color         = js.native
     var linewidth: Double    = js.native
@@ -1051,17 +1543,6 @@ object THREE extends js.Object {
     def this(parameters: LineBasicMaterialParameters = js.native) = this()
 
     override def clone(): LineBasicMaterial = js.native
-  }
-
-  @js.native
-  trait LineDashedMaterialParameters extends MaterialParameters {
-    var color: Double        = js.native
-    var linewidth: Double    = js.native
-    var scale: Double        = js.native
-    var dashSize: Double     = js.native
-    var gapSize: Double      = js.native
-    var vertexColors: Colors = js.native
-    var fog: Boolean         = js.native
   }
 
   @js.native
@@ -1077,28 +1558,6 @@ object THREE extends js.Object {
     def this(parameters: LineDashedMaterialParameters = js.native) = this()
 
     override def clone(): LineDashedMaterial = js.native
-  }
-
-  @js.native
-  trait MeshBasicMaterialParameters extends MaterialParameters {
-    var color: Double              = js.native
-    var map: Texture               = js.native
-    var lightMap: Texture          = js.native
-    var specularMap: Texture       = js.native
-    var alphaMap: Texture          = js.native
-    var envMap: Texture            = js.native
-    var combine: Combine           = js.native
-    var reflectivity: Double       = js.native
-    var refractionRatio: Double    = js.native
-    var fog: Boolean               = js.native
-    var shading: Shading           = js.native
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-    var wireframeLinecap: String   = js.native
-    var wireframeLinejoin: String  = js.native
-    var vertexColors: Colors       = js.native
-    var skinning: Boolean          = js.native
-    var morphTargets: Boolean      = js.native
   }
 
   @js.native
@@ -1128,12 +1587,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait MeshDepthMaterialParameters extends MaterialParameters {
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-  }
-
-  @js.native
   class MeshDepthMaterial extends Material {
     var wireframe: Boolean         = js.native
     var wireframeLinewidth: Double = js.native
@@ -1150,33 +1603,6 @@ object THREE extends js.Object {
     def this(materials: js.Array[Material] = js.native) = this()
 
     override def clone(): MeshFaceMaterial = js.native
-  }
-
-  @js.native
-  trait MeshLambertMaterialParameters extends MaterialParameters {
-    var color: Double              = js.native
-    var ambient: Double            = js.native
-    var emissive: Double           = js.native
-    var wrapAround: Boolean        = js.native
-    var wrapRGB: Vector3           = js.native
-    var map: Texture               = js.native
-    var lightMap: Texture          = js.native
-    var specularMap: Texture       = js.native
-    var alphaMap: Texture          = js.native
-    var envMap: Texture            = js.native
-    var combine: Combine           = js.native
-    var reflectivity: Double       = js.native
-    var refractionRatio: Double    = js.native
-    var fog: Boolean               = js.native
-    var shading: Shading           = js.native
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-    var wireframeLinecap: String   = js.native
-    var wireframeLinejoin: String  = js.native
-    var vertexColors: Colors       = js.native
-    var skinning: Boolean          = js.native
-    var morphTargets: Boolean      = js.native
-    var morphNormals: Boolean      = js.native
   }
 
   @js.native
@@ -1211,14 +1637,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait MeshNormalMaterialParameters extends MaterialParameters {
-    var shading: Shading           = js.native
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-    var morphTargets: Boolean      = js.native
-  }
-
-  @js.native
   class MeshNormalMaterial extends Material {
     var shading: Shading           = js.native
     var wireframe: Boolean         = js.native
@@ -1228,38 +1646,6 @@ object THREE extends js.Object {
     def this(parameters: MeshNormalMaterialParameters = js.native) = this()
 
     override def clone(): MeshNormalMaterial = js.native
-  }
-
-  @js.native
-  trait MeshPhongMaterialParameters extends MaterialParameters {
-    var color: Double              = js.native
-    var emissive: Double           = js.native
-    var specular: Double           = js.native
-    var shininess: Double          = js.native
-    var wrapAround: Boolean        = js.native
-    var wrapRGB: Vector3           = js.native
-    var map: Texture               = js.native
-    var lightMap: Texture          = js.native
-    var bumpMap: Texture           = js.native
-    var bumpScale: Double          = js.native
-    var normalMap: Texture         = js.native
-    var normalScale: Vector2       = js.native
-    var specularMap: Texture       = js.native
-    var alphaMap: Texture          = js.native
-    var envMap: Texture            = js.native
-    var combine: Combine           = js.native
-    var reflectivity: Double       = js.native
-    var refractionRatio: Double    = js.native
-    var fog: Boolean               = js.native
-    var shading: Shading           = js.native
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-    var wireframeLinecap: String   = js.native
-    var wireframeLinejoin: String  = js.native
-    var vertexColors: Colors       = js.native
-    var skinning: Boolean          = js.native
-    var morphTargets: Boolean      = js.native
-    var morphNormals: Boolean      = js.native
   }
 
   @js.native
@@ -1299,16 +1685,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait PointsMaterialParameters extends MaterialParameters {
-    var color: Double            = js.native
-    var map: Texture             = js.native
-    var size: Double             = js.native
-    var sizeAttenuation: Boolean = js.native
-    var vertexColors: Colors     = js.native
-    var fog: Boolean             = js.native
-  }
-
-  @js.native
   class PointsMaterial extends Material {
     var color: Color             = js.native
     var map: Texture             = js.native
@@ -1331,25 +1707,6 @@ object THREE extends js.Object {
   @js.native
   class RawShaderMaterial extends ShaderMaterial {
     def this(parameters: ShaderMaterialParameters = js.native) = this()
-  }
-
-  @js.native
-  trait ShaderMaterialParameters extends MaterialParameters {
-    var defines: js.Any            = js.native
-    var uniforms: js.Any           = js.native
-    var attributes: js.Any         = js.native
-    var vertexShader: String       = js.native
-    var fragmentShader: String     = js.native
-    var shading: Shading           = js.native
-    var linewidth: Double          = js.native
-    var wireframe: Boolean         = js.native
-    var wireframeLinewidth: Double = js.native
-    var fog: Boolean               = js.native
-    var lights: Boolean            = js.native
-    var vertexColors: Colors       = js.native
-    var skinning: Boolean          = js.native
-    var morphTargets: Boolean      = js.native
-    var morphNormals: Boolean      = js.native
   }
 
   @js.native
@@ -1376,11 +1733,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait SpriteCanvasMaterialParameters extends MaterialParameters {
-    var color: Double = js.native
-  }
-
-  @js.native
   class SpriteCanvasMaterial extends Material {
     var color: Color = js.native
 
@@ -1389,14 +1741,6 @@ object THREE extends js.Object {
     def program(context: js.Any, color: Color): Unit = js.native
 
     override def clone(): SpriteCanvasMaterial = js.native
-  }
-
-  @js.native
-  trait SpriteMaterialParameters extends MaterialParameters {
-    var color: Double    = js.native
-    var map: Texture     = js.native
-    var rotation: Double = js.native
-    var fog: Boolean     = js.native
   }
 
   @js.native
@@ -1524,13 +1868,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait HSL extends js.Object {
-    var h: Double = js.native
-    var s: Double = js.native
-    var l: Double = js.native
-  }
-
-  @js.native
   class Color extends js.Object {
     var r: Double = js.native
     var g: Double = js.native
@@ -1595,157 +1932,6 @@ object THREE extends js.Object {
 
   @js.native
   class ColorKeywords extends js.Object {}
-
-  @js.native
-  object ColorKeywords extends js.Object {
-    var aliceblue: Double            = js.native
-    var antiquewhite: Double         = js.native
-    var aqua: Double                 = js.native
-    var aquamarine: Double           = js.native
-    var azure: Double                = js.native
-    var beige: Double                = js.native
-    var bisque: Double               = js.native
-    var black: Double                = js.native
-    var blanchedalmond: Double       = js.native
-    var blue: Double                 = js.native
-    var blueviolet: Double           = js.native
-    var brown: Double                = js.native
-    var burlywood: Double            = js.native
-    var cadetblue: Double            = js.native
-    var chartreuse: Double           = js.native
-    var chocolate: Double            = js.native
-    var coral: Double                = js.native
-    var cornflowerblue: Double       = js.native
-    var cornsilk: Double             = js.native
-    var crimson: Double              = js.native
-    var cyan: Double                 = js.native
-    var darkblue: Double             = js.native
-    var darkcyan: Double             = js.native
-    var darkgoldenrod: Double        = js.native
-    var darkgray: Double             = js.native
-    var darkgreen: Double            = js.native
-    var darkgrey: Double             = js.native
-    var darkkhaki: Double            = js.native
-    var darkmagenta: Double          = js.native
-    var darkolivegreen: Double       = js.native
-    var darkorange: Double           = js.native
-    var darkorchid: Double           = js.native
-    var darkred: Double              = js.native
-    var darksalmon: Double           = js.native
-    var darkseagreen: Double         = js.native
-    var darkslateblue: Double        = js.native
-    var darkslategray: Double        = js.native
-    var darkslategrey: Double        = js.native
-    var darkturquoise: Double        = js.native
-    var darkviolet: Double           = js.native
-    var deeppink: Double             = js.native
-    var deepskyblue: Double          = js.native
-    var dimgray: Double              = js.native
-    var dimgrey: Double              = js.native
-    var dodgerblue: Double           = js.native
-    var firebrick: Double            = js.native
-    var floralwhite: Double          = js.native
-    var forestgreen: Double          = js.native
-    var fuchsia: Double              = js.native
-    var gainsboro: Double            = js.native
-    var ghostwhite: Double           = js.native
-    var gold: Double                 = js.native
-    var goldenrod: Double            = js.native
-    var gray: Double                 = js.native
-    var green: Double                = js.native
-    var greenyellow: Double          = js.native
-    var grey: Double                 = js.native
-    var honeydew: Double             = js.native
-    var hotpink: Double              = js.native
-    var indianred: Double            = js.native
-    var indigo: Double               = js.native
-    var ivory: Double                = js.native
-    var khaki: Double                = js.native
-    var lavender: Double             = js.native
-    var lavenderblush: Double        = js.native
-    var lawngreen: Double            = js.native
-    var lemonchiffon: Double         = js.native
-    var lightblue: Double            = js.native
-    var lightcoral: Double           = js.native
-    var lightcyan: Double            = js.native
-    var lightgoldenrodyellow: Double = js.native
-    var lightgray: Double            = js.native
-    var lightgreen: Double           = js.native
-    var lightgrey: Double            = js.native
-    var lightpink: Double            = js.native
-    var lightsalmon: Double          = js.native
-    var lightseagreen: Double        = js.native
-    var lightskyblue: Double         = js.native
-    var lightslategray: Double       = js.native
-    var lightslategrey: Double       = js.native
-    var lightsteelblue: Double       = js.native
-    var lightyellow: Double          = js.native
-    var lime: Double                 = js.native
-    var limegreen: Double            = js.native
-    var linen: Double                = js.native
-    var magenta: Double              = js.native
-    var maroon: Double               = js.native
-    var mediumaquamarine: Double     = js.native
-    var mediumblue: Double           = js.native
-    var mediumorchid: Double         = js.native
-    var mediumpurple: Double         = js.native
-    var mediumseagreen: Double       = js.native
-    var mediumslateblue: Double      = js.native
-    var mediumspringgreen: Double    = js.native
-    var mediumturquoise: Double      = js.native
-    var mediumvioletred: Double      = js.native
-    var midnightblue: Double         = js.native
-    var mintcream: Double            = js.native
-    var mistyrose: Double            = js.native
-    var moccasin: Double             = js.native
-    var navajowhite: Double          = js.native
-    var navy: Double                 = js.native
-    var oldlace: Double              = js.native
-    var olive: Double                = js.native
-    var olivedrab: Double            = js.native
-    var orange: Double               = js.native
-    var orangered: Double            = js.native
-    var orchid: Double               = js.native
-    var palegoldenrod: Double        = js.native
-    var palegreen: Double            = js.native
-    var paleturquoise: Double        = js.native
-    var palevioletred: Double        = js.native
-    var papayawhip: Double           = js.native
-    var peachpuff: Double            = js.native
-    var peru: Double                 = js.native
-    var pink: Double                 = js.native
-    var plum: Double                 = js.native
-    var powderblue: Double           = js.native
-    var purple: Double               = js.native
-    var red: Double                  = js.native
-    var rosybrown: Double            = js.native
-    var royalblue: Double            = js.native
-    var saddlebrown: Double          = js.native
-    var salmon: Double               = js.native
-    var sandybrown: Double           = js.native
-    var seagreen: Double             = js.native
-    var seashell: Double             = js.native
-    var sienna: Double               = js.native
-    var silver: Double               = js.native
-    var skyblue: Double              = js.native
-    var slateblue: Double            = js.native
-    var slategray: Double            = js.native
-    var slategrey: Double            = js.native
-    var snow: Double                 = js.native
-    var springgreen: Double          = js.native
-    var steelblue: Double            = js.native
-    var tan: Double                  = js.native
-    var teal: Double                 = js.native
-    var thistle: Double              = js.native
-    var tomato: Double               = js.native
-    var turquoise: Double            = js.native
-    var violet: Double               = js.native
-    var wheat: Double                = js.native
-    var white: Double                = js.native
-    var whitesmoke: Double           = js.native
-    var yellow: Double               = js.native
-    var yellowgreen: Double          = js.native
-  }
 
   @js.native
   class Euler extends js.Object {
@@ -1849,56 +2035,6 @@ object THREE extends js.Object {
     def equals(line: Line3): Boolean = js.native
 
     override def clone(): Line3 = js.native
-  }
-
-  @js.native
-  trait Math extends js.Object {
-    def generateUUID(): String = js.native
-
-    def clamp(x: Double, a: Double, b: Double): Double = js.native
-
-    def mapLinear(x: Double, a1: Double, a2: Double, b1: Double, b2: Double): Double =
-      js.native
-
-    def smoothstep(x: Double, min: Double, max: Double): Double = js.native
-
-    def smootherstep(x: Double, min: Double, max: Double): Double = js.native
-
-    def random16(): Double = js.native
-
-    def randInt(low: Double, high: Double): Double = js.native
-
-    def randFloat(low: Double, high: Double): Double = js.native
-
-    def randFloatSpread(range: Double): Double = js.native
-
-    def sign(x: Double): Double = js.native
-
-    def degToRad(degrees: Double): Double = js.native
-
-    def radToDeg(radians: Double): Double = js.native
-
-    def isPowerOfTwo(value: Double): Boolean = js.native
-  }
-
-  @js.native
-  trait Matrix extends js.Object {
-    var elements: scala.scalajs.js.typedarray.Float32Array = js.native
-
-    def identity(): Matrix = js.native
-
-    def copy(m: Matrix): Matrix = js.native
-
-    def multiplyScalar(s: Double): Matrix = js.native
-
-    def determinant(): Double = js.native
-
-    def getInverse(matrix: Matrix, throwOnInvertible: Boolean = js.native): Matrix =
-      js.native
-
-    def transpose(): Matrix = js.native
-
-    override def clone(): Matrix = js.native
   }
 
   @js.native
@@ -2183,12 +2319,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  object Quaternion extends js.Object {
-    def slerp(qa: Quaternion, qb: Quaternion, qm: Quaternion, t: Double): Quaternion =
-      js.native
-  }
-
-  @js.native
   class Ray extends js.Object {
     var origin: Vector3    = js.native
     var direction: Vector3 = js.native
@@ -2281,13 +2411,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait SplineControlPoint extends js.Object {
-    var x: Double = js.native
-    var y: Double = js.native
-    var z: Double = js.native
-  }
-
-  @js.native
   class Spline extends js.Object {
     var points: js.Array[SplineControlPoint] = js.native
 
@@ -2339,66 +2462,6 @@ object THREE extends js.Object {
     def equals(triangle: Triangle): Boolean = js.native
 
     override def clone(): Triangle = js.native
-  }
-
-  @js.native
-  object Triangle extends js.Object {
-    def normal(a: Vector3,
-               b: Vector3,
-               c: Vector3,
-               optionalTarget: Vector3 = js.native): Vector3 = js.native
-
-    def barycoordFromPoint(point: Vector3,
-                           a: Vector3,
-                           b: Vector3,
-                           c: Vector3,
-                           optionalTarget: Vector3): Vector3 = js.native
-
-    def containsPoint(point: Vector3, a: Vector3, b: Vector3, c: Vector3): Boolean =
-      js.native
-  }
-
-  @js.native
-  trait Vector extends js.Object {
-    def setComponent(index: Double, value: Double): Unit = js.native
-
-    def getComponent(index: Double): Double = js.native
-
-    def copy(v: Vector): Vector = js.native
-
-    def add(v: Vector): Vector = js.native
-
-    def addVectors(a: Vector, b: Vector): Vector = js.native
-
-    def sub(v: Vector): Vector = js.native
-
-    def subVectors(a: Vector, b: Vector): Vector = js.native
-
-    def multiplyScalar(s: Double): Vector = js.native
-
-    def divideScalar(s: Double): Vector = js.native
-
-    def negate(): Vector = js.native
-
-    def dot(v: Vector): Double = js.native
-
-    def lengthSq(): Double = js.native
-
-    def length(): Double = js.native
-
-    def normalize(): Vector = js.native
-
-    def distanceTo(v: Vector): Double = js.native
-
-    def distanceToSquared(v: Vector): Double = js.native
-
-    def setLength(l: Double): Vector = js.native
-
-    def lerp(v: Vector, alpha: Double): Vector = js.native
-
-    def equals(v: Vector): Boolean = js.native
-
-    override def clone(): Vector = js.native
   }
 
   @js.native
@@ -2725,15 +2788,6 @@ object THREE extends js.Object {
   class LineSegments extends Line {}
 
   @js.native
-  sealed trait LineType extends js.Object {}
-
-  @js.native
-  object LineType extends js.Object {
-    @JSBracketAccess
-    def apply(value: LineType): String = js.native
-  }
-
-  @js.native
   class LOD extends Object3D {
     var objects: js.Array[js.Any] = js.native
 
@@ -2870,27 +2924,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait Renderer extends js.Object {
-    var domElement: HTMLCanvasElement = js.native
-    var pixelRatio: Double            = js.native
-
-    def render(scene: Scene, camera: Camera): Unit = js.native
-
-    def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit =
-      js.native
-
-    def getPixelRatio(): Double = js.native
-
-    def setPixelRatio(value: Double): Unit = js.native
-  }
-
-  @js.native
-  trait CanvasRendererParameters extends js.Object {
-    var canvas: HTMLCanvasElement = js.native
-    var pixelRatio: Double        = js.native
-  }
-
-  @js.native
   class CanvasRenderer extends Renderer {
     var autoClear: Boolean    = js.native
     var sortObjects: Boolean  = js.native
@@ -2933,40 +2966,6 @@ object THREE extends js.Object {
     def clearStencil(): Unit = js.native
 
     override def render(scene: Scene, camera: Camera): Unit = js.native
-  }
-
-  @js.native
-  trait RendererPlugin extends js.Object {
-    def init(renderer: WebGLRenderer): Unit = js.native
-
-    def render(scene: Scene,
-               camera: Camera,
-               currentWidth: Double,
-               currentHeight: Double): Unit = js.native
-  }
-
-  @js.native
-  trait WebGLRendererParameters extends js.Object {
-    var canvas: HTMLCanvasElement      = js.native
-    var precision: String              = js.native
-    var alpha: Boolean                 = js.native
-    var premultipliedAlpha: Boolean    = js.native
-    var antialias: Boolean             = js.native
-    var stencil: Boolean               = js.native
-    var preserveDrawingBuffer: Boolean = js.native
-    var clearColor: Double             = js.native
-    var clearAlpha: Double             = js.native
-  }
-
-  @js.native
-  trait WebGLRendererShadowMap extends js.Object {
-    var enabled: Boolean        = js.native
-    var autoUpdate: Boolean     = js.native
-    var `type`: ShadowMapType   = js.native
-    var cullFace: CullFace      = js.native
-    var debug: Boolean          = js.native
-    var cascade: Boolean        = js.native
-    var plugin: ShadowMapPlugin = js.native
   }
 
   @js.native
@@ -3094,22 +3093,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait RenderTarget extends js.Object {}
-
-  @js.native
-  trait WebGLRenderTargetOptions extends js.Object {
-    var wrapS: Wrapping          = js.native
-    var wrapT: Wrapping          = js.native
-    var magFilter: TextureFilter = js.native
-    var minFilter: TextureFilter = js.native
-    var anisotropy: Double       = js.native
-    var format: Double           = js.native
-    var `type`: TextureDataType  = js.native
-    var depthBuffer: Boolean     = js.native
-    var stencilBuffer: Boolean   = js.native
-  }
-
-  @js.native
   class WebGLRenderTarget extends RenderTarget {
     var width: Double            = js.native
     var height: Double           = js.native
@@ -3210,113 +3193,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait ShaderChunk extends js.Object {
-    var alphamap_fragment: String          = js.native
-    var alphamap_pars_fragment: String     = js.native
-    var alphatest_fragment: String         = js.native
-    var bumpmap_pars_fragment: String      = js.native
-    var color_fragment: String             = js.native
-    var color_pars_fragment: String        = js.native
-    var color_pars_vertex: String          = js.native
-    var color_vertex: String               = js.native
-    var default_vertex: String             = js.native
-    var defaultnormal_vertex: String       = js.native
-    var envmap_fragment: String            = js.native
-    var envmap_pars_fragment: String       = js.native
-    var envmap_pars_vertex: String         = js.native
-    var envmap_vertex: String              = js.native
-    var fog_fragment: String               = js.native
-    var fog_pars_fragment: String          = js.native
-    var lightmap_fragment: String          = js.native
-    var lightmap_pars_fragment: String     = js.native
-    var lightmap_pars_vertex: String       = js.native
-    var lightmap_vertex: String            = js.native
-    var lights_lambert_pars_vertex: String = js.native
-    var lights_lambert_vertex: String      = js.native
-    var lights_phong_fragment: String      = js.native
-    var lights_phong_pars_fragment: String = js.native
-    var lights_phong_pars_vertex: String   = js.native
-    var lights_phong_vertex: String        = js.native
-    var linear_to_gamma_fragment: String   = js.native
-    var logdepthbuf_fragment: String       = js.native
-    var logdepthbuf_pars_fragment: String  = js.native
-    var logdepthbuf_pars_vertex: String    = js.native
-    var logdepthbuf_vertex: String         = js.native
-    var map_fragment: String               = js.native
-    var map_pars_fragment: String          = js.native
-    var map_pars_vertex: String            = js.native
-    var map_particle_fragment: String      = js.native
-    var map_particle_pars_fragment: String = js.native
-    var map_vertex: String                 = js.native
-    var morphnormal_vertex: String         = js.native
-    var morphtarget_pars_vertex: String    = js.native
-    var morphtarget_vertex: String         = js.native
-    var normalmap_pars_fragment: String    = js.native
-    var shadowmap_fragment: String         = js.native
-    var shadowmap_pars_fragment: String    = js.native
-    var shadowmap_pars_vertex: String      = js.native
-    var shadowmap_vertex: String           = js.native
-    var skinbase_vertex: String            = js.native
-    var skinning_pars_vertex: String       = js.native
-    var skinning_vertex: String            = js.native
-    var skinnormal_vertex: String          = js.native
-    var specularmap_fragment: String       = js.native
-    var specularmap_pars_fragment: String  = js.native
-    var worldpos_vertex: String            = js.native
-
-    @JSBracketAccess
-    def apply(name: String): String = js.native
-
-    @JSBracketAccess
-    def update(name: String, v: String): Unit = js.native
-  }
-
-  @js.native
-  trait Shader extends js.Object {
-    var uniforms: js.Any       = js.native
-    var vertexShader: String   = js.native
-    var fragmentShader: String = js.native
-  }
-
-  @js.native
-  object ShaderLib extends js.Object {
-    var basic: Shader          = js.native
-    var lambert: Shader        = js.native
-    var phong: Shader          = js.native
-    var particle_basic: Shader = js.native
-    var dashed: Shader         = js.native
-    var depth: Shader          = js.native
-    var normal: Shader         = js.native
-    var normalmap: Shader      = js.native
-    var cube: Shader           = js.native
-    var depthRGBA: Shader      = js.native
-
-    @JSBracketAccess
-    def apply(name: String): Shader = js.native
-
-    @JSBracketAccess
-    def update(name: String, v: Shader): Unit = js.native
-  }
-
-  @js.native
-  object UniformsLib extends js.Object {
-    var common: js.Any    = js.native
-    var bump: js.Any      = js.native
-    var normalmap: js.Any = js.native
-    var fog: js.Any       = js.native
-    var lights: js.Any    = js.native
-    var particle: js.Any  = js.native
-    var shadowmap: js.Any = js.native
-  }
-
-  @js.native
-  object UniformsUtils extends js.Object {
-    def merge(uniforms: js.Array[js.Any]): js.Dynamic = js.native
-
-    def clone(uniforms_src: js.Any): js.Dynamic = js.native
-  }
-
-  @js.native
   class WebGLProgram extends js.Object {
     def this(renderer: WebGLRenderer,
              code: String,
@@ -3327,14 +3203,6 @@ object THREE extends js.Object {
   @js.native
   class WebGLShader extends js.Object {
     def this(gl: js.Any, `type`: String, string: String) = this()
-  }
-
-  @js.native
-  trait IFog extends js.Object {
-    var name: String = js.native
-    var color: Color = js.native
-
-    override def clone(): IFog = js.native
   }
 
   @js.native
@@ -3468,83 +3336,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  object Texture extends js.Object {
-    var DEFAULT_IMAGE: js.Any   = js.native
-    var DEFAULT_MAPPING: js.Any = js.native
-  }
-
-  @js.native
-  trait TypefaceData extends js.Object {
-    var familyName: String    = js.native
-    var cssFontWeight: String = js.native
-    var cssFontStyle: String  = js.native
-  }
-
-  @js.native
-  object GeometryUtils extends js.Object {
-    def merge(geometry1: Geometry,
-              object2: Mesh,
-              materialIndexOffset: Double = js.native): Unit = js.native
-
-    def center(geometry: Geometry): Vector3 = js.native
-  }
-
-  @js.native
-  object ImageUtils extends js.Object {
-    var crossOrigin: String = js.native
-
-    def loadTexture(url: String,
-                    mapping: Mapping = js.native,
-                    onLoad: js.Function1[Texture, Unit] = js.native,
-                    onError: js.Function1[String, Unit] = js.native): Texture = js.native
-
-    def loadTextureCube(array: js.Array[String],
-                        mapping: Mapping = js.native,
-                        onLoad: js.Function1[Texture, Unit] = js.native,
-                        onError: js.Function1[String, Unit] = js.native): Texture =
-      js.native
-
-    def getNormalMap(image: HTMLImageElement,
-                     depth: Double = js.native): HTMLCanvasElement = js.native
-
-    def generateDataTexture(width: Double, height: Double, color: Color): DataTexture =
-      js.native
-  }
-
-  @js.native
-  object SceneUtils extends js.Object {
-    def createMultiMaterialObject(geometry: Geometry,
-                                  materials: js.Array[Material]): Object3D = js.native
-
-    def detach(child: Object3D, parent: Object3D, scene: Scene): Unit = js.native
-
-    def attach(child: Object3D, scene: Scene, parent: Object3D): Unit = js.native
-  }
-
-  @js.native
-  trait KeyFrame extends js.Object {
-    var pos: js.Array[Double] = js.native
-    var rot: js.Array[Double] = js.native
-    var scl: js.Array[Double] = js.native
-    var time: Double          = js.native
-  }
-
-  @js.native
-  trait KeyFrames extends js.Object {
-    var keys: js.Array[KeyFrame] = js.native
-    var parent: Double           = js.native
-  }
-
-  @js.native
-  trait AnimationData extends js.Object {
-    var JIT: Double                    = js.native
-    var fps: Double                    = js.native
-    var hierarchy: js.Array[KeyFrames] = js.native
-    var length: Double                 = js.native
-    var name: String                   = js.native
-  }
-
-  @js.native
   class Animation extends js.Object {
     var root: Mesh                 = js.native
     var data: AnimationData        = js.native
@@ -3570,24 +3361,6 @@ object THREE extends js.Object {
     def getNextKeyWith(`type`: String, h: Double, key: Double): KeyFrame = js.native
 
     def getPrevKeyWith(`type`: String, h: Double, key: Double): KeyFrame = js.native
-  }
-
-  @js.native
-  object AnimationHandler extends js.Object {
-    var LINEAR: Double               = js.native
-    var CATMULLROM: Double           = js.native
-    var CATMULLROM_FORWARD: Double   = js.native
-    var animations: js.Array[js.Any] = js.native
-
-    def init(data: Animation): Unit = js.native
-
-    def parse(root: Mesh): js.Array[Object3D] = js.native
-
-    def play(animation: Animation): Unit = js.native
-
-    def stop(animation: Animation): Unit = js.native
-
-    def update(deltaTimeMS: Double): Unit = js.native
   }
 
   @js.native
@@ -3656,23 +3429,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  object Curve extends js.Object {
-    var Utils: js.Any = js.native
-
-    def create(constructorFunc: js.Function, getPointFunc: js.Function): js.Function =
-      js.native
-  }
-
-  @js.native
-  trait BoundingBox extends js.Object {
-    var minX: Double     = js.native
-    var minY: Double     = js.native
-    var maxX: Double     = js.native
-    var maxY: Double     = js.native
-    var centroid: Vector = js.native
-  }
-
-  @js.native
   class CurvePath extends Curve {
     var curves: js.Array[Curve] = js.native
     var bends: js.Array[Path]   = js.native
@@ -3723,29 +3479,6 @@ object THREE extends js.Object {
     var scaleObject: Vector3         = js.native
 
     override def updateMatrixWorld(force: Boolean): Unit = js.native
-  }
-
-  @js.native
-  sealed trait PathActions extends js.Object {}
-
-  @js.native
-  object PathActions extends js.Object {
-    var MOVE_TO: PathActions            = js.native
-    var LINE_TO: PathActions            = js.native
-    var QUADRATIC_CURVE_TO: PathActions = js.native
-    var BEZIER_CURVE_TO: PathActions    = js.native
-    var CSPLINE_THRU: PathActions       = js.native
-    var ARC: PathActions                = js.native
-    var ELLIPSE: PathActions            = js.native
-
-    @JSBracketAccess
-    def apply(value: PathActions): String = js.native
-  }
-
-  @js.native
-  trait PathAction extends js.Object {
-    var action: PathActions = js.native
-    var args: js.Any        = js.native
   }
 
   @js.native
@@ -4135,19 +3868,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait TextGeometryParameters extends js.Object {
-    var size: Double           = js.native
-    var height: Double         = js.native
-    var curveSegments: Double  = js.native
-    var font: String           = js.native
-    var weight: String         = js.native
-    var style: String          = js.native
-    var bevelEnabled: Boolean  = js.native
-    var bevelThickness: Double = js.native
-    var bevelSize: Double      = js.native
-  }
-
-  @js.native
   class TorusGeometry extends Geometry {
     var parameters: js.Any      = js.native
     var radius: Double          = js.native
@@ -4387,21 +4107,6 @@ object THREE extends js.Object {
   }
 
   @js.native
-  trait LensFlareProperty extends js.Object {
-    var texture: Texture   = js.native
-    var size: Double       = js.native
-    var distance: Double   = js.native
-    var x: Double          = js.native
-    var y: Double          = js.native
-    var z: Double          = js.native
-    var scale: Double      = js.native
-    var rotation: Double   = js.native
-    var opacity: Double    = js.native
-    var color: Color       = js.native
-    var blending: Blending = js.native
-  }
-
-  @js.native
   class LensFlare extends Object3D {
     var lensFlares: js.Array[LensFlareProperty]             = js.native
     var positionScreen: Vector3                             = js.native
@@ -4422,23 +4127,6 @@ object THREE extends js.Object {
     override def add(obj: Object3D): Unit = js.native
 
     def updateLensFlares(): Unit = js.native
-  }
-
-  @js.native
-  trait MorphBlendMeshAnimation extends js.Object {
-    var startFrame: Double          = js.native
-    var endFrame: Double            = js.native
-    var length: Double              = js.native
-    var fps: Double                 = js.native
-    var duration: Double            = js.native
-    var lastFrame: Double           = js.native
-    var currentFrame: Double        = js.native
-    var active: Boolean             = js.native
-    var time: Double                = js.native
-    var direction: Double           = js.native
-    var weight: Double              = js.native
-    var directionBackwards: Boolean = js.native
-    var mirroredLoop: Boolean       = js.native
   }
 
   @js.native
@@ -4515,6 +4203,321 @@ object THREE extends js.Object {
                         camera: Camera,
                         viewportWidth: Double,
                         viewportHeight: Double): Unit = js.native
+  }
+
+  @js.native
+  object Object3D extends js.Object {
+    var DefaultUp: Vector3 = js.native
+  }
+
+  @js.native
+  object Loader extends js.Object {
+    var Handlers: LoaderHandler = js.native
+  }
+
+  @js.native
+  object ColorKeywords extends js.Object {
+    var aliceblue: Double            = js.native
+    var antiquewhite: Double         = js.native
+    var aqua: Double                 = js.native
+    var aquamarine: Double           = js.native
+    var azure: Double                = js.native
+    var beige: Double                = js.native
+    var bisque: Double               = js.native
+    var black: Double                = js.native
+    var blanchedalmond: Double       = js.native
+    var blue: Double                 = js.native
+    var blueviolet: Double           = js.native
+    var brown: Double                = js.native
+    var burlywood: Double            = js.native
+    var cadetblue: Double            = js.native
+    var chartreuse: Double           = js.native
+    var chocolate: Double            = js.native
+    var coral: Double                = js.native
+    var cornflowerblue: Double       = js.native
+    var cornsilk: Double             = js.native
+    var crimson: Double              = js.native
+    var cyan: Double                 = js.native
+    var darkblue: Double             = js.native
+    var darkcyan: Double             = js.native
+    var darkgoldenrod: Double        = js.native
+    var darkgray: Double             = js.native
+    var darkgreen: Double            = js.native
+    var darkgrey: Double             = js.native
+    var darkkhaki: Double            = js.native
+    var darkmagenta: Double          = js.native
+    var darkolivegreen: Double       = js.native
+    var darkorange: Double           = js.native
+    var darkorchid: Double           = js.native
+    var darkred: Double              = js.native
+    var darksalmon: Double           = js.native
+    var darkseagreen: Double         = js.native
+    var darkslateblue: Double        = js.native
+    var darkslategray: Double        = js.native
+    var darkslategrey: Double        = js.native
+    var darkturquoise: Double        = js.native
+    var darkviolet: Double           = js.native
+    var deeppink: Double             = js.native
+    var deepskyblue: Double          = js.native
+    var dimgray: Double              = js.native
+    var dimgrey: Double              = js.native
+    var dodgerblue: Double           = js.native
+    var firebrick: Double            = js.native
+    var floralwhite: Double          = js.native
+    var forestgreen: Double          = js.native
+    var fuchsia: Double              = js.native
+    var gainsboro: Double            = js.native
+    var ghostwhite: Double           = js.native
+    var gold: Double                 = js.native
+    var goldenrod: Double            = js.native
+    var gray: Double                 = js.native
+    var green: Double                = js.native
+    var greenyellow: Double          = js.native
+    var grey: Double                 = js.native
+    var honeydew: Double             = js.native
+    var hotpink: Double              = js.native
+    var indianred: Double            = js.native
+    var indigo: Double               = js.native
+    var ivory: Double                = js.native
+    var khaki: Double                = js.native
+    var lavender: Double             = js.native
+    var lavenderblush: Double        = js.native
+    var lawngreen: Double            = js.native
+    var lemonchiffon: Double         = js.native
+    var lightblue: Double            = js.native
+    var lightcoral: Double           = js.native
+    var lightcyan: Double            = js.native
+    var lightgoldenrodyellow: Double = js.native
+    var lightgray: Double            = js.native
+    var lightgreen: Double           = js.native
+    var lightgrey: Double            = js.native
+    var lightpink: Double            = js.native
+    var lightsalmon: Double          = js.native
+    var lightseagreen: Double        = js.native
+    var lightskyblue: Double         = js.native
+    var lightslategray: Double       = js.native
+    var lightslategrey: Double       = js.native
+    var lightsteelblue: Double       = js.native
+    var lightyellow: Double          = js.native
+    var lime: Double                 = js.native
+    var limegreen: Double            = js.native
+    var linen: Double                = js.native
+    var magenta: Double              = js.native
+    var maroon: Double               = js.native
+    var mediumaquamarine: Double     = js.native
+    var mediumblue: Double           = js.native
+    var mediumorchid: Double         = js.native
+    var mediumpurple: Double         = js.native
+    var mediumseagreen: Double       = js.native
+    var mediumslateblue: Double      = js.native
+    var mediumspringgreen: Double    = js.native
+    var mediumturquoise: Double      = js.native
+    var mediumvioletred: Double      = js.native
+    var midnightblue: Double         = js.native
+    var mintcream: Double            = js.native
+    var mistyrose: Double            = js.native
+    var moccasin: Double             = js.native
+    var navajowhite: Double          = js.native
+    var navy: Double                 = js.native
+    var oldlace: Double              = js.native
+    var olive: Double                = js.native
+    var olivedrab: Double            = js.native
+    var orange: Double               = js.native
+    var orangered: Double            = js.native
+    var orchid: Double               = js.native
+    var palegoldenrod: Double        = js.native
+    var palegreen: Double            = js.native
+    var paleturquoise: Double        = js.native
+    var palevioletred: Double        = js.native
+    var papayawhip: Double           = js.native
+    var peachpuff: Double            = js.native
+    var peru: Double                 = js.native
+    var pink: Double                 = js.native
+    var plum: Double                 = js.native
+    var powderblue: Double           = js.native
+    var purple: Double               = js.native
+    var red: Double                  = js.native
+    var rosybrown: Double            = js.native
+    var royalblue: Double            = js.native
+    var saddlebrown: Double          = js.native
+    var salmon: Double               = js.native
+    var sandybrown: Double           = js.native
+    var seagreen: Double             = js.native
+    var seashell: Double             = js.native
+    var sienna: Double               = js.native
+    var silver: Double               = js.native
+    var skyblue: Double              = js.native
+    var slateblue: Double            = js.native
+    var slategray: Double            = js.native
+    var slategrey: Double            = js.native
+    var snow: Double                 = js.native
+    var springgreen: Double          = js.native
+    var steelblue: Double            = js.native
+    var tan: Double                  = js.native
+    var teal: Double                 = js.native
+    var thistle: Double              = js.native
+    var tomato: Double               = js.native
+    var turquoise: Double            = js.native
+    var violet: Double               = js.native
+    var wheat: Double                = js.native
+    var white: Double                = js.native
+    var whitesmoke: Double           = js.native
+    var yellow: Double               = js.native
+    var yellowgreen: Double          = js.native
+  }
+
+  @js.native
+  object Quaternion extends js.Object {
+    def slerp(qa: Quaternion, qb: Quaternion, qm: Quaternion, t: Double): Quaternion =
+      js.native
+  }
+
+  @js.native
+  object Triangle extends js.Object {
+    def normal(a: Vector3,
+               b: Vector3,
+               c: Vector3,
+               optionalTarget: Vector3 = js.native): Vector3 = js.native
+
+    def barycoordFromPoint(point: Vector3,
+                           a: Vector3,
+                           b: Vector3,
+                           c: Vector3,
+                           optionalTarget: Vector3): Vector3 = js.native
+
+    def containsPoint(point: Vector3, a: Vector3, b: Vector3, c: Vector3): Boolean =
+      js.native
+  }
+
+  @js.native
+  object LineType extends js.Object {
+    @JSBracketAccess
+    def apply(value: LineType): String = js.native
+  }
+
+  @js.native
+  object ShaderLib extends js.Object {
+    var basic: Shader          = js.native
+    var lambert: Shader        = js.native
+    var phong: Shader          = js.native
+    var particle_basic: Shader = js.native
+    var dashed: Shader         = js.native
+    var depth: Shader          = js.native
+    var normal: Shader         = js.native
+    var normalmap: Shader      = js.native
+    var cube: Shader           = js.native
+    var depthRGBA: Shader      = js.native
+
+    @JSBracketAccess
+    def apply(name: String): Shader = js.native
+
+    @JSBracketAccess
+    def update(name: String, v: Shader): Unit = js.native
+  }
+
+  @js.native
+  object UniformsLib extends js.Object {
+    var common: js.Any    = js.native
+    var bump: js.Any      = js.native
+    var normalmap: js.Any = js.native
+    var fog: js.Any       = js.native
+    var lights: js.Any    = js.native
+    var particle: js.Any  = js.native
+    var shadowmap: js.Any = js.native
+  }
+
+  @js.native
+  object UniformsUtils extends js.Object {
+    def merge(uniforms: js.Array[js.Any]): js.Dynamic = js.native
+
+    def clone(uniforms_src: js.Any): js.Dynamic = js.native
+  }
+
+  @js.native
+  object Texture extends js.Object {
+    var DEFAULT_IMAGE: js.Any   = js.native
+    var DEFAULT_MAPPING: js.Any = js.native
+  }
+
+  @js.native
+  object GeometryUtils extends js.Object {
+    def merge(geometry1: Geometry,
+              object2: Mesh,
+              materialIndexOffset: Double = js.native): Unit = js.native
+
+    def center(geometry: Geometry): Vector3 = js.native
+  }
+
+  @js.native
+  object ImageUtils extends js.Object {
+    var crossOrigin: String = js.native
+
+    def loadTexture(url: String,
+                    mapping: Mapping = js.native,
+                    onLoad: js.Function1[Texture, Unit] = js.native,
+                    onError: js.Function1[String, Unit] = js.native): Texture = js.native
+
+    def loadTextureCube(array: js.Array[String],
+                        mapping: Mapping = js.native,
+                        onLoad: js.Function1[Texture, Unit] = js.native,
+                        onError: js.Function1[String, Unit] = js.native): Texture =
+      js.native
+
+    def getNormalMap(image: HTMLImageElement,
+                     depth: Double = js.native): HTMLCanvasElement = js.native
+
+    def generateDataTexture(width: Double, height: Double, color: Color): DataTexture =
+      js.native
+  }
+
+  @js.native
+  object SceneUtils extends js.Object {
+    def createMultiMaterialObject(geometry: Geometry,
+                                  materials: js.Array[Material]): Object3D = js.native
+
+    def detach(child: Object3D, parent: Object3D, scene: Scene): Unit = js.native
+
+    def attach(child: Object3D, scene: Scene, parent: Object3D): Unit = js.native
+  }
+
+  @js.native
+  object AnimationHandler extends js.Object {
+    var LINEAR: Double               = js.native
+    var CATMULLROM: Double           = js.native
+    var CATMULLROM_FORWARD: Double   = js.native
+    var animations: js.Array[js.Any] = js.native
+
+    def init(data: Animation): Unit = js.native
+
+    def parse(root: Mesh): js.Array[Object3D] = js.native
+
+    def play(animation: Animation): Unit = js.native
+
+    def stop(animation: Animation): Unit = js.native
+
+    def update(deltaTimeMS: Double): Unit = js.native
+  }
+
+  @js.native
+  object Curve extends js.Object {
+    var Utils: js.Any = js.native
+
+    def create(constructorFunc: js.Function, getPointFunc: js.Function): js.Function =
+      js.native
+  }
+
+  @js.native
+  object PathActions extends js.Object {
+    var MOVE_TO: PathActions            = js.native
+    var LINE_TO: PathActions            = js.native
+    var QUADRATIC_CURVE_TO: PathActions = js.native
+    var BEZIER_CURVE_TO: PathActions    = js.native
+    var CSPLINE_THRU: PathActions       = js.native
+    var ARC: PathActions                = js.native
+    var ELLIPSE: PathActions            = js.native
+
+    @JSBracketAccess
+    def apply(value: PathActions): String = js.native
   }
 
   @js.native
