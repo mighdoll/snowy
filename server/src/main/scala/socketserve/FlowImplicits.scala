@@ -39,5 +39,13 @@ object FlowImplicits {
       }
       (newFlow, promise.future)
     }
+
+    /** run a side effecting function on messages in the flow */
+    def foreach(fn: Out => Unit): Source[Out, Mat] = {
+      source.map { m =>
+        fn(m)
+        m
+      }
+    }
   }
 }
