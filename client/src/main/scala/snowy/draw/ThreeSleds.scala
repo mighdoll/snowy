@@ -1,8 +1,13 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{MeshBasicMaterialParameters, MeshPhongMaterialParameters, Object3D, Vector3}
-import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
+import minithree.THREE.{
+  MeshBasicMaterialParameters,
+  MeshPhongMaterialParameters,
+  Object3D,
+  Vector3
+}
+import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
 import snowy.client.DrawPlayfield._
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.SledId
@@ -15,6 +20,7 @@ object ThreeSleds {
 
   /** Revise position, etc. of a three js sled to match a playfield sled */
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
+    threeSled.position.y = playfieldSled.radius * 2.5
     DrawPlayfield.setThreePosition(threeSled, playfieldSled, myPos)
 
     val threeSledBody   = threeSled.children(1)
@@ -116,6 +122,7 @@ object ThreeSleds {
 
     newSled.add(text)
 
+    newSled.position.y = sled.radius + 2.5
     DrawPlayfield.setThreePosition(newSled, sled, myPos)
 
     newSled.name = sled.id.id.toString

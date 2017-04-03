@@ -1,7 +1,11 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{MeshPhongMaterialParameters, Vector3}
+import minithree.THREE.{
+  MeshLambertMaterialParameters,
+  MeshPhongMaterialParameters,
+  Vector3
+}
 import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
 import snowy.client.ThreeRenderer._
@@ -32,8 +36,8 @@ class LoginScreen() {
   private val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
 
-  private val amb   = new THREE.AmbientLight(0x555555)
-  private val light = new THREE.DirectionalLight(0xBBBBBB)
+  private val amb   = new THREE.AmbientLight(0xFFFFFF, 0.7)
+  private val light = new THREE.DirectionalLight(0xFFFFFF, 0.3)
 
   private var connected: Option[Connection] = None
   private var skiColor: SkiColor            = BasicSkis
@@ -65,7 +69,7 @@ class LoginScreen() {
     camera.position.set(0, 100, 100)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-    light.position.set(0, 20, 10)
+    light.position.set(0, 2, 1)
 
     Meshes.trunk.position.y = 5
     Meshes.leave1.position.y = 14
@@ -257,6 +261,7 @@ class LoginScreen() {
     //Connect to the WebSocket server
     connected match {
       case None =>
+        ClientMain.setupPlayfield()
         connected = Some(
           new Connection(
             document.getElementById("username").asInstanceOf[html.Input].value,
@@ -272,7 +277,6 @@ class LoginScreen() {
 
     rejoinScreen = false
     gameHud.classList.remove("hide")
-    ClientMain.setupPlayfield()
     ClientMain.startRedraw()
   }
 
@@ -325,6 +329,9 @@ class LoginScreen() {
     val leave2Geo = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
     val cardGeo   = new THREE.BoxGeometry(16, 8, 1)
 
+    leave1Geo.computeFlatVertexNormals()
+    leave2Geo.computeFlatVertexNormals()
+
     // LATER use typed version
     val geoParams = Dynamic.literal(
       steps = 1,
@@ -342,30 +349,30 @@ class LoginScreen() {
   }
 
   object Mats {
-    val trunkMat = new THREE.MeshPhongMaterial(
+    val trunkMat = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x502A2A, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x502A2A)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val leave1Mat = new THREE.MeshPhongMaterial(
+    val leave1Mat = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x658033, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x658033)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val leave2Mat = new THREE.MeshPhongMaterial(
+    val leave2Mat = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x81A442, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x81A442)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
     val cardMat = new THREE.MeshPhongMaterial(
       Dynamic
-        .literal(color = 0xd8bc9d, shading = THREE.FlatShading)
+        .literal(color = 0xd8bc9d)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val matLetters = new THREE.MeshPhongMaterial(
+    val matLetters = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0xa3a3a3, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0xa3a3a3)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
   }
 
@@ -447,7 +454,7 @@ class LoginScreen() {
     val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
 
     val arrow1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
-    val arrow2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave1Mat)
+    val arrow2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
 
     val card = new THREE.Mesh(Geos.cardGeo, Mats.cardMat)
 

@@ -991,6 +991,8 @@ object THREE extends js.Object {
 
     def computeFaceNormals(): Unit = js.native
 
+    def computeFlatVertexNormals(): Unit = js.native
+
     def computeVertexNormals(areaWeighted: Boolean = js.native): Unit = js.native
 
     def computeMorphNormals(): Unit = js.native
@@ -1168,7 +1170,7 @@ object THREE extends js.Object {
   }
 
   @js.native
-  class AmbientLight(hex: Double = js.native) extends Light {
+  class AmbientLight(hex: Double = js.native, var intensity: Double = js.native) extends Light {
     override def clone(): AmbientLight = js.native
   }
 

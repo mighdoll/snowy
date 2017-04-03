@@ -1,7 +1,12 @@
 package snowy.client
 
+import minithree.THREE.{
+  MeshBasicMaterialParameters,
+  MeshLambertMaterialParameters,
+  Object3D,
+  Vector3
+}
 import minithree.{Stats, THREE}
-import minithree.THREE.{MeshPhongMaterialParameters, Object3D, Vector3}
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants
@@ -80,51 +85,48 @@ object DrawPlayfield {
   }
 
   object Mats {
-    val sled = new THREE.MeshPhongMaterial(
+    val sled = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x2194ce, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x2194ce)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val turret = new THREE.MeshPhongMaterial(
+    val turret = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x222222, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x222222)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val ski = new THREE.MeshPhongMaterial(
+    val ski = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x222222, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x222222)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val skiTip = new THREE.MeshPhongMaterial(
+    val skiTip = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0xEE2222, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0xEE2222)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-
-    val snowball = new THREE.MeshPhongMaterial(
+    val snowball = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x1878f0, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = 0x1878f0)
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val healthColor = new THREE.MeshPhongMaterial(
+    val healthColor = new THREE.MeshBasicMaterial(
       Dynamic
         .literal(
           color = 0x59B224,
-          shading = THREE.FlatShading,
           transparent = true,
           depthTest = false
         )
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .asInstanceOf[MeshBasicMaterialParameters]
     )
-    val enemyHealth = new THREE.MeshPhongMaterial(
+    val enemyHealth = new THREE.MeshBasicMaterial(
       Dynamic
         .literal(
           color = 0xF43131,
-          shading = THREE.FlatShading,
           transparent = true,
           depthTest = false
         )
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .asInstanceOf[MeshBasicMaterialParameters]
     )
   }
 
@@ -141,10 +143,9 @@ class DrawPlayfield() {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
-  camera.position.set(0, 100, 100)
-  camera.lookAt(new THREE.Vector3(0, 0, 0))
-  val amb   = new THREE.AmbientLight(0x888888)
-  val light = new THREE.DirectionalLight(0xffffff)
+
+  val amb   = new THREE.AmbientLight(0xFFFFFF, 0.5)
+  val light = new THREE.DirectionalLight(0xFFFFFF, 0.5)
 
   val stats = new Stats()
 
@@ -152,12 +153,13 @@ class DrawPlayfield() {
     stats.showPanel(0)
     document.body.appendChild(stats.dom)
 
+    camera.position.set(0, 1200, 100)
+    camera.lookAt(new THREE.Vector3(0, 0, 0))
+
     scene.add(amb)
 
-    light.position.set(10, 20, 0)
+    light.position.set(0, 2, 1)
     scene.add(light)
-
-    camera.position.y = 800
 
     Groups.threeGrid = Some(AddGrid.createGrid())
     Groups.threeGrid.foreach { grid =>
