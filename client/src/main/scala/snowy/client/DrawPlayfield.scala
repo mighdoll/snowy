@@ -12,7 +12,7 @@ import org.scalajs.dom.{document, window}
 import snowy.GameConstants
 import snowy.client.ThreeRenderer._
 import snowy.connection.GameState
-import snowy.draw.{AddGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
+import snowy.draw.{CreateGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield._
 import vector.Vec2d
 
@@ -138,6 +138,7 @@ object DrawPlayfield {
   }
 
 }
+
 class DrawPlayfield() {
   import DrawPlayfield._
   val scene = new THREE.Scene()
@@ -161,7 +162,7 @@ class DrawPlayfield() {
     light.position.set(0, 2, 1)
     scene.add(light)
 
-    Groups.threeGrid = Some(AddGrid.createGrid())
+    Groups.threeGrid = Some(CreateGrid.newGrid())
     Groups.threeGrid.foreach { grid =>
       scene.add(grid)
     }
@@ -170,6 +171,8 @@ class DrawPlayfield() {
     scene.add(Groups.threeSnowballs)
     scene.add(Groups.threeSleds)
   }
+
+  setup()
 
   /** Update the positions of all the three playfield items, then draw to screen */
   def drawPlayfield(snowballs: Set[Snowball],

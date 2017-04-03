@@ -51,19 +51,26 @@ class LoginScreen() {
   private val textInput = document.getElementById("username").asInstanceOf[html.Input]
   private val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
 
-  private var raycaster = new THREE.Raycaster()
-  private var mouse     = new THREE.Vector2()
-  private var hover     = 0
+  sealed trait Direction
+  case object Left   extends Direction
+  case object Right  extends Direction
+  case object Middle extends Direction
+
+  private val raycaster        = new THREE.Raycaster()
+  private val mouse            = new THREE.Vector2()
+  private var hover: Direction = Middle
 
   private var rejoinScreen = false
 
-  def setup(): Unit = {
+  private def setup(): Unit = {
     positions()
     addGroups()
     addItems()
 
     textInput.focus()
   }
+
+  setup()
 
   def positions(): Unit = {
     camera.position.set(0, 100, 100)
@@ -164,20 +171,20 @@ class LoginScreen() {
 
     if (GameState.mySledId.isEmpty || rejoinScreen) {
       hover match {
-        case -1 =>
+        case Left =>
           sledKind =
             if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
             else SledKinds.allSleds.last
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
           clearConnection()
-        case 1 =>
+        case Right =>
           sledKind =
             if (currentIndex < SledKinds.allSleds.length - 1)
               SledKinds.allSleds(currentIndex + 1)
             else SledKinds.allSleds.head
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
           clearConnection()
-        case _ =>
+        case Middle =>
       }
     }
 
@@ -236,16 +243,16 @@ class LoginScreen() {
       if (intersects(0).`object`.name == "right") {
         Groups.tree.children(1).asInstanceOf[THREE.Mesh].material = mat
         Groups.tree.children(2).asInstanceOf[THREE.Mesh].material = mat2
-        hover = -1
+        hover = Left
 
       } else {
         Groups.tree2.children(1).asInstanceOf[THREE.Mesh].material = mat
         Groups.tree2.children(2).asInstanceOf[THREE.Mesh].material = mat2
-        hover = 1
+        hover = Right
 
       }
     } else {
-      hover = 0
+      hover = Middle
     }
 
     renderLoginScreen()
@@ -256,12 +263,11 @@ class LoginScreen() {
     updateSelector()
   }, false)
 
-  def checkConnection(e: Event): Unit = {
+  def loginPressed(e: Event): Unit = {
     e.preventDefault()
     //Connect to the WebSocket server
     connected match {
       case None =>
-        ClientMain.setupPlayfield()
         connected = Some(
           new Connection(
             document.getElementById("username").asInstanceOf[html.Input].value,
@@ -283,7 +289,7 @@ class LoginScreen() {
   document
     .getElementById("login-form")
     .asInstanceOf[html.Form]
-    .addEventListener("submit", checkConnection, false)
+    .addEventListener("submit", loginPressed, false)
 
   def clearConnection(): Unit = {
     connected = None
@@ -324,13 +330,13 @@ class LoginScreen() {
   }
 
   object Geos {
-    val trunkGeo  = new THREE.BoxGeometry(2, 10, 2)
-    val leave1Geo = new ConeGeometry(4, 8, 4, 1, false, 0.783, math.Pi * 2)
-    val leave2Geo = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
-    val cardGeo   = new THREE.BoxGeometry(16, 8, 1)
+    val trunk  = new THREE.BoxGeometry(2, 10, 2)
+    val leave1 = new ConeGeometry(4, 8, 4, 1, false, 0.783, math.Pi * 2)
+    val leave2 = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
+    val card   = new THREE.BoxGeometry(16, 8, 1)
 
-    leave1Geo.computeFlatVertexNormals()
-    leave2Geo.computeFlatVertexNormals()
+    leave1.computeFlatVertexNormals()
+    leave2.computeFlatVertexNormals()
 
     // LATER use typed version
     val geoParams = Dynamic.literal(
@@ -345,31 +351,31 @@ class LoginScreen() {
     val geoW = new THREE.ExtrudeGeometry(Shapes.shapeW, geoParams)
     val geoY = new THREE.ExtrudeGeometry(Shapes.shapeY, geoParams)
 
-    val inputGeo = new THREE.BoxGeometry(45, 10, 2)
+    val input = new THREE.BoxGeometry(45, 10, 2)
   }
 
   object Mats {
-    val trunkMat = new THREE.MeshLambertMaterial(
+    val trunk = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = 0x502A2A)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val leave1Mat = new THREE.MeshLambertMaterial(
+    val leave1 = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = 0x658033)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val leave2Mat = new THREE.MeshLambertMaterial(
+    val leave2 = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = 0x81A442)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val cardMat = new THREE.MeshPhongMaterial(
+    val card = new THREE.MeshPhongMaterial(
       Dynamic
         .literal(color = 0xd8bc9d)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val matLetters = new THREE.MeshLambertMaterial(
+    val letters = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = 0xa3a3a3)
         .asInstanceOf[MeshLambertMaterialParameters]
@@ -449,22 +455,22 @@ class LoginScreen() {
   }
 
   object Meshes {
-    val trunk  = new THREE.Mesh(Geos.trunkGeo, Mats.trunkMat)
-    val leave1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
-    val leave2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
+    val trunk  = new THREE.Mesh(Geos.trunk, Mats.trunk)
+    val leave1 = new THREE.Mesh(Geos.leave1, Mats.leave1)
+    val leave2 = new THREE.Mesh(Geos.leave2, Mats.leave2)
 
-    val arrow1 = new THREE.Mesh(Geos.leave1Geo, Mats.leave1Mat)
-    val arrow2 = new THREE.Mesh(Geos.leave2Geo, Mats.leave2Mat)
+    val arrow1 = new THREE.Mesh(Geos.leave1, Mats.leave1)
+    val arrow2 = new THREE.Mesh(Geos.leave2, Mats.leave2)
 
-    val card = new THREE.Mesh(Geos.cardGeo, Mats.cardMat)
+    val card = new THREE.Mesh(Geos.card, Mats.card)
 
-    val meshS = new THREE.Mesh(Geos.geoS, Mats.matLetters)
-    val meshN = new THREE.Mesh(Geos.geoN, Mats.matLetters)
-    val meshO = new THREE.Mesh(Geos.geoO, Mats.matLetters)
-    val meshW = new THREE.Mesh(Geos.geoW, Mats.matLetters)
-    val meshY = new THREE.Mesh(Geos.geoY, Mats.matLetters)
+    val meshS = new THREE.Mesh(Geos.geoS, Mats.letters)
+    val meshN = new THREE.Mesh(Geos.geoN, Mats.letters)
+    val meshO = new THREE.Mesh(Geos.geoO, Mats.letters)
+    val meshW = new THREE.Mesh(Geos.geoW, Mats.letters)
+    val meshY = new THREE.Mesh(Geos.geoY, Mats.letters)
 
-    val input = new THREE.Mesh(Geos.inputGeo, Mats.matLetters)
+    val input = new THREE.Mesh(Geos.input, Mats.letters)
   }
 
   object Groups {

@@ -6,8 +6,8 @@ import snowy.GameConstants
 
 import scala.scalajs.js.Dynamic
 
-object AddGrid {
-  def createGrid(): Object3D = {
+object CreateGrid {
+  def newGrid(): Object3D = {
     val xSpacing = 50
     val ySpacing = 50
 
@@ -27,10 +27,10 @@ object AddGrid {
       yAmount
     )
     for (i <- 0 until grid.vertices.length) {
-      grid.vertices(i).z = -Math.random() * 20
+      grid.vertices(i).z = -math.round(math.random) * 20
     }
     grid.computeFaceNormals()
-    grid.computeFlatVertexNormals()
+    grid.computeVertexNormals()
 
     val mesh = new THREE.Mesh(grid, material)
     mesh.rotation.x = 1.5 * math.Pi
