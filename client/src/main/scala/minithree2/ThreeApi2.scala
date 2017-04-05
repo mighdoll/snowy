@@ -1,4 +1,4 @@
-package minithree.THREE
+package minithree2
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation._
