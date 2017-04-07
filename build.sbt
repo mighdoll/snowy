@@ -33,8 +33,8 @@ lazy val V = new Object {
   val scala      = "2.12.1"
   val akka       = "2.4.17"
   val akkaHttp   = "10.0.5"
-  val log4j      = "2.8.1"
-  val jackson    = "2.8.7"
+  val log4j      = "2.8.2"
+  val jackson    = "2.8.8"
   val scalacheck = "1.13.5"
   val scalactic  = "3.0.1"
   val scalatest  = "3.0.1"
@@ -92,7 +92,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
     ),
     jsDependencies ++= Seq(
-      "org.webjars.bower" % "three.js"                   % "0.82.0" / "0.82.0/three.min.js",
+      "org.webjars.npm"   % "three"                      % "0.83.0" / "0.83.0/build/three.min.js",
       "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
     )
   )
