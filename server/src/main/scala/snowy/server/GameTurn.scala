@@ -107,7 +107,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           winner             <- winnerId.user
           loser              <- loserId.user
         } {
-          val points = loser.score / 2
+          val points = loser.score * Points.sledKill
           winner.addScore(points)
         }
       case Travel(sledId, distance) =>
@@ -125,7 +125,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           user         <- loserId.user
         } {
           user.setScore((score: Double) => {
-            Math.max(score / 2, 10)
+            Math.max(score * Points.sledLoss, Points.minPoints)
           })
         }
     }
