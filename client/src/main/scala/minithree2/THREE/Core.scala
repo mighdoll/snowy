@@ -29,8 +29,8 @@ class BufferAttribute(var array: ArrayBuffer,
   def copyArray(array: js.Array[Double] | ArrayBuffer): BufferAttribute = js.native
   def copyAt(index1: Int, bufferAttribute: BufferAttribute, index2: Int): Unit =
     js.native
-  def copyColorsArray(colors: js.Array[Color]): BufferAttribute = js.native
-  def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute    = js.native
+  def copyColorsArray(colors: js.Array[Color]): BufferAttribute             = js.native
+  def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute           = js.native
   def copyVector2sArray(vectors: js.Array[Vector2]): BufferAttribute        = js.native
   def copyVector3sArray(vectors: js.Array[Vector3]): BufferAttribute        = js.native
   def copyVector4sArray(vectors: js.Array[Vector4]): BufferAttribute        = js.native
@@ -113,14 +113,24 @@ class BufferGeometry extends js.Object with EventDispatcher {
 
 @js.native
 @JSGlobal("THREE.Clock")
-class Clock extends js.Object {}
+class Clock(autoStart: js.UndefOr[Boolean]) extends js.Object {
+  val startTime: Float        = js.native
+  val oldTime: Float          = js.native
+  val elapsedTime: Float      = js.native
+  val running: Boolean        = js.native
+  def start(): Unit           = js.native
+  def stop(): Unit            = js.native
+  def getElapsedTime(): Float = js.native
+  def getDelta(): Float       = js.native
+}
 
 @js.native
-@JSGlobal("THREE.DirectGeometry")
-class DirectGeometry extends js.Object {}
-
-@js.native
-trait EventDispatcher extends js.Object {}
+trait EventDispatcher extends js.Object {
+  def addEventListener(`type`: String, listener: js.Function): Unit    = js.native
+  def hasEventListener(`type`: String, listener: js.Function): Boolean = js.native
+  def removeEventListener(`type`: String, listener: js.Function): Unit = js.native
+  def dispatchEvent(event: js.Object): Unit                            = js.native
+}
 
 @js.native
 @JSGlobal("THREE.Face3")
