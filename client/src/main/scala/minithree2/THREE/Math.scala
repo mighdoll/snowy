@@ -3,6 +3,7 @@ package minithree2.THREE
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
 
+// TODO what should be vars?
 @js.native
 @JSGlobal("THREE.Box2")
 class Box2(var min: js.UndefOr[Vector2], var max: js.UndefOr[Vector2])
