@@ -10,7 +10,6 @@ object GlobalConfig {
     ConfigUtil.writeConfig(newConfig)
     newConfig
   }
-  lazy val performanceReport = config.getBoolean("snowy.performanceReport")
   private val files          = ListBuffer[File]()
 
   /** add .conf file that will be accessible to the program */

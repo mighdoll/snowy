@@ -22,7 +22,7 @@ object LoadTestTiming {
 class LoadTestTiming[E: EC: ACT: MR](url: String) extends StrictLogging {
   var send: Option[SourceQueueWithComplete[GameServerMessage]] = None
 
-  var span: StartedSpan = Span.start("loadTest.ClientPing")
+  var span: StartedSpan = Span.root("loadTest.ClientPing")
 
   val sink = Sink.foreach[GameClientMessage] {
     case ClientPong =>

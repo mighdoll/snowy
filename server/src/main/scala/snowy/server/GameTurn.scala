@@ -8,8 +8,8 @@ import snowy.collision.{CollideThings, Death, DeathList, SledTree}
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.{Sled, _}
-import snowy.util.Perf
-import snowy.util.Perf.time
+import snowy.util.Span
+import snowy.util.Span.time
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   val gameHealth         = new GameHealth(state)
@@ -31,13 +31,13 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
                         deadSnowBalls: Traversable[BallId])
 
   /** Called to update game state on a regular timer */
-  def turn(deltaSeconds: Double): TurnDeaths = time("gameTurn") {
+  def turn(deltaSeconds: Double)(implicit span:Span): TurnDeaths = time("GameTurn.turn") {
     gameHealth.recoverHealth(deltaSeconds)
     val expiredBalls = gameHealth.expireSnowballs()
 
     moveSnowballs(state.snowballs.items, deltaSeconds)
 
-    val moveAwards = time("moveSleds")(moveSleds(state.sleds.items, deltaSeconds))
+    val moveAwards = moveSleds(state.sleds.items, deltaSeconds)
     val collided   = time("checkCollisions")(checkCollisions())
     val died       = gameHealth.collectDead()
 
@@ -146,7 +146,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   private def recordTurnJitter(deltaSeconds: Double): Unit = {
     val secondsToMicros = 1000000
     val deltaMicros     = (deltaSeconds * secondsToMicros).toLong
-    Perf.record("deltaSeconds", deltaMicros)
+//    Perf.record("deltaSeconds", deltaMicros)
   }
 
 }

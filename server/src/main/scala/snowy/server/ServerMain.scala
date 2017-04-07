@@ -2,7 +2,7 @@ package snowy.server
 
 import com.typesafe.scalalogging.LazyLogging
 import snowy.server.CommandLine.BasicArgs
-import snowy.util.Perf
+import snowy.util.MeasurementRecorder
 import socketserve.WebServer.socketApplication
 
 object ServerMain extends LazyLogging {
@@ -22,10 +22,10 @@ object ServerMain extends LazyLogging {
     cmdLine.conf.foreach(GlobalConfig.addConfigFiles(_))
     logger.info("starting server")
 
-    Perf.start()
 
     socketApplication { (api, system) =>
-      new GameControl(api)(system)
+      val measurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
+      new GameControl(api)(system, measurementRecorder)
     }
   }
 

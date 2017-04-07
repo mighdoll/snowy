@@ -17,6 +17,7 @@ import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
 import snowy.playfield.Picklers._
 import snowy.server.GameControl
+import snowy.util.NullMeasurementRecorder
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()
@@ -56,15 +57,21 @@ object SnowyServerFixture {
   def withServer(fn: ServerTestApi => Future[Unit],
                  timeout: FiniteDuration = 3 seconds): Unit = {
     testPort = testPort + 1
+    val recorder = NullMeasurementRecorder
     val server =
-      socketApplication((api, system) => new GameControl(api)(system), Some(testPort))
+      socketApplication(
+        (api, system) => new GameControl(api)(system, recorder),
+        Some(testPort)
+      )
     try {
-      connectToServer(s"ws://localhost:${server.port}/game").flatMap { api =>
-        fn(api).flatMap { _ =>
-          api.sendQueue.complete()
-          api.sendQueue.watchCompletion()
+      connectToServer(s"ws://localhost:${server.port}/game")
+        .flatMap { api =>
+          fn(api).flatMap { _ =>
+            api.sendQueue.complete()
+            api.sendQueue.watchCompletion()
+          }
         }
-      }.await(timeout)
+        .await(timeout)
     } finally {
       Http().shutdownAllConnectionPools() andThen { case _ => server.shutDown() }
     }
@@ -86,8 +93,10 @@ object SnowyServerFixture {
     * @param sink Sink to be materialized to accept messages from the server
     * @return a Future containing a SourceQueue for sending messages to the server
     */
-  def connectSinkToServer[M](wsUrl: String, sink: Sink[GameClientMessage, M])
-    : Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
+  def connectSinkToServer[M](
+        wsUrl: String,
+        sink: Sink[GameClientMessage, M]
+  ): Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
     implicit val _       = ActorMaterializer()
     val outputBufferSize = 100
 

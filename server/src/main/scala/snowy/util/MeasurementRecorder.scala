@@ -38,10 +38,30 @@ class MeasurementToTsvFile(directoryName: String)(implicit system: ActorSystem)
   val path                  = Paths.get(directoryName)
   val spans = startTsvFile(
     path.resolve("spans.tsv"),
-    "name\tspanId\tstartEpochMicros\tdurationMicros\n"
+    "name\tspanId\tparentId\tstartEpochMicros\tdurationMicros\n"
   )
 
-  def startTsvFile(path: Path, header: String): SourceQueueWithComplete[String] = {
+  override def close(): Unit = {
+    spans.complete()
+  }
+
+  override def publish(measurement: Measurement): Unit = {
+    measurement match {
+      case span: CompletedSpan => publishSpan(span)
+    }
+  }
+
+  private def publishSpan(span: CompletedSpan): Unit = {
+    val name        = span.name
+    val startMicros = span.start.value
+    val duration    = span.end.value - startMicros
+    val spanId      = span.id.value.toHexString
+    val parentId    = span.parent.map(_.id.value.toHexString).getOrElse("_")
+    val csv         = s"$name\t$spanId\t$parentId\t$startMicros\t$duration\n"
+    spans.offer(csv)
+  }
+
+  private def startTsvFile(path: Path, header: String): SourceQueueWithComplete[String] = {
     createDirectoriesTo(path)
     val fileStream = {
       val source = Source
@@ -59,24 +79,5 @@ class MeasurementToTsvFile(directoryName: String)(implicit system: ActorSystem)
     if (!Files.exists(parentDir)) {
       Files.createDirectories(parentDir)
     }
-  }
-
-  override def close(): Unit = {
-    spans.complete()
-  }
-
-  def publish(measurement: Measurement): Unit = {
-    measurement match {
-      case span: CompletedSpan => publishSpan(span)
-    }
-  }
-
-  def publishSpan(span: CompletedSpan): Unit = {
-    val name        = span.name
-    val startMicros = span.start.value
-    val duration    = span.end.value - startMicros
-    val spanId      = span.id.value.toHexString
-    val csv         = s"$name\t$spanId\t$startMicros\t$duration\n"
-    spans.offer(csv)
   }
 }

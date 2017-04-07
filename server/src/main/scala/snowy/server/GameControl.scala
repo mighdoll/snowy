@@ -15,11 +15,13 @@ import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.StationaryRobot
 import snowy.server.GameSeeding.randomSpot
-import snowy.util.Perf.time
+import snowy.util.{MeasurementRecorder, Span}
+import snowy.util.Span.time
 import socketserve._
 import vector.Vec2d
 
-class GameControl(api: AppHostApi)(implicit system: ActorSystem)
+class GameControl(api: AppHostApi)(implicit system: ActorSystem,
+                                   measurementRecorder: MeasurementRecorder)
     extends AppController with GameState with StrictLogging {
   override val turnPeriod = 20 milliseconds
   val messageIO           = new MessageIO(api)
@@ -63,15 +65,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem)
 
   /** Run the next game turn. (called on a periodic timer) */
   override def turn(): Unit = {
-    val deltaSeconds = gameTurns.nextTurn()
-    robots.robotsTurn()
-    applyDrive(deltaSeconds)
-    applyCommands(deltaSeconds)
-    val turnDeaths = gameTurns.turn(deltaSeconds)
-    reapDead(turnDeaths.deadSleds)
-    reportExpiredSnowballs(turnDeaths.deadSnowBalls)
-    time("sendUpdates") {
-      sendUpdates()
+    Span.root("GameControl.turn").timeSpan { implicit span =>
+      val deltaSeconds = gameTurns.nextTurn()
+      time("GameControl.robotsTurn"){ robots.robotsTurn() }
+      applyDrive(deltaSeconds)
+      applyCommands(deltaSeconds)
+      val turnDeaths = gameTurns.turn(deltaSeconds)
+      reapDead(turnDeaths.deadSleds)
+      reportExpiredSnowballs(turnDeaths.deadSnowBalls)
+      time("sendUpdates") {
+        sendUpdates()
+      }
     }
   }
 

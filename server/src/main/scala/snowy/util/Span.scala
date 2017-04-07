@@ -9,14 +9,17 @@ trait Measurement {
 
 trait Span {
   val name: String
+  val parent: Option[Span]
   val recorder: MeasurementRecorder
   val id                     = SpanId()
-  def restart(): StartedSpan = StartedSpan(name, recorder)
+  def restart(): StartedSpan = StartedSpan(name, parent, recorder)
 }
 
 case class CompletedSpan(
-      name: String,
-      recorder: MeasurementRecorder,
+      override val id: SpanId,
+      override val name: String,
+      override val parent: Option[Span],
+      override val recorder: MeasurementRecorder,
       start: EpochMicroseconds,
       end: EpochMicroseconds
 ) extends Span with Measurement {
@@ -24,17 +27,37 @@ case class CompletedSpan(
 }
 
 case class StartedSpan(
-      name: String,
-      recorder: MeasurementRecorder,
+      override val name: String,
+      override val parent: Option[Span],
+      override val recorder: MeasurementRecorder,
       start: EpochMicroseconds = EpochMicroseconds()
 ) extends Span {
-  def finish(): CompletedSpan              = CompletedSpan(name, recorder, start, EpochMicroseconds())
-  def rename(newName: String): StartedSpan = StartedSpan(newName, recorder, start)
+  def finish(): CompletedSpan =
+    CompletedSpan(id, name, parent, recorder, start, EpochMicroseconds())
+
+  def rename(newName: String): StartedSpan =
+    StartedSpan(newName, parent, recorder, start)
+
+  def timeSpan[T](fn: StartedSpan => T): T = {
+    try { fn(this) } finally { finish() }
+  }
+
+  def time[T](fn: => T): T = {
+    try { fn } finally { finish() }
+  }
 }
 
 object Span {
-  def start(name: String)(implicit recorder: MeasurementRecorder): StartedSpan =
-    StartedSpan(name, recorder)
+  def apply(name: String)(implicit parentSpan: Span): StartedSpan =
+    StartedSpan(name, Some(parentSpan), parentSpan.recorder)
+
+  def root(name: String)(implicit recorder: MeasurementRecorder): StartedSpan =
+    StartedSpan(name, None, recorder)
+
+  def time[T](name: String)(fn: => T)(implicit parent: Span): T = {
+    val span = Span(name)
+    span.time(fn)
+  }
 }
 
 case class SpanId(val value: Long = ThreadLocalRandom.current.nextLong()) extends AnyVal
