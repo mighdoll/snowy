@@ -61,10 +61,10 @@ object GameConstants {
     val treePadding = 2
 
     /** health cost from colliding into a tree at maximum speed */
-    val maxTreeCost = .66
+    val maxTreeCost = .25
 
     /** minimum health after a tree collision */
-    val treeMinHealth = .05
+    val treeMinHealth = .1
 
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50
