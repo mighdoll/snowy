@@ -30,7 +30,7 @@ class BufferAttribute(var array: ArrayBuffer,
   def copyAt(index1: Int, bufferAttribute: BufferAttribute, index2: Int): Unit =
     js.native
   def copyColorsArray(colors: js.Array[Color]): BufferAttribute = js.native
-  //def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute    = js.native
+  def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute    = js.native
   def copyVector2sArray(vectors: js.Array[Vector2]): BufferAttribute        = js.native
   def copyVector3sArray(vectors: js.Array[Vector3]): BufferAttribute        = js.native
   def copyVector4sArray(vectors: js.Array[Vector4]): BufferAttribute        = js.native
