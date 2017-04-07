@@ -29,6 +29,24 @@ class BufferAttribute(var array: ArrayBuffer,
   def copyArray(array: js.Array[Double] | ArrayBuffer): BufferAttribute = js.native
   def copyAt(index1: Int, bufferAttribute: BufferAttribute, index2: Int): Unit =
     js.native
-  //def copyColorsArray(colors: js.Array[Color]): BufferAttribute = js.native
-
+  def copyColorsArray(colors: js.Array[Color]): BufferAttribute = js.native
+  //def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute    = js.native
+  def copyVector2sArray(vectors: js.Array[Vector2]): BufferAttribute        = js.native
+  def copyVector3sArray(vectors: js.Array[Vector3]): BufferAttribute        = js.native
+  def copyVector4sArray(vectors: js.Array[Vector4]): BufferAttribute        = js.native
+  def getX(index: Int): Double                                              = js.native
+  def getY(index: Int): Double                                              = js.native
+  def getZ(index: Int): Double                                              = js.native
+  def getW(index: Int): Double                                              = js.native
+  def onUpload(callback: js.Function): Unit                                 = js.native
+  def set(value: js.Array[Double], offset: Int): Unit                       = js.native
+  def setArray(array: ArrayBuffer): Unit                                    = js.native
+  def setDynamic(value: Boolean): BufferAttribute                           = js.native
+  def setX(index: Int, x: Double): Unit                                     = js.native
+  def setY(index: Int, y: Double): Unit                                     = js.native
+  def setZ(index: Int, z: Double): Unit                                     = js.native
+  def setW(index: Int, w: Double): Unit                                     = js.native
+  def setXY(index: Int, x: Double, y: Double): Unit                         = js.native
+  def setXYZ(index: Int, x: Double, y: Double, z: Double): Unit             = js.native
+  def setXYZW(index: Int, x: Double, y: Double, z: Double, w: Double): Unit = js.native
 }
