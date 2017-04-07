@@ -134,7 +134,18 @@ trait EventDispatcher extends js.Object {
 
 @js.native
 @JSGlobal("THREE.Face3")
-class Face3 extends js.Object {}
+class Face3(a: Int,
+            b: Int,
+            c: Int,
+            normal: js.UndefOr[Vector3],
+            color: js.UndefOr[Color],
+            materialIndex: js.UndefOr[Int])
+    extends js.Object {
+  val vertexNormals: js.Array[Vector3] = js.native
+  val vertexColors: js.Array[Color]    = js.native
+  override def clone(): Face3          = js.native
+  def copy(face3: Face3): Face3        = js.native
+}
 
 @js.native
 @JSGlobal("THREE.Geometry")
