@@ -3,8 +3,6 @@ package minithree2.THREE
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSGlobal
 
-// TODO add js.UndefOr to necessary
-
 @js.native
 @JSGlobal("THREE.Box2")
 class Box2(var min: js.UndefOr[Vector2], var max: js.UndefOr[Vector2])
@@ -35,7 +33,11 @@ class Cylindrical(radius: Float, theta: Float, y: Float) extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Euler")
-class Euler(x: Float, y: Float, z: Float, order: String) extends js.Object {}
+class Euler(x: js.UndefOr[Float],
+            y: js.UndefOr[Float],
+            z: js.UndefOr[Float],
+            order: js.UndefOr[String])
+    extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Frustum")
@@ -70,7 +72,7 @@ class Matrix4 extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Plane")
-class Plane(normal: Vector3, constant: Float) extends js.Object {}
+class Plane(normal: js.UndefOr[Vector3], constant: js.UndefOr[Float]) extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Quaternion")
