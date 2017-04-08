@@ -1,11 +1,11 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Stats, Vector3}
+import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Stats, Vector3, WebGLRenderer}
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants
-import snowy.client.ThreeRenderer._
+import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.connection.GameState
 import snowy.draw.{CreateGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield._
@@ -134,7 +134,7 @@ object DrawPlayfield {
 
 }
 
-class DrawPlayfield() {
+class DrawPlayfield(renderer: WebGLRenderer) {
   import DrawPlayfield._
   val scene = new THREE.Scene()
   val camera =

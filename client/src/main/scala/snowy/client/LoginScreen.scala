@@ -1,14 +1,10 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{
-  MeshLambertMaterialParameters,
-  MeshPhongMaterialParameters,
-  Vector3
-}
+import minithree.THREE.{MeshLambertMaterialParameters, MeshPhongMaterialParameters, Vector3, WebGLRenderer}
 import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
-import snowy.client.ThreeRenderer._
+import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.connection.GameState
 import snowy.draw.ThreeSleds
 import snowy.playfield._
@@ -31,7 +27,7 @@ class ConeGeometry(radius: Double = js.native,
   var parameters: js.Any = js.native
 }
 
-class LoginScreen() {
+class LoginScreen(renderer: WebGLRenderer) {
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)

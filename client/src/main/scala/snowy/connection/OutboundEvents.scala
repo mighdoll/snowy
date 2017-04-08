@@ -2,8 +2,8 @@ package snowy.connection
 
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
+import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.client.Keys
-import snowy.client.ThreeRenderer.{getHeight, getWidth}
 import snowy.connection.GameState.gameTime
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
