@@ -14,10 +14,7 @@ import snowy.playfield.{SkiColor, SledKind}
 import vector.Vec2d
 
 class InboundEvents(socket: NetworkSocket,
-                    sendMessage: (GameServerMessage) => Unit,
-                    name: String,
-                    kind: SledKind,
-                    color: SkiColor) {
+                    sendMessage: (GameServerMessage) => Unit) {
 
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
@@ -26,8 +23,8 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   socket.onOpen { _ =>
+    new OutboundEvents(sendMessage)
     GameState.serverGameClock = Some(new ServerGameClock(sendMessage))
-    sendMessage(Join(name, kind, color))
   }
 
   socket.onError { event =>

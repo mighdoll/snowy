@@ -9,7 +9,7 @@ import snowy.GameServerProtocol._
 import snowy.connection.{InboundEvents, OutboundEvents}
 import snowy.playfield.{SkiColor, SledKind}
 
-class Connection(name: String, kind: SledKind, color: SkiColor) {
+class Connection() {
   val socket = {
     val inDelay  = 0 milliseconds
     val outDelay = 0 milliseconds
@@ -25,8 +25,11 @@ class Connection(name: String, kind: SledKind, color: SkiColor) {
     document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
   }
 
-  new InboundEvents(socket, sendMessage, name, kind, color)
-  new OutboundEvents(sendMessage)
+  def join(name: String, kind: SledKind, color: SkiColor): Unit = {
+    sendMessage(Join(name, kind, color))
+  }
+
+  new InboundEvents(socket, sendMessage)
 
   def sendMessage(item: GameServerMessage): Unit = {
     val bytes     = Pickle.intoBytes(item)

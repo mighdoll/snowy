@@ -14,7 +14,7 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
   socket.binaryType = "arraybuffer"
 
   def onOpen(fn: Event => Unit): Unit = {
-    socket.onopen = fn
+    socket.addEventListener("open", fn, false)
   }
 
   def send(data: String): Unit = {
@@ -28,22 +28,22 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
   }
 
   def onError(fn: ErrorEvent => Unit): Unit = {
-    socket.onerror = fn
+    socket.addEventListener("error", fn, false)
   }
 
   def onClose(fn: CloseEvent => Unit): Unit = {
-    socket.onclose = fn
+    socket.addEventListener("close", fn, false)
   }
 
   def onMessage(fn: MessageEvent => Unit): Unit = {
     if (inDelay.length == 0) {
-      socket.onmessage = fn
+      socket.addEventListener("message", fn, false)
     } else {
-      socket.onmessage = { message: MessageEvent =>
+      socket.addEventListener("message", { message: MessageEvent =>
         delay(inDelay) {
           fn(message)
         }
-      }
+      }, false)
     }
   }
 

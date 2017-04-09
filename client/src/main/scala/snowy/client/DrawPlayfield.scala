@@ -1,7 +1,14 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Stats, Vector3, WebGLRenderer}
+import minithree.THREE.{
+  MeshBasicMaterialParameters,
+  MeshLambertMaterialParameters,
+  Object3D,
+  Stats,
+  Vector3,
+  WebGLRenderer
+}
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants
@@ -189,14 +196,19 @@ class DrawPlayfield(renderer: WebGLRenderer) {
     stats.end()
   }
 
+  def gameActive(): Boolean = GameState.mySledId.isDefined
+
   def renderState(): Unit = {
-    if (GameState.mySledId.isDefined) renderer.render(scene, camera)
+    if (gameActive()) renderer.render(scene, camera)
   }
 
-  window.addEventListener("resize", { _: Event =>
-    camera.aspect = Math.min(getWidth / getHeight, 3)
-    camera.updateProjectionMatrix()
+  window.addEventListener(
+    "resize", { _: Event =>
+      camera.aspect = Math.min(getWidth / getHeight, 3)
+      camera.updateProjectionMatrix()
 
-    renderState()
-  })
+      if (gameActive() && ClientMain.animating()) ClientMain.resize()
+      renderState()
+    }
+  )
 }

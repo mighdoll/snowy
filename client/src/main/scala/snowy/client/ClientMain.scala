@@ -2,7 +2,6 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.{WebGLRenderer, WebGLRendererParameters}
-import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.connection.GameState.{nextState, nextTimeSlice}
 
@@ -14,8 +13,9 @@ object ClientMain extends JSApp {
   private val loginScreen        = new LoginScreen(renderer)
   private val playfieldAnimation = new Animation(animate)
 
-  def getWidth(): Double  = window.innerWidth
-  def getHeight(): Double = window.innerHeight
+  def getWidth(): Double   = window.innerWidth
+  def getHeight(): Double  = window.innerHeight
+  def animating(): Boolean = playfieldAnimation.animating()
 
   private def createRenderer(): WebGLRenderer = {
     val renderer = new THREE.WebGLRenderer(
@@ -54,19 +54,17 @@ object ClientMain extends JSApp {
 
   def death(): Unit = loginScreen.rejoinPanel()
 
-  private def resize(): Unit = {
+  def resize(): Unit = {
     renderer.setSize(getWidth(), getHeight())
     renderer.setViewport(0, 0, getWidth(), getHeight())
   }
-
-  window.addEventListener("resize", { _: Event =>
-    resize()
-  }, false)
 }
 
 /** Manage a function that's run on the browser's requestAnimationFrame loop */
 class Animation(frameFn: Double => Unit) {
   private var frameId: Option[Int] = None
+
+  def animating(): Boolean = frameId.isDefined
 
   def start(): Unit = nextFrame()
 
@@ -77,5 +75,8 @@ class Animation(frameFn: Double => Unit) {
 
   def nextFrame(): Unit = { frameId = Some(window.requestAnimationFrame(animate)) }
 
-  def cancel(): Unit = frameId.foreach(window.cancelAnimationFrame)
+  def cancel(): Unit = {
+    frameId.foreach(window.cancelAnimationFrame)
+    frameId = None
+  }
 }

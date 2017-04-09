@@ -1,7 +1,12 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{MeshLambertMaterialParameters, MeshPhongMaterialParameters, Vector3, WebGLRenderer}
+import minithree.THREE.{
+  MeshLambertMaterialParameters,
+  MeshPhongMaterialParameters,
+  Vector3,
+  WebGLRenderer
+}
 import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
 import snowy.client.ClientMain.{getHeight, getWidth}
@@ -35,9 +40,10 @@ class LoginScreen(renderer: WebGLRenderer) {
   private val amb   = new THREE.AmbientLight(0xFFFFFF, 0.7)
   private val light = new THREE.DirectionalLight(0xFFFFFF, 0.3)
 
-  private var connected: Option[Connection] = None
-  private var skiColor: SkiColor            = BasicSkis
-  private var sledKind: SledKind            = BasicSled
+  private var connected: Connection = new Connection()
+  private var spawned: Boolean      = false
+  private var skiColor: SkiColor    = BasicSkis
+  private var sledKind: SledKind    = BasicSled
 
   private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
   private val sled       = Sled("", Vec2d(0, 0), sledKind, skiColor)
@@ -158,8 +164,10 @@ class LoginScreen(renderer: WebGLRenderer) {
     renderLoginScreen()
   }
 
+  def loginScreenActive(): Boolean = GameState.mySledId.isEmpty || rejoinScreen
+
   def renderLoginScreen(): Unit = {
-    if (GameState.mySledId.isEmpty || rejoinScreen) renderer.render(scene, camera)
+    if (loginScreenActive()) renderer.render(scene, camera)
   }
 
   def updateSelector(): Unit = {
@@ -262,18 +270,15 @@ class LoginScreen(renderer: WebGLRenderer) {
   def loginPressed(e: Event): Unit = {
     e.preventDefault()
     //Connect to the WebSocket server
-    connected match {
-      case None =>
-        connected = Some(
-          new Connection(
-            document.getElementById("username").asInstanceOf[html.Input].value,
-            sledKind,
-            skiColor
-          )
-        )
-      case Some(x) => x.reSpawn()
-      case _       =>
-    }
+    if (!spawned) {
+      //TODO: If the socket is not open wait until socket is open to join (connected.socket.onOpen)
+      connected.join(
+        document.getElementById("username").asInstanceOf[html.Input].value,
+        sledKind,
+        skiColor
+      )
+      spawned = true
+    } else connected.reSpawn()
 
     swapScreen(true)
 
@@ -287,9 +292,7 @@ class LoginScreen(renderer: WebGLRenderer) {
     .asInstanceOf[html.Form]
     .addEventListener("submit", loginPressed, false)
 
-  def clearConnection(): Unit = {
-    connected = None
-  }
+  def clearConnection(): Unit = { spawned = false }
 
   def rejoinPanel() {
     swapScreen(false)
@@ -331,15 +334,8 @@ class LoginScreen(renderer: WebGLRenderer) {
     val leave2 = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
     val card   = new THREE.BoxGeometry(16, 8, 1)
 
-    leave1.computeFlatVertexNormals()
-    leave2.computeFlatVertexNormals()
-
     // LATER use typed version
-    val geoParams = Dynamic.literal(
-      steps = 1,
-      amount = Shapes.s,
-      bevelEnabled = false
-    )
+    val geoParams = Dynamic.literal(steps = 1, amount = Shapes.s, bevelEnabled = false)
 
     val geoS = new THREE.ExtrudeGeometry(Shapes.shapeS, geoParams)
     val geoN = new THREE.ExtrudeGeometry(Shapes.shapeN, geoParams)
@@ -477,10 +473,14 @@ class LoginScreen(renderer: WebGLRenderer) {
     val snowyText = new THREE.Object3D()
   }
 
-  window.addEventListener("resize", { _: Event =>
-    camera.aspect = Math.min(getWidth / getHeight, 3)
-    camera.updateProjectionMatrix()
+  window.addEventListener(
+    "resize", { _: Event =>
+      camera.aspect = Math.min(getWidth / getHeight, 3)
+      camera.updateProjectionMatrix()
 
-    renderLoginScreen()
-  })
+      if (loginScreenActive()) ClientMain.resize()
+      renderLoginScreen()
+    },
+    false
+  )
 }
