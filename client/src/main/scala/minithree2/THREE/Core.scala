@@ -5,6 +5,10 @@ import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 import scala.scalajs.js.typedarray.ArrayBuffer
 import scala.scalajs.js.|
 
+// TODO: The docs and src conflict for a lot of things, check and update based on src
+// TODO: If params are defined as properties in docs, make them mutable and set them to js.native
+
+// TODO: Should this be @ScalaJSDefined
 @ScalaJSDefined
 trait UpdateRangeParameters extends js.Object {
   val offset: js.UndefOr[Int] = js.undefined
@@ -361,6 +365,7 @@ class Object3D extends EventDispatcher {
   def worldToLocal(vector: Vector3): Vector3                      = js.native
 }
 
+// TODO: Are (js.Object)s the same as (Dynamic.literal)s
 @ScalaJSDefined
 trait RaycasterParameters extends js.Object {
   val Mesh: js.UndefOr[js.Object]   = js.undefined
