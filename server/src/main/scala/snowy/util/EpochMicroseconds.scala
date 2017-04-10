@@ -6,6 +6,10 @@ case class EpochMicroseconds(value: Long) extends AnyVal
 /** an interval in nanoseconds */
 case class Nanoseconds(value: Long) extends AnyVal
 
+object Nanoseconds {
+  def current():Nanoseconds = Nanoseconds(System.nanoTime())
+}
+
 /** An microsecond clock aligned within 1msec of the system clock.
   *
   * The jvm provides real time clock to milliseconds and an interval

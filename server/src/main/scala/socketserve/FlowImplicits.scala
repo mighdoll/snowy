@@ -1,9 +1,11 @@
 package socketserve
 
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Future, Promise}
 import scala.util.Success
 import akka.socketserve.FixedBuffer
 import akka.stream.scaladsl.{Flow, Source}
+import snowy.util.Nanoseconds
 
 object FlowImplicits {
 
@@ -31,6 +33,30 @@ object FlowImplicits {
       val droppingFn = () => fn
       val buffer     = FixedBuffer[Out](size, droppingFn)
       flow.via(buffer)
+    }
+
+    def filterOld(window: FiniteDuration, // note untested
+                  bufferSize: Int,
+                  oldFn: (Out) => Boolean,
+                  overflowFn: () => Unit): Flow[In, Out, Mat] = {
+
+      case class Dated[T](item: T, time: Nanoseconds = Nanoseconds.current()) {
+        def expired: Boolean = {
+          val current = Nanoseconds.current().value
+          current - time.value > window.toNanos
+        }
+      }
+
+      flow
+        .map(Dated(_))
+        .fixedBuffer(bufferSize, overflowFn())
+        .filter{ dated =>
+          val expired = dated.expired
+          if (expired) {
+            oldFn(dated.item)
+          } else true
+        }
+        .map(_.item)
     }
 
   }
