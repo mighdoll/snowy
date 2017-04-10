@@ -92,6 +92,9 @@ html, body {
 #play:hover {
   background: rgb(120, 201, 44);
 }
+#play:focus {
+  outline: none;
+}
 #play:disabled {
   background: rgba(120, 201, 44, 0.5);
 }

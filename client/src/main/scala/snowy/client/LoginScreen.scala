@@ -304,7 +304,7 @@ class LoginScreen(renderer: WebGLRenderer) {
 
     ClientMain.stopRedraw()
     gameHud.classList.add("hide")
-    textInput.focus()
+    playButton.focus()
     rejoinScreen = true
 
     renderLoginScreen()
