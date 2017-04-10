@@ -92,8 +92,8 @@ html, body {
 #play:hover {
   background: rgb(120, 201, 44);
 }
-div#3d-elements {
-    position: absolute;
+#play:disabled {
+  background: rgba(120, 201, 44, 0.5);
 }
 .link {
   position: relative;

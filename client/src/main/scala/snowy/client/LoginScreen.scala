@@ -50,8 +50,11 @@ class LoginScreen(renderer: WebGLRenderer) {
   private var threeSled =
     ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
 
-  private val textInput = document.getElementById("username").asInstanceOf[html.Input]
-  private val gameHud   = document.getElementById("game-hud").asInstanceOf[html.Div]
+  private val gameDiv    = document.getElementById("game-div").asInstanceOf[html.Div]
+  private val gameHud    = document.getElementById("game-hud").asInstanceOf[html.Div]
+  private val loginForm  = document.getElementById("login-form").asInstanceOf[html.Form]
+  private val textInput  = document.getElementById("username").asInstanceOf[html.Input]
+  private val playButton = document.getElementById("play").asInstanceOf[html.Button]
 
   sealed trait Direction
   case object Left   extends Direction
@@ -63,6 +66,11 @@ class LoginScreen(renderer: WebGLRenderer) {
   private var hover: Direction = Middle
 
   private var rejoinScreen = false
+
+  connected.socket.onOpen { _ =>
+    playButton.disabled = false
+    playButton.innerHTML = "Join Game"
+  }
 
   private def setup(): Unit = {
     positions()
@@ -273,7 +281,7 @@ class LoginScreen(renderer: WebGLRenderer) {
     if (!spawned) {
       //TODO: If the socket is not open wait until socket is open to join (connected.socket.onOpen)
       connected.join(
-        document.getElementById("username").asInstanceOf[html.Input].value,
+        textInput.value,
         sledKind,
         skiColor
       )
@@ -287,10 +295,7 @@ class LoginScreen(renderer: WebGLRenderer) {
     ClientMain.startRedraw()
   }
 
-  document
-    .getElementById("login-form")
-    .asInstanceOf[html.Form]
-    .addEventListener("submit", loginPressed, false)
+  loginForm.addEventListener("submit", loginPressed, false)
 
   def clearConnection(): Unit = { spawned = false }
 
@@ -308,23 +313,11 @@ class LoginScreen(renderer: WebGLRenderer) {
   /** Swap the login screen and game panel */
   def swapScreen(game: Boolean) {
     if (game) {
-      document
-        .getElementById("game-div")
-        .asInstanceOf[html.Div]
-        .classList
-        .remove("back")
-      document
-        .getElementById("login-form")
-        .asInstanceOf[html.Div]
-        .classList
-        .add("hide")
+      gameDiv.classList.remove("back")
+      loginForm.classList.add("hide")
     } else {
-      document.getElementById("game-div").asInstanceOf[html.Div].classList.add("back")
-      document
-        .getElementById("login-form")
-        .asInstanceOf[html.Div]
-        .classList
-        .remove("hide")
+      gameDiv.classList.add("back")
+      loginForm.classList.remove("hide")
     }
   }
 
