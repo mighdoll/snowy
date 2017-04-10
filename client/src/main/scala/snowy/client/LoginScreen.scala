@@ -404,12 +404,15 @@ class LoginScreen(renderer: WebGLRenderer) {
     shapeO.lineTo(s * 4 - s * 2, s * 5 - s * 2.5)
     shapeO.lineTo(s * 0 - s * 2, s * 5 - s * 2.5)
     shapeO.lineTo(s * 0 - s * 2, s * 0 - s * 2.5)
-    shapeO.lineTo(s * 1 - s * 2, s * 1 - s * 2.5)
-    shapeO.lineTo(s * 1 - s * 2, s * 4 - s * 2.5)
-    shapeO.lineTo(s * 3 - s * 2, s * 4 - s * 2.5)
-    shapeO.lineTo(s * 3 - s * 2, s * 1 - s * 2.5)
-    shapeO.lineTo(s * 1 - s * 2, s * 1 - s * 2.5)
-    shapeO.lineTo(s * 0 - s * 2, s * 0 - s * 2.5)
+
+    val shapeOHole = new THREE.Shape()
+    shapeOHole.moveTo(s * 1 - s * 2, s * 1 - s * 2.5)
+    shapeOHole.lineTo(s * 3 - s * 2, s * 1 - s * 2.5)
+    shapeOHole.lineTo(s * 3 - s * 2, s * 4 - s * 2.5)
+    shapeOHole.lineTo(s * 1 - s * 2, s * 4 - s * 2.5)
+    shapeOHole.lineTo(s * 1 - s * 2, s * 1 - s * 2.5)
+
+    shapeO.holes.push(shapeOHole)
 
     val shapeW = new THREE.Shape()
     shapeW.moveTo(s * 0 - s * 2.5, s * 0 - s * 2.5)
