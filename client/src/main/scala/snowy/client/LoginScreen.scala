@@ -2,6 +2,9 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.{
+  Intersection,
+  Mesh,
+  MeshLambertMaterial,
   MeshLambertMaterialParameters,
   MeshPhongMaterialParameters,
   Vector3,
@@ -45,13 +48,13 @@ class LoginScreen(renderer: WebGLRenderer) {
   private var skiColor: SkiColor    = BasicSkis
   private var sledKind: SledKind    = BasicSled
 
-  private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
-  private val sled       = Sled("", Vec2d(0, 0), sledKind, skiColor)
+  private val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
   private var threeSled =
     ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
 
   private val gameDiv    = document.getElementById("game-div").asInstanceOf[html.Div]
   private val gameHud    = document.getElementById("game-hud").asInstanceOf[html.Div]
+  private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
   private val loginForm  = document.getElementById("login-form").asInstanceOf[html.Form]
   private val textInput  = document.getElementById("username").asInstanceOf[html.Input]
   private val playButton = document.getElementById("play").asInstanceOf[html.Button]
@@ -61,9 +64,10 @@ class LoginScreen(renderer: WebGLRenderer) {
   case object Right  extends Direction
   case object Middle extends Direction
 
-  private val raycaster        = new THREE.Raycaster()
-  private val mouse            = new THREE.Vector2()
-  private var hover: Direction = Middle
+  private val raycaster                    = new THREE.Raycaster()
+  private val mouse                        = new THREE.Vector2()
+  private var hover: Direction             = Middle
+  private var hoverColor: Option[SkiColor] = Some(BasicSkis)
 
   private var rejoinScreen = false
 
@@ -103,6 +107,8 @@ class LoginScreen(renderer: WebGLRenderer) {
     Groups.selector.scale.y = 2
     Groups.selector.scale.z = 2
 
+    Groups.colorSelector.position.y = -2
+
     Meshes.meshS.position.x = Shapes.s * 0
     Meshes.meshN.position.x = Shapes.s * 4
     Meshes.meshO.position.x = Shapes.s * 9
@@ -136,6 +142,25 @@ class LoginScreen(renderer: WebGLRenderer) {
   }
 
   def addGroups(): Unit = {
+    SkiColors.allSkis.zipWithIndex.foreach {
+      case (skiColor, index) =>
+        val colMat = new THREE.MeshLambertMaterial(
+          Dynamic
+            .literal(color = skiColor.color.to0x())
+            .asInstanceOf[MeshLambertMaterialParameters]
+        )
+        val colGeo = new THREE.BoxGeometry(2, 2, 2)
+        val mesh   = new THREE.Mesh(colGeo, colMat)
+        mesh.position.x = (index - SkiColors.allSkis.size / 2) * 2 + 1
+        mesh.name = index.toString
+        if (index == 0) {
+          mesh.scale.y = 2
+          mesh.position.y = -1
+        }
+
+        Groups.colorSelector.add(mesh)
+    }
+
     Groups.tree.add(Meshes.trunk)
     Groups.tree.add(Meshes.leave1)
     Groups.tree.add(Meshes.leave2)
@@ -151,6 +176,8 @@ class LoginScreen(renderer: WebGLRenderer) {
     Groups.selector.add(Groups.tree2)
 
     Groups.selector.add(Meshes.card)
+
+    Groups.selector.add(Groups.colorSelector)
 
     Groups.snowyText.add(Meshes.meshS)
     Groups.snowyText.add(Meshes.meshN)
@@ -178,6 +205,26 @@ class LoginScreen(renderer: WebGLRenderer) {
     if (loginScreenActive()) renderer.render(scene, camera)
   }
 
+  def updateColors(): Unit = {
+    if (GameState.mySledId.isEmpty || rejoinScreen) {
+      hoverColor match {
+        case Some(color) =>
+          val oldColor =
+            Groups.colorSelector.children(SkiColors.allSkis.indexOf(skiColor))
+          val newColor = Groups.colorSelector.children(SkiColors.allSkis.indexOf(color))
+          oldColor.scale.y = 1
+          newColor.scale.y = 2
+          oldColor.position.y = 0
+          newColor.position.y = -1
+          skiColor = color
+
+          updateSelector()
+          clearConnection()
+        case None =>
+      }
+    }
+  }
+
   def updateSelector(): Unit = {
     val currentIndex = SledKinds.allSleds.indexOf(sledKind)
 
@@ -188,17 +235,17 @@ class LoginScreen(renderer: WebGLRenderer) {
             if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
             else SledKinds.allSleds.last
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-          clearConnection()
         case Right =>
           sledKind =
             if (currentIndex < SledKinds.allSleds.length - 1)
               SledKinds.allSleds(currentIndex + 1)
             else SledKinds.allSleds.head
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-          clearConnection()
         case Middle =>
       }
     }
+
+    if (rejoinScreen && hover != Middle) clearConnection()
 
     scene.remove(threeSled)
 
@@ -216,13 +263,63 @@ class LoginScreen(renderer: WebGLRenderer) {
     renderLoginScreen()
   }
 
+  def hoverTree(intersects: js.Array[Intersection]): Unit = {
+    val leaf1 = Groups.tree.children(1).asInstanceOf[Mesh]
+    val leaf2 = Groups.tree.children(2).asInstanceOf[Mesh]
+
+    val leaf3 = Groups.tree2.children(1).asInstanceOf[Mesh]
+    val leaf4 = Groups.tree2.children(2).asInstanceOf[Mesh]
+
+    leaf1.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf2.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf1.name = "right"
+    leaf2.name = "right"
+    leaf3.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf4.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf3.name = "left"
+    leaf4.name = "left"
+
+    if (intersects.length > 0) {
+      val mat = leaf1.material.clone().asInstanceOf[MeshLambertMaterial]
+      mat.emissive.setHex(0x222222)
+      val mat2 = leaf2.material.clone().asInstanceOf[MeshLambertMaterial]
+      mat2.emissive.setHex(0x222222)
+      if (intersects(0).`object`.name == "right") {
+        leaf1.material = mat
+        leaf2.material = mat2
+        hover = Left
+      } else {
+        leaf3.material = mat
+        leaf4.material = mat2
+        hover = Right
+      }
+    } else {
+      hover = Middle
+    }
+  }
+
+  def hoverColor(intersects: js.Array[Intersection]): Unit = {
+    Groups.colorSelector.children = Groups.colorSelector.children.map { color =>
+      val colorMesh = color.asInstanceOf[Mesh]
+      colorMesh.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+      colorMesh
+    }
+    if (intersects.length > 0) {
+      val hoverObject = intersects(0).`object`.asInstanceOf[Mesh]
+      val newMat      = hoverObject.material.clone().asInstanceOf[MeshLambertMaterial]
+      newMat.emissive.setHex(0x222222)
+      hoverObject.material = newMat
+      hoverColor = Some(SkiColors.allSkis(hoverObject.name.toInt))
+    } else { hoverColor = None }
+  }
+
   def selectorHover(e: MouseEvent): Unit = {
     mouse.x = (e.clientX / getWidth) * 2 - 1
     mouse.y = (e.clientY / getHeight) * -2 + 1
 
     raycaster.setFromCamera(mouse, camera)
 
-    val intersects = raycaster.intersectObjects(
+    val intersectsTree = raycaster.intersectObjects(
       js.Array(
         Groups.tree.children(1),
         Groups.tree.children(2),
@@ -230,42 +327,10 @@ class LoginScreen(renderer: WebGLRenderer) {
         Groups.tree2.children(2)
       )
     )
-    val leaf1 = Groups.tree.children(1).asInstanceOf[THREE.Mesh]
-    val leaf2 = Groups.tree.children(2).asInstanceOf[THREE.Mesh]
+    hoverTree(intersectsTree)
 
-    val leaf3 = Groups.tree2.children(1).asInstanceOf[THREE.Mesh]
-    val leaf4 = Groups.tree2.children(2).asInstanceOf[THREE.Mesh]
-    leaf1.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-    leaf2.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-    Groups.tree.children(1).name = "right"
-    Groups.tree.children(2).name = "right"
-    leaf3.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-    leaf4.material.asInstanceOf[THREE.MeshPhongMaterial].emissive.setHex(0x0)
-    Groups.tree2.children(1).name = "left"
-    Groups.tree2.children(2).name = "left"
-
-    if (intersects.length > 0) {
-      val mat = leaf1.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
-      mat.emissive.setHex(0x222222)
-      mat.shading = THREE.FlatShading
-      val mat2 = leaf2.material.clone().asInstanceOf[THREE.MeshPhongMaterial]
-      mat2.emissive.setHex(0x222222)
-      mat2.shading = THREE.FlatShading
-
-      if (intersects(0).`object`.name == "right") {
-        Groups.tree.children(1).asInstanceOf[THREE.Mesh].material = mat
-        Groups.tree.children(2).asInstanceOf[THREE.Mesh].material = mat2
-        hover = Left
-
-      } else {
-        Groups.tree2.children(1).asInstanceOf[THREE.Mesh].material = mat
-        Groups.tree2.children(2).asInstanceOf[THREE.Mesh].material = mat2
-        hover = Right
-
-      }
-    } else {
-      hover = Middle
-    }
+    val intersectsColor = raycaster.intersectObjects(Groups.colorSelector.children)
+    hoverColor(intersectsColor)
 
     renderLoginScreen()
   }
@@ -273,6 +338,7 @@ class LoginScreen(renderer: WebGLRenderer) {
   window.addEventListener("mousemove", selectorHover, false)
   document.addEventListener("mousedown", { _: Event =>
     updateSelector()
+    updateColors()
   }, false)
 
   def loginPressed(e: Event): Unit = {
@@ -462,11 +528,12 @@ class LoginScreen(renderer: WebGLRenderer) {
   }
 
   object Groups {
-    val arrow     = new THREE.Object3D()
-    val selector  = new THREE.Object3D()
-    val tree      = new THREE.Object3D()
-    val tree2     = new THREE.Object3D()
-    val snowyText = new THREE.Object3D()
+    val arrow         = new THREE.Object3D()
+    val selector      = new THREE.Object3D()
+    val tree          = new THREE.Object3D()
+    val tree2         = new THREE.Object3D()
+    val snowyText     = new THREE.Object3D()
+    val colorSelector = new THREE.Object3D()
   }
 
   window.addEventListener(
