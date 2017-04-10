@@ -18,7 +18,8 @@ object Sled {
       userName = userName,
       _position = initialPosition,
       kind = kind,
-      skiColor = color
+      skiColor = color,
+      health = kind.maxHealth
     )
   }
 }

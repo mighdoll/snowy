@@ -141,7 +141,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     // TODO what should this be in the real game?
     // one idea: start with ~20 robots but don't rejoin them when the number of users
     // exceeds a threshold?
-    (1 to 4).foreach { _ =>
+    (1 to 2).foreach { _ =>
       robots.createRobot(StationaryRobot.apply)
     }
   }

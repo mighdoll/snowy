@@ -110,7 +110,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       // TODO replace magic numbers e.g. '20'
       // TODO make a function for this, e.g. 'mouseNearCenter'
       if (math.pow(e.clientX - getWidth / 2, 2) + math
-            .pow(e.clientY - getHeight / 2, 2) < math.pow(20, 2)) {
+            .pow(e.clientY - getHeight / 2, 2) < math.pow(40, 2)) {
         sendMessage(Start(Slowing, gameTime))
       } else {
         sendMessage(Stop(Slowing, gameTime))
