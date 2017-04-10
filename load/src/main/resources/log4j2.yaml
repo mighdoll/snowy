@@ -14,7 +14,7 @@ Configuration:
 
     File:
       name: File
-      fileName: ${log-path}/snowy-server.log
+      fileName: ${log-path}/snowy-load.log
       PatternLayout:
         Pattern: "%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
 
@@ -27,9 +27,4 @@ Configuration:
         - ref: File
           level: info
 
-    Logger:
-      - name: socketserve.WebServer
-        AppenderRef:
-          - ref: Console
-            level: info
 

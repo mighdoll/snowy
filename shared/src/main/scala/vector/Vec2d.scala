@@ -37,7 +37,6 @@ case class Vec2d(x: Double, y: Double) {
   def unit: Vec2d = {
     val l = length
     if (l == 0) {
-      println(s"returning unitUp from zero length Vec2.unit")
       Vec2d.unitUp
     } else {
       this / l
