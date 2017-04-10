@@ -29,12 +29,25 @@ object FlowImplicits {
       (newFlow, promise.future)
     }
 
+    /** add a buffering stage to the flow with OverflowStrategy.DropBuffer
+      * semantics. Unlike the inbuilt buffer, provides a hook for logging if
+      * the buffer overflows and is dropped.
+      *
+      * @param size number of elements in the buffer
+      * @param fn called if the buffer dropped due to overflow
+      * @return the flow with a buffering stage added
+      */
     def fixedBuffer(size: Int, fn: => Unit): Flow[In, Out, Mat] = {
       val droppingFn = () => fn
       val buffer     = FixedBuffer[Out](size, droppingFn)
       flow.via(buffer)
     }
 
+    /** a filtering stage buffers and optionally removes old elements
+      * @param window messages older than this are considered for filtering
+      * @param oldFn called on each old message to decide whether to filter it
+      * @param overflowFn called (e.g. for logging) if the internal buffer overflows
+      */
     def filterOld(window: FiniteDuration, // note untested
                   bufferSize: Int,
                   oldFn: (Out) => Boolean,
@@ -75,16 +88,11 @@ object FlowImplicits {
 
     /** run a side effecting function on messages in the flow */
     def foreach(fn: Out => Unit): Source[Out, Mat] = {
-      source.map { m =>
-        fn(m)
-        m
-      }
+      source.via(Flow[Out].foreach(fn))
     }
 
     def fixedBuffer(size: Int, fn: => Unit): Source[Out, Mat] = {
-      val droppingFn = () => fn
-      val buffer     = FixedBuffer[Out](size, droppingFn)
-      source.via(buffer)
+      source.via(Flow[Out].fixedBuffer(size, fn))
     }
   }
 }
