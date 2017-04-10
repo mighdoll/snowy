@@ -3,37 +3,38 @@ package socketserve
 import scala.collection.mutable
 import scala.concurrent.duration._
 import akka.NotUsed
-import akka.actor.{Actor, ActorRef, ActorSystem, Cancellable, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
+import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
-import ActorUtil.materializerWithLogging
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLogging {
   private implicit val materializer      = materializerWithLogging(logger)
   private var app: Option[AppController] = None
   private val connections                = mutable.Map[ClientId, ActorRef]()
-  val tickTime: FiniteDuration           = 20 milliseconds // TODO get this from GameControl
-  val internalMessagesQueue              = 10
+  private val tickTime
+    : FiniteDuration                = 20 milliseconds // TODO get this from GameControl
+  private val internalMessagesQueue = 10
 
-  val tickSource =
+  private val tickSource =
     Source
       .tick[GameCommand](tickTime, tickTime, Turn)
       .conflate(Keep.left) // if we're behind on ticks, just skip one
       .named("tickSource")
 
-  val (internalMessages, messagesRefFuture) =
+  private val (internalMessages, messagesRefFuture) =
     Source
       .actorRef[GameCommand](bufferSize = 2, OverflowStrategy.fail)
       .fixedBuffer(internalMessagesQueue, logger.warn("internal message overflow"))
       .named("internalMessages")
       .peekMat
 
-  val handlerSink = Flow[GameCommand]
+  private val handlerSink = Flow[GameCommand]
     .to(Sink.foreach {
       case ClientMessage(id, binary) => clientMessage(id, binary)
       case Open(id, out)             => open(id, out)
@@ -44,7 +45,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
     .named("handlerSink")
 
   // LATER use mergePreferred ticks and internalMessages
-  val mergeSink = MergeHub
+  private val mergeSink = MergeHub
     .source[GameCommand]
     .merge(tickSource)
     .merge(internalMessages)
