@@ -68,6 +68,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     Span.root("GameControl.turn").timeSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
       time("GameControl.robotsTurn"){ robots.robotsTurn() }
+      applyTurn(deltaSeconds)
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
       val turnDeaths = gameTurns.turn(deltaSeconds)
