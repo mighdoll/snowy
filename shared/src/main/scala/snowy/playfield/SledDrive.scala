@@ -16,7 +16,7 @@ object SledDrive {
 
   /** brake counter the current direction of travel */
   def brake(sled: Sled, acceleration: Double): Unit = {
-    sled.speed.transform {
+    sled.speed = sled.speed.transform {
       case speed if !speed.zero =>
         val speedLength = (speed.length - acceleration).clip(0, sled.maxSpeed)
         speed.unit * speedLength
