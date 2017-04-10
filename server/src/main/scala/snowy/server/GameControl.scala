@@ -268,7 +268,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
-        logger.info(s"sled ${sledId.id} killed: sledCount:${sledMap.size}")
+        val connectIdStr= sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
+        logger.info(s"sled ${sledId.id} killed $connectIdStr sledCount:${sledMap.size}")
         sled.remove()
       }
     }

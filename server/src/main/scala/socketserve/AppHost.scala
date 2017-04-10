@@ -18,6 +18,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   private var app: Option[AppController] = None
   private val connections                = mutable.Map[ClientId, ActorRef]()
   val tickTime: FiniteDuration           = 20 milliseconds // TODO get this from GameControl
+  val internalMessagesQueue              = 10
 
   val tickSource =
     Source
@@ -27,7 +28,8 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
 
   val (internalMessages, messagesRefFuture) =
     Source
-      .actorRef[GameCommand](bufferSize = 10, OverflowStrategy.fail)
+      .actorRef[GameCommand](bufferSize = 2, OverflowStrategy.fail)
+      .fixedBuffer(internalMessagesQueue, logger.warn("internal message overflow"))
       .named("internalMessages")
       .peekMat
 

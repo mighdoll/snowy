@@ -47,8 +47,7 @@ class ClientConnection(id: ConnectionId,
     pongsRef ! pingTime
   }
 
-  /** setup a flow to watch for incoming Pongs
-    * sets PingsToHere as a side effect */
+  /** setup a flow to watch for incoming Pongs */
   private def watchForPongs(): ActorRef = {
     val pongSource = Source.actorRef[Long](100, OverflowStrategy.dropTail)
 

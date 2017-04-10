@@ -1,21 +1,24 @@
 package socketserve
 
-import java.util.concurrent.atomic.AtomicInteger
 import scala.concurrent.Future
-import akka.{Done, NotUsed}
 import akka.actor._
-import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
+import akka.http.scaladsl.model.ws.{BinaryMessage, Message}
+import akka.socketserve.FixedBuffer
 import akka.stream._
 import akka.stream.scaladsl._
+import akka.{Done, NotUsed}
 import com.typesafe.scalalogging.StrictLogging
+import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
-import ActorUtil.materializerWithLogging
+import snowy.util.RateLimit.rateLimit
+import scala.concurrent.duration._
+import snowy.GameServerProtocol.ClientPing
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictLogging {
-  val outputBufferSize = 1000
-  val inputBufferSize  = 10
-  val inputBufferLevel = new AtomicInteger()
+  val outputBufferSize              = 1000
+  val inputBufferSize               = 100
+  val internalMessagesSize          = 100
   private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 
@@ -26,9 +29,15 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
 
     val (inputSink, messagesRefFuture) = setupInput(connectionId)
 
+    def warnOverflow() =
+      logger.warn(s"overflow sending messages to client: $connectionId")
+
     // create an actor ref to accept and buffer messages sent to the client
     val (out, outRefFuture) =
-      Source.actorRef[Message](outputBufferSize, OverflowStrategy.dropBuffer).peekMat
+      Source
+        .actorRef[Message](3, OverflowStrategy.dropBuffer)
+        .fixedBuffer(outputBufferSize, warnOverflow)
+        .peekMat
 
     reportOnOpen(connectionId, messagesRefFuture, outRefFuture)
     Flow.fromSinkAndSource(inputSink, out)
@@ -43,28 +52,20 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
   private def setupInput(
         connectionId: ConnectionId
   ): (Sink[Message, NotUsed], Future[ActorRef]) = {
-    val internalMessagesBuffer = 100
 
     // watch for closing the socket
     val (inputNotifyDone, terminationFutureMat) =
       Flow[Message].watchTermination()(Keep.right).peekMat
 
+    def warnInputOverflow() = logger.warn(s"input buffer overflow on $connectionId")
+
     // buffer input messages from the client
-    var lastBufferLevel = 0
     val inputBuffered: Flow[Message, Message, NotUsed] =
       inputNotifyDone
         .foreach { m =>
           logger.trace(s"received message on $connectionId. message: $m")
         }
-        .foreach { _ =>
-          val level = inputBufferLevel.incrementAndGet()
-          if (level > 1 & level != lastBufferLevel) {
-            lastBufferLevel = level
-            logger.info(s"input buffer $connectionId  level: $level")
-          }
-        }
-        .buffer(inputBufferSize, OverflowStrategy.dropBuffer)
-        .foreach(_ => inputBufferLevel.decrementAndGet())
+        .fixedBuffer(inputBufferSize, warnInputOverflow)
         .mapMaterializedValue(_ => NotUsed)
         .named("inputBuffered")
 
@@ -81,7 +82,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
     // target for sending connection open/close messages to the controller
     val (internalMessages, internalRefFuture) =
       Source
-        .actorRef[GameCommand](internalMessagesBuffer, OverflowStrategy.fail)
+        .actorRef[GameCommand](internalMessagesSize, OverflowStrategy.fail)
         .named("inputInternalMessages")
         .peekMat
 

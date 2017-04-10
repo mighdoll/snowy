@@ -110,7 +110,8 @@ object SnowyServerFixture {
 
     val sourceToServer = {
       val sourceQueue =
-        Source.queue[GameServerMessage](outputBufferSize, OverflowStrategy.dropTail)
+        Source.queue[GameServerMessage](outputBufferSize, OverflowStrategy.fail)
+
       val gameMessageToBinaryMessage = Flow[GameServerMessage].map { msg =>
         val msgString = Pickle.intoBytes[GameServerMessage](msg)
         BinaryMessage(ByteString(msgString)): Message

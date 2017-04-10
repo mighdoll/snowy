@@ -2,6 +2,7 @@ package socketserve
 
 import scala.concurrent.{Future, Promise}
 import scala.util.Success
+import akka.socketserve.FixedBuffer
 import akka.stream.scaladsl.{Flow, Source}
 
 object FlowImplicits {
@@ -26,6 +27,12 @@ object FlowImplicits {
       (newFlow, promise.future)
     }
 
+    def fixedBuffer(size: Int, fn: => Unit): Flow[In, Out, Mat] = {
+      val droppingFn = () => fn
+      val buffer     = FixedBuffer[Out](size, droppingFn)
+      flow.via(buffer)
+    }
+
   }
 
   implicit class SourceOps[Out, Mat](source: Source[Out, Mat]) {
@@ -46,6 +53,12 @@ object FlowImplicits {
         fn(m)
         m
       }
+    }
+
+    def fixedBuffer(size: Int, fn: => Unit): Source[Out, Mat] = {
+      val droppingFn = () => fn
+      val buffer     = FixedBuffer[Out](size, droppingFn)
+      source.via(buffer)
     }
   }
 }

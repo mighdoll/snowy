@@ -9,6 +9,8 @@ import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import socketserve.ActorUtil.materializerWithLogging
+import socketserve.FlowImplicits._
+
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {
@@ -65,7 +67,8 @@ class MeasurementToTsvFile(directoryName: String)(implicit system: ActorSystem)
     createDirectoriesTo(path)
     val fileStream = {
       val source = Source
-        .queue[String](8192, OverflowStrategy.dropBuffer)
+        .queue[String](3, OverflowStrategy.dropBuffer)
+        .fixedBuffer(8192, logger.warn(s"overflow writing to $path"))
         .map(ByteString(_))
       val sink = FileIO.toPath(path, Set(WRITE, CREATE, TRUNCATE_EXISTING))
       source.to(sink).run()
