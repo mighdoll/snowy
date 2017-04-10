@@ -9,6 +9,7 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
+import snowy.playfield.GameMotion.Turn
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
@@ -21,10 +22,16 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
     : FiniteDuration                = 20 milliseconds // TODO get this from GameControl
   private val internalMessagesQueue = 10
 
+  /** if we're behind on ticks, just skip one */
+  private def tickBehind(a: GameCommand, b: GameCommand): GameCommand = {
+    logger.warn("running slowly, skipping turn")
+    a
+  }
+
   private val tickSource =
     Source
       .tick[GameCommand](tickTime, tickTime, Turn)
-      .conflate(Keep.left) // if we're behind on ticks, just skip one
+      .conflate(tickBehind)
       .named("tickSource")
 
   private val (internalMessages, messagesRefFuture) =
