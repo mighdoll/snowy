@@ -207,20 +207,18 @@ class LoginScreen(renderer: WebGLRenderer) {
 
   def updateColors(): Unit = {
     if (GameState.mySledId.isEmpty || rejoinScreen) {
-      hoverColor match {
-        case Some(color) =>
-          val oldColor =
-            Groups.colorSelector.children(SkiColors.allSkis.indexOf(skiColor))
-          val newColor = Groups.colorSelector.children(SkiColors.allSkis.indexOf(color))
-          oldColor.scale.y = 1
-          newColor.scale.y = 2
-          oldColor.position.y = 0
-          newColor.position.y = -1
-          skiColor = color
+      hoverColor.foreach { color =>
+        val oldColor =
+          Groups.colorSelector.children(SkiColors.allSkis.indexOf(skiColor))
+        val newColor = Groups.colorSelector.children(SkiColors.allSkis.indexOf(color))
+        oldColor.scale.y = 1
+        newColor.scale.y = 2
+        oldColor.position.y = 0
+        newColor.position.y = -1
+        skiColor = color
 
-          updateSelector()
-          clearConnection()
-        case None =>
+        updateSelector()
+        clearConnection()
       }
     }
   }
