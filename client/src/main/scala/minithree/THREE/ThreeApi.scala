@@ -1066,7 +1066,7 @@ class Material extends js.Object {
   var visible: Boolean                = js.native
   var needsUpdate: Boolean            = js.native
   def setValues(values: Object): Unit = js.native
-  override def clone(): Material    = js.native
+  override def clone(): Material      = js.native
   def dispose(): Unit                 = js.native
   def addEventListener(`type`: String, listener: js.Function1[js.Any, Unit]): Unit =
     js.native
@@ -3724,6 +3724,19 @@ class ShapeGeometry extends Geometry {
 
   def addShapeList(shapes: js.Array[Shape], options: js.Any): ShapeGeometry = js.native
   def addShape(shape: Shape, options: js.Any = js.native): Unit             = js.native
+}
+
+@js.native
+@JSGlobal("THREE.ConeGeometry")
+class ConeGeometry(radius: Double = js.native,
+                   height: Double = js.native,
+                   radialSegments: Int = js.native,
+                   heightSegments: Int = js.native,
+                   openEnded: Boolean = js.native,
+                   thetaStart: Double = js.native,
+                   thetaLength: Double = js.native)
+    extends Geometry {
+  var parameters: js.Any = js.native
 }
 
 @js.native

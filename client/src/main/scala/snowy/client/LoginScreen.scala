@@ -20,20 +20,6 @@ import vector.Vec2d
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
-import scala.scalajs.js.annotation.JSGlobal
-
-@js.native
-@JSGlobal("THREE.ConeGeometry")
-class ConeGeometry(radius: Double = js.native,
-                   height: Double = js.native,
-                   radialSegments: Int = js.native,
-                   heightSegments: Int = js.native,
-                   openEnded: Boolean = js.native,
-                   thetaStart: Double = js.native,
-                   thetaLength: Double = js.native)
-    extends THREE.Geometry {
-  var parameters: js.Any = js.native
-}
 
 class LoginScreen(renderer: WebGLRenderer) {
   private val scene = new THREE.Scene()
@@ -387,8 +373,8 @@ class LoginScreen(renderer: WebGLRenderer) {
 
   object Geos {
     val trunk  = new THREE.BoxGeometry(2, 10, 2)
-    val leave1 = new ConeGeometry(4, 8, 4, 1, false, 0.783, math.Pi * 2)
-    val leave2 = new ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
+    val leave1 = new THREE.ConeGeometry(4, 8, 4, 1, false, 0.783, math.Pi * 2)
+    val leave2 = new THREE.ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
     val card   = new THREE.BoxGeometry(16, 8, 1)
 
     // LATER use typed version
