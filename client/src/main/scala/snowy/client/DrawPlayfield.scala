@@ -144,7 +144,7 @@ class DrawPlayfield(renderer: WebGLRenderer) {
   import DrawPlayfield._
   val scene = new THREE.Scene()
   val camera =
-    new THREE.PerspectiveCamera(45, Math.min(getWidth / getHeight, 3), 1, 5000)
+    new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
 
   val amb   = new THREE.AmbientLight(0xFFFFFF, 0.5)
   val light = new THREE.DirectionalLight(0xFFFFFF, 0.5)
@@ -200,7 +200,7 @@ class DrawPlayfield(renderer: WebGLRenderer) {
 
   window.addEventListener(
     "resize", { _: Event =>
-      camera.aspect = Math.min(getWidth / getHeight, 3)
+      camera.aspect = math.min(getWidth / getHeight, 3)
       camera.updateProjectionMatrix()
 
       if (gameActive() && ClientMain.animating()) ClientMain.resize()

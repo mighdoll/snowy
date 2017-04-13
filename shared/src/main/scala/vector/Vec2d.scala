@@ -69,7 +69,7 @@ case class Vec2d(x: Double, y: Double) {
   /** Make sure vector.Vec2d is within max & min */
   def clamp(min: Vec2d, max: Vec2d): Vec2d = {
     def clampNum(num: Double, min: Double, max: Double): Double = {
-      Math.min(Math.max(num, min), max)
+      math.min(math.max(num, min), max)
     }
     Vec2d(clampNum(x, min.x, max.x), clampNum(y, min.y, max.y))
   }

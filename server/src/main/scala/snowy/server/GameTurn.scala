@@ -125,7 +125,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           user         <- loserId.user
         } {
           user.setScore((score: Double) => {
-            Math.max(score * Points.sledLoss, Points.minPoints)
+            math.max(score * Points.sledLoss, Points.minPoints)
           })
         }
     }

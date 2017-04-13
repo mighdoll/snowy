@@ -11,7 +11,7 @@ object Collisions {
     val closestPoint = circle.pos.clamp(rect.pos, rect.pos + rect.size)
 
     val distanceSquared = (circle.pos - closestPoint).lengthSquared
-    distanceSquared < Math.max(circle.radius * circle.radius, Double.MinPositiveValue)
+    distanceSquared < math.max(circle.radius * circle.radius, Double.MinPositiveValue)
   }
 
   def rectClosestPerimeterPoint(rect: Rect, circle: Circle): Vec2d = {
