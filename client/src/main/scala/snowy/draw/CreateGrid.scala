@@ -36,18 +36,18 @@ object CreateGrid {
     randomHeights
   }
 
-  private val heightMap3: Seq[Double] = {
+  private val heightMap3x3: Seq[Double] = {
     def rowAtIndex(i: Int): Seq[Double] = {
       val row  = heightMap.slice(i, i + gridColumns)
       val row2 = heightMap.slice(i, i + gridColumns1)
       row ++ row ++ row2
     }
 
-    val newMap: Seq[Double] = (for {
+    val heightMap3x1: Seq[Double] = (for {
       i <- 0 until (gridColumns1 * gridRows) by gridColumns1
     } yield rowAtIndex(i)).flatten
 
-    (newMap ++ newMap ++ newMap) ++ rowAtIndex(gridColumns1 * gridRows)
+    (heightMap3x1 ++ heightMap3x1 ++ heightMap3x1) ++ rowAtIndex(gridColumns1 * gridRows)
   }
 
   private val material = new THREE.MeshLambertMaterial(
@@ -65,7 +65,7 @@ object CreateGrid {
     )
 
     for (i <- grid.vertices.indices) {
-      grid.vertices(i).z = heightMap3(i)
+      grid.vertices(i).z = heightMap3x3(i)
     }
 
     grid.computeFaceNormals()
