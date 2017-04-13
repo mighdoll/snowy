@@ -133,10 +133,9 @@ object DrawPlayfield {
   }
 
   object Groups {
-    val threeTrees                  = new THREE.Object3D()
-    val threeSnowballs              = new THREE.Object3D()
-    val threeSleds                  = new THREE.Object3D()
-    var threeGrid: Option[Object3D] = None
+    val threeTrees     = new THREE.Object3D()
+    val threeSnowballs = new THREE.Object3D()
+    val threeSleds     = new THREE.Object3D()
   }
 
 }
@@ -164,10 +163,7 @@ class DrawPlayfield(renderer: WebGLRenderer) {
     light.position.set(0, 2, 1)
     scene.add(light)
 
-    Groups.threeGrid = Some(CreateGrid.newGrid())
-    Groups.threeGrid.foreach { grid =>
-      scene.add(grid)
-    }
+    scene.add(CreateGrid.newGrid())
 
     scene.add(Groups.threeTrees)
     scene.add(Groups.threeSnowballs)

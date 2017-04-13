@@ -43,7 +43,7 @@ class LoginScreen(renderer: WebGLRenderer) {
   private val amb   = new THREE.AmbientLight(0xFFFFFF, 0.7)
   private val light = new THREE.DirectionalLight(0xFFFFFF, 0.3)
 
-  private var connected: Connection = new Connection()
+  private val connected: Connection = new Connection()
   private var spawned: Boolean      = false
   private var skiColor: SkiColor    = BasicSkis
   private var sledKind: SledKind    = BasicSled
