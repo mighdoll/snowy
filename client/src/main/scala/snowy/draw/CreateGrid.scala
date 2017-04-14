@@ -36,18 +36,23 @@ object CreateGrid {
     randomHeights
   }
 
+  /** a larger heightMap with nine copies of the base map */
   private val heightMap3x3: Seq[Double] = {
-    def rowAtIndex(i: Int): Seq[Double] = {
-      val row  = heightMap.slice(i, i + gridColumns)
-      val row2 = heightMap.slice(i, i + gridColumns1)
-      row ++ row ++ row2
+
+    /** @return one row, three times wider than the original row */
+    def wideRow(index: Int): Seq[Double] = {
+      val row        = heightMap.view(index, index + gridColumns)
+      val endElement = heightMap(index + gridColumns)
+      (row ++ row ++ row) :+ endElement
     }
 
-    val heightMap3x1: Seq[Double] = (for {
-      i <- 0 until (gridColumns1 * gridRows) by gridColumns1
-    } yield rowAtIndex(i)).flatten
+    /** height map 3 times as wide as original */
+    val rowIndices                = 0 until (gridColumns1 * gridRows) by gridColumns1
+    val heightMap3x1: Seq[Double] = rowIndices.flatMap(wideRow)
 
-    (heightMap3x1 ++ heightMap3x1 ++ heightMap3x1) ++ rowAtIndex(gridColumns1 * gridRows)
+    /** height map 3 times as wide and three times as tall as original */
+    val endRow = wideRow(gridColumns1 * gridRows)
+    (heightMap3x1 ++ heightMap3x1 ++ heightMap3x1) ++ endRow
   }
 
   private val material = new THREE.MeshLambertMaterial(
