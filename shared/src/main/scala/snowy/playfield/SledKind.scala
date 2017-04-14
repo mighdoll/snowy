@@ -92,16 +92,18 @@ case object StationaryTestSled extends SledKind {
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
-  override val gravity           = BasicSled.gravity * .5
-  override val driveAcceleration = BasicSled.driveAcceleration * .5
+  override val gravity           = BasicSled.gravity * .35
+  override val driveAcceleration = BasicSled.driveAcceleration * .25
   override val boostAcceleration = BasicSled.boostAcceleration * .5
-  override val maxHealth         = 2.0
+  override val rotationSpeed     = math.Pi / 2
+  override val maxHealth         = 3.0
   override val minRechargeTime   = 1000
-  override val bulletImpact      = 1.25
-  override val bulletSpeed       = 250
+  override val bulletHealth      = 2
+  override val bulletImpact      = 0.25
+  override val bulletSpeed       = 190
   override val bulletRadius      = 10
   override val bulletMass        = .75
-  override val bulletRecoil      = 0 //120
+  override val bulletRecoil      = 70
   override val bulletLifetime    = 10.0
   override val mass              = 3.0
 }

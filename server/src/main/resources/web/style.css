@@ -22,14 +22,16 @@ html, body {
 }
 #scoreboard {
   position: absolute;
-  width: 150px;
-  height: 220px;
+  width: 170px;
+  height: 260px;
   background: rgba(170, 170, 170, 0.5);
   right: 0px;
   top: 0px;
+  padding: 5px;
 }
 #score-title {
   text-align: center;
+  height: 20px;
 }
 .score-element {
   height: 20px;
@@ -39,6 +41,12 @@ html, body {
 }
 .score-value {
   float: right;
+}
+hr {
+  background: #888888;
+  height: 2px;
+  border: none;
+  border-radius: 10px;
 }
 #username {
   width: 35vh;
