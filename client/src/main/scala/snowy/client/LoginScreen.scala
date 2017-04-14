@@ -329,7 +329,6 @@ class LoginScreen(renderer: WebGLRenderer) {
     e.preventDefault()
     //Connect to the WebSocket server
     if (!spawned) {
-      //TODO: If the socket is not open wait until socket is open to join (connected.socket.onOpen)
       connected.join(
         textInput.value,
         sledKind,
