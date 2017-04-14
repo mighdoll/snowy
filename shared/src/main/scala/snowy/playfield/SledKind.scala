@@ -58,7 +58,7 @@ sealed trait SledKind {
   def maxImpactDamage: Double = .5
 
   /** reduce impact by this factor in sled/sled collisions */
-  def armor: Double = 1.0
+  def armor: Double = 2.0
 
   /** sleds heavier than 1.0 accelerate and decelerate more slowly */
   def mass: Double = 1.0
@@ -96,6 +96,7 @@ case object TankSled extends SledKind {
   override val driveAcceleration = BasicSled.driveAcceleration * .25
   override val boostAcceleration = BasicSled.boostAcceleration * .5
   override val rotationSpeed     = math.Pi / 2
+  override val maxImpactDamage   = 0.5
   override val maxHealth         = 3.0
   override val minRechargeTime   = 1000
   override val bulletHealth      = 2
@@ -115,7 +116,7 @@ case object GunnerSled extends SledKind {
   override val maxSpeed          = 350
   override val maxHealth         = .75
   override val minRechargeTime   = 100
-  override val bulletSpeed       = 300
+  override val bulletSpeed       = 400
   override val bulletRadius      = 3
   override val bulletMass        = .01
   override val bulletImpact      = 5.5
@@ -136,13 +137,22 @@ case object SpeedySled extends SledKind {
 }
 
 case object SpikySled extends SledKind {
-  override val gravity            = BasicSled.gravity * .65
+  override val gravity            = BasicSled.gravity * .5
   override val boostAcceleration  = BasicSled.boostAcceleration * .65
-  override val driveAcceleration  = BasicSled.driveAcceleration * .65
-  override val maxHealth          = 2.0
+  override val driveAcceleration  = BasicSled.driveAcceleration * .5
+  override val armor              = 1.0
+  override val maxHealth          = 4.0
   override val maxImpactDamage    = 2.0
-  override val mass               = 2.0
-  override val healthRecoveryTime = 30.0
+  override val mass               = 1.0
+  override val rotationSpeed      = math.Pi * 2 / 3
+  override val healthRecoveryTime = 10.0
+  override val bulletHealth       = 2.0
+  override val bulletSpeed        = 250
+  override val bulletRadius       = 12
+  override val bulletMass         = 30
+  override val bulletImpact       = 0.002
+  override val bulletLifetime     = 0.25
+  override val minRechargeTime    = 800
 }
 
 object SledKinds {
