@@ -12,7 +12,7 @@ sealed trait SledKind {
   def maxSpeed: Int = 750
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime: Int = 600
+  def minRechargeTime: Int = 200
 
   /** factor increasing or decreasing damage from being hit with a snowball
     * beyond the mass and speed of the ball */
@@ -85,10 +85,6 @@ sealed trait SledKind {
   def brakeAcceleration: Double = 450
 }
 
-case object StationaryTestSled extends SledKind {
-  override val gravity = 0.0
-}
-
 case object BasicSled extends SledKind
 
 case object TankSled extends SledKind {
@@ -110,19 +106,20 @@ case object TankSled extends SledKind {
 }
 
 case object GunnerSled extends SledKind {
-  override val gravity           = BasicSled.gravity * .8
-  override val driveAcceleration = BasicSled.driveAcceleration * .8
-  override val boostAcceleration = BasicSled.boostAcceleration * .8
-  override val maxSpeed          = 350
-  override val maxHealth         = .75
-  override val minRechargeTime   = 100
-  override val bulletSpeed       = 400
-  override val bulletRadius      = 3
-  override val bulletMass        = .01
-  override val bulletImpact      = 5.5
-  override val bulletRecoil      = 0 //10
-  override val bulletHealth      = 1.0
-  override val mass              = 1.0
+  override val gravity            = BasicSled.gravity * 1.2
+  override val driveAcceleration  = BasicSled.driveAcceleration * 1.2
+  override val boostAcceleration  = BasicSled.boostAcceleration * .8
+  override val maxSpeed           = 600
+  override val maxHealth          = 1.5
+  override val healthRecoveryTime = 10
+  override val minRechargeTime    = 100
+  override val bulletSpeed        = 400
+  override val bulletRadius       = 3
+  override val bulletLifetime     = 2
+  override val bulletMass         = .01
+  override val bulletImpact       = 4.5
+  override val bulletHealth       = 0.3
+  override val mass               = 1.0
 }
 
 case object SpeedySled extends SledKind {
@@ -132,8 +129,7 @@ case object SpeedySled extends SledKind {
   override val brakeAcceleration  = BasicSled.brakeAcceleration * 2.5
   override val healthRecoveryTime = 10.0
   override val mass               = .1
-  override val minRechargeTime    = 200
-  override val maxSpeed           = 500
+  override val maxSpeed           = 700
 }
 
 case object SpikySled extends SledKind {

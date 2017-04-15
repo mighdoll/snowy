@@ -3,10 +3,15 @@ package snowy.robot
 object RobotNames {
   val allNames = Seq(
     "hahahaha",
-    "snowy!!",
+    "snowy",
     "whoops",
     "meh",
     "asdf",
-    "notabot"
+    "notabot",
+    "blehblehbleh",
+    "totally",
+    "yep",
+    "hacker",
+    "scala"
   )
 }
