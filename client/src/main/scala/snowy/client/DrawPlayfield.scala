@@ -79,7 +79,7 @@ object DrawPlayfield {
 
   object Geos {
     val sled     = new THREE.BoxGeometry(2, 2, 2)
-    val turret   = new THREE.BoxGeometry(4, 4, 20)
+    val turret   = new THREE.BoxGeometry(8, 8, 20)
     val ski      = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
     val skiTip   = new THREE.BoxGeometry(0.25, 0.125, 0.25)
     val snowball = new THREE.BoxGeometry(2, 2, 2)
