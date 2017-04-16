@@ -150,3 +150,13 @@ case object SpikySled extends SledKind {
   override val bulletLifetime     = 0.25
   override val minRechargeTime    = 800
 }
+
+case object PrototypeSled extends SledKind {
+  override val gravity            = BasicSled.gravity * 1.5
+  override val driveAcceleration  = BasicSled.driveAcceleration * 2.5
+  override val boostAcceleration  = BasicSled.boostAcceleration * 2.5
+  override val brakeAcceleration  = BasicSled.brakeAcceleration * 2.5
+  override val healthRecoveryTime = 10.0
+  override val mass               = .1
+  override val maxSpeed           = 700
+}

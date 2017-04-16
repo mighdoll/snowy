@@ -73,12 +73,13 @@ object ThreeSleds {
     )
 
     val bodyColor = sled.kind match {
-      case BasicSled  => 0x00FFFF
-      case TankSled   => 0xFF0000
-      case GunnerSled => 0x0000FF
-      case SpeedySled => 0x00FF00
-      case SpikySled  => 0x888888
-      case _          => 0xFFFFFF
+      case BasicSled     => 0x00FFFF
+      case TankSled      => 0xFF0000
+      case GunnerSled    => 0x0000FF
+      case SpeedySled    => 0x00FF00
+      case SpikySled     => 0x888888
+      case PrototypeSled => 0xFFFF00
+      case _             => 0xFFFFFF
     }
     val bodyMat = new THREE.MeshPhongMaterial(
       Dynamic
