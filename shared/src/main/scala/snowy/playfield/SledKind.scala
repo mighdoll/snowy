@@ -150,7 +150,3 @@ case object SpikySled extends SledKind {
   override val bulletLifetime     = 0.25
   override val minRechargeTime    = 800
 }
-
-object SledKinds {
-  val allSleds = Seq(BasicSled, TankSled, GunnerSled, SpeedySled, SpikySled)
-}

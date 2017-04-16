@@ -1,17 +1,10 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{
-  Intersection,
-  Mesh,
-  MeshLambertMaterial,
-  MeshLambertMaterialParameters,
-  MeshPhongMaterialParameters,
-  Vector3,
-  WebGLRenderer
-}
+import minithree.THREE._
 import org.scalajs.dom._
 import org.scalajs.dom.raw.Event
+import snowy.AllLists
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.connection.GameState
 import snowy.draw.ThreeSleds
@@ -128,7 +121,7 @@ class LoginScreen(renderer: WebGLRenderer) {
   }
 
   def addGroups(): Unit = {
-    SkiColors.allSkis.zipWithIndex.foreach {
+    AllLists.allSkis.zipWithIndex.foreach {
       case (skiColor, index) =>
         val colMat = new THREE.MeshLambertMaterial(
           Dynamic
@@ -137,7 +130,7 @@ class LoginScreen(renderer: WebGLRenderer) {
         )
         val colGeo = new THREE.BoxGeometry(2, 2, 2)
         val mesh   = new THREE.Mesh(colGeo, colMat)
-        mesh.position.x = (index - SkiColors.allSkis.size / 2) * 2 + 1
+        mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
         mesh.name = index.toString
         if (index == 0) {
           mesh.scale.y = 2
@@ -195,8 +188,8 @@ class LoginScreen(renderer: WebGLRenderer) {
     if (GameState.mySledId.isEmpty || rejoinScreen) {
       hoverColor.foreach { color =>
         val oldColor =
-          Groups.colorSelector.children(SkiColors.allSkis.indexOf(skiColor))
-        val newColor = Groups.colorSelector.children(SkiColors.allSkis.indexOf(color))
+          Groups.colorSelector.children(AllLists.allSkis.indexOf(skiColor))
+        val newColor = Groups.colorSelector.children(AllLists.allSkis.indexOf(color))
         oldColor.scale.y = 1
         newColor.scale.y = 2
         oldColor.position.y = 0
@@ -210,20 +203,20 @@ class LoginScreen(renderer: WebGLRenderer) {
   }
 
   def updateSelector(): Unit = {
-    val currentIndex = SledKinds.allSleds.indexOf(sledKind)
+    val currentIndex = AllLists.allSleds.indexOf(sledKind)
 
     if (GameState.mySledId.isEmpty || rejoinScreen) {
       hover match {
         case Left =>
           sledKind =
-            if (currentIndex > 0) SledKinds.allSleds(currentIndex - 1)
-            else SledKinds.allSleds.last
+            if (currentIndex > 0) AllLists.allSleds(currentIndex - 1)
+            else AllLists.allSleds.last
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
         case Right =>
           sledKind =
-            if (currentIndex < SledKinds.allSleds.length - 1)
-              SledKinds.allSleds(currentIndex + 1)
-            else SledKinds.allSleds.head
+            if (currentIndex < AllLists.allSleds.length - 1)
+              AllLists.allSleds(currentIndex + 1)
+            else AllLists.allSleds.head
           chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
         case Middle =>
       }
@@ -293,7 +286,7 @@ class LoginScreen(renderer: WebGLRenderer) {
       val newMat      = hoverObject.material.clone().asInstanceOf[MeshLambertMaterial]
       newMat.emissive.setHex(0x222222)
       hoverObject.material = newMat
-      hoverColor = Some(SkiColors.allSkis(hoverObject.name.toInt))
+      hoverColor = Some(AllLists.allSkis(hoverObject.name.toInt))
     } else { hoverColor = None }
   }
 

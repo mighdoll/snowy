@@ -2,27 +2,27 @@ package snowy.robot
 
 import java.util.concurrent.ThreadLocalRandom
 
-import snowy.GameConstants
-
-import scala.util.Random
+import snowy.AllLists
 import snowy.GameServerProtocol._
 import snowy.playfield._
 import vector.Vec2d
+
+import scala.util.Random
 
 object StationaryRobot {
   private var id = 0
 
   def apply(api: RobotApi): StationaryRobot = {
     id = id + 1
-    new StationaryRobot(api, RobotNames.allNames(Random.nextInt(RobotNames.allNames.size)))
+    new StationaryRobot(api, AllLists.allNames(Random.nextInt(AllLists.allNames.size)))
   }
 }
 
 class StationaryRobot(api: RobotApi, name: String) extends Robot {
   val mySkis =
-    SkiColors.allSkis(ThreadLocalRandom.current.nextInt(SkiColors.allSkis.length))
+    AllLists.allSkis(ThreadLocalRandom.current.nextInt(AllLists.allSkis.length))
   val myType =
-    SledKinds.allSleds(ThreadLocalRandom.current.nextInt(SledKinds.allSleds.length))
+    AllLists.allSleds(ThreadLocalRandom.current.nextInt(AllLists.allSleds.length))
 
   api.sendToServer(Join(name, myType, mySkis))
 
