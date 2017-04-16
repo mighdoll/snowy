@@ -126,10 +126,11 @@ case object SpeedySled extends SledKind {
   override val gravity            = BasicSled.gravity * 1.5
   override val driveAcceleration  = BasicSled.driveAcceleration * 2.5
   override val boostAcceleration  = BasicSled.boostAcceleration * 2.5
-  override val brakeAcceleration  = BasicSled.brakeAcceleration * 2.5
+  override val brakeAcceleration  = BasicSled.brakeAcceleration * .25
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val maxSpeed           = 700
+  override val rotationSpeed      = math.Pi * 2
 }
 
 case object SpikySled extends SledKind {
@@ -155,8 +156,9 @@ case object PrototypeSled extends SledKind {
   override val gravity            = BasicSled.gravity * 1.5
   override val driveAcceleration  = BasicSled.driveAcceleration * 2.5
   override val boostAcceleration  = BasicSled.boostAcceleration * 2.5
-  override val brakeAcceleration  = BasicSled.brakeAcceleration * 2.5
+  override val brakeAcceleration  = BasicSled.brakeAcceleration * .25
   override val healthRecoveryTime = 10.0
   override val mass               = .1
-  override val maxSpeed           = 700
+  override val maxSpeed           = 650
+  override val minRechargeTime    = 175
 }

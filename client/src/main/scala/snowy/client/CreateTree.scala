@@ -35,19 +35,19 @@ object CreateTree {
   def randomTree(): Object3D = {
     val tree = new THREE.Object3D
 
-    val leafBlocksPerTree = 5
-    val leafSizeMax       = 50
-    val leafSizeMin       = 20
+    val leafBlocksPerTree = 3
+    val leafSizeMax       = 20
+    val leafSizeMin       = 10
     val leafHeightMax     = 200
     val leafHeightMin     = 50
     val snowThickness     = 5
-    val snowMinHeight     = 20
+    val snowMinHeight     = 3
 
     val trunk = new THREE.Mesh(trunkGeo, trunkMat)
     trunk.position.y = 100
     tree.add(trunk)
 
-    val topSize = randBetween(50, 30)
+    val topSize = randBetween(30, 20)
     val topGeo  = new THREE.BoxGeometry(topSize, topSize, topSize)
     val treeTop = new THREE.Mesh(topGeo, leaf2Mat)
     treeTop.position.y = 200
@@ -59,7 +59,7 @@ object CreateTree {
       topSize + snowThickness * 2
     )
     val snowTop = new THREE.Mesh(snowTopGeo, snowMat)
-    snowTop.position.y = treeTop.position.y + topSize
+    snowTop.position.y = treeTop.position.y + topSize / 2
     tree.add(snowTop)
 
     for (_ <- 1 to leafBlocksPerTree) {
@@ -105,7 +105,7 @@ object CreateTree {
       }
       snowOnLeaf.position.set(
         leaveN.position.x,
-        leaveHeight + size,
+        leaveHeight + size / 2,
         leaveN.position.z
       )
 

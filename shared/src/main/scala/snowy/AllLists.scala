@@ -16,7 +16,7 @@ object AllLists {
     "blehblehbleh",
     "totally",
     "yep",
-    "hacker",
+    "hack3r",
     "scala"
   )
 }
