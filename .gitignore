@@ -7,3 +7,4 @@ target/
 native/
 **/*.log
 .vscode/
+logs/

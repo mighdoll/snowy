@@ -3,7 +3,7 @@ Configuration:
   Properties:
     Property:
       name: log-path
-      value: "/tmp/snowy-logs"
+      value: "../logs"
 
   Appenders:
     Console:
