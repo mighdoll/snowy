@@ -92,7 +92,6 @@ object ThreeSleds {
     val tur  = new THREE.Mesh(Geos.turret, Mats.turret)
     val health =
       new THREE.Mesh(Geos.health, if (friendly) Mats.healthColor else Mats.enemyHealth)
-    val text = createText(sled.userName, 16)
 
     val ski1 = new THREE.Mesh(Geos.ski, skiMat)
     val ski2 = new THREE.Mesh(Geos.ski, skiMat)
@@ -101,8 +100,6 @@ object ThreeSleds {
     val skiTip2 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
 
     health.position.z = -50
-    text.position.z = -70
-
     health.rotation.x = 1.5 * math.Pi
 
     skiTip1.position.z = 1.5 - 0.25 / 2
@@ -123,7 +120,11 @@ object ThreeSleds {
     newSled.add(body)
     newSled.add(health)
 
-    newSled.add(text)
+    if (sled.userName != "") {
+      val text = createText(sled.userName, 16)
+      text.position.z = -70
+      newSled.add(text)
+    }
 
     newSled.position.y = sled.radius + 2.5
     DrawPlayfield.setThreePosition(newSled, sled, myPos)

@@ -64,6 +64,11 @@ case class Store[A <: PlayfieldObject](items: Set[A] = Set[A](),
     }
   }
 
+  // LATER Consider optimizing this by indexing by id
+  def getItemById(id: PlayId[A]): Option[A] = {
+    items.find(_.id == id)
+  }
+
   def debugPrint(prefix: String): Unit = {
     println(s"$prefix size:${items.size}")
     items.foreach { item =>

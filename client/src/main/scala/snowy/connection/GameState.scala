@@ -1,8 +1,9 @@
 package snowy.connection
 
 import snowy.GameClientProtocol._
+import snowy.draw.{ThreeSleds, ThreeSnowballs}
 import snowy.playfield.GameMotion._
-import snowy.playfield.PlayId.SledId
+import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield._
 import vector.Vec2d
 
@@ -84,5 +85,25 @@ object GameState {
     val deltaSeconds = (newTurn - gameTime) / 1000.0
     gameTime = newTurn
     deltaSeconds
+  }
+
+  def removeSleds(deaths: Seq[SledId]): Unit = {
+    deaths.foreach { sledDeath =>
+      serverSleds.getItemById(sledDeath) match {
+        case Some(sled) => serverSleds.remove(sled)
+        case None       =>
+      }
+    }
+    ThreeSleds.removeSleds(deaths)
+  }
+
+  def removeSnowballs(deaths: Seq[BallId]): Unit = {
+    deaths.foreach { snowballDeath =>
+      serverSnowballs.getItemById(snowballDeath) match {
+        case Some(snowball) => serverSnowballs.remove(snowball)
+        case None           =>
+      }
+    }
+    ThreeSnowballs.removeSnowballs(deaths)
   }
 }

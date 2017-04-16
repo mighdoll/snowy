@@ -32,7 +32,7 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   socket.onClose { event =>
-    window.alert(s"Socket closed: $event. The server is probably dead. Reloading")
+    if(document.hasFocus()) window.alert(s"Socket closed: $event. The server is probably dead. Reloading")
     window.location.reload()
   }
 
@@ -53,8 +53,8 @@ class InboundEvents(socket: NetworkSocket,
       case ClientPong                  => // currently used only by the load test client
       case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
       case MySled(sledId)              => mySledId = Some(sledId)
-      case SnowballDeaths(balls)       => ThreeSnowballs.removeSnowballs(balls)
-      case SledDeaths(sleds)           => ThreeSleds.removeSleds(sleds)
+      case SnowballDeaths(balls)       => GameState.removeSnowballs(balls)
+      case SledDeaths(sleds)           => GameState.removeSleds(sleds)
       case newScoreboard: Scoreboard   => UpdateScoreboard.updateScoreboard(newScoreboard)
     }
   }
