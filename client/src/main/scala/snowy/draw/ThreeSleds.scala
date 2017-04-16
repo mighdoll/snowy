@@ -41,9 +41,11 @@ object ThreeSleds {
 
     threeSledTurret.rotation.y = playfieldSled.turretRotation
     threeSledTurret.position.set(
-      math.sin(playfieldSled.turretRotation) * playfieldSled.radius,
+      math
+        .sin(playfieldSled.turretRotation) * (playfieldSled.radius + playfieldSled.bulletLaunchPosition.length),
       0,
-      math.cos(playfieldSled.turretRotation) * playfieldSled.radius
+      math
+        .cos(playfieldSled.turretRotation) * (playfieldSled.radius + playfieldSled.bulletLaunchPosition.length)
     )
 
     threeSledHealth.scale.x = playfieldSled.health / playfieldSled.maxHealth

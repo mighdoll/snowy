@@ -34,9 +34,9 @@ sealed trait SledKind {
   // TODO: Bullet recoil should be a product of bulletMass
   def bulletRecoil = 0 //30
 
-  /** bullet begins its flight this pixel offset from the sled center
+  /** bullet begins its flight this pixel offset from the sled radius
     * if the sled is shooting straight up */
-  def bulletLaunchPosition = Vec2d(0, 30)
+  def bulletLaunchPosition = Vec2d(0, 10)
 
   /** launch angle rotation from turret direction, e.g. for rear facing cannon
     * Angle is clockwise in screen coordinates (y is down) */

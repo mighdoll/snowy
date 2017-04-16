@@ -5,7 +5,7 @@ import minithree.THREE.{Object3D, Vector3}
 import snowy.client.DrawPlayfield.{Geos, Groups, Mats, removeDeaths}
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
-import snowy.playfield.Snowball
+import snowy.playfield.{BasicSled, Snowball}
 
 object ThreeSnowballs {
   val snowballGroup = new UpdateGroup[Snowball](Groups.threeSnowballs)
@@ -28,6 +28,8 @@ object ThreeSnowballs {
 
     DrawPlayfield.setThreePosition(newSnowball, snowball, myPos)
 
+    // TODO: Use actual sled height instead
+    newSnowball.position.y = BasicSled.radius * 2
     newSnowball.name = snowball.id.id.toString
     newSnowball
   }

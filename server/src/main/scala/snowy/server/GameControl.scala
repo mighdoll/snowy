@@ -241,9 +241,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def shootSnowball(sled: Sled): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
-      val launchAngle = sled.turretRotation + sled.bulletLaunchAngle
-      val launchPos   = sled.bulletLaunchPosition.rotate(sled.turretRotation)
-      val direction   = Vec2d.fromRotation(launchAngle)
+      val launchAngle    = sled.turretRotation + sled.bulletLaunchAngle
+      val launchDistance = sled.bulletLaunchPosition.length + sled.radius
+      val launchPos      = sled.bulletLaunchPosition.rotate(launchAngle).unit * launchDistance
+      val direction      = Vec2d.fromRotation(launchAngle)
       val ball = Snowball(
         ownerId = sled.id,
         _position = wrapInPlayfield(sled.pos + launchPos), // TODO don't use _position
