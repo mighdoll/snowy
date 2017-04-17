@@ -1,5 +1,5 @@
 package vector
-import math.{sin,cos}
+import math.{cos, sin}
 
 case class Vec2d(x: Double, y: Double) {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)
@@ -28,7 +28,7 @@ case class Vec2d(x: Double, y: Double) {
 
   def rightPerpendicular: Vec2d = Vec2d(-y, x)
 
-  def clipLength(maxLength:Double): Vec2d = {
+  def clipLength(maxLength: Double): Vec2d = {
     if (length > maxLength) {
       this.unit * maxLength
     } else this
@@ -43,7 +43,7 @@ case class Vec2d(x: Double, y: Double) {
     }
   }
 
-  def zero: Boolean = {x == 0 && y == 0}
+  def zero: Boolean = { x == 0 && y == 0 }
 
   def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)

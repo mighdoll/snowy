@@ -2,7 +2,7 @@ package snowy.draw
 
 import minithree.THREE
 import minithree.THREE.{Object3D, Vector3}
-import snowy.client.DrawPlayfield.{Geos, Groups, Mats, removeDeaths}
+import snowy.client.DrawPlayfield.{removeDeaths, Geos, Groups, Mats}
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.{BasicSled, Snowball}

@@ -7,7 +7,7 @@ case class EpochMicroseconds(value: Long) extends AnyVal
 case class Nanoseconds(value: Long) extends AnyVal
 
 object Nanoseconds {
-  def current():Nanoseconds = Nanoseconds(System.nanoTime())
+  def current(): Nanoseconds = Nanoseconds(System.nanoTime())
 }
 
 /** An microsecond clock aligned within 1msec of the system clock.

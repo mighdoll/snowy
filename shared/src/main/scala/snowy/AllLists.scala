@@ -3,8 +3,9 @@ package snowy
 import snowy.playfield._
 
 object AllLists {
-  val allSleds = Seq(BasicSled, PrototypeSled, TankSled, GunnerSled, SpeedySled, SpikySled)
-  val allSkis  = Seq(BasicSkis, RedSkis, OrangeSkis, YellowSkis, GreenSkis, BlueSkis)
+  val allSleds =
+    Seq(BasicSled, PrototypeSled, TankSled, GunnerSled, SpeedySled, SpikySled)
+  val allSkis = Seq(BasicSkis, RedSkis, OrangeSkis, YellowSkis, GreenSkis, BlueSkis)
 
   val allNames = Seq(
     "hahahaha",

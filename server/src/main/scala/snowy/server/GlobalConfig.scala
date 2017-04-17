@@ -10,7 +10,7 @@ object GlobalConfig {
     ConfigUtil.writeConfig(newConfig)
     newConfig
   }
-  private val files          = ListBuffer[File]()
+  private val files = ListBuffer[File]()
 
   /** add .conf file that will be accessible to the program */
   def addConfigFiles(file: File*): Unit = {

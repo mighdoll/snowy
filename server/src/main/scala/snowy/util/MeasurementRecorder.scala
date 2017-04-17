@@ -11,7 +11,6 @@ import com.typesafe.scalalogging.StrictLogging
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.FlowImplicits._
 
-
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {
     if (config.getBoolean("snowy.measurement.enable")) {

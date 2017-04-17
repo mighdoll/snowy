@@ -63,7 +63,7 @@ object FlowImplicits {
       flow
         .map(Dated(_))
         .fixedBuffer(bufferSize, overflowFn())
-        .filter{ dated =>
+        .filter { dated =>
           val expired = dated.expired
           if (expired) {
             oldFn(dated.item)

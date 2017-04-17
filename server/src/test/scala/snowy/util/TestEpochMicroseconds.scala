@@ -15,7 +15,7 @@ class TestEpochMicroseconds extends PropSpec with PropertyChecks {
     val probes =
       differences.sorted.reverse
         .drop(10) // drop the first few clock probes while our test warms up
-    
+
     probes
       .foreach { d =>
         assert(d < 1000) // difference should be within a second

@@ -1,5 +1,3 @@
 package minithree2
 
-package object THREE {
-
-}
+package object THREE {}

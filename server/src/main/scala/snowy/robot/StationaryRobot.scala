@@ -34,11 +34,13 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     mySledOpt.foreach { mySled =>
       val robotGameTime = System.currentTimeMillis()
       val random        = ThreadLocalRandom.current.nextDouble()
-      val commands = Seq(TargetAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs))) ++ (random match {
+      val commands = Seq(
+          TargetAngle(aimAtNearest(mySled, state.otherSleds, state.snowballs))
+        ) ++ (random match {
         case _ if random < .037 => Seq(Boost(robotGameTime))
         case _ if random < .070 => Seq(Start(Shooting, robotGameTime))
         case _ if random < .090 => Seq(Stop(Shooting, robotGameTime))
-        case _ => Seq()
+        case _                  => Seq()
       })
 
       commands.foreach { command =>

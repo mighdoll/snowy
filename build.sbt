@@ -22,12 +22,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
-  libraryDependencies ++= Seq(
-    "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
-    "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
-    "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
+    libraryDependencies ++= Seq(
+      "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
+      "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
+      "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
+    )
   )
-)
 
 lazy val V = new Object {
   val scala      = "2.12.1"

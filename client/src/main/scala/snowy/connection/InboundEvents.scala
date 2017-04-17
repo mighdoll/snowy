@@ -13,8 +13,7 @@ import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledKind}
 import vector.Vec2d
 
-class InboundEvents(socket: NetworkSocket,
-                    sendMessage: (GameServerMessage) => Unit) {
+class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => Unit) {
 
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
@@ -32,7 +31,8 @@ class InboundEvents(socket: NetworkSocket,
   }
 
   socket.onClose { event =>
-    if(document.hasFocus()) window.alert(s"Socket closed: $event. The server is probably dead. Reloading")
+    if (document.hasFocus())
+      window.alert(s"Socket closed: $event. The server is probably dead. Reloading")
     window.location.reload()
   }
 

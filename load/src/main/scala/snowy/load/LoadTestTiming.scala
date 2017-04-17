@@ -14,7 +14,7 @@ import snowy.util.{MeasurementRecorder, Span, StartedSpan}
 object LoadTestTiming {
   type EC[_]  = ExecutionContext
   type ACT[_] = ActorSystem
-  type MR[_] = MeasurementRecorder
+  type MR[_]  = MeasurementRecorder
 }
 
 /** A game client that sends ClientPing messages to the server

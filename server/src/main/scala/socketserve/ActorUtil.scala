@@ -8,13 +8,16 @@ import com.typesafe.scalalogging.Logger
 object ActorUtil {
 
   /** return a actor materializer that logs errors on actor failure */
-  def materializerWithLogging(logger: Logger)(implicit system:ActorSystem):ActorMaterializer = {
+  def materializerWithLogging(
+        logger: Logger
+  )(implicit system: ActorSystem): ActorMaterializer = {
     val decider: Supervision.Decider = { e =>
       logger.error("Unhandled exception in actor", e)
       Supervision.Stop
     }
 
-    val materializerSettings = ActorMaterializerSettings(system).withSupervisionStrategy(decider)
+    val materializerSettings =
+      ActorMaterializerSettings(system).withSupervisionStrategy(decider)
     ActorMaterializer(materializerSettings)(system)
   }
 

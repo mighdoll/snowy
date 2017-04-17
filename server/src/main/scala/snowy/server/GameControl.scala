@@ -67,7 +67,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   override def turn(): Unit = {
     Span.root("GameControl.turn").timeSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
-      time("GameControl.robotsTurn"){ robots.robotsTurn() }
+      time("GameControl.robotsTurn") { robots.robotsTurn() }
       applyTurn(deltaSeconds)
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
@@ -86,16 +86,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     msg match {
       case Join(name, sledKind, skiColor) =>
         userJoin(id, name.slice(0, 15), sledKind, skiColor)
-      case TargetAngle(angle)          => targetDirection(id, angle)
-      case Shoot(time)                 => id.sled.foreach(shootSnowball(_))
-      case Start(cmd, time)            => startControl(id, cmd, time)
-      case Stop(cmd, time)             => stopControl(id, cmd, time)
-      case Boost(time)                 => id.sled.foreach(boostSled(_, time))
-      case Pong                        => optNetId(id).foreach(pong(_))
-      case ReJoin                      => rejoin(id)
-      case TestDie                     => reapSled(sledMap(id))
-      case RequestGameTime(clientTime) => optNetId(id).foreach(reportGameTime(_, clientTime))
-      case ClientPing         => optNetId(id).foreach(sendMessage(ClientPong, _))
+      case TargetAngle(angle) => targetDirection(id, angle)
+      case Shoot(time)        => id.sled.foreach(shootSnowball(_))
+      case Start(cmd, time)   => startControl(id, cmd, time)
+      case Stop(cmd, time)    => stopControl(id, cmd, time)
+      case Boost(time)        => id.sled.foreach(boostSled(_, time))
+      case Pong               => optNetId(id).foreach(pong(_))
+      case ReJoin             => rejoin(id)
+      case TestDie            => reapSled(sledMap(id))
+      case RequestGameTime(clientTime) =>
+        optNetId(id).foreach(reportGameTime(_, clientTime))
+      case ClientPing => optNetId(id).foreach(sendMessage(ClientPong, _))
     }
   }
 
@@ -216,8 +217,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
-          case Left  => turnSled(sled, LeftTurn, deltaSeconds)
-          case Right => turnSled(sled, RightTurn, deltaSeconds)
+          case Left     => turnSled(sled, LeftTurn, deltaSeconds)
+          case Right    => turnSled(sled, RightTurn, deltaSeconds)
           case Shooting => shootSnowball(sled)
         }
       }
@@ -278,7 +279,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
-        val connectIdStr= sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
+        val connectIdStr =
+          sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
         logger.info(s"sled ${sledId.id} killed $connectIdStr sledCount:${sledMap.size}")
         sled.remove()
       }

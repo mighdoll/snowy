@@ -31,19 +31,20 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
                         deadSnowBalls: Traversable[BallId])
 
   /** Called to update game state on a regular timer */
-  def turn(deltaSeconds: Double)(implicit span:Span): TurnDeaths = time("GameTurn.turn") {
-    gameHealth.recoverHealth(deltaSeconds)
-    val expiredBalls = gameHealth.expireSnowballs()
+  def turn(deltaSeconds: Double)(implicit span: Span): TurnDeaths =
+    time("GameTurn.turn") {
+      gameHealth.recoverHealth(deltaSeconds)
+      val expiredBalls = gameHealth.expireSnowballs()
 
-    moveSnowballs(state.snowballs.items, deltaSeconds)
+      moveSnowballs(state.snowballs.items, deltaSeconds)
 
-    val moveAwards = moveSleds(state.sleds.items, deltaSeconds)
-    val collided   = time("checkCollisions")(checkCollisions())
-    val died       = gameHealth.collectDead()
+      val moveAwards = moveSleds(state.sleds.items, deltaSeconds)
+      val collided   = time("checkCollisions")(checkCollisions())
+      val died       = gameHealth.collectDead()
 
-    updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
-    TurnDeaths(died, expiredBalls ++ collided.killedSnowballs)
-  }
+      updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
+      TurnDeaths(died, expiredBalls ++ collided.killedSnowballs)
+    }
 
   case class CollisionResult(killedSleds: Traversable[SledKill],
                              killedSnowballs: Traversable[BallId])

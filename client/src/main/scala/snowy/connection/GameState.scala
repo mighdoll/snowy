@@ -32,10 +32,9 @@ object GameState {
     } yield sled
   }
 
-  private var gameLoop: Option[Int] = None
-  private var turning: Turning      = NoTurn
-  var serverGameClock
-    : Option[ServerGameClock] = None // HACK! TODO make GameState an instance
+  private var gameLoop: Option[Int]            = None
+  private var turning: Turning                 = NoTurn
+  var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
   /** set the client state to the state from the server
     * @param state the state sent from the server */
