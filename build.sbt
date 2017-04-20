@@ -36,8 +36,8 @@ lazy val V = new Object {
   val log4j      = "2.8.2"
   val jackson    = "2.8.8"
   val scalacheck = "1.13.5"
-  val scalactic  = "3.0.2"
-  val scalatest  = "3.0.2"
+  val scalactic  = "3.0.3"
+  val scalatest  = "3.0.3"
 }
 
 lazy val server = (project in file("server"))
