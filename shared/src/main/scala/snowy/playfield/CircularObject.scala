@@ -1,6 +1,9 @@
 package snowy.playfield
 
-trait FlyingCircle extends MoveablePlayfieldObject {
+import vector.Vec2d
+
+trait CircularObject[A <: PlayfieldItem[A]] extends MoveablePlayfieldObject[A] with Bounds {
+  self: A =>
 
   def radius: Double
 
@@ -8,4 +11,8 @@ trait FlyingCircle extends MoveablePlayfieldObject {
 
 }
 
-trait CircularObject extends MoveablePlayfieldObject with FlyingCircle
+trait MoveablePlayfieldObject[A <: PlayfieldItem[A]] extends PlayfieldItem[A] {
+  self: A =>
+  var speed: Vec2d
+}
+

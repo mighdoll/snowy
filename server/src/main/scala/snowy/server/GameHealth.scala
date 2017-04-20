@@ -9,7 +9,7 @@ class GameHealth(state: GameState) {
 
   /** slowly recover some health points */
   def recoverHealth(deltaSeconds: Double): Unit = {
-    state.sleds.items.foreach { sled =>
+    state.sleds.foreach { sled =>
       val deltaHealth = deltaSeconds / sled.healthRecoveryTime
       val newHealth   = min(sled.maxHealth, sled.health + deltaHealth)
       sled.health = newHealth
@@ -22,14 +22,14 @@ class GameHealth(state: GameState) {
     def expired(snowball: Snowball): Boolean =
       now > snowball.spawned + snowball.lifetime * 1000
 
-    val oldBalls = state.snowballs.items filter expired map (_.id)
-    state.snowballs = state.snowballs removeMatchingItems expired
-    oldBalls
+    val oldBalls = state.snowballs.filter(expired)
+    state.snowballs --= oldBalls
+    oldBalls.map(_.id)
   }
 
   /** @return the sleds with no health left */
   def collectDead(): Traversable[SledDied] = {
-    state.sleds.items.find(_.health <= 0).map { sled =>
+    state.sleds.find(_.health <= 0).map { sled =>
       SledDied(sled.id)
     }
   }

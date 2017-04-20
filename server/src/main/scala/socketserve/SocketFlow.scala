@@ -29,7 +29,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
 
     val (inputSink, messagesRefFuture) = setupInput(connectionId)
 
-    def warnOverflow() =
+    def warnOverflow() = // LATER consider dropping the connection if this happens..
       logger.warn(s"overflow sending messages to client: $connectionId")
 
     // create an actor ref to accept and buffer messages sent to the client

@@ -1,22 +1,22 @@
 package snowy.playfield
 
+import snowy.GameConstants
 import snowy.playfield.PlayId.TreeId
 import vector.Vec2d
 
 object Tree {
-  def apply(initialPosition: Vec2d): Tree = new Tree(_position = initialPosition)
+  def apply(initialPosition: Vec2d)(implicit tracker: PlayfieldTracker[Tree]): Tree = {
+    val tree = new Tree()
+    tree.setInitialPosition(initialPosition)
+    tree
+  }
 }
 
-case class Tree(id: TreeId = PlayfieldObject.nextId(),
-                var _position: Vec2d,
-                var health: Double = 100,
-                size: Double = 20)
-    extends PlayfieldObject {
-  type MyType = Tree
+case class Tree(var health: Double = 100)
+    extends PlayfieldItem[Tree] {
+  override def boundingBox = Rect(position, GameConstants.treeSize)
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Tree]
-
-  override def copyWithUpdatedPos(newPos: Vec2d): Tree = this.copy(_position = newPos)
 
   override def armor: Double        = 1
   override def impactDamage: Double = 1

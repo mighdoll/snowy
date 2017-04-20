@@ -10,11 +10,13 @@ import snowy.connection.GameState
 import snowy.draw.ThreeSleds
 import snowy.playfield._
 import vector.Vec2d
+import snowy.playfield.PlayfieldTracker.nullSledTracker
 
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
 
 class LoginScreen(renderer: WebGLRenderer) {
+  private implicit val sledTracker = nullSledTracker
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)

@@ -18,7 +18,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   private implicit val materializer      = materializerWithLogging(logger)
   private var app: Option[AppController] = None
   private val connections                = mutable.Map[ClientId, ActorRef]()
-  private val tickTime: FiniteDuration   = 20 milliseconds // TODO get this from GameControl
+  private val tickTime: FiniteDuration   = 20 milliseconds // LATER get this from GameControl
   private val internalMessagesQueue      = 10
 
   /** if we're behind on ticks, just skip one */

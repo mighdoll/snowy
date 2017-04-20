@@ -1,11 +1,13 @@
 package snowy.connection
 
+import scala.collection.mutable
 import snowy.GameClientProtocol._
 import snowy.draw.{ThreeSleds, ThreeSnowballs}
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield._
 import vector.Vec2d
+import snowy.playfield.PlayfieldTracker
 
 case class PlayfieldState(mySled: Sled,
                           sleds: Set[Sled],
@@ -17,30 +19,32 @@ object GameState {
   var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard               = Scoreboard(0, Seq())
   var mySledId: Option[SledId] = None
+  implicit val nullSnowballTracker = PlayfieldTracker.nullSnowballTracker
+  implicit val nullSledTracker = PlayfieldTracker.nullSledTracker
 
   // TODO add a gametime timestamp to these, and organize together into a class
-  var serverTrees             = Store[Tree]()
-  private var serverSnowballs = Store[Snowball]()
-  private var serverSleds     = Store[Sled]()
+  var serverTrees             = Set[Tree]()
+  private var serverSnowballs = mutable.HashSet[Snowball]()
+  private var serverSleds     = mutable.HashSet[Sled]()
   var gameTime                = 0L
 
-  // TODO: return Option[Sled]. The server might send state before we join and have a sled
   def serverMySled: Option[Sled] = {
     for {
       id   <- mySledId
-      sled <- serverSleds.items.find(_.id == id)
+      sled <- serverSleds.find(_.id == id)
     } yield sled
   }
 
-  private var gameLoop: Option[Int]            = None
-  private var turning: Turning                 = NoTurn
-  var serverGameClock: Option[ServerGameClock] = None // HACK! TODO make GameState an instance
+  private var gameLoop: Option[Int] = None
+  private var turning: Turning      = NoTurn
+  var serverGameClock
+    : Option[ServerGameClock] = None // HACK! TODO make GameState an instance
 
   /** set the client state to the state from the server
     * @param state the state sent from the server */
   def receivedState(state: State): Unit = {
-    serverSnowballs = Store(state.snowballs)
-    serverSleds = Store(state.sleds)
+    serverSnowballs = mutable.HashSet(state.snowballs: _*)
+    serverSleds = mutable.HashSet(state.sleds: _*)
     gameTime = state.gameTime
   }
 
@@ -60,17 +64,17 @@ object GameState {
 
   // TODO Use the same turns that the server does
   def nextState(deltaSeconds: Double): PlayfieldState = {
-    moveSnowballs(serverSnowballs.items, deltaSeconds)
+    moveSnowballs(serverSnowballs, deltaSeconds)
     serverMySled.foreach { mySled =>
       applyTurn(mySled, deltaSeconds)
       moveOneSled(mySled, deltaSeconds)
     }
-    moveSleds(serverSleds.items, deltaSeconds)
+    moveSleds(serverSleds, deltaSeconds)
     PlayfieldState(
       serverMySled.getOrElse(Sled.dummy),
-      serverSleds.items,
-      serverSnowballs.items,
-      serverTrees.items,
+      serverSleds.toSet,
+      serverSnowballs.toSet,
+      serverTrees,
       gPlayField
     )
   }
@@ -86,23 +90,26 @@ object GameState {
     deltaSeconds
   }
 
-  def removeSleds(deaths: Seq[SledId]): Unit = {
-    deaths.foreach { sledDeath =>
-      serverSleds.getItemById(sledDeath) match {
-        case Some(sled) => serverSleds.remove(sled)
-        case None       =>
-      }
-    }
-    ThreeSleds.removeSleds(deaths)
+
+  def removeSleds(removedIds: Seq[SledId]): Unit = {
+    removeById[Sled](removedIds, serverSleds)
+    ThreeSleds.removeSleds(removedIds)
   }
 
-  def removeSnowballs(deaths: Seq[BallId]): Unit = {
-    deaths.foreach { snowballDeath =>
-      serverSnowballs.getItemById(snowballDeath) match {
-        case Some(snowball) => serverSnowballs.remove(snowball)
-        case None           =>
-      }
-    }
-    ThreeSnowballs.removeSnowballs(deaths)
+  def removeSnowballs(removedIds: Seq[BallId]): Unit = {
+    removeById[Snowball](removedIds, serverSnowballs)
+    ThreeSnowballs.removeSnowballs(removedIds)
+  }
+
+  /** remove a collection of sled or snowballs from from the store */
+  private def removeById[A <: PlayfieldItem[A]](ids: Traversable[PlayId[A]],
+                                                set: mutable.HashSet[A]): Unit = {
+    val removedItems =
+      for {
+        itemId <-ids
+        item <- set.find(_.id == itemId)
+      } yield item
+
+    removedItems.foreach(set.remove)
   }
 }

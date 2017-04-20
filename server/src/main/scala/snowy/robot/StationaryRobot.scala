@@ -58,11 +58,11 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
     val closeSnowballs = snowballs
       .filterNot(ball => ball.ownerId == mySled.id)
       .filter(
-        ball => (mySled._position - ball._position).length < closestBall
+        ball => (mySled.position - ball.position).length < closestBall
       )
     if (closeSnowballs.nonEmpty) {
       snowballs.foreach { ball =>
-        val distance = ball._position - mySled._position
+        val distance = ball.position - mySled.position
         if (distance.length <= closestBall) {
           closestBall = distance.length
           ballAngle = distance.angle(Vec2d.unitUp)
@@ -73,7 +73,7 @@ class StationaryRobot(api: RobotApi, name: String) extends Robot {
       var closest = 1500.0
       var angle   = 0.0
       sleds.filterNot(sled => sled == mySled).foreach { sled =>
-        val distance = sled._position - mySled._position
+        val distance = sled.position - mySled.position
         if (distance.length <= closest) {
           closest = distance.length
           angle = distance.angle(Vec2d.unitUp)

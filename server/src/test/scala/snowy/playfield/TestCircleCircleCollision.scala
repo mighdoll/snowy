@@ -2,21 +2,26 @@ package snowy.playfield
 
 import org.scalatest.PropSpec
 import snowy.collision.CollideThings.collideCollection
-import snowy.playfield.SnowballFixture.testball
+import snowy.playfield.PlayfieldTracker.{nullSledTracker, nullSnowballTracker}
+import snowy.playfield.SnowballFixture.testSnowball
 import vector.Vec2d
 
 class TestCircleCircleCollision extends PropSpec {
   property("hit from right") {
     val a = TestCircle(Vec2d.zero, Vec2d.zero)
     val b = TestCircle(Vec2d(4, 0), Vec2d(-1, 0))
-    collideCollection(Seq(a, b))
+    collideCollection(Seq(a, b))(TestCircle.nullCircleTracker)
     // TODO test
   }
 
   property("hit from right, up a bit") {
-    val a = Sled("te")
-    val b = testball().copy(_position = Vec2d(5, 1), speed = Vec2d(-1, 0))
-    collideCollection(Seq(a, b))
+    implicit val _s = nullSledTracker
+    implicit val _b = nullSnowballTracker
+    val a           = Sled("te")
+    val b           = testSnowball()
+    b.position = Vec2d(5, 1)
+    b.speed = Vec2d(-1, 0)
+//    collideCollection(Seq(a, b))(TestCircle.nullCircleTracker) // TODO tricky to get the typing right..
 //    println(s"$a $b")
     // TODO test
   }
@@ -24,11 +29,9 @@ class TestCircleCircleCollision extends PropSpec {
 }
 
 case class TestCircle(private val initialPosition: Vec2d, override var speed: Vec2d)
-    extends CircularObject {
-  override type MyType = TestCircle
-  override def id: PlayId[TestCircle] = PlayfieldObject.nextId()
+    extends CircularObject[TestCircle] {
 
-  override protected var _position: Vec2d = initialPosition
+  override def boundingBox = Rect(position, Vec2d(radius * 2, radius * 2))
 
   override var health: Double = 1
 
@@ -38,9 +41,15 @@ case class TestCircle(private val initialPosition: Vec2d, override var speed: Ve
 
   override def radius: Double = 18
 
-  override def copyWithUpdatedPos(newPos: Vec2d): TestCircle = ???
-
   override def mass: Double = 1
 
-  override def toString(): String = s"pos:$pos  speed:$speed"
+  override def toString(): String = s"pos:$position  speed:$speed"
+
+  position = initialPosition
+
+}
+
+object TestCircle {
+
+  implicit val nullCircleTracker = PlayfieldTracker.nullTracker[TestCircle]
 }

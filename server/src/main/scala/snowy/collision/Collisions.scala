@@ -5,6 +5,7 @@ import vector.Vec2d
 
 object Collisions {
 
+  // TODO move to snowy.playfield.Intersect
   /** @return true if a circle and rect are overlapping */
   def circleRectCollide(circle: Circle, rect: Rect): Boolean = {
     // Find the nearest point to the circle within the rectangle
@@ -18,7 +19,7 @@ object Collisions {
     // Find the nearest point to the circle within the rectangle, possibly in interior
     val closestPoint = circle.pos.clamp(rect.pos, rect.pos + rect.size)
 
-    // TODO if point is interior to rectangle, move it to the edge
+    // LATER if point is interior to rectangle, move it to the edge
     closestPoint
   }
 
@@ -27,12 +28,12 @@ object Collisions {
     * @return A list containing speed and position adjustments for two collided objects,
     *         or an empty list
     */
-  def collideCircles[A <: CircularObject, B <: CircularObject](
+  def collideCircles[A <: CircularObject[A], B <: CircularObject[B]](
         a: A,
         b: B
   ): Option[(Collided[A], Collided[B])] = {
     val collisionDistance = a.radius + b.radius
-    val collisionVector   = (a.pos - b.pos) // vector between the centers
+    val collisionVector   = a.position - b.position // vector between the centers
     val distance          = collisionVector.length
     if (distance < collisionDistance) {
 
@@ -74,7 +75,7 @@ object Collisions {
     * to the collided object, but this separation allows adjustments from multiple
     * collisions to be accumulated.)
     */
-  case class Collided[A <: CircularObject](movingCircle: A,
+  case class Collided[A <: CircularObject[A]](movingCircle: A,
                                            rebound: Vec2d,
                                            reposition: Vec2d)
 

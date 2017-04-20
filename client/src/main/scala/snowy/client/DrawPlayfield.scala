@@ -40,10 +40,10 @@ class UpdateGroup[A](group: Object3D) {
 object DrawPlayfield {
 
   def setThreePosition(obj: Object3D,
-                       playfieldObject: PlayfieldObject,
+                       playfieldItem: PlayfieldItem[_],
                        myPos: Vector3): Unit = {
     val newPos = playfieldWrap(
-      new Vector3(playfieldObject.pos.x, 0, playfieldObject.pos.y),
+      new Vector3(playfieldItem.position.x, 0, playfieldItem.position.y),
       myPos,
       new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
     )
@@ -179,14 +179,14 @@ class DrawPlayfield(renderer: WebGLRenderer) {
                     trees: Set[Tree],
                     border: Vec2d): Unit = {
     stats.begin()
-    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
+    val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
     ThreeTrees.updateThreeTrees(trees, myPos)
     ThreeSnowballs.updateThreeSnowballs(snowballs, myPos)
     ThreeSleds.updateThreeSleds(sleds, mySled)
 
-    camera.position.x = mySled._position.x
-    camera.position.z = mySled._position.y + 400
-    camera.lookAt(new THREE.Vector3(mySled._position.x, 0, mySled._position.y))
+    camera.position.x = mySled.position.x
+    camera.position.z = mySled.position.y + 400
+    camera.lookAt(new THREE.Vector3(mySled.position.x, 0, mySled.position.y))
 
     renderState()
     stats.end()

@@ -72,7 +72,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
       val turnDeaths = gameTurns.turn(deltaSeconds)
-      reapDead(turnDeaths.deadSleds)
+      reapAndReportDeadSleds(turnDeaths.deadSleds)
       reportExpiredSnowballs(turnDeaths.deadSnowBalls)
       time("sendUpdates") {
         sendUpdates()
@@ -193,7 +193,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   private def applyTurn(deltaSeconds: Double): Unit = {
-    for (sled <- sleds.items) {
+    for (sled <- sleds) {
       val tau             = math.Pi * 2
       val distanceBetween = (sled.turretRotation - sled.rotation) % tau
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
@@ -205,7 +205,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   private def applyDrive(deltaSeconds: Double): Unit = {
-    for (sled <- sleds.items) {
+    for (sled <- sleds) {
       sled.driveMode.driveSled(sled, deltaSeconds)
     }
   }
@@ -225,9 +225,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
-  private def reportExpiredSnowballs(balls: Traversable[BallId]): Unit = {
-    if (balls.nonEmpty) {
-      val deaths = SnowballDeaths(balls.toSeq)
+  private def reportExpiredSnowballs(expiredBalls: Traversable[BallId]): Unit = {
+    if (expiredBalls.nonEmpty) {
+      val deaths = SnowballDeaths(expiredBalls.toSeq)
       connections.keys.foreach(sendMessage(deaths, _))
     }
   }
@@ -240,15 +240,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
-  private def shootSnowball(sled: Sled): Unit = {
+  private def shootSnowball(
+        sled: Sled
+  )(implicit snowballTracker: PlayfieldTracker[Snowball]): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
       val launchAngle    = sled.turretRotation + sled.bulletLaunchAngle
       val launchDistance = sled.bulletLaunchPosition.length + sled.radius
       val launchPos      = sled.bulletLaunchPosition.rotate(launchAngle).unit * launchDistance
       val direction      = Vec2d.fromRotation(launchAngle)
-      val ball = Snowball(
+      val ball = new Snowball(
         ownerId = sled.id,
-        _position = wrapInPlayfield(sled.pos + launchPos), // TODO don't use _position
         speed = sled.speed + (direction * sled.bulletSpeed),
         radius = sled.bulletRadius,
         mass = sled.bulletMass,
@@ -257,7 +258,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
         health = sled.bulletHealth,
         lifetime = sled.bulletLifetime
       )
-      snowballs = snowballs.add(ball)
+      ball.setInitialPosition(wrapInPlayfield(sled.position + launchPos))
+      snowballs.add(ball)
 
       val recoilForce = direction * -sled.bulletRecoil
       sled.speed = sled.speed + recoilForce
@@ -267,7 +269,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   // TODO Notify clients who they kill, and who killed them
   /** Notify clients about sleds that have been killed, remove sleds from the game */
-  private def reapDead(dead: Traversable[SledDied]): Unit = {
+  private def reapAndReportDeadSleds(dead: Traversable[SledDied]): Unit = {
     val deadSleds =
       dead.map {
         case SledDied(sledId) => sledId
@@ -347,7 +349,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def createSled(connectionId: ClientId, user: User, sledKind: SledKind): Sled = {
     val sled = newRandomSled(user.name, sledKind, user.skiColor)
-    sleds = sleds.add(sled)
+    sleds.add(sled)
     sledMap(connectionId) = sled.id
     sled
   }

@@ -2,25 +2,24 @@ package snowy.playfield
 
 import org.scalatest.PropSpec
 import snowy.playfield.PlayId.BallId
-import snowy.playfield.SnowballFixture.testball
+import snowy.playfield.SnowballFixture.testSnowball
 import vector.Vec2d
 
 class TestEqualsPlayfieldObject extends PropSpec {
   property("different sleds with same id are =") {
     val one = Sled("one")
-    val two = one.copy(id = one.id, speed = Vec2d.unitLeft)
-    assert(one == two)
-  }
-
-  property("different sleds with same id have the same hash code") {
-    val one = Sled("one")
-    val two = one.copy(id = one.id, speed = Vec2d.unitLeft)
+    val two = new Sled(
+      userName = "two"
+    ) {
+      override val id = one.id
+    }
     assert(one.hashCode == two.hashCode)
+    assert(one == two)
   }
 
   property("sled and snowball with same id are !=") {
     val one = Sled("one")
-    val two = testball().copy(id = new BallId(one.id.id))
+    val two = testSnowball(new BallId(one.id.id))
     assert(one != two)
   }
 

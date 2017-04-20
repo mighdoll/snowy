@@ -47,7 +47,7 @@ class InboundEvents(socket: NetworkSocket, sendMessage: (GameServerMessage) => U
     message match {
       case state: State                => receivedState(state)
       case Playfield(width, height)    => gPlayField = Vec2d(width, height)
-      case trees: Trees                => serverTrees = serverTrees.addItems(trees.trees)
+      case trees: Trees                => serverTrees = trees.trees.toSet
       case Died                        => ClientMain.death()
       case Ping                        => sendMessage(Pong)
       case ClientPong                  => // currently used only by the load test client

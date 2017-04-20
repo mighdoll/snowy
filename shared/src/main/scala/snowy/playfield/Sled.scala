@@ -2,50 +2,54 @@ package snowy.playfield
 
 import vector.Vec2d
 import snowy.GameConstants.downhillRotation
+import snowy.playfield.PlayfieldTracker.nullSledTracker
 
 object Sled {
-  val dummy = new Sled(userName = "dummy", _position = Vec2d.zero)
+  val dummy = {
+    val sled = new Sled(userName = "dummy")
+    sled.position_=(Vec2d(-1,-1))(nullSledTracker)
+    sled
+  }
 
   def apply(userName: String): Sled = {
-    new Sled(userName = userName, _position = Vec2d.zero)
+    new Sled(userName = userName)
   }
 
   def apply(userName: String,
             initialPosition: Vec2d,
             kind: SledKind,
-            color: SkiColor): Sled = {
-    new Sled(
+            color: SkiColor)(implicit tracker:PlayfieldTracker[Sled]): Sled = {
+    val sled = new Sled(
       userName = userName,
-      _position = initialPosition,
       kind = kind,
       skiColor = color,
       health = kind.maxHealth
     )
+    sled.setInitialPosition(initialPosition)
+    sled
   }
 }
+
 /* rotation in radians, 0 points down the screen, towards larger Y values.
  * speed in pixels / second
  */
-case class Sled(id: PlayId[Sled] = PlayfieldObject.nextId(),
-                userName: String,
-                var _position: Vec2d,
+case class Sled(userName: String,
                 var speed: Vec2d = Vec2d.zero,
                 kind: SledKind = BasicSled,
                 skiColor: SkiColor = BasicSkis,
                 /** angle of sled clockwise from screen coordinates of (0, 1) (down on screen)*/
                 var rotation: Double = downhillRotation,
                 var health: Double = 1,
-                impactDamage: Double = 1,
                 /** angle of turret clockwise in screen coordinates of (0, 1) down on screen */
                 var turretRotation: Double = downhillRotation,
                 var lastShotTime: Long = 0,
                 var lastBoostTime: Long = 0)
-    extends CircularObject {
+    extends CircularObject[Sled] {
+
   type MyType = Sled
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Sled]
-
-  override def copyWithUpdatedPos(newPos: Vec2d): Sled = this.copy(_position = newPos)
+  override def boundingBox = Rect(position, Vec2d(radius * 2, radius * 2))
 
   val driveMode = new SledDrive
 

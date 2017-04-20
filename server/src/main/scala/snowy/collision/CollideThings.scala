@@ -3,7 +3,7 @@ package snowy.collision
 import scala.collection.mutable.ListBuffer
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{collideCircles, Collided}
-import snowy.playfield.CircularObject
+import snowy.playfield.{CircularObject, PlayfieldTracker}
 import cats._
 
 object CollideThings {
@@ -12,7 +12,7 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideThings[A <: CircularObject, B <: CircularObject](
+  def collideThings[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[B]: PlayfieldTracker](
         aCollection: Traversable[A],
         bCollection: Traversable[B]
   ): DeathList[A, B] = {
@@ -33,7 +33,7 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideCollection[A <: CircularObject](
+  def collideCollection[A <: CircularObject[A]: PlayfieldTracker](
         collection: Traversable[A]
   ): Traversable[Death[A, A]] = {
     val combinations = collection.toList.combinations(2)
@@ -56,7 +56,9 @@ object CollideThings {
 
   /** Modify two objects with the effects of a collision.
     * (the effects are deferred until all collisions are calculated) */
-  private def applyTwoEffects[A <: CircularObject, B <: CircularObject](
+  private def applyTwoEffects[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[
+    B
+  ]: PlayfieldTracker](
         effectA: CollisionEffect[A],
         effectB: CollisionEffect[B]
   ): DeathList[A, B] = {
@@ -75,7 +77,7 @@ object CollideThings {
     DeathList(aDeaths, bDeaths)
   }
 
-  private def collide2[A <: CircularObject, B <: CircularObject](
+  private def collide2[A <: CircularObject[A], B <: CircularObject[B]](
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
@@ -89,8 +91,10 @@ object CollideThings {
   }
 
   /** @return the damage to sled a from a collision with sled b */
-  private def impactDamage[A <: CircularObject, B <: CircularObject](objA: A,
-                                                                     objB: B): Double = {
+  private def impactDamage[A <: CircularObject[A], B <: CircularObject[B]](
+        objA: A,
+        objB: B
+  ): Double = {
     val collisionSpeed = (objA.speed - objB.speed).length
     val speedFactor    = math.min(1.0, collisionSpeed / absoluteMaxSpeed)
     val baseDamage     = objB.impactDamage * speedFactor * objB.mass
@@ -99,26 +103,26 @@ object CollideThings {
 }
 
 /** Pending changes to an objects health,speed, etc. after a collision */
-case class CollisionEffect[A <: CircularObject](collided: Collided[A], damage: Double) {
-  def applyEffects(): Unit = {
+case class CollisionEffect[A <: CircularObject[A]](collided: Collided[A], damage: Double) {
+  def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.movingCircle
     obj.health = obj.health - damage
     obj.speed = obj.speed + collided.rebound
-    obj.updatePos(obj.pos + collided.reposition)
+    obj.position = obj.position + collided.reposition
   }
 }
 
 /** A report that one of the objects in a collision has run out of health */
-case class Death[A <: CircularObject, B <: CircularObject](killed: A, killer: B)
+case class Death[A <: CircularObject[A], B <: CircularObject[B]](killed: A, killer: B)
 
 /** a report of one or more objects that have been killed */
-case class DeathList[A <: CircularObject, B <: CircularObject](
+case class DeathList[A <: CircularObject[A], B <: CircularObject[B]](
       a: Traversable[Death[A, B]],
       b: Traversable[Death[B, A]]
 )
 
 object DeathList {
-  implicit def deathListMonoid[A <: CircularObject, B <: CircularObject]
+  implicit def deathListMonoid[A <: CircularObject[A], B <: CircularObject[B]]
     : Monoid[DeathList[A, B]] = {
     new Monoid[DeathList[A, B]] {
       def empty = DeathList[A, B](Nil, Nil)

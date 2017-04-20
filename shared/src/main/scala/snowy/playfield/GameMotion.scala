@@ -12,20 +12,25 @@ import Skid.skid
 object GameMotion {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double): Traversable[Travel] = {
+  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
+        implicit tracker: PlayfieldTracker[Sled]
+  ): Traversable[Travel] = {
+
     updateSledSpeedVector(sleds, deltaSeconds)
     repositionSleds(sleds, deltaSeconds)
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double): Unit = {
+  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(
+        implicit tracker: PlayfieldTracker[Snowball]
+  ): Unit = {
     snowballs.foreach { snowball =>
       val wrappedPos = {
         val deltaPosition = snowball.speed * deltaSeconds
-        val newPosition   = snowball.pos + deltaPosition
+        val newPosition   = snowball.position + deltaPosition
         wrapInPlayfield(newPosition)
       }
-      snowball.updatePos(wrappedPos)
+      snowball.position = wrappedPos
     }
   }
 
@@ -104,13 +109,14 @@ object GameMotion {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Traversable[Sled],
-                              deltaSeconds: Double): Traversable[Travel] = {
+  private def repositionSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
+        implicit tracker: PlayfieldTracker[Sled]
+  ): Traversable[Travel] = {
     val awards = sleds.flatMap { sled =>
       val positionChange = sled.speed * deltaSeconds
-      val moved          = sled.pos + positionChange
+      val moved          = sled.position + positionChange
       val wrappedPos     = wrapInPlayfield(moved)
-      sled.updatePos(wrappedPos)
+      sled.position = wrappedPos
 
       val distance = positionChange.length
       if (distance > 0) {

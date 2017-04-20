@@ -5,14 +5,14 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import snowy.GameConstants.playfield
 import snowy.playfield.GameMotion.wrapInPlayfield
-import snowy.playfield.Tree
+import snowy.playfield.{PlayfieldTracker, Tree}
 import vector.Vec2d
 
 /** Utilities for putting game objects in random places on the field */
 object GameSeeding {
 
   /** Initialize a set of playfield obstacles */
-  def randomTrees(): Set[Tree] = {
+  def randomTrees()(implicit tracker:PlayfieldTracker[Tree]): Set[Tree] = {
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
@@ -47,7 +47,7 @@ object GameSeeding {
     (0 to numClumps).foreach { _ =>
       if (random.nextDouble < inClump && forest.nonEmpty) {
         val clump = random.nextInt(forest.length)
-        val near  = forest(clump)(random.nextInt(forest(clump).length)).pos
+        val near  = forest(clump)(random.nextInt(forest(clump).length)).position
         val tree  = nonOverlapping(nearbyTree(near))
 
         forest(clump) += tree
@@ -77,8 +77,8 @@ object GameSeeding {
   /** @return true if the two trees overlap visually on the screen */
   private def treesOverlap(a: Tree, b: Tree): Boolean = {
     import math.abs
-    val xDist = abs(a.pos.x - b.pos.x)
-    val yDist = abs(a.pos.y - b.pos.y)
+    val xDist = abs(a.position.x - b.position.x)
+    val yDist = abs(a.position.y - b.position.y)
     xDist <= 50 && yDist <= 50
   }
 

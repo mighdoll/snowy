@@ -12,7 +12,7 @@ object GameCollide {
     *
     * @return true if the tree collides */
   def snowballTrees(snowball: Snowball, trees: Set[Tree]): Boolean = {
-    val ball = Circle(snowball.pos, snowball.radius)
+    val ball = Circle(snowball.position, snowball.radius)
     trees.find(treeCollide(_, ball)).isDefined
   }
 
@@ -23,7 +23,7 @@ object GameCollide {
   }
 
   def treeTrunk(tree: Tree): Rect = {
-    val topLeft = tree.pos - toTreeTopLeft
+    val topLeft = tree.position - toTreeTopLeft
     Rect(topLeft, treeSize)
   }
 }

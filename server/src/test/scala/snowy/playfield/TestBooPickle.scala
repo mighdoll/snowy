@@ -6,27 +6,55 @@ import org.scalatest.prop._
 import snowy.GameClientProtocol._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.SnowballFixture.testSnowball
 import vector.Vec2d
 
 class TestBooPickle extends PropSpec with PropertyChecks {
-  val sled = Sled.dummy
+  val sled = {
+    Sled.dummy
+  }
 
-  val ball = Snowball(
-    ownerId = new SledId(1),
-    _position = Vec2d.zero,
-    radius = 1,
-    mass = .1,
-    speed = Vec2d.zero,
-    spawned = 0,
-    impactDamage = 0,
-    lifetime = 10,
-    health = 1
-  )
+  val ball = testSnowball()
 
-  def pickleUnpickle[T: Pickler](value: T): Unit = {
+  def pickleUnpickle[T: Pickler](value: T): T = {
     val bytes     = Pickle.intoBytes[T](value)
     val unpickled = Unpickle[T](implicitly[Pickler[T]]).fromBytes(bytes)
     assert(unpickled === value)
+    unpickled
+  }
+
+  def compareSleds(a: Sled, b: Sled): Unit = {
+    assert(a.id === b.id)
+    assert(a.position === b.position)
+    assert(a.speed === b.speed)
+    assert(a.kind === b.kind)
+    assert(a.skiColor === b.skiColor)
+    assert(a.rotation === b.rotation)
+    assert(a.health === b.health)
+    assert(a.radius === b.radius)
+    assert(a.turretRotation === b.turretRotation)
+    assert(a.lastShotTime === b.lastShotTime)
+    assert(a.lastBoostTime === b.lastBoostTime)
+    assert(a.mass === b.mass)
+    assert(a.position === b.position)
+  }
+  def compareSnowballs(a: Snowball, b: Snowball): Unit = {
+    assert(a.id === b.id)
+    assert(a.ownerId === b.ownerId)
+    assert(a.position === b.position)
+    assert(a.speed === b.speed)
+    assert(a.radius === b.radius)
+    assert(a.mass === b.mass)
+    assert(a.spawned === b.spawned)
+    assert(a.health === b.health)
+    assert(a.lifetime === b.lifetime)
+    assert(a.impactDamage === b.impactDamage)
+    assert(a.position === b.position)
+  }
+  def compareTrees(a: Tree, b: Tree): Unit = {
+    assert(a.id === b.id)
+    assert(a.health === b.health)
+    assert(a.position === b.position)
   }
 
   property("pickle Died") {
@@ -39,10 +67,19 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     pickleUnpickle(new BallId(1))
   }
   property("pickle snowball") {
-    pickleUnpickle(ball)
+    val ball2 = pickleUnpickle(ball)
+    compareSnowballs(ball, ball2)
   }
   property("pickle sled") {
-    pickleUnpickle(sled)
+    val sled2 = pickleUnpickle(sled)
+    compareSleds(sled, sled2)
+  }
+  property("pickle tree") {
+    val tree = Tree()
+    tree.health = 2.0
+    tree.position = Vec2d.unitLeft
+    val tree2 = pickleUnpickle(tree)
+    compareTrees(tree, tree2)
   }
   property("pickle state") {
     pickleUnpickle(

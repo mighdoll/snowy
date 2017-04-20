@@ -52,7 +52,7 @@ object ThreeSleds {
   }
 
   def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {
-    val myPos = new Vector3(mySled.pos.x, 0, mySled.pos.y)
+    val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
 
     // map of threeJs sleds, indexed by snowy sled id
 

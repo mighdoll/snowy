@@ -3,9 +3,7 @@ package snowy.playfield
 import snowy.playfield.PlayId._
 import vector.Vec2d
 
-case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
-                    var _position: Vec2d,
-                    ownerId: SledId,
+case class Snowball( ownerId: SledId,
                     override var speed: Vec2d,
                     radius: Double,
                     mass: Double,
@@ -13,13 +11,9 @@ case class Snowball(id: PlayId[Snowball] = PlayfieldObject.nextId(),
                     var health: Double,
                     lifetime: Double,
                     override val impactDamage: Double)
-    extends CircularObject {
-  type MyType = Snowball
+    extends CircularObject[Snowball] {
 
-  override def canEqual(a: Any): Boolean = a.isInstanceOf[MyType]
+  override def boundingBox = Rect(position, Vec2d(radius * 2, radius * 2))
 
-  override def copyWithUpdatedPos(newPos: Vec2d): Snowball =
-    this.copy(_position = newPos)
-
-  override def armor: Double = 1
+  override def canEqual(a: Any): Boolean = a.isInstanceOf[Snowball]
 }

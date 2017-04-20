@@ -53,8 +53,8 @@ object InternalRobotState {
   def gameState(state: GameState, sledId: SledId): RobotGameState = {
     RobotGameState(
       mySledId = sledId,
-      allSleds = state.sleds.items,
-      snowballs = state.snowballs.items,
+      allSleds = state.sleds,
+      snowballs = state.snowballs,
       trees = state.trees,
       playfield = GameConstants.playfield
     )
