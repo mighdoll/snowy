@@ -15,37 +15,29 @@ import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 
-object ThreeSleds {
+class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
   val sledGroup = new UpdateGroup[Sled](Groups.threeSleds)
 
   /** Revise position, etc. of a three js sled to match a playfield sled */
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
-    threeSled.position.y = playfieldSled.radius * 2.5
     DrawPlayfield.setThreePosition(threeSled, playfieldSled, myPos)
 
-    val threeSledBody   = threeSled.children(1)
-    val threeSledTurret = threeSled.children(0)
+    val threeSledBody   = threeSled.children(0)
+    val threeSledSkis   = threeSled.children(1)
     val threeSledHealth = threeSled.children(2)
 
-    val distanceBetween = playfieldSled.turretRotation - playfieldSled.rotation
-    val tau             = math.Pi * 2
-    val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-    threeSledBody.rotation.z = -math.sin(wrapping) * math.Pi / 6
+    threeSledSkis.rotation.y = playfieldSled.rotation - math.Pi / 2
+    threeSledBody.rotation.y = playfieldSled.turretRotation - math.Pi / 2
 
-    threeSledBody.rotation.y = playfieldSled.rotation
-    threeSledBody.scale.set(
+    threeSledSkis.scale.set(
       playfieldSled.radius,
       playfieldSled.radius,
       playfieldSled.radius
     )
-
-    threeSledTurret.rotation.y = playfieldSled.turretRotation
-    threeSledTurret.position.set(
-      math
-        .sin(playfieldSled.turretRotation) * (playfieldSled.radius + playfieldSled.bulletLaunchPosition.length),
-      0,
-      math
-        .cos(playfieldSled.turretRotation) * (playfieldSled.radius + playfieldSled.bulletLaunchPosition.length)
+    threeSledBody.scale.set(
+      playfieldSled.radius,
+      playfieldSled.radius,
+      playfieldSled.radius
     )
 
     threeSledHealth.scale.x = playfieldSled.health / playfieldSled.maxHealth
@@ -88,36 +80,21 @@ object ThreeSleds {
         .literal(color = bodyColor, shading = THREE.FlatShading)
         .asInstanceOf[MeshPhongMaterialParameters]
     )
-    val body = new THREE.Mesh(Geos.sled, bodyMat)
-    val tur  = new THREE.Mesh(Geos.turret, Mats.turret)
+
+    val body = new THREE.Mesh(bodyGeo, bodyMat)
+    val skis = new THREE.Mesh(skisGeo, skiMat)
+
     val health =
       new THREE.Mesh(Geos.health, if (friendly) Mats.healthColor else Mats.enemyHealth)
-
-    val ski1 = new THREE.Mesh(Geos.ski, skiMat)
-    val ski2 = new THREE.Mesh(Geos.ski, skiMat)
-
-    val skiTip1 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
-    val skiTip2 = new THREE.Mesh(Geos.skiTip, Mats.skiTip)
 
     health.position.z = -50
     health.rotation.x = 1.5 * math.Pi
 
-    skiTip1.position.z = 1.5 - 0.25 / 2
-    skiTip2.position.z = 1.5 - 0.25 / 2
-
-    ski1.add(skiTip1)
-    ski2.add(skiTip2)
-
-    ski1.position.set(-1.25, -2.5, 0)
-    ski2.position.set(1.25, -2.5, 0)
-
-    body.add(ski1)
-    body.add(ski2)
-
     body.scale.set(sled.radius, sled.radius, sled.radius)
+    skis.scale.set(sled.radius, sled.radius, sled.radius)
 
-    newSled.add(tur)
     newSled.add(body)
+    newSled.add(skis)
     newSled.add(health)
 
     if (sled.userName != "") {

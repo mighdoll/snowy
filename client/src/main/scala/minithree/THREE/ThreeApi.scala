@@ -941,7 +941,7 @@ class JSONLoader extends Loader {
   def this(showStatus: Boolean = js.native) = this()
 
   def load(url: String,
-           callback: js.Function2[JSonLoaderResultGeometry, js.Array[Material], Unit],
+           callback: js.Function2[Geometry, js.Array[Material], Unit],
            texturePath: String = js.native): Unit = js.native
   def loadAjaxJSON(context: JSONLoader,
                    url: String,

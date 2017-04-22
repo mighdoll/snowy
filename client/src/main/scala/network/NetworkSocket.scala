@@ -1,7 +1,11 @@
 package network
 
-import scala.concurrent.duration.FiniteDuration
 import org.scalajs.dom._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Promise
+import scala.concurrent.duration.FiniteDuration
+import scala.util.Success
 
 /** A wrapper around a web socket that supports simulated network delays
   * @param url: connect the web socket to this address
@@ -9,20 +13,28 @@ import org.scalajs.dom._
   * @param outDelay: delay message to the server by this amount of time
   */
 class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
-  val socket = new WebSocket(url)
+  val socket                 = new WebSocket(url)
+  private val networkPromise = Promise[WebSocket]
+  val future                 = networkPromise.future
 
   socket.binaryType = "arraybuffer"
+
+  socket.addEventListener("open", { _: Event =>
+    networkPromise.complete(Success(socket))
+  }, false)
 
   def onOpen(fn: Event => Unit): Unit = {
     socket.addEventListener("open", fn, false)
   }
 
   def send(data: String): Unit = {
-    if (outDelay.length == 0) {
-      socket.send(data)
-    } else {
-      delay(outDelay) {
+    future.foreach { socket =>
+      if (outDelay.length == 0) {
         socket.send(data)
+      } else {
+        delay(outDelay) {
+          socket.send(data)
+        }
       }
     }
   }

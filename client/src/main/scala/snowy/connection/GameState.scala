@@ -2,6 +2,7 @@ package snowy.connection
 
 import scala.collection.mutable
 import snowy.GameClientProtocol._
+import snowy.client.ClientMain
 import snowy.draw.{ThreeSleds, ThreeSnowballs}
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
@@ -93,7 +94,7 @@ object GameState {
 
   def removeSleds(removedIds: Seq[SledId]): Unit = {
     removeById[Sled](removedIds, serverSleds)
-    ThreeSleds.removeSleds(removedIds)
+    ClientMain.threeSleds(_.removeSleds(deaths))
   }
 
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {

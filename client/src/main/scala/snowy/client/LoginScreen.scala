@@ -12,6 +12,8 @@ import snowy.playfield._
 import vector.Vec2d
 import snowy.playfield.PlayfieldTracker.nullSledTracker
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
 
@@ -29,9 +31,9 @@ class LoginScreen(renderer: WebGLRenderer) {
   private var skiColor: SkiColor    = BasicSkis
   private var sledKind: SledKind    = BasicSled
 
-  private val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
-  private var threeSled =
-    ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
+  private var threeSleds: Option[ThreeSleds] = None
+  private val sled                           = Sled("", Vec2d(0, 0), sledKind, skiColor)
+  private var threeSled                      = new THREE.Object3D()
 
   private val gameDiv    = document.getElementById("game-div").asInstanceOf[html.Div]
   private val gameHud    = document.getElementById("game-hud").asInstanceOf[html.Div]
@@ -52,7 +54,18 @@ class LoginScreen(renderer: WebGLRenderer) {
 
   private var rejoinScreen = false
 
-  connected.socket.onOpen { _ =>
+  val loader = new ThreeLoader()
+  val Seq(sledFuture, skisFuture) =
+    loader.loadGeometries("sled/body.json", "sled/skis.json")
+  val geometriesLoaded = Future.sequence(Seq(sledFuture, skisFuture))
+  geometriesLoaded.onComplete(_.foreach { _ =>
+    threeSleds = Some(new ThreeSleds(sledFuture.value.get.get, skisFuture.value.get.get))
+    updateSelector()
+  })
+
+  val connectedFuture = connected.socket.future
+
+  Future.sequence(Seq(connectedFuture, geometriesLoaded)).onComplete { _ =>
     playButton.disabled = false
     playButton.innerHTML = "Join Game"
   }
@@ -68,10 +81,10 @@ class LoginScreen(renderer: WebGLRenderer) {
   setup()
 
   def positions(): Unit = {
-    camera.position.set(0, 100, 100)
+    camera.position.set(0, 0, 140)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
-    light.position.set(0, 2, 1)
+    light.position.set(0, 1, 2)
 
     Meshes.trunk.position.y = 5
     Meshes.leave1.position.y = 14
@@ -82,11 +95,8 @@ class LoginScreen(renderer: WebGLRenderer) {
 
     Meshes.card.position.y = 5
 
-    Groups.selector.position.y = -70
-    Groups.selector.rotation.x = 1.7 * math.Pi
-    Groups.selector.scale.x = 2
-    Groups.selector.scale.y = 2
-    Groups.selector.scale.z = 2
+    Groups.selector.position.y = -38
+    Groups.selector.scale.set(1.8, 1.8, 1.8)
 
     Groups.colorSelector.position.y = -2
 
@@ -109,11 +119,9 @@ class LoginScreen(renderer: WebGLRenderer) {
     Meshes.meshY.rotation.x = 1 * math.Pi
 
     Groups.snowyText.position.x = -Shapes.s * 10
-    Groups.snowyText.position.y = 48
+    Groups.snowyText.position.y = 40
 
-    Groups.snowyText.rotation.x = 1.7 * math.Pi
-
-    Meshes.input.rotation.x = 1.6 * math.Pi
+    Meshes.input.rotation.x = 1.9 * math.Pi
 
     Meshes.arrow2.position.y = 2
 
@@ -226,18 +234,18 @@ class LoginScreen(renderer: WebGLRenderer) {
 
     if (rejoinScreen && hover != Middle) clearConnection()
 
-    scene.remove(threeSled)
+    Groups.selector.remove(threeSled)
 
     val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
-    threeSled = ThreeSleds.createSled(sled, true, new Vector3(0, 0, 0)).children(1)
-    threeSled.scale.multiplyScalar(0.2)
+    threeSleds.foreach { a =>
+      val a2 = a.createSled(sled, true, new Vector3(0, 0, 0))
+      a2.children = js.Array(a2.children(0), a2.children(1))
+      threeSled = a2
+      threeSled.scale.multiplyScalar(0.1)
+      threeSled.position.y = 3
+    }
 
-    threeSled.position.y = -52
-
-    threeSled.lookAt(camera.position)
-    threeSled.rotation.x += 0.5 * math.Pi
-    threeSled.rotation.y = 0.5 * math.Pi
-    scene.add(threeSled)
+    Groups.selector.add(threeSled)
 
     renderLoginScreen()
   }
@@ -320,10 +328,15 @@ class LoginScreen(renderer: WebGLRenderer) {
     updateColors()
   }, false)
 
+  var drawPlayfield: Option[DrawPlayfield] = None
+
+  def threeSleds(fn: ThreeSleds => Unit): Unit = threeSleds.foreach(fn)
+
   def loginPressed(e: Event): Unit = {
     e.preventDefault()
     //Connect to the WebSocket server
     if (!spawned) {
+      threeSleds.foreach(a => drawPlayfield = Some(new DrawPlayfield(renderer, a)))
       connected.join(
         textInput.value,
         sledKind,
@@ -336,7 +349,7 @@ class LoginScreen(renderer: WebGLRenderer) {
 
     rejoinScreen = false
     gameHud.classList.remove("hide")
-    ClientMain.startRedraw()
+    drawPlayfield.foreach(_.startRedraw())
   }
 
   loginForm.addEventListener("submit", loginPressed, false)
@@ -346,7 +359,7 @@ class LoginScreen(renderer: WebGLRenderer) {
   def rejoinPanel() {
     swapScreen(false)
 
-    ClientMain.stopRedraw()
+    drawPlayfield.foreach(_.stopRedraw())
     gameHud.classList.add("hide")
     playButton.focus()
     rejoinScreen = true
@@ -399,10 +412,10 @@ class LoginScreen(renderer: WebGLRenderer) {
         .literal(color = 0x81A442)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
-    val card = new THREE.MeshPhongMaterial(
+    val card = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = 0xd8bc9d)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
     val letters = new THREE.MeshLambertMaterial(
       Dynamic
@@ -412,7 +425,7 @@ class LoginScreen(renderer: WebGLRenderer) {
   }
 
   object Shapes {
-    val s = 3
+    val s = 5
 
     val shapeS = new THREE.Shape()
     shapeS.moveTo(s * 0 - s * 1.5, s * 0 - s * 2.5)

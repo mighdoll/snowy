@@ -14,6 +14,7 @@ import org.scalajs.dom.{document, window}
 import snowy.GameConstants
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.connection.GameState
+import snowy.connection.GameState.{nextState, nextTimeSlice}
 import snowy.draw.{CreateGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield._
 import vector.Vec2d
@@ -140,7 +141,7 @@ object DrawPlayfield {
 
 }
 
-class DrawPlayfield(renderer: WebGLRenderer) {
+class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
   import DrawPlayfield._
   val scene = new THREE.Scene()
   val camera =
@@ -155,7 +156,7 @@ class DrawPlayfield(renderer: WebGLRenderer) {
     stats.showPanel(0)
     document.body.appendChild(stats.dom)
 
-    camera.position.set(0, 1200, 100)
+    camera.position.set(0, 1200, 400)
     camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     scene.add(amb)
@@ -182,11 +183,10 @@ class DrawPlayfield(renderer: WebGLRenderer) {
     val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
     ThreeTrees.updateThreeTrees(trees, myPos)
     ThreeSnowballs.updateThreeSnowballs(snowballs, myPos)
-    ThreeSleds.updateThreeSleds(sleds, mySled)
+    threeSleds.updateThreeSleds(sleds, mySled)
 
-    camera.position.x = mySled.position.x
-    camera.position.z = mySled.position.y + 400
-    camera.lookAt(new THREE.Vector3(mySled.position.x, 0, mySled.position.y))
+    camera.position.set(mySled._position.x, 1200 + myPos.y / 2, mySled._position.y + 400)
+    camera.lookAt(new THREE.Vector3(mySled._position.x, 0, mySled._position.y))
 
     renderState()
     stats.end()
@@ -198,12 +198,32 @@ class DrawPlayfield(renderer: WebGLRenderer) {
     if (gameActive()) renderer.render(scene, camera)
   }
 
+  private val playfieldAnimation = new Animation(animate)
+
+  /** Update the client's playfield objects and draw the new playfield to the screen */
+  private def animate(timestamp: Double): Unit = {
+    val deltaSeconds = nextTimeSlice()
+    val newState     = nextState(math.max(deltaSeconds, 0))
+
+    drawPlayfield(
+      newState.snowballs,
+      newState.sleds,
+      newState.mySled,
+      newState.trees,
+      newState.playfield
+    )
+  }
+
+  def startRedraw(): Unit = playfieldAnimation.start()
+
+  def stopRedraw(): Unit = playfieldAnimation.cancel()
+
   window.addEventListener(
     "resize", { _: Event =>
       camera.aspect = math.min(getWidth / getHeight, 3)
       camera.updateProjectionMatrix()
 
-      if (gameActive() && ClientMain.animating()) ClientMain.resize()
+      if (gameActive() && playfieldAnimation.animating()) ClientMain.resize()
       renderState()
     }
   )

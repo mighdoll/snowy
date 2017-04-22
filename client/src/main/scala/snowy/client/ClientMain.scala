@@ -4,18 +4,16 @@ import minithree.THREE
 import minithree.THREE.{WebGLRenderer, WebGLRendererParameters}
 import org.scalajs.dom.{document, window}
 import snowy.connection.GameState.{nextState, nextTimeSlice}
+import snowy.draw.ThreeSleds
 
 import scala.scalajs.js.{Dynamic, JSApp}
 
 object ClientMain extends JSApp {
   private val renderer           = createRenderer()
-  private val drawPlayfield      = new DrawPlayfield(renderer)
   private val loginScreen        = new LoginScreen(renderer)
-  private val playfieldAnimation = new Animation(animate)
 
   def getWidth(): Double   = window.innerWidth
   def getHeight(): Double  = window.innerHeight
-  def animating(): Boolean = playfieldAnimation.animating()
 
   private def createRenderer(): WebGLRenderer = {
     val renderer = new THREE.WebGLRenderer(
@@ -34,30 +32,14 @@ object ClientMain extends JSApp {
 
   def main(): Unit = {}
 
-  /** Update the client's playfield objects and draw the new playfield to the screen */
-  def animate(timestamp: Double): Unit = {
-    val deltaSeconds = nextTimeSlice()
-    val newState     = nextState(math.max(deltaSeconds, 0))
-
-    drawPlayfield.drawPlayfield(
-      newState.snowballs,
-      newState.sleds,
-      newState.mySled,
-      newState.trees,
-      newState.playfield
-    )
-  }
-
-  def startRedraw(): Unit = playfieldAnimation.start()
-
-  def stopRedraw(): Unit = playfieldAnimation.cancel()
-
   def death(): Unit = loginScreen.rejoinPanel()
 
   def resize(): Unit = {
     renderer.setSize(getWidth(), getHeight())
     renderer.setViewport(0, 0, getWidth(), getHeight())
   }
+
+  def threeSleds(fn: ThreeSleds => Unit): Unit = loginScreen.threeSleds(fn)
 }
 
 /** Manage a function that's run on the browser's requestAnimationFrame loop */
