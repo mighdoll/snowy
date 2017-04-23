@@ -94,7 +94,7 @@ object GameState {
 
   def removeSleds(removedIds: Seq[SledId]): Unit = {
     removeById[Sled](removedIds, serverSleds)
-    ClientMain.threeSleds(_.removeSleds(deaths))
+    ClientMain.threeSleds(_.removeSleds(removedIds))
   }
 
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {

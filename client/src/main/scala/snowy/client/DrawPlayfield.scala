@@ -185,8 +185,8 @@ class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
     ThreeSnowballs.updateThreeSnowballs(snowballs, myPos)
     threeSleds.updateThreeSleds(sleds, mySled)
 
-    camera.position.set(mySled._position.x, 1200 + myPos.y / 2, mySled._position.y + 400)
-    camera.lookAt(new THREE.Vector3(mySled._position.x, 0, mySled._position.y))
+    camera.position.set(mySled.position.x, 1200 + myPos.y, mySled.position.y + 400)
+    camera.lookAt(new THREE.Vector3(mySled.position.x, 0, mySled.position.y))
 
     renderState()
     stats.end()
