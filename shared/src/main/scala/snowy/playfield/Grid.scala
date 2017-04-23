@@ -31,7 +31,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
   }
 
   def add(item: A): Unit = {
-//    println(s"grid: adding item: $item")
     for (cell <- coveredCells(item.boundingBox)) {
       val added = cell.add(item)
       if (!added) {
@@ -41,7 +40,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
   }
 
   def remove(item: A): Unit = {
-//    println(s"grid: removing item: $item")
     for (cell <- coveredCells(item.boundingBox)) {
       val found =
         cell.remove(item)
@@ -78,7 +76,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     val lastRow     = cellRow(bounds.bottom)
     val firstColumn = cellColumn(bounds.left)
     val lastColumn  = cellColumn(bounds.right)
-    //    println(s"bounds: $bounds  indices: rows: $firstRow - $lastRow  columns: $firstColumn - $lastColumn")
     for {
       row    <- firstRow to lastRow
       column <- firstColumn to lastColumn
@@ -115,10 +112,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
   private def cellColumn(x: Double): Int = {
     val boundedX = clipEndExclusive(x, size.x)
     floor(boundedX / spacing).toInt
-  }
-
-  private def cell(item: A): HashSet[A] = {
-    cells(cellIndex(item))
   }
 
 }

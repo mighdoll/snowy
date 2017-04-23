@@ -34,16 +34,34 @@ object CollideThings {
         (a, b)
       }
 
-    // CONSIDER if the grid was perfect (re:wrapping, etc.) pairsA should equal pairsB
-    val uniquePairs = pairsA.toSet // ++ pairsB.toSet
+    // CONSIDER: if the grid was perfect (re:wrapping, etc.) pairsA should equal pairsB
+    val uniquePairs = pairsA.toSet ++ pairsB.toSet
 
-    val deaths =
+    val effects =
       for {
         (a, b)             <- uniquePairs
         (effectA, effectB) <- collide2(a, b)
       } yield {
-        applyTwoEffects(effectA, effectB)
+        (effectA, effectB)
       }
+
+    val oldEffects =
+      for {
+        objA               <- aCollection
+        objB               <- bCollection
+        (effectA, effectB) <- collide2(objA, objB)
+      } yield {
+        (effectA, effectB)
+      }
+
+    if (effects.size != oldEffects.size) {
+      println(s"effects: $effects")
+      println(s"oldEffects: $oldEffects")
+    }
+
+    // apply the collisions to the items and return any killed items
+    val deaths =
+      for { (effectA, effectB) <- effects } yield applyTwoEffects(effectA, effectB)
 
     Monoid.combineAll(deaths)
   }
