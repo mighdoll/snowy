@@ -12,7 +12,7 @@ object SledTree {
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
     * @return a damaged sled if it overlaps with a tree */
-  def collide(sled: Sled, trees: Set[Tree])
+  def collide(sled: Sled, trees: Iterable[Tree])
              (implicit tracker:PlayfieldTracker[Sled]): Unit = {
     val sledBody = Circle(sled.position, sled.radius)
 

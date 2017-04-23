@@ -75,8 +75,8 @@ object Collisions {
     * to the collided object, but this separation allows adjustments from multiple
     * collisions to be accumulated.)
     */
-  case class Collided[A <: CircularObject[A]](movingCircle: A,
-                                           rebound: Vec2d,
-                                           reposition: Vec2d)
+  case class Collided[A <: CircularObject[A]](item: A,
+                                              rebound: Vec2d,
+                                              reposition: Vec2d)
 
 }
