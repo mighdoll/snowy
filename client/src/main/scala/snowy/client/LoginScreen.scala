@@ -22,63 +22,221 @@ class LoginScreen(renderer: WebGLRenderer) {
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
-
-  private val amb   = new THREE.AmbientLight(0xFFFFFF, 0.7)
-  private val light = new THREE.DirectionalLight(0xFFFFFF, 0.3)
-
+  private val amb                   = new THREE.AmbientLight(0xFFFFFF, 0.7)
+  private val light                 = new THREE.DirectionalLight(0xFFFFFF, 0.3)
+  private val gameDiv               = document.getElementById("game-div").asInstanceOf[html.Div]
+  private val gameHud               = document.getElementById("game-hud").asInstanceOf[html.Div]
+  private val chosenSled            = document.getElementById("chosen").asInstanceOf[html.Div]
+  private val loginForm             = document.getElementById("login-form").asInstanceOf[html.Form]
+  private val textInput             = document.getElementById("username").asInstanceOf[html.Input]
+  private val playButton            = document.getElementById("play").asInstanceOf[html.Button]
+  private val raycaster             = new THREE.Raycaster()
+  private val mouse                 = new THREE.Vector2()
   private val connected: Connection = new Connection()
-  private var spawned: Boolean      = false
-  private var skiColor: SkiColor    = BasicSkis
-  private var sledKind: SledKind    = BasicSled
-
-  private var threeSleds: Option[ThreeSleds] = None
-  private val sled                           = Sled("", Vec2d(0, 0), sledKind, skiColor)
-  private var threeSled                      = new THREE.Object3D()
-
-  private val gameDiv    = document.getElementById("game-div").asInstanceOf[html.Div]
-  private val gameHud    = document.getElementById("game-hud").asInstanceOf[html.Div]
-  private val chosenSled = document.getElementById("chosen").asInstanceOf[html.Div]
-  private val loginForm  = document.getElementById("login-form").asInstanceOf[html.Form]
-  private val textInput  = document.getElementById("username").asInstanceOf[html.Input]
-  private val playButton = document.getElementById("play").asInstanceOf[html.Button]
-
-  sealed trait Direction
-  case object Left   extends Direction
-  case object Right  extends Direction
-  case object Middle extends Direction
-
-  private val raycaster                    = new THREE.Raycaster()
-  private val mouse                        = new THREE.Vector2()
-  private var hover: Direction             = Middle
-  private var hoverColor: Option[SkiColor] = Some(BasicSkis)
-
-  private var rejoinScreen = false
-
-  val loader = new ThreeLoader()
-  val Seq(sledFuture, skisFuture) =
+  private val loader                = new ThreeLoader()
+  private val Seq(sledFuture, skisFuture) =
     loader.loadGeometries("sled/body.json", "sled/skis.json")
-  val geometriesLoaded = Future.sequence(Seq(sledFuture, skisFuture))
+  private val geometriesLoaded               = Future.sequence(Seq(sledFuture, skisFuture))
+  private val connectedFuture                = connected.socket.future
+  var drawPlayfield: Option[DrawPlayfield]   = None
+  private var skiColor: SkiColor             = BasicSkis
+  private var sledKind: SledKind             = BasicSled
+  private var spawned: Boolean               = false
+  private var threeSleds: Option[ThreeSleds] = None
+  private var threeSled                      = new THREE.Object3D()
+  private var hover: Direction               = Middle
+  private var hoverColor: Option[SkiColor]   = Some(BasicSkis)
+  private var rejoinScreen                   = false
+
   geometriesLoaded.onComplete(_.foreach { _ =>
     threeSleds = Some(new ThreeSleds(sledFuture.value.get.get, skisFuture.value.get.get))
     updateSelector()
   })
-
-  val connectedFuture = connected.socket.future
 
   Future.sequence(Seq(connectedFuture, geometriesLoaded)).onComplete { _ =>
     playButton.disabled = false
     playButton.innerHTML = "Join Game"
   }
 
-  private def setup(): Unit = {
-    positions()
-    addGroups()
-    addItems()
+  def threeSleds(fn: ThreeSleds => Unit): Unit = threeSleds.foreach(fn)
 
-    textInput.focus()
+  def updateColors(): Unit = {
+    if (GameState.mySledId.isEmpty || rejoinScreen) {
+      hoverColor.foreach { color =>
+        val oldColor =
+          Groups.colorSelector.children(AllLists.allSkis.indexOf(skiColor))
+        val newColor = Groups.colorSelector.children(AllLists.allSkis.indexOf(color))
+        oldColor.scale.y = 1
+        newColor.scale.y = 2
+        oldColor.position.y = 0
+        newColor.position.y = -1
+        skiColor = color
+
+        updateSelector()
+        clearConnection()
+      }
+    }
   }
 
-  setup()
+  def updateSelector(): Unit = {
+    val currentIndex = AllLists.allSleds.indexOf(sledKind)
+
+    if (GameState.mySledId.isEmpty || rejoinScreen) {
+      hover match {
+        case Left =>
+          sledKind =
+            if (currentIndex > 0) AllLists.allSleds(currentIndex - 1)
+            else AllLists.allSleds.last
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+        case Right =>
+          sledKind =
+            if (currentIndex < AllLists.allSleds.length - 1)
+              AllLists.allSleds(currentIndex + 1)
+            else AllLists.allSleds.head
+          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
+        case Middle =>
+      }
+    }
+
+    if (rejoinScreen && hover != Middle) clearConnection()
+
+    Groups.selector.remove(threeSled)
+
+    val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
+    threeSleds.foreach { a =>
+      val a2 = a.createSled(sled, true, new Vector3(0, 0, 0))
+      a2.children = js.Array(a2.children(0), a2.children(1))
+      threeSled = a2
+      threeSled.scale.multiplyScalar(0.1)
+      threeSled.position.y = 3
+    }
+
+    Groups.selector.add(threeSled)
+
+    renderLoginScreen()
+  }
+
+  def clearConnection(): Unit = { spawned = false }
+
+  def selectorHover(e: MouseEvent): Unit = {
+    mouse.x = (e.clientX / getWidth) * 2 - 1
+    mouse.y = (e.clientY / getHeight) * -2 + 1
+
+    raycaster.setFromCamera(mouse, camera)
+
+    val intersectsTree = raycaster.intersectObjects(
+      js.Array(
+        Groups.tree.children(1),
+        Groups.tree.children(2),
+        Groups.tree2.children(1),
+        Groups.tree2.children(2)
+      )
+    )
+    hoverTree(intersectsTree)
+
+    val intersectsColor = raycaster.intersectObjects(Groups.colorSelector.children)
+    hoverColor(intersectsColor)
+
+    renderLoginScreen()
+  }
+
+  def hoverTree(intersects: js.Array[Intersection]): Unit = {
+    val leaf1 = Groups.tree.children(1).asInstanceOf[Mesh]
+    val leaf2 = Groups.tree.children(2).asInstanceOf[Mesh]
+
+    val leaf3 = Groups.tree2.children(1).asInstanceOf[Mesh]
+    val leaf4 = Groups.tree2.children(2).asInstanceOf[Mesh]
+
+    leaf1.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf2.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf1.name = "right"
+    leaf2.name = "right"
+    leaf3.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf4.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+    leaf3.name = "left"
+    leaf4.name = "left"
+
+    if (intersects.length > 0) {
+      val mat = leaf1.material.clone().asInstanceOf[MeshLambertMaterial]
+      mat.emissive.setHex(0x222222)
+      val mat2 = leaf2.material.clone().asInstanceOf[MeshLambertMaterial]
+      mat2.emissive.setHex(0x222222)
+      if (intersects(0).`object`.name == "right") {
+        leaf1.material = mat
+        leaf2.material = mat2
+        hover = Left
+      } else {
+        leaf3.material = mat
+        leaf4.material = mat2
+        hover = Right
+      }
+    } else {
+      hover = Middle
+    }
+  }
+
+  def hoverColor(intersects: js.Array[Intersection]): Unit = {
+    Groups.colorSelector.children = Groups.colorSelector.children.map { color =>
+      val colorMesh = color.asInstanceOf[Mesh]
+      colorMesh.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
+      colorMesh
+    }
+    if (intersects.length > 0) {
+      val hoverObject = intersects(0).`object`.asInstanceOf[Mesh]
+      val newMat      = hoverObject.material.clone().asInstanceOf[MeshLambertMaterial]
+      newMat.emissive.setHex(0x222222)
+      hoverObject.material = newMat
+      hoverColor = Some(AllLists.allSkis(hoverObject.name.toInt))
+    } else { hoverColor = None }
+  }
+
+  def loginPressed(e: Event): Unit = {
+    e.preventDefault()
+    //Connect to the WebSocket server
+    if (!spawned) {
+      threeSleds.foreach(a => drawPlayfield = Some(new DrawPlayfield(renderer, a)))
+      connected.join(
+        textInput.value,
+        sledKind,
+        skiColor
+      )
+      spawned = true
+    } else connected.reSpawn()
+
+    swapScreen(true)
+
+    rejoinScreen = false
+    gameHud.classList.remove("hide")
+    drawPlayfield.foreach(_.startRedraw())
+  }
+
+  def rejoinPanel() {
+    swapScreen(false)
+
+    drawPlayfield.foreach(_.stopRedraw())
+    gameHud.classList.add("hide")
+    playButton.focus()
+    rejoinScreen = true
+
+    renderLoginScreen()
+  }
+
+  def renderLoginScreen(): Unit = {
+    if (loginScreenActive()) renderer.render(scene, camera)
+  }
+
+  def loginScreenActive(): Boolean = GameState.mySledId.isEmpty || rejoinScreen
+
+  /** Swap the login screen and game panel */
+  def swapScreen(game: Boolean) {
+    if (game) {
+      gameDiv.classList.remove("back")
+      loginForm.classList.add("hide")
+    } else {
+      gameDiv.classList.add("back")
+      loginForm.classList.remove("hide")
+    }
+  }
 
   def positions(): Unit = {
     camera.position.set(0, 0, 140)
@@ -175,6 +333,12 @@ class LoginScreen(renderer: WebGLRenderer) {
     Groups.snowyText.add(Meshes.meshY)
   }
 
+  window.addEventListener("mousemove", selectorHover, false)
+  document.addEventListener("mousedown", { _: Event =>
+    updateSelector()
+    updateColors()
+  }, false)
+
   def addItems(): Unit = {
     scene.add(amb)
     scene.add(light)
@@ -188,195 +352,22 @@ class LoginScreen(renderer: WebGLRenderer) {
     renderLoginScreen()
   }
 
-  def loginScreenActive(): Boolean = GameState.mySledId.isEmpty || rejoinScreen
+  private def setup(): Unit = {
+    positions()
+    addGroups()
+    addItems()
 
-  def renderLoginScreen(): Unit = {
-    if (loginScreenActive()) renderer.render(scene, camera)
+    textInput.focus()
   }
 
-  def updateColors(): Unit = {
-    if (GameState.mySledId.isEmpty || rejoinScreen) {
-      hoverColor.foreach { color =>
-        val oldColor =
-          Groups.colorSelector.children(AllLists.allSkis.indexOf(skiColor))
-        val newColor = Groups.colorSelector.children(AllLists.allSkis.indexOf(color))
-        oldColor.scale.y = 1
-        newColor.scale.y = 2
-        oldColor.position.y = 0
-        newColor.position.y = -1
-        skiColor = color
-
-        updateSelector()
-        clearConnection()
-      }
-    }
-  }
-
-  def updateSelector(): Unit = {
-    val currentIndex = AllLists.allSleds.indexOf(sledKind)
-
-    if (GameState.mySledId.isEmpty || rejoinScreen) {
-      hover match {
-        case Left =>
-          sledKind =
-            if (currentIndex > 0) AllLists.allSleds(currentIndex - 1)
-            else AllLists.allSleds.last
-          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-        case Right =>
-          sledKind =
-            if (currentIndex < AllLists.allSleds.length - 1)
-              AllLists.allSleds(currentIndex + 1)
-            else AllLists.allSleds.head
-          chosenSled.innerHTML = "Sled: " + sledKind.toString.replace("Sled", "")
-        case Middle =>
-      }
-    }
-
-    if (rejoinScreen && hover != Middle) clearConnection()
-
-    Groups.selector.remove(threeSled)
-
-    val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
-    threeSleds.foreach { a =>
-      val a2 = a.createSled(sled, true, new Vector3(0, 0, 0))
-      a2.children = js.Array(a2.children(0), a2.children(1))
-      threeSled = a2
-      threeSled.scale.multiplyScalar(0.1)
-      threeSled.position.y = 3
-    }
-
-    Groups.selector.add(threeSled)
-
-    renderLoginScreen()
-  }
-
-  def hoverTree(intersects: js.Array[Intersection]): Unit = {
-    val leaf1 = Groups.tree.children(1).asInstanceOf[Mesh]
-    val leaf2 = Groups.tree.children(2).asInstanceOf[Mesh]
-
-    val leaf3 = Groups.tree2.children(1).asInstanceOf[Mesh]
-    val leaf4 = Groups.tree2.children(2).asInstanceOf[Mesh]
-
-    leaf1.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
-    leaf2.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
-    leaf1.name = "right"
-    leaf2.name = "right"
-    leaf3.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
-    leaf4.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
-    leaf3.name = "left"
-    leaf4.name = "left"
-
-    if (intersects.length > 0) {
-      val mat = leaf1.material.clone().asInstanceOf[MeshLambertMaterial]
-      mat.emissive.setHex(0x222222)
-      val mat2 = leaf2.material.clone().asInstanceOf[MeshLambertMaterial]
-      mat2.emissive.setHex(0x222222)
-      if (intersects(0).`object`.name == "right") {
-        leaf1.material = mat
-        leaf2.material = mat2
-        hover = Left
-      } else {
-        leaf3.material = mat
-        leaf4.material = mat2
-        hover = Right
-      }
-    } else {
-      hover = Middle
-    }
-  }
-
-  def hoverColor(intersects: js.Array[Intersection]): Unit = {
-    Groups.colorSelector.children = Groups.colorSelector.children.map { color =>
-      val colorMesh = color.asInstanceOf[Mesh]
-      colorMesh.material.asInstanceOf[MeshLambertMaterial].emissive.setHex(0x0)
-      colorMesh
-    }
-    if (intersects.length > 0) {
-      val hoverObject = intersects(0).`object`.asInstanceOf[Mesh]
-      val newMat      = hoverObject.material.clone().asInstanceOf[MeshLambertMaterial]
-      newMat.emissive.setHex(0x222222)
-      hoverObject.material = newMat
-      hoverColor = Some(AllLists.allSkis(hoverObject.name.toInt))
-    } else { hoverColor = None }
-  }
-
-  def selectorHover(e: MouseEvent): Unit = {
-    mouse.x = (e.clientX / getWidth) * 2 - 1
-    mouse.y = (e.clientY / getHeight) * -2 + 1
-
-    raycaster.setFromCamera(mouse, camera)
-
-    val intersectsTree = raycaster.intersectObjects(
-      js.Array(
-        Groups.tree.children(1),
-        Groups.tree.children(2),
-        Groups.tree2.children(1),
-        Groups.tree2.children(2)
-      )
-    )
-    hoverTree(intersectsTree)
-
-    val intersectsColor = raycaster.intersectObjects(Groups.colorSelector.children)
-    hoverColor(intersectsColor)
-
-    renderLoginScreen()
-  }
-
-  window.addEventListener("mousemove", selectorHover, false)
-  document.addEventListener("mousedown", { _: Event =>
-    updateSelector()
-    updateColors()
-  }, false)
-
-  var drawPlayfield: Option[DrawPlayfield] = None
-
-  def threeSleds(fn: ThreeSleds => Unit): Unit = threeSleds.foreach(fn)
-
-  def loginPressed(e: Event): Unit = {
-    e.preventDefault()
-    //Connect to the WebSocket server
-    if (!spawned) {
-      threeSleds.foreach(a => drawPlayfield = Some(new DrawPlayfield(renderer, a)))
-      connected.join(
-        textInput.value,
-        sledKind,
-        skiColor
-      )
-      spawned = true
-    } else connected.reSpawn()
-
-    swapScreen(true)
-
-    rejoinScreen = false
-    gameHud.classList.remove("hide")
-    drawPlayfield.foreach(_.startRedraw())
-  }
+  setup()
 
   loginForm.addEventListener("submit", loginPressed, false)
 
-  def clearConnection(): Unit = { spawned = false }
-
-  def rejoinPanel() {
-    swapScreen(false)
-
-    drawPlayfield.foreach(_.stopRedraw())
-    gameHud.classList.add("hide")
-    playButton.focus()
-    rejoinScreen = true
-
-    renderLoginScreen()
-  }
-
-  /** Swap the login screen and game panel */
-  def swapScreen(game: Boolean) {
-    if (game) {
-      gameDiv.classList.remove("back")
-      loginForm.classList.add("hide")
-    } else {
-      gameDiv.classList.add("back")
-      loginForm.classList.remove("hide")
-    }
-  }
+  sealed trait Direction
+  case object Left   extends Direction
+  case object Right  extends Direction
+  case object Middle extends Direction
 
   object Geos {
     val trunk  = new THREE.BoxGeometry(2, 10, 2)
