@@ -52,13 +52,15 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
   }
 
   def inside(bounds: Rect): Iterable[A] = {
-    for {
-      cell <- coveredCells(bounds)
-      item <- cell
-      if bounds.intersectRect(item.boundingBox)
-    } yield {
-      item
-    }
+    val found =
+      for {
+        cell <- coveredCells(bounds)
+        item <- cell
+        if bounds.intersectRect(item.boundingBox)
+      } yield {
+        item
+      }
+    found.toSet
   }
 
   def items: Traversable[A] = {
