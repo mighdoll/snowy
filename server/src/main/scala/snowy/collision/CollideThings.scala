@@ -19,14 +19,14 @@ object CollideThings {
         bGrid: Grid[B]
   ): DeathList[A, B] = {
 
-    val pairsA =
+    val pairsA: Traversable[(A, B)] =
       for {
         a <- aCollection
         b <- bGrid.inside(a.boundingBox)
       } yield {
         (a, b)
       }
-    val pairsB =
+    val pairsB: Traversable[(A, B)] =
       for {
         b <- bCollection
         a <- aGrid.inside(b.boundingBox)
@@ -35,7 +35,7 @@ object CollideThings {
       }
 
     // CONSIDER if the grid was perfect (re:wrapping, etc.) pairsA should equal pairsB
-    val uniquePairs = pairsA.toSet ++ pairsB.toSet
+    val uniquePairs = pairsA.toSet // ++ pairsB.toSet
 
     val deaths =
       for {
@@ -74,31 +74,6 @@ object CollideThings {
     *
     * @return a list of any killed objects */
   def collideCollection[A <: CircularObject[A]: PlayfieldTracker](
-        collection: Traversable[A]
-  ): Traversable[Death[A, A]] = {
-    val combinations = collection.toList.combinations(2)
-    val effectPairs: Iterator[(CollisionEffect[A], CollisionEffect[A])] =
-      combinations.flatMap {
-        case List(a, b) => collide2(a, b)
-      }
-
-    val deathLists: Iterator[DeathList[A, A]] = effectPairs.map {
-      case (effectA, effectB) =>
-        applyTwoEffects(effectA, effectB)
-    }
-
-    val deaths: Iterator[Death[A, A]] = deathLists.flatMap { deathList =>
-      deathList.a ++ deathList.b
-    }
-
-    deaths.toSeq
-  }
-
-  /** Collide all elements in a collection of circular objects with each other
-    * The objects speeds, positions, and health are modified based on the collision.
-    *
-    * @return a list of any killed objects */
-  def collideCollection2[A <: CircularObject[A]: PlayfieldTracker](
         collection: Traversable[A],
         grid: Grid[A]
   ): Traversable[Death[A, A]] = {
@@ -159,12 +134,11 @@ object CollideThings {
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
-    collideCircles(objA, objB) match {
-      case Some((aCollision, bCollision)) =>
+    collideCircles(objA, objB) map {
+      case (aCollision, bCollision) =>
         val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
         val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
-        Some((aDamage, bDamage))
-      case None => None
+        (aDamage, bDamage)
     }
   }
 

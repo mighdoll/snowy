@@ -58,25 +58,32 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
-      CollideThings.collideThings2(
-        state.sleds,
-        state.snowballs,
-        state.sledGrid,
-        state.snowballGrid
-      )
+//      CollideThings.collideThings2(
+//        state.sleds,
+//        state.snowballs,
+//        state.sledGrid,
+//        state.snowballGrid
+//      )
+    CollideThings.collideThings(state.sleds, state.snowballs)
 
     for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b) {
       state.snowballs -= killed
     }
 
     // collide snowballs with trees
-    val snowballTreeDeaths = state.snowballs.filter(snowballTrees(_, state.trees))
+    val snowballTreeDeaths =
+    for {
+      snowball <- state.snowballs
+      nearTrees = state.treeGrid.inside(snowball.boundingBox)
+      if snowballTrees(snowball, nearTrees)
+    } yield snowball
+
     for (ball <- snowballTreeDeaths)
       state.snowballs -= ball
 
     // collide snowballs with each other
     val snowballDeaths =
-      CollideThings.collideCollection2(state.snowballs, state.snowballGrid)
+      CollideThings.collideCollection(state.snowballs, state.snowballGrid)
 
     for (Death(killed: Snowball, _) <- snowballDeaths) {
       state.snowballs -= killed
@@ -89,7 +96,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     } SledTree.collide(sled, nearTrees)
 
     // collide sleds with each other
-    val sledDeaths = CollideThings.collideCollection2(state.sleds, state.sledGrid)
+    val sledDeaths = CollideThings.collideCollection(state.sleds, state.sledGrid)
 
     // accumulate awards
     val snowballAwards =
