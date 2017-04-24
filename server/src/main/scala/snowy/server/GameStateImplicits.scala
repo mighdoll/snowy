@@ -26,7 +26,14 @@ class GameStateImplicits(state: GameState) {
     def sled: Option[Sled] = state.sledMap.get(id).flatMap(_.sled)
   }
 
-  implicit class SledIndices(sled: Sled) {
+  implicit class SnowballOps(val snowball:Snowball) {
+    def remove(): Unit = {
+      state.snowballGrid.remove(snowball)
+      state.snowballs.remove(snowball)
+    }
+  }
+
+  implicit class SledOps(sled: Sled) {
     def connectionId: Option[ClientId] = {
       state.sledMap.collectFirst {
         case (connectionId, sledId) if sled.id == sledId =>

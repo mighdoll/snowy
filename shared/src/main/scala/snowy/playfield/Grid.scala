@@ -49,6 +49,10 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     }
   }
 
+  def removeAll(item:A):Unit = {
+    for {cell <- cells} cell.remove(item)
+  }
+
   def inside(bounds: Rect): Iterable[A] = {
     val found =
       for {

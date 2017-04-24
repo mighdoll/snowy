@@ -6,6 +6,7 @@ import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 
 class GameHealth(state: GameState) {
+  import state.gameStateImplicits._
 
   /** slowly recover some health points */
   def recoverHealth(deltaSeconds: Double): Unit = {
@@ -22,9 +23,10 @@ class GameHealth(state: GameState) {
     def expired(snowball: Snowball): Boolean =
       now > snowball.spawned + snowball.lifetime * 1000
 
-    val oldBalls = state.snowballs.filter(expired)
-    state.snowballs --= oldBalls
-    oldBalls.map(_.id)
+    for { oldBall <- state.snowballs.filter(expired) } yield {
+      oldBall.remove()
+      oldBall.id
+    }
   }
 
   /** @return the sleds with no health left */

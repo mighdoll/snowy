@@ -51,11 +51,28 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   case class CollisionResult(killedSleds: Traversable[SledKill],
                              killedSnowballs: Traversable[BallId])
 
+  private def verifyGridState():Unit = {
+    val sledSet = state.sleds.toSet
+    val sledGridSet = state.sledGrid.items
+    if (sledSet != sledGridSet) {
+      logger.error("sledSet != sledGridSet")
+      logger.error(s"sledSet:     $sledSet")
+      logger.error(s"sledGridSet: $sledGridSet")
+    }
+    val snowballSet = state.snowballs.toSet
+    val snowballGridSet = state.snowballGrid.items
+    if (snowballSet != snowballGridSet) {
+      logger.error("snowballSet != snowballGridSet")
+      logger.error(s"snowballSet:     $snowballSet")
+      logger.error(s"snowballGridSet: $snowballGridSet")
+    }
+  }
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
                                 sledTracker: PlayfieldTracker[Sled]): CollisionResult = {
     import snowy.collision.GameCollide.snowballTrees
 
+    verifyGridState()
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideThings2(
@@ -67,7 +84,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 //    CollideThings.collideThings(state.sleds, state.snowballs)
 
     for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b) {
-      state.snowballs -= killed
+      killed.remove()
     }
 
     // collide snowballs with trees
@@ -78,15 +95,16 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       if snowballTrees(snowball, nearTrees)
     } yield snowball
 
-    for (ball <- snowballTreeDeaths)
-      state.snowballs -= ball
+    for (ball <- snowballTreeDeaths) {
+      ball.remove()
+    }
 
     // collide snowballs with each other
     val snowballDeaths =
       CollideThings.collideCollection(state.snowballs, state.snowballGrid)
 
     for (Death(killed: Snowball, _) <- snowballDeaths) {
-      state.snowballs -= killed
+      killed.remove()
     }
 
     // collide sleds with trees
