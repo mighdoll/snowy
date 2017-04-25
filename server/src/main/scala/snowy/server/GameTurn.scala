@@ -64,17 +64,18 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         state.snowballGrid
       )
 
-    for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b) {
-      killed.remove()
-    }
+    val deadBalls: Traversable[Snowball] =
+      for { Death(snowball: Snowball, _) <- sledSnowballDeaths.b } yield { snowball }
+    val uniqueDeadBalls = deadBalls.toSet
+    uniqueDeadBalls.foreach(_.remove())
 
     // collide snowballs with trees
     val snowballTreeDeaths =
-    for {
-      snowball <- state.snowballs
-      nearTrees = state.treeGrid.inside(snowball.boundingBox)
-      if snowballTrees(snowball, nearTrees)
-    } yield snowball
+      for {
+        snowball <- state.snowballs
+        nearTrees = state.treeGrid.inside(snowball.boundingBox)
+        if snowballTrees(snowball, nearTrees)
+      } yield snowball
 
     for (ball <- snowballTreeDeaths) {
       ball.remove()
@@ -82,11 +83,12 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     // collide snowballs with each other
     val snowballDeaths =
-      CollideThings.collideCollection(state.snowballs, state.snowballGrid)
+      CollideThings
+        .collideCollection(state.snowballs, state.snowballGrid)
+        .map(_.killed)
+        .toSet
 
-    for (Death(killed: Snowball, _) <- snowballDeaths) {
-      killed.remove()
-    }
+    for (snowball <- snowballDeaths) { snowball.remove() }
 
     // collide sleds with trees
     for {
@@ -111,7 +113,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b)
           yield killed.id
 
-      snowballDeaths.map(_.killed.id) ++ bySled ++ snowballTreeDeaths.map(_.id)
+      snowballDeaths.map(_.id) ++ bySled ++ snowballTreeDeaths.map(_.id)
     }
 
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)

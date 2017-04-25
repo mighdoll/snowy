@@ -41,7 +41,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
 
   /** Remove an item from the grid.
     *
-    * Note that the bounding box of the item must unchanged since it was put in
+    * Note that the bounding box of the item must unchanged since insertion
     */
   def remove(item: A): Unit = {
     for (cell <- coveredCells(item.boundingBox)) {
@@ -49,6 +49,10 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
         cell.remove(item)
       if (!found) {
         println(s"removing item $item not in the grid") // TODO log that works on client too
+        items.find(_ == item) match {
+          case Some(_) => println(s"$item in another cell in the grid")
+          case None => println(s"$item not in any other cell in the grid")
+        }
       }
     }
   }
@@ -99,7 +103,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
   }
 
   private def cellRowColumnToIndex(row: Int, column: Int): Int = {
-//    println(s"cell row column: $row  $column")
     (row * columns) + column
   }
 

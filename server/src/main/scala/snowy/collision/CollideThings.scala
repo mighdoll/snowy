@@ -31,7 +31,7 @@ object CollideThings {
     val effects =
       for {
         (a, b)             <- itemPairs
-        (effectA, effectB) <- collide2(a, b)
+        (effectA, effectB) <- collideCircular(a, b)
       } yield {
         (effectA, effectB)
       }
@@ -64,7 +64,7 @@ object CollideThings {
       for {
         pairSet <- uniquePairs.toList
         Seq(a, b) = pairSet.toSeq
-        collisions <- collide2(a, b)
+        collisions <- collideCircular(a, b)
       } yield {
         collisions
       }
@@ -104,7 +104,7 @@ object CollideThings {
     DeathList(aDeaths, bDeaths)
   }
 
-  private def collide2[A <: CircularObject[A], B <: CircularObject[B]](
+  private def collideCircular[A <: CircularObject[A], B <: CircularObject[B]](
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
@@ -133,8 +133,10 @@ case class CollisionEffect[A <: CircularObject[A]](collided: Collided[A], damage
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
-    obj.speed = obj.speed + collided.rebound
-    obj.position = obj.position + collided.reposition
+    if (obj.health > 0) { // don't bother changing position or speed if its dead anyway
+      obj.speed = obj.speed + collided.rebound
+      obj.position = obj.position + collided.reposition
+    }
   }
 
   override def toString: String = {
