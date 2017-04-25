@@ -1,13 +1,16 @@
 package snowy.playfield
 import vector.Vec2d
 
-/** A collidable object on the playfield */
+/** A mutable game object positionable on the playfield.
+  *
+  * The position of the object is tracked externally via a PlayfieldTracker
+  * to enable updating of an external database of game objects, such as the
+  * collision Grid.
+  */
 trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
-  var health: Double
-
   private var internalPosition = Vec2d.zero
-
-  val id: PlayId[A] = PlayId.nextId[A]()
+  var health: Double
+  val id: PlayId[A]            = PlayId.nextId[A]()
 
   def position: Vec2d = internalPosition
 
@@ -17,7 +20,7 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
     tracker.add(this)
   }
 
-  def setInitialPosition(pos:Vec2d)(implicit tracker: PlayfieldTracker[A]):Unit = {
+  def setInitialPosition(pos: Vec2d)(implicit tracker: PlayfieldTracker[A]): Unit = {
     internalPosition = pos
     tracker.add(this)
   }
@@ -34,10 +37,11 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
   /** reduce impact by this factor in collisions */
   def armor: Double = 1.0
 
+  /** increase collision impact on opponent by this factor */
   def impactDamage: Double = 1.0
 
   override def toString() = {
-    val named  = getClass.getSimpleName
+    val named = getClass.getSimpleName
     s"$named[${id.id}]"
   }
 }
