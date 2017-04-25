@@ -39,6 +39,10 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     }
   }
 
+  /** Remove an item from the grid.
+    *
+    * Note that the bounding box of the item must unchanged since it was put in
+    */
   def remove(item: A): Unit = {
     for (cell <- coveredCells(item.boundingBox)) {
       val found =
@@ -49,10 +53,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     }
   }
 
-  def removeAll(item:A):Unit = {
-    for {cell <- cells} cell.remove(item)
-  }
-
+  /** @return all of the items inside a bounding box */
   def inside(bounds: Rect): Iterable[A] = {
     val found =
       for {

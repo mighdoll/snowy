@@ -13,41 +13,31 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideTwoCollections[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[B]: PlayfieldTracker](
+  def collideCollectionWithGrid[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[
+    B
+  ]: PlayfieldTracker](
         aCollection: Traversable[A],
-        bCollection: Traversable[B],
-        aGrid: Grid[A],
         bGrid: Grid[B]
   ): DeathList[A, B] = {
 
-    val pairsA: Traversable[(A, B)] =
+    val itemPairs: Traversable[(A, B)] =
       for {
         a <- aCollection
         b <- bGrid.inside(a.boundingBox)
       } yield {
         (a, b)
       }
-    val pairsB: Traversable[(A, B)] =
-      for {
-        b <- bCollection
-        a <- aGrid.inside(b.boundingBox)
-      } yield {
-        (a, b)
-      }
-
-    // CONSIDER: if the grid was perfect (re:wrapping, etc.) pairsA should equal pairsB
-    val uniquePairs = pairsA.toSet ++ pairsB.toSet
 
     val effects =
       for {
-        (a, b)             <- uniquePairs
+        (a, b)             <- itemPairs
         (effectA, effectB) <- collide2(a, b)
       } yield {
         (effectA, effectB)
       }
 
     // apply the collisions to the items and return any killed items
-    val deaths =
+    val deaths: Traversable[DeathList[A, B]] =
       for { (effectA, effectB) <- effects } yield applyTwoEffects(effectA, effectB)
 
     Monoid.combineAll(deaths)
