@@ -59,12 +59,11 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     state.debugVerifyGridState()
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
-      CollideThings.collideThings2(
+      CollideThings.collideTwoCollections(
         state.sleds,
         state.snowballs,
         state.sledGrid,
-        state.snowballGrid,
-        state
+        state.snowballGrid
       )
 //    CollideThings.collideThings(state.sleds, state.snowballs)
 

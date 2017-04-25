@@ -5,7 +5,6 @@ import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield._
 import cats._
-import snowy.server.GameState
 import vector.Vec2d
 
 object CollideThings {
@@ -14,12 +13,11 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideThings2[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[B]: PlayfieldTracker](
+  def collideTwoCollections[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[B]: PlayfieldTracker](
         aCollection: Traversable[A],
         bCollection: Traversable[B],
         aGrid: Grid[A],
-        bGrid: Grid[B],
-        state: GameState
+        bGrid: Grid[B]
   ): DeathList[A, B] = {
 
     val pairsA: Traversable[(A, B)] =
@@ -48,79 +46,9 @@ object CollideThings {
         (effectA, effectB)
       }
 
-    val oldEffects =
-      for {
-        objA               <- aCollection
-        objB               <- bCollection
-        (effectA, effectB) <- collide2(objA, objB)
-      } yield {
-        (effectA, effectB)
-      }
-
-    if (effects.size != oldEffects.size) {
-      println(s"effects: $effects")
-      println(s"oldEffects: $oldEffects")
-      state.debugVerifyGridState()
-      val old: Set[(CollisionEffect[A], CollisionEffect[B])] = oldEffects.toSet
-      val e: Set[(CollisionEffect[A], CollisionEffect[B])]   = effects
-      val gridMissing                                        = oldEffects.toSet -- effects
-      for {
-        (effectA, effectB) <- gridMissing
-      } {
-        val itemA = effectA.collided.item
-        val itemB = effectB.collided.item
-        val collided = collideCircles(itemA, itemB).isDefined
-        import snowy.playfield.Intersect._
-        val bboxIntersects = itemA.boundingBox.intersectRect(itemB.boundingBox)
-        println(s"$itemA and $itemB collide: $collided  bboxIntersect:$bboxIntersects")
-        printMissing(effectA)
-        printMissing(effectB)
-      }
-
-      def printMissing[C <: CircularObject[C]](collisionEffect: CollisionEffect[C]):Unit = {
-        collisionEffect.collided.item match {
-          case sled: Sled =>
-            val found = state.sledGrid.items
-              .find(_ == sled)
-              .map(_ => "found in")
-              .getOrElse("missing from")
-            println(s"sled[${sled.id.id}]  $found sledGrid")
-          case snowball: Snowball =>
-            val found = state.snowballGrid.items
-              .find(_ == snowball)
-              .map(_ => "found in")
-              .getOrElse("missing from")
-            println(s"snowball[${snowball.id.id}]  $found snowballGrid")
-          case x =>
-            println(s"??? missing $x")
-        }
-      }
-    }
-
     // apply the collisions to the items and return any killed items
     val deaths =
       for { (effectA, effectB) <- effects } yield applyTwoEffects(effectA, effectB)
-
-    Monoid.combineAll(deaths)
-  }
-
-  /** Collide two sets of circular objects with each other
-    * The objects speeds, positions, and health are modified based on the collision.
-    *
-    * @return a list of any killed objects */
-  def collideThings[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[B]: PlayfieldTracker](
-        aCollection: Traversable[A],
-        bCollection: Traversable[B]
-  ): DeathList[A, B] = {
-
-    val deaths =
-      for {
-        objA               <- aCollection
-        objB               <- bCollection
-        (effectA, effectB) <- collide2(objA, objB)
-      } yield {
-        applyTwoEffects(effectA, effectB)
-      }
 
     Monoid.combineAll(deaths)
   }
