@@ -9,6 +9,7 @@ trait CircularObject[A <: PlayfieldItem[A]] extends MoveablePlayfieldObject[A] w
 
   def mass: Double
 
+  override def boundingBox = Rect(position - Vec2d(radius, radius), Vec2d(radius * 2, radius * 2))
 }
 
 trait MoveablePlayfieldObject[A <: PlayfieldItem[A]] extends PlayfieldItem[A] {

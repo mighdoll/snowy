@@ -49,7 +49,6 @@ case class Sled(userName: String,
   type MyType = Sled
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Sled]
-  override def boundingBox = Rect(position, Vec2d(radius * 2, radius * 2))
 
   val driveMode = new SledDrive
 

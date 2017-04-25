@@ -13,7 +13,5 @@ case class Snowball( ownerId: SledId,
                     override val impactDamage: Double)
     extends CircularObject[Snowball] {
 
-  override def boundingBox = Rect(position, Vec2d(radius * 2, radius * 2))
-
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Snowball]
 }
