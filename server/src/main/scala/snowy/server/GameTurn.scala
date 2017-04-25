@@ -51,35 +51,20 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   case class CollisionResult(killedSleds: Traversable[SledKill],
                              killedSnowballs: Traversable[BallId])
 
-  private def verifyGridState():Unit = {
-    val sledSet = state.sleds.toSet
-    val sledGridSet = state.sledGrid.items
-    if (sledSet != sledGridSet) {
-      logger.error("sledSet != sledGridSet")
-      logger.error(s"sledSet:     $sledSet")
-      logger.error(s"sledGridSet: $sledGridSet")
-    }
-    val snowballSet = state.snowballs.toSet
-    val snowballGridSet = state.snowballGrid.items
-    if (snowballSet != snowballGridSet) {
-      logger.error("snowballSet != snowballGridSet")
-      logger.error(s"snowballSet:     $snowballSet")
-      logger.error(s"snowballGridSet: $snowballGridSet")
-    }
-  }
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
                                 sledTracker: PlayfieldTracker[Sled]): CollisionResult = {
     import snowy.collision.GameCollide.snowballTrees
 
-    verifyGridState()
+    state.debugVerifyGridState()
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideThings2(
         state.sleds,
         state.snowballs,
         state.sledGrid,
-        state.snowballGrid
+        state.snowballGrid,
+        state
       )
 //    CollideThings.collideThings(state.sleds, state.snowballs)
 

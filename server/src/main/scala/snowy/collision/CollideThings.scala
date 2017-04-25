@@ -3,8 +3,10 @@ package snowy.collision
 import scala.collection.mutable.ListBuffer
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{collideCircles, Collided}
-import snowy.playfield.{CircularObject, Grid, PlayfieldTracker}
+import snowy.playfield._
 import cats._
+import snowy.server.GameState
+import vector.Vec2d
 
 object CollideThings {
 
@@ -16,7 +18,8 @@ object CollideThings {
         aCollection: Traversable[A],
         bCollection: Traversable[B],
         aGrid: Grid[A],
-        bGrid: Grid[B]
+        bGrid: Grid[B],
+        state: GameState
   ): DeathList[A, B] = {
 
     val pairsA: Traversable[(A, B)] =
@@ -57,6 +60,41 @@ object CollideThings {
     if (effects.size != oldEffects.size) {
       println(s"effects: $effects")
       println(s"oldEffects: $oldEffects")
+      state.debugVerifyGridState()
+      val old: Set[(CollisionEffect[A], CollisionEffect[B])] = oldEffects.toSet
+      val e: Set[(CollisionEffect[A], CollisionEffect[B])]   = effects
+      val gridMissing                                        = oldEffects.toSet -- effects
+      for {
+        (effectA, effectB) <- gridMissing
+      } {
+        val itemA = effectA.collided.item
+        val itemB = effectB.collided.item
+        val collided = collideCircles(itemA, itemB).isDefined
+        import snowy.playfield.Intersect._
+        val bboxIntersects = itemA.boundingBox.intersectRect(itemB.boundingBox)
+        println(s"$itemA and $itemB collide: $collided  bboxIntersect:$bboxIntersects")
+        printMissing(effectA)
+        printMissing(effectB)
+      }
+
+      def printMissing[C <: CircularObject[C]](collisionEffect: CollisionEffect[C]):Unit = {
+        collisionEffect.collided.item match {
+          case sled: Sled =>
+            val found = state.sledGrid.items
+              .find(_ == sled)
+              .map(_ => "found in")
+              .getOrElse("missing from")
+            println(s"sled[${sled.id.id}]  $found sledGrid")
+          case snowball: Snowball =>
+            val found = state.snowballGrid.items
+              .find(_ == snowball)
+              .map(_ => "found in")
+              .getOrElse("missing from")
+            println(s"snowball[${snowball.id.id}]  $found snowballGrid")
+          case x =>
+            println(s"??? missing $x")
+        }
+      }
     }
 
     // apply the collisions to the items and return any killed items
@@ -179,6 +217,21 @@ case class CollisionEffect[A <: CircularObject[A]](collided: Collided[A], damage
     obj.health = obj.health - damage
     obj.speed = obj.speed + collided.rebound
     obj.position = obj.position + collided.reposition
+  }
+
+  override def toString: String = {
+    def vecToString(vec: Vec2d): String = {
+      s"${vec.x.toInt}, ${vec.y.toInt}"
+    }
+    collided.item match {
+      case item: PlayfieldItem[_] =>
+        val named  = item.getClass.getSimpleName
+        val pos    = vecToString(item.position)
+        val bboxTL = vecToString(item.boundingBox.pos)
+        val bboxBR = vecToString(item.boundingBox.pos + item.boundingBox.size)
+        s"CollisionEffect: $named[${item.id.id}]   pos: $pos   bbox: $bboxTL to $bboxBR"
+      case x => s"CollisionEffect on $x"
+    }
   }
 }
 

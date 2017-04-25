@@ -28,4 +28,20 @@ trait GameState { self: GameControl =>
     State(gameTurns.gameTime, sleds.toSeq, snowballs.toSeq)
   }
 
+  def debugVerifyGridState():Unit = {
+    val sledSet = sleds.toSet
+    val sledGridSet = sledGrid.items
+    if (sledSet != sledGridSet) {
+      logger.error("sledSet != sledGridSet")
+      logger.error(s"sledSet:     $sledSet")
+      logger.error(s"sledGridSet: $sledGridSet")
+    }
+    val snowballSet = snowballs.toSet
+    val snowballGridSet = snowballGrid.items
+    if (snowballSet != snowballGridSet) {
+      logger.error("snowballSet != snowballGridSet")
+      logger.error(s"snowballSet:     $snowballSet")
+      logger.error(s"snowballGridSet: $snowballGridSet")
+    }
+  }
 }

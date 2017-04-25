@@ -35,6 +35,11 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
   def armor: Double = 1.0
 
   def impactDamage: Double = 1.0
+
+  override def toString() = {
+    val named  = getClass.getSimpleName
+    s"$named[${id.id}]"
+  }
 }
 
 /** An object with a bounding box */
