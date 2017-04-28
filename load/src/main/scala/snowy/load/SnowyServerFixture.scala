@@ -4,20 +4,16 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.ws._
 import akka.stream.scaladsl._
 import akka.stream.testkit.TestSubscriber.Probe
 import akka.stream.testkit.scaladsl.TestSink
-import akka.stream.{ActorMaterializer, OverflowStrategy}
-import akka.util.ByteString
-import boopickle.Default._
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
-import snowy.util.FutureAwaiting._
-import socketserve.WebServer.socketApplication
-import snowy.playfield.Picklers._
+import snowy.load.SnowyClientSocket.connectSinkToServer
 import snowy.server.GameControl
+import snowy.util.FutureAwaiting._
 import snowy.util.NullMeasurementRecorder
+import socketserve.WebServer.socketApplication
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()
@@ -89,43 +85,4 @@ object SnowyServerFixture {
     }
   }
 
-  /** Connect to a Game server websocket.
-    * @param sink Sink to be materialized to accept messages from the server
-    * @return a Future containing a SourceQueue for sending messages to the server
-    */
-  def connectSinkToServer[M](
-        wsUrl: String,
-        sink: Sink[GameClientMessage, M]
-  ): Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
-    implicit val _       = ActorMaterializer()
-    val outputBufferSize = 100
-
-    val sinkFromServer = {
-      val messageToGameMessage = Flow[Message].collect {
-        case BinaryMessage.Strict(msg) =>
-          Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
-      }
-      messageToGameMessage.toMat(sink)(Keep.right)
-    }
-
-    val sourceToServer = {
-      val sourceQueue =
-        Source.queue[GameServerMessage](outputBufferSize, OverflowStrategy.fail)
-
-      val gameMessageToBinaryMessage = Flow[GameServerMessage].map { msg =>
-        val msgString = Pickle.intoBytes[GameServerMessage](msg)
-        BinaryMessage(ByteString(msgString)): Message
-      }
-      sourceQueue.via(gameMessageToBinaryMessage)
-    }
-
-    val flow = Flow.fromSinkAndSourceMat(sinkFromServer, sourceToServer)(Keep.both)
-
-    val (upgradeResponse, (materializedSink, sendQueue)) =
-      Http().singleWebSocketRequest(WebSocketRequest(wsUrl), flow)
-
-    upgradeResponse.map { _ =>
-      (sendQueue, materializedSink)
-    }
-  }
 }

@@ -20,5 +20,4 @@ object ActorUtil {
       ActorMaterializerSettings(system).withSupervisionStrategy(decider)
     ActorMaterializer(materializerSettings)(system)
   }
-
 }

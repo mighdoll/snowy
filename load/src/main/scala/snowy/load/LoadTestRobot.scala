@@ -1,27 +1,30 @@
 package snowy.load
 
 import scala.concurrent.{ExecutionContext, Promise}
+import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Sink, SourceQueue}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
-import snowy.load.SnowyServerFixture.connectSinkToServer
+import snowy.load.SnowyClientSocket.connectSinkToServer
 import snowy.robot.{Robot, RobotApi, RobotGameState}
 import vector.Vec2d
+import socketserve.ActorTypes._
 
 /** Host for a single robot in a client, e.g. for a load test via a websocket.
   * Provides the RobotApi to the robot logic. Internally sends and
   * receives messages from the game server. */
-class LoadTestRobot(
+class LoadTestRobot[_: Actors](
       url: String
-)(createRobot: (RobotApi => Robot))(implicit executionContext: ExecutionContext)
+)(createRobot: (RobotApi => Robot))
     extends StrictLogging {
 
-  var promisedRobot = Promise[Robot]()
-  var promisedSend  = Promise[SourceQueue[GameServerMessage]]()
-  var hostedState   = RobotGameState.emptyGameState
+  private implicit val dispatcher = implicitly[ActorSystem].dispatcher
+  private var promisedRobot = Promise[Robot]()
+  private var promisedSend  = Promise[SourceQueue[GameServerMessage]]()
+  private var hostedState   = RobotGameState.emptyGameState
 
-  val flow =
+  private val flow =
     Flow[GameClientMessage].map {
       case Ping =>
         promisedSend.future.foreach(_.offer(Pong))
@@ -45,7 +48,7 @@ class LoadTestRobot(
       case _ =>
     }
 
-  val sink: Sink[GameClientMessage, _] = flow.to(Sink.ignore)
+  private val sink: Sink[GameClientMessage, _] = flow.to(Sink.ignore)
 
   connectSinkToServer(url, sink).foreach {
     case (sendQueue, m) =>
