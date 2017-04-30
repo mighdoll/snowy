@@ -4,67 +4,28 @@
   <link href="style.css" rel="stylesheet">
 </head>
 <body class="fullscreen">
-<form id="login-form" name="login-form">
+<div id="login-div">
   <a class="button link" href="about.html">About</a>
   <a class="button link">How to play</a>
-  <input id="username" maxlength="15" placeholder="Enter Name">
-  <div id="chosen">Sled: Basic</div>
-  <button class="button" id="play" disabled>Connecting</button>
-</form>
-<div class="back fullscreen" id="game-div">
-  <canvas id="game-c"></canvas>
+  <form id="login-form" name="login-form">
+    <input id="username" maxlength="15" placeholder="Enter Name" spellcheck="false">
+    <button class="button" id="play" disabled>Connecting</button>
+    <label id="chosen">Sled: Basic</label>
+  </form>
 </div>
-<div class="fullscreen hide" id="game-hud">
-  <div id="scoreboard">
-    <div id="score-title"><b>Scoreboard</b></div>
-    <div id="scores">
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
-      <div class="score-element">
-        <div class="score-name"></div>
-        <div class="score-value"></div>
-      </div>
+<div class="back fullscreen" id="game-div">
+  <div class="hide" id="game-hud">
+    <div id="scoreboard">
+      <div id="score-title"><b>Scoreboard</b></div>
+      <div id="scores"></div>
       <hr>
-	    <div id="my-score" class="score-element">
-		    <div class="score-name"></div>
-		    <div class="score-value"></div>
-	    </div>
+      <div id="my-score" class="score-element">
+        <div class="score-name"></div>
+        <div class="score-value"></div>
+      </div>
     </div>
   </div>
+  <canvas id="game-c"></canvas>
 </div>
 
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>

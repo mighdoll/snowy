@@ -19,15 +19,16 @@ import scala.scalajs.js.Dynamic
 
 class LoginScreen(renderer: WebGLRenderer) {
   private implicit val sledTracker = nullSledTracker
-  private val scene = new THREE.Scene()
+  private val scene                = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
   private val amb                   = new THREE.AmbientLight(0xFFFFFF, 0.7)
   private val light                 = new THREE.DirectionalLight(0xFFFFFF, 0.3)
   private val gameDiv               = document.getElementById("game-div").asInstanceOf[html.Div]
   private val gameHud               = document.getElementById("game-hud").asInstanceOf[html.Div]
-  private val chosenSled            = document.getElementById("chosen").asInstanceOf[html.Div]
+  private val chosenSled            = document.getElementById("chosen").asInstanceOf[html.Label]
   private val loginForm             = document.getElementById("login-form").asInstanceOf[html.Form]
+  private val loginDiv              = document.getElementById("login-div").asInstanceOf[html.Div]
   private val textInput             = document.getElementById("username").asInstanceOf[html.Input]
   private val playButton            = document.getElementById("play").asInstanceOf[html.Button]
   private val raycaster             = new THREE.Raycaster()
@@ -231,10 +232,10 @@ class LoginScreen(renderer: WebGLRenderer) {
   def swapScreen(game: Boolean) {
     if (game) {
       gameDiv.classList.remove("back")
-      loginForm.classList.add("hide")
+      loginDiv.classList.add("hide")
     } else {
       gameDiv.classList.add("back")
-      loginForm.classList.remove("hide")
+      loginDiv.classList.remove("hide")
     }
   }
 
@@ -333,11 +334,11 @@ class LoginScreen(renderer: WebGLRenderer) {
     Groups.snowyText.add(Meshes.meshY)
   }
 
-  window.addEventListener("mousemove", selectorHover, false)
-  document.addEventListener("mousedown", { _: Event =>
+  window.addEventListener("mousemove", selectorHover)
+  window.addEventListener("mousedown", { _: Event =>
     updateSelector()
     updateColors()
-  }, false)
+  })
 
   def addItems(): Unit = {
     scene.add(amb)
@@ -525,7 +526,6 @@ class LoginScreen(renderer: WebGLRenderer) {
 
       if (loginScreenActive()) ClientMain.resize()
       renderLoginScreen()
-    },
-    false
+    }
   )
 }

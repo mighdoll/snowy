@@ -55,8 +55,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
           shooting = NotFiring
         case _ =>
       }
-    },
-    false
+    }
   )
 
   window.addEventListener(
@@ -95,8 +94,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         case Keys.Shoot() => shootReleased()
         case _            =>
       }
-    },
-    false
+    }
   )
 
   window.addEventListener(
@@ -115,8 +113,7 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
       } else {
         sendMessage(Stop(Slowing, gameTime))
       }
-    },
-    false
+    }
   )
 
   def shootReleased(): Unit = {
@@ -139,17 +136,14 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
         case 0 => shootPressed()
         case 2 => sendMessage(Boost(gameTime))
       }
-      e.preventDefault()
-    },
-    false
+    }
   )
 
   window.addEventListener("mouseup", { e: MouseEvent =>
     shootReleased()
-    e.preventDefault()
-  }, false)
+  })
 
   window.addEventListener("contextmenu", { e: Event =>
     e.preventDefault()
-  }, false)
+  })
 }

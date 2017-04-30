@@ -22,7 +22,7 @@ class Connection() {
   def reSpawn(): Unit = {
     sendMessage(ReJoin)
     document.getElementById("game-div").asInstanceOf[html.Div].classList.remove("back")
-    document.getElementById("login-form").asInstanceOf[html.Div].classList.add("hide")
+    document.getElementById("login-div").asInstanceOf[html.Div].classList.add("hide")
   }
 
   def join(name: String, kind: SledKind, color: SkiColor): Unit = {

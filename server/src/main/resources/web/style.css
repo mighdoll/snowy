@@ -3,6 +3,10 @@ html, body {
   padding: 0;
   overflow: hidden;
   font-family: arial;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .back {
   z-index: -1;
@@ -12,6 +16,8 @@ html, body {
 }
 #login-form {
   position: absolute;
+  top: 0;
+  left: 0;
 }
 #game-div {
   position: absolute;
