@@ -31,7 +31,7 @@ object LoadTest {
     (1 to numClients).foreach { _ =>
       new SingleLoadTestClient(wsUrl)
     }
-    val timing = new LoadTestTiming(wsUrl)
+    val timing = new TimingRobot(wsUrl)
     Thread.sleep(testDuration.toMillis)
     timing.shutdown()
   }

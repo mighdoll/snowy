@@ -12,7 +12,7 @@ import snowy.util.{Span, StartedSpan}
 
 /** A game client that sends ClientPing messages to the server
   * and measures how long it takes for the server to respond */
-class LoadTestTiming[_: Actors: Measurement](url: String) extends StrictLogging {
+class TimingRobot[_: Actors: Measurement](url: String) extends StrictLogging {
   implicit val dispatcher = implicitly[ActorSystem].dispatcher
   var send: Option[SourceQueueWithComplete[GameServerMessage]] = None
 
