@@ -15,7 +15,8 @@ object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {
     if (config.getBoolean("snowy.measurement.enable")) {
       val directory = config.getString("snowy.measurement.directory")
-      new MeasurementToTsvFile(directory)
+      val baseName = config.getString("snowy.measurement.base-name")
+      new MeasurementToTsvFile(directory, baseName)
     } else {
       NullMeasurementRecorder
     }
@@ -33,12 +34,12 @@ object NullMeasurementRecorder extends MeasurementRecorder {
 }
 
 /** a measurement system that sends measurements to a file */
-class MeasurementToTsvFile(directoryName: String)(implicit system: ActorSystem)
+class MeasurementToTsvFile(directoryName: String, baseName:String)(implicit system: ActorSystem)
     extends MeasurementRecorder with StrictLogging {
   implicit val materializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
   val spans = startTsvFile(
-    path.resolve("spans.tsv"),
+    path.resolve(s"$baseName.tsv"),
     "name\tspanId\tparentId\tstartEpochMicros\tdurationMicros\n"
   )
 
