@@ -13,7 +13,7 @@ import snowy.GameServerProtocol._
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, _}
-import snowy.robot.StationaryRobot
+import snowy.robot.RobotPlayer
 import snowy.server.GameSeeding.randomSpot
 import snowy.util.{MeasurementRecorder, Span}
 import snowy.util.Span.time
@@ -140,11 +140,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    // TODO what should this be in the real game?
-    // one idea: start with ~20 robots but don't rejoin them when the number of users
-    // exceeds a threshold?
     (1 to 2).foreach { _ =>
-      robots.createRobot(StationaryRobot.apply)
+      robots.createRobot(RobotPlayer.apply)
     }
   }
 

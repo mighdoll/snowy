@@ -9,16 +9,16 @@ import vector.Vec2d
 
 import scala.util.Random
 
-object StationaryRobot {
+object RobotPlayer {
   private var id = 0
 
-  def apply(api: RobotApi): StationaryRobot = {
+  def apply(api: RobotApi): RobotPlayer = {
     id = id + 1
-    new StationaryRobot(api, AllLists.allNames(Random.nextInt(AllLists.allNames.size)))
+    new RobotPlayer(api, AllLists.allNames(Random.nextInt(AllLists.allNames.size)))
   }
 }
 
-class StationaryRobot(api: RobotApi, name: String) extends Robot {
+class RobotPlayer(api: RobotApi, name: String) extends Robot {
   val mySkis =
     AllLists.allSkis(ThreadLocalRandom.current.nextInt(AllLists.allSkis.length))
   val myType =
