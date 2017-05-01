@@ -37,29 +37,28 @@ class LoginScreen(renderer: WebGLRenderer) {
   private val loader                = new ThreeLoader()
   private val Seq(sledFuture, skisFuture) =
     loader.loadGeometries("sled/body.json", "sled/skis.json")
-  private val geometriesLoaded               = Future.sequence(Seq(sledFuture, skisFuture))
-  private val connectedFuture                = connected.socket.future
-  var drawPlayfield: Option[DrawPlayfield]   = None
-  private var skiColor: SkiColor             = BasicSkis
-  private var sledKind: SledKind             = BasicSled
-  private var spawned: Boolean               = false
-  private var threeSleds: Option[ThreeSleds] = None
-  private var threeSled                      = new THREE.Object3D()
-  private var hover: Direction               = Middle
-  private var hoverColor: Option[SkiColor]   = Some(BasicSkis)
-  private var rejoinScreen                   = false
+  private val geometriesLoaded = Future.sequence(Seq(sledFuture, skisFuture))
+  private val threeSledsFuture = geometriesLoaded.map {
+    case Seq(sled, skis) => new ThreeSleds(sled, skis)
+  }
+  private val drawPlayfield                = threeSledsFuture.map(new DrawPlayfield(renderer, _))
+  private val connectedFuture              = connected.socket.future
+  private var spawned: Boolean             = false
+  private var skiColor: SkiColor           = BasicSkis
+  private var sledKind: SledKind           = BasicSled
+  private var threeSled                    = new THREE.Object3D()
+  private var hover: Direction             = Middle
+  private var hoverColor: Option[SkiColor] = Some(BasicSkis)
+  private var rejoinScreen                 = false
 
-  geometriesLoaded.onComplete(_.foreach { _ =>
-    threeSleds = Some(new ThreeSleds(sledFuture.value.get.get, skisFuture.value.get.get))
-    updateSelector()
-  })
+  threeSledsFuture.foreach(_ => updateSelector())
 
-  Future.sequence(Seq(connectedFuture, geometriesLoaded)).onComplete { _ =>
+  Future.sequence(Seq(connectedFuture, geometriesLoaded)).foreach { _ =>
     playButton.disabled = false
     playButton.innerHTML = "Join Game"
   }
 
-  def threeSleds(fn: ThreeSleds => Unit): Unit = threeSleds.foreach(fn)
+  def threeSleds(fn: ThreeSleds => Unit): Unit = threeSledsFuture.foreach(fn)
 
   def updateColors(): Unit = {
     if (GameState.mySledId.isEmpty || rejoinScreen) {
@@ -101,20 +100,17 @@ class LoginScreen(renderer: WebGLRenderer) {
 
     if (rejoinScreen && hover != Middle) clearConnection()
 
-    Groups.selector.remove(threeSled)
-
-    val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
-    threeSleds.foreach { a =>
-      val a2 = a.createSled(sled, true, new Vector3(0, 0, 0))
-      a2.children = js.Array(a2.children(0), a2.children(1))
-      threeSled = a2
-      threeSled.scale.multiplyScalar(0.1)
-      threeSled.position.y = 3
+    threeSledsFuture.foreach { threeSleds =>
+      Groups.selector.remove(threeSled)
+      val sled = Sled("", Vec2d(0, 0), sledKind, skiColor)
+      val newThreeSled = threeSleds.createSled(sled, true, new Vector3(0, 0, 0))
+      newThreeSled.children = newThreeSled.children.slice(0, 2)
+      newThreeSled.scale.multiplyScalar(0.1)
+      newThreeSled.position.y = 3
+      threeSled = newThreeSled
+      Groups.selector.add(threeSled)
+      renderLoginScreen()
     }
-
-    Groups.selector.add(threeSled)
-
-    renderLoginScreen()
   }
 
   def clearConnection(): Unit = { spawned = false }
@@ -195,7 +191,6 @@ class LoginScreen(renderer: WebGLRenderer) {
     e.preventDefault()
     //Connect to the WebSocket server
     if (!spawned) {
-      threeSleds.foreach(a => drawPlayfield = Some(new DrawPlayfield(renderer, a)))
       connected.join(
         textInput.value,
         sledKind,
