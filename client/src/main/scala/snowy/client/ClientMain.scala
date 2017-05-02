@@ -3,7 +3,8 @@ package snowy.client
 import minithree.THREE
 import minithree.THREE.{WebGLRenderer, WebGLRendererParameters}
 import org.scalajs.dom.{document, window}
-import snowy.connection.GameState.{nextState, nextTimeSlice}
+import snowy.client.login.LoginScreen
+import scala.concurrent.ExecutionContext.Implicits.global
 import snowy.draw.ThreeSleds
 
 import scala.scalajs.js.{Dynamic, JSApp}
@@ -39,7 +40,7 @@ object ClientMain extends JSApp {
     renderer.setViewport(0, 0, getWidth(), getHeight())
   }
 
-  def threeSleds(fn: ThreeSleds => Unit): Unit = loginScreen.threeSleds(fn)
+  def threeSleds(fn: ThreeSleds => Unit): Unit = loginScreen.threeSleds.foreach(fn)
 }
 
 /** Manage a function that's run on the browser's requestAnimationFrame loop */

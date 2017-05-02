@@ -6,7 +6,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.client.{ClientMain, LoginScreen, UpdateScoreboard}
+import snowy.client.{ClientMain, UpdateScoreboard}
 import snowy.connection.GameState._
 import snowy.draw.{ThreeSleds, ThreeSnowballs}
 import snowy.playfield.Picklers._
