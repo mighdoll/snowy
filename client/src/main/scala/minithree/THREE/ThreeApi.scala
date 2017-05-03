@@ -21,7 +21,7 @@ class Stats extends js.Object {
 
 @js.native
 @JSGlobal("THREE")
-object THREE extends js.Object {
+object jsTHREE extends js.Object {
   var REVISION: String                               = js.native
   var CullFaceNone: CullFace                         = js.native
   var CullFaceBack: CullFace                         = js.native

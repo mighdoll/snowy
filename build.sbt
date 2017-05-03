@@ -87,7 +87,6 @@ lazy val client = (project in file("client"))
   .settings(
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
-    resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases"),
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % "0.9.1"
     ),
