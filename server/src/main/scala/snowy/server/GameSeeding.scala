@@ -36,10 +36,13 @@ object GameSeeding {
     }
 
     def nonOverlapping(fn: => Tree): Tree = {
+      val maxAttempts = 100
       @tailrec
       def upToCount(attempts: Int): Tree = {
         val tree = fn
-        if (!forest.flatten.forall(!treesOverlap(_, tree)) && attempts < 100) {
+        @inline def treeOverlaps: Boolean =
+          !forest.flatten.forall(!treesOverlap(_, tree))
+        if (treeOverlaps && attempts < maxAttempts) {
           upToCount(attempts + 1)
         } else {
           tree
