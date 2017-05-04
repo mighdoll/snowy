@@ -12,7 +12,7 @@ import vector.Vec2d
 object GameSeeding {
 
   /** Initialize a set of playfield obstacles */
-  def randomTrees()(implicit tracker:PlayfieldTracker[Tree]): Set[Tree] = {
+  def randomTrees()(implicit tracker: PlayfieldTracker[Tree]): Set[Tree] = {
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
@@ -35,13 +35,17 @@ object GameSeeding {
       Tree(newPos)
     }
 
-    @tailrec
     def nonOverlapping(fn: => Tree): Tree = {
-      val tree = fn
-      forest.flatten.find(treesOverlap(_, tree)) match {
-        case Some(t) => nonOverlapping(fn)
-        case None    => tree
+      @tailrec
+      def upToCount(attempts: Int): Tree = {
+        val tree = fn
+        if (!forest.flatten.forall(!treesOverlap(_, tree)) && attempts < 100) {
+          upToCount(attempts + 1)
+        } else {
+          tree
+        }
       }
+      upToCount(0)
     }
 
     (0 to numClumps).foreach { _ =>
