@@ -79,6 +79,7 @@ object SnowyServerFixture {
     * @return a test api to send/receive messages against the snowy server
     */
   def connectToServer[M](wsUrl: String): Future[ServerTestApi] = {
+    implicit def recorder = NullMeasurementRecorder
     connectSinkToServer(wsUrl, TestSink.probe[GameClientMessage]).map {
       case ((sendQueue, testProbe)) =>
         ServerTestApi(sendQueue, testProbe)

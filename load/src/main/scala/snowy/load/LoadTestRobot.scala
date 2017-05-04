@@ -1,20 +1,20 @@
 package snowy.load
 
-import scala.concurrent.{ExecutionContext, Promise}
+import scala.concurrent.Promise
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Sink, SourceQueue}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
-import snowy.load.SnowyClientSocket.connectSinkToServer
+import snowy.load.SnowyClientSocket.connectBlindSinkToServer
 import snowy.robot.{Robot, RobotApi, RobotGameState}
-import vector.Vec2d
 import socketserve.ActorTypes._
+import vector.Vec2d
 
 /** Host for a single robot in a client, e.g. for a load test via a websocket.
   * Provides the RobotApi to the robot logic. Internally sends and
   * receives messages from the game server. */
-class LoadTestRobot[_: Actors](
+class LoadTestRobot[_: Actors: Measurement](
       url: String
 )(createRobot: (RobotApi => Robot))
     extends StrictLogging {
@@ -50,7 +50,7 @@ class LoadTestRobot[_: Actors](
 
   private val sink: Sink[GameClientMessage, _] = flow.to(Sink.ignore)
 
-  connectSinkToServer(url, sink).foreach {
+  connectBlindSinkToServer(url, sink).foreach {
     case (sendQueue, m) =>
       promisedSend.success(sendQueue)
       val api   = new HostedRobotApi(sendQueue)
