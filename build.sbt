@@ -31,10 +31,9 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 
 lazy val V = new Object {
   val scala      = "2.12.2"
-  val akka       = "2.5.0"
-  val akkaHttp   = "10.0.5"
+  val akka       = "2.5.1"
+  val akkaHttp   = "10.0.6"
   val log4j      = "2.8.2"
-  val jackson    = "2.8.8"
   val scalacheck = "1.13.5"
   val scalactic  = "3.0.3"
   val scalatest  = "3.0.3"
@@ -61,8 +60,8 @@ lazy val server = (project in file("server"))
       "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
       "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
-      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
-      "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
+      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.8.8",
+      "com.fasterxml.jackson.core"       % "jackson-databind"        % "2.8.8.1",
       "com.typesafe.scala-logging"       %% "scala-logging"          % "3.5.0",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
