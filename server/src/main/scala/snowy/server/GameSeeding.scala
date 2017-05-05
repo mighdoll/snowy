@@ -1,15 +1,18 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
-import scala.annotation.tailrec
-import scala.collection.mutable
+
+import com.typesafe.scalalogging.StrictLogging
 import snowy.GameConstants.playfield
 import snowy.playfield.GameMotion.wrapInPlayfield
 import snowy.playfield.{PlayfieldTracker, Tree}
 import vector.Vec2d
 
+import scala.annotation.tailrec
+import scala.collection.mutable
+
 /** Utilities for putting game objects in random places on the field */
-object GameSeeding {
+object GameSeeding extends StrictLogging {
 
   /** Initialize a set of playfield obstacles */
   def randomTrees()(implicit tracker: PlayfieldTracker[Tree]): Set[Tree] = {
@@ -40,11 +43,16 @@ object GameSeeding {
       @tailrec
       def upToCount(attempts: Int): Tree = {
         val tree = fn
+
         @inline def treeOverlaps: Boolean =
           !forest.flatten.forall(!treesOverlap(_, tree))
+
         if (treeOverlaps && attempts < maxAttempts) {
           upToCount(attempts + 1)
         } else {
+          if (attempts >= maxAttempts)
+            logger.error(s"Tree seeding failed, attempts greater than $maxAttempts")
+
           tree
         }
       }
