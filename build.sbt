@@ -1,5 +1,3 @@
-enablePlugins(JavaAppPackaging)
-
 lazy val root =
   (project in file(".")).aggregate(server, client).settings(commonSettings: _*)
 
@@ -40,6 +38,7 @@ lazy val V = new Object {
 }
 
 lazy val server = (project in file("server"))
+  .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
   .settings(
     assemblyJarName in assembly := "full.jar",
@@ -78,7 +77,6 @@ lazy val server = (project in file("server"))
     watchSources ++= (watchSources in client).value
   )
   .dependsOn(sharedJvm)
-  .enablePlugins(JavaAppPackaging)
 
 lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin)
@@ -97,6 +95,7 @@ lazy val client = (project in file("client"))
   .dependsOn(shared.js)
 
 lazy val load = (project in file("load"))
+  .enablePlugins(JavaAppPackaging)
   .configs(IntegrationTest)
   .settings(commonSettings: _*)
   .settings(itSettings: _*)
