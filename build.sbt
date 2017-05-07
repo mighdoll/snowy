@@ -87,7 +87,7 @@ lazy val client = (project in file("client"))
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.1"
+      "org.scala-js" %%% "scalajs-dom" % "0.9.2"
     ),
     jsDependencies ++= Seq(
       "org.webjars.npm"   % "three"                      % "0.84.0" / "0.84.0/build/three.min.js",
