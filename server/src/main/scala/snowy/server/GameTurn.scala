@@ -56,7 +56,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
                                 sledTracker: PlayfieldTracker[Sled]): CollisionResult = {
     import snowy.collision.GameCollide.snowballTrees
 
-    state.debugVerifyGridState()
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideCollectionWithGrid(
