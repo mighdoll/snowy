@@ -40,6 +40,7 @@ object ClientMain extends JSApp {
     renderer.setViewport(0, 0, getWidth(), getHeight())
   }
 
+  // TODO GameState calls this but should be a class that knows about this
   def threeSleds(fn: ThreeSleds => Unit): Unit = loginScreen.threeSleds.foreach(fn)
 }
 
