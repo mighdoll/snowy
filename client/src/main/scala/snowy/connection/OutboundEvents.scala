@@ -4,10 +4,9 @@ import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.client.Keys
-import snowy.connection.GameState.gameTime
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
-class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
+class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => Unit) {
   sealed trait FiringState
   case object Firing     extends FiringState
   case object NotFiring  extends FiringState
@@ -25,17 +24,18 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
 
   object GoLeft  extends Direction
   object GoRight extends Direction
+  import gameState.gameTime
 
   window.addEventListener(
     "keydown", { event: KeyboardEvent =>
       event.keyCode match {
         case Keys.Right() if !turning.contains(GoRight) =>
-          GameState.startTurn(RightTurn)
+          gameState.startTurn(RightTurn)
           sendMessage(Stop(Left, gameTime))
           sendMessage(Start(Right, gameTime))
           turning = Some(GoRight)
         case Keys.Left() if !turning.contains(GoLeft) =>
-          GameState.startTurn(LeftTurn)
+          gameState.startTurn(LeftTurn)
           sendMessage(Stop(Right, gameTime))
           sendMessage(Start(Left, gameTime))
           turning = Some(GoLeft)
@@ -62,11 +62,11 @@ class OutboundEvents(sendMessage: (GameServerMessage) => Unit) {
     "keyup", { event: KeyboardEvent =>
       (event.keyCode, turning) match {
         case (Keys.Right(), Some(GoRight)) =>
-          GameState.startTurn(NoTurn)
+          gameState.startTurn(NoTurn)
           sendMessage(Stop(Right, gameTime))
           turning = None
         case (Keys.Left(), Some(GoLeft)) =>
-          GameState.startTurn(NoTurn)
+          gameState.startTurn(NoTurn)
           sendMessage(Stop(Left, gameTime))
           turning = None
         case _ =>

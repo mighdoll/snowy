@@ -1,14 +1,15 @@
 package snowy.connection
 
-import scala.collection.mutable
 import snowy.GameClientProtocol._
-import snowy.client.ClientMain
-import snowy.draw.{ThreeSleds, ThreeSnowballs}
+import snowy.client.{Animation, ClientMain, DrawPlayfield}
+import snowy.draw.ThreeSnowballs
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
-import snowy.playfield._
+import snowy.playfield.{PlayfieldTracker, _}
 import vector.Vec2d
-import snowy.playfield.PlayfieldTracker
+
+import scala.collection.mutable
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class PlayfieldState(mySled: Sled,
                           sleds: Set[Sled],
@@ -16,12 +17,32 @@ case class PlayfieldState(mySled: Sled,
                           trees: Set[Tree],
                           playfield: Vec2d)
 
-object GameState {
-  var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
-  var scoreboard               = Scoreboard(0, Seq())
-  var mySledId: Option[SledId] = None
+class GameState(drawPlayfield: DrawPlayfield) {
+  var gPlayField                   = Vec2d(0, 0) // A playfield dummy until the game receives a different one
+  var scoreboard                   = Scoreboard(0, Seq())
+  var mySledId: Option[SledId]     = None
   implicit val nullSnowballTracker = PlayfieldTracker.nullSnowballTracker
-  implicit val nullSledTracker = PlayfieldTracker.nullSledTracker
+  implicit val nullSledTracker     = PlayfieldTracker.nullSledTracker
+
+  val playfieldAnimation = new Animation(animate)
+
+  /** Update the client's playfield objects and draw the new playfield to the screen */
+  private def animate(timestamp: Double): Unit = {
+    val deltaSeconds = nextTimeSlice()
+    val newState     = nextState(math.max(deltaSeconds, 0))
+
+    drawPlayfield.drawPlayfield(
+      newState.snowballs,
+      newState.sleds,
+      newState.mySled,
+      newState.trees,
+      newState.playfield
+    )
+  }
+
+  def startRedraw(): Unit = playfieldAnimation.start()
+
+  def stopRedraw(): Unit = playfieldAnimation.cancel()
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees             = Set[Tree]()
@@ -91,10 +112,9 @@ object GameState {
     deltaSeconds
   }
 
-
   def removeSleds(removedIds: Seq[SledId]): Unit = {
     removeById[Sled](removedIds, serverSleds)
-    ClientMain.threeSleds(_.removeSleds(removedIds))
+    ClientMain.loadedGeometry.threeSledsFuture.foreach(_.removeSleds(removedIds))
   }
 
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {
@@ -107,8 +127,8 @@ object GameState {
                                                 set: mutable.HashSet[A]): Unit = {
     val removedItems =
       for {
-        itemId <-ids
-        item <- set.find(_.id == itemId)
+        itemId <- ids
+        item   <- set.find(_.id == itemId)
       } yield item
 
     removedItems.foreach(set.remove)

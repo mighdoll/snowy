@@ -4,7 +4,8 @@ import snowy.GameClientProtocol.Scoreboard
 import org.scalajs.dom._
 import snowy.connection.GameState
 import snowy.playfield.Sled
-object UpdateScoreboard {
+
+class UpdateScoreboard(gameState: GameState) {
   private val scoreTable =
     document.getElementById("scores").asInstanceOf[html.Div]
   val myScoreElement = document.getElementById("my-score").asInstanceOf[html.Div]
@@ -30,12 +31,13 @@ object UpdateScoreboard {
       case (score, index) =>
         val scoreElement = scoreTable.children(index)
         val scoreName    = scoreElement.children(0)
-        val scoreValue    = scoreElement.children(1)
+        val scoreValue   = scoreElement.children(1)
 
         scoreName.innerHTML = score.userName
         scoreValue.innerHTML = math.floor(score.score).toString
     }
-    myScoreName.innerHTML = GameState.serverMySled.getOrElse(Sled.dummy).userName
+
+    myScoreName.innerHTML = gameState.serverMySled.getOrElse(Sled.dummy).userName
     mySledScore.innerHTML = math.floor(scoreboard.myScore).toString
   }
 }

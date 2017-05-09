@@ -5,8 +5,8 @@ import minithree.THREE._
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{window, MouseEvent}
 import snowy.AllLists
+import snowy.client.ClientMain
 import snowy.client.ClientMain.{getHeight, getWidth}
-import snowy.client.{ClientMain, DrawPlayfield, ThreeLoader}
 import snowy.draw.ThreeSleds
 import snowy.playfield.PlayfieldTracker.nullSledTracker
 import snowy.playfield._
@@ -19,28 +19,19 @@ import scala.scalajs.js.Dynamic
 
 class LoginGeometries(renderer: WebGLRenderer,
                       clearConnection: => Unit,
-                      loginScreenActive: => Boolean) {
+                      loginScreenActive: => Boolean,
+                      threeSledsFuture: Future[ThreeSleds]) {
   private implicit val sledTracker = nullSledTracker
   private val scene                = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
-  private val amb       = new THREE.AmbientLight(0xFFFFFF, 0.7)
-  private val light     = new THREE.DirectionalLight(0xFFFFFF, 0.3)
-  private val raycaster = new THREE.Raycaster()
-  private val mouse     = new THREE.Vector2()
-  private val loader    = new ThreeLoader()
-  private val Seq(sledFuture, skisFuture) =
-    loader.loadGeometries("sled/body.json", "sled/skis.json")
+  private val amb                  = new THREE.AmbientLight(0xFFFFFF, 0.7)
+  private val light                = new THREE.DirectionalLight(0xFFFFFF, 0.3)
+  private val raycaster            = new THREE.Raycaster()
+  private val mouse                = new THREE.Vector2()
   private var threeSled            = new THREE.Object3D()
   var hoverSled: Direction         = Middle
   var hoverColor: Option[SkiColor] = Some(BasicSkis)
-  val geometriesLoaded: Future[Seq[Geometry]] =
-    Future.sequence(Seq(sledFuture, skisFuture))
-  val threeSledsFuture: Future[ThreeSleds] = geometriesLoaded.map {
-    case Seq(sled, skis) => new ThreeSleds(sled, skis)
-  }
-  val drawPlayfield: Future[DrawPlayfield] =
-    threeSledsFuture.map(new DrawPlayfield(renderer, _))
 
   threeSledsFuture.foreach(_ => updateSelector(BasicSled, BasicSkis))
 

@@ -1,13 +1,8 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{
-  MeshBasicMaterialParameters,
-  MeshPhongMaterialParameters,
-  Object3D,
-  Vector3
-}
-import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
+import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Vector3}
+import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
 import snowy.client.DrawPlayfield._
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.SledId
@@ -16,7 +11,7 @@ import snowy.playfield._
 import scala.scalajs.js.Dynamic
 
 class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
-  val sledGroup = new UpdateGroup[Sled](Groups.threeSleds)
+  val sledGroup = new UpdateGroup[Sled](new THREE.Object3D())
 
   /** Revise position, etc. of a three js sled to match a playfield sled */
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
@@ -46,8 +41,6 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
   def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {
     val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
 
-    // map of threeJs sleds, indexed by snowy sled id
-
     sleds.foreach { sled1 =>
       sledGroup.map.get(sled1.id) match {
         case Some(sled) => updateSled(sled1, sled, myPos)
@@ -60,10 +53,10 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
   def createSled(sled: Sled, friendly: Boolean, myPos: Vector3): Object3D = {
     val newSled = new THREE.Object3D()
 
-    val skiMat = new THREE.MeshPhongMaterial(
+    val skiMat = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = sled.skiColor.color.to0x(), shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .literal(color = sled.skiColor.color.to0x())
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
 
     val bodyColor = sled.kind match {
@@ -75,17 +68,20 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
       case PrototypeSled => 0xFFFF00
       case _             => 0xFFFFFF
     }
-    val bodyMat = new THREE.MeshPhongMaterial(
+    val bodyMat = new THREE.MeshLambertMaterial(
       Dynamic
         .literal(color = bodyColor, shading = THREE.FlatShading)
-        .asInstanceOf[MeshPhongMaterialParameters]
+        .asInstanceOf[MeshLambertMaterialParameters]
     )
 
     val body = new THREE.Mesh(bodyGeo, bodyMat)
     val skis = new THREE.Mesh(skisGeo, skiMat)
 
     val health =
-      new THREE.Mesh(Geos.health, if (friendly) Mats.healthColor else Mats.enemyHealth)
+      new THREE.Mesh(
+        new THREE.PlaneGeometry(64, 16),
+        if (friendly) createHealthMaterial(0x59B224) else createHealthMaterial(0xF43131)
+      )
 
     health.position.z = -50
     health.rotation.x = 1.5 * math.Pi
@@ -108,6 +104,18 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
 
     newSled.name = sled.id.id.toString
     newSled
+  }
+
+  def createHealthMaterial(color: Double): THREE.MeshBasicMaterial = {
+    new THREE.MeshBasicMaterial(
+      Dynamic
+        .literal(
+          color = color,
+          transparent = true,
+          depthTest = false
+        )
+        .asInstanceOf[MeshBasicMaterialParameters]
+    )
   }
 
   def removeSleds(deaths: Seq[SledId]): Unit = removeDeaths[Sled](sledGroup, deaths)

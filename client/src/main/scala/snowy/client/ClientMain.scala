@@ -3,18 +3,32 @@ package snowy.client
 import minithree.THREE
 import minithree.THREE.{WebGLRenderer, WebGLRendererParameters}
 import org.scalajs.dom.{document, window}
+import snowy.GameClientProtocol.Scoreboard
 import snowy.client.login.LoginScreen
-import scala.concurrent.ExecutionContext.Implicits.global
+import snowy.connection.GameState
 import snowy.draw.ThreeSleds
+import snowy.playfield.{SkiColor, SledKind}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
 import scala.scalajs.js.{Dynamic, JSApp}
 
 object ClientMain extends JSApp {
-  private val renderer           = createRenderer()
-  private val loginScreen        = new LoginScreen(renderer)
+  val loadedGeometry            = new LoadedGeometries()
+  var gameScreenActive: Boolean = false
+
+  private val promisedConnection                            = Promise[Connection]()
+  private val renderer                                      = createRenderer()
+  private val loginScreen                                   = new LoginScreen(renderer, loadedGeometry.threeSledsFuture)
+  private var drawPlayfieldOpt: Option[DrawPlayfield]       = None
+  private var gameStateOpt: Option[GameState]               = None
+  private var updateScoreboardOpt: Option[UpdateScoreboard] = None
+
+  loadedGeometry.threeSledsFuture.foreach(initializeGame)
 
   def getWidth(): Double   = window.innerWidth
   def getHeight(): Double  = window.innerHeight
+  def gameState: GameState = gameStateOpt.get
 
   private def createRenderer(): WebGLRenderer = {
     val renderer = new THREE.WebGLRenderer(
@@ -33,15 +47,56 @@ object ClientMain extends JSApp {
 
   def main(): Unit = {}
 
+  def initializeGame(threeSleds: ThreeSleds): Unit = {
+    val drawPlayfield    = new DrawPlayfield(renderer, threeSleds)
+    val gameState        = new GameState(drawPlayfield)
+    val updateScoreboard = new UpdateScoreboard(gameState)
+
+    drawPlayfieldOpt = Some(drawPlayfield)
+    gameStateOpt = Some(gameState)
+    updateScoreboardOpt = Some(updateScoreboard)
+
+    val connection = new Connection(gameState)
+    // expose the connection only when connected
+    val futureConnection = connection.socket.future.map(_ => connection)
+    promisedConnection.completeWith(futureConnection)
+  }
+
+  def updateScoreboard(scoreboard: Scoreboard): Unit =
+    updateScoreboardOpt.foreach(_.updateScoreboard(scoreboard))
+
+  def connectedToServer: Future[Unit] = promisedConnection.future.map(_ => ())
+
+  def freshStartGame(name: String, kind: SledKind, color: SkiColor): Unit = {
+    promisedConnection.future.foreach { connection =>
+      connection.join(name, kind, color)
+      startGame()
+    }
+  }
+
+  def rejoinGame(): Unit = {
+    promisedConnection.future.foreach { connection =>
+      connection.reSpawn()
+      startGame()
+    }
+  }
+
+  def startGame(): Unit = {
+    gameStateOpt.foreach(_.startRedraw())
+    gameScreenActive = true
+  }
+
+  def stopGame(): Unit = {
+    gameScreenActive = false
+    gameStateOpt.foreach(_.stopRedraw())
+  }
+
   def death(): Unit = loginScreen.rejoinPanel()
 
   def resize(): Unit = {
     renderer.setSize(getWidth(), getHeight())
     renderer.setViewport(0, 0, getWidth(), getHeight())
   }
-
-  // TODO GameState calls this but should be a class that knows about this
-  def threeSleds(fn: ThreeSleds => Unit): Unit = loginScreen.threeSleds.foreach(fn)
 }
 
 /** Manage a function that's run on the browser's requestAnimationFrame loop */

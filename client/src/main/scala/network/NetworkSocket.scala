@@ -3,8 +3,8 @@ package network
 import org.scalajs.dom._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Promise
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Future, Promise}
 import scala.util.Success
 
 /** A wrapper around a web socket that supports simulated network delays
@@ -13,9 +13,9 @@ import scala.util.Success
   * @param outDelay: delay message to the server by this amount of time
   */
 class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
-  val socket                 = new WebSocket(url)
-  private val networkPromise = Promise[WebSocket]
-  val future                 = networkPromise.future
+  private val networkPromise    = Promise[WebSocket]
+  val socket: WebSocket         = new WebSocket(url)
+  val future: Future[WebSocket] = networkPromise.future
 
   socket.binaryType = "arraybuffer"
 

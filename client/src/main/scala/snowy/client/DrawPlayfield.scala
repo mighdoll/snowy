@@ -1,28 +1,18 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.{
-  MeshBasicMaterialParameters,
-  MeshLambertMaterialParameters,
-  Object3D,
-  Stats,
-  Vector3,
-  WebGLRenderer
-}
+import minithree.THREE._
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants
 import snowy.client.ClientMain.{getHeight, getWidth}
-import snowy.connection.GameState
-import snowy.connection.GameState.{nextState, nextTimeSlice}
 import snowy.draw.{CreateGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
 import snowy.playfield._
 import vector.Vec2d
 
 import scala.collection.mutable
-import scala.scalajs.js.Dynamic
 
-class UpdateGroup[A](group: Object3D) {
+class UpdateGroup[A](val group: Object3D) {
   val map = {
     val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item)
     mutable.HashMap(items: _*)
@@ -77,72 +67,9 @@ object DrawPlayfield {
       group.remove(sled)
     }
   }
-
-  object Geos {
-    val sled     = new THREE.BoxGeometry(2, 2, 2)
-    val turret   = new THREE.BoxGeometry(8, 8, 20)
-    val ski      = new THREE.BoxGeometry(0.25, 0.125, 3 - 0.25)
-    val skiTip   = new THREE.BoxGeometry(0.25, 0.125, 0.25)
-    val snowball = new THREE.BoxGeometry(2, 2, 2)
-    val health   = new THREE.PlaneGeometry(64, 16)
-  }
-
-  object Mats {
-    val sled = new THREE.MeshLambertMaterial(
-      Dynamic
-        .literal(color = 0x2194ce)
-        .asInstanceOf[MeshLambertMaterialParameters]
-    )
-    val turret = new THREE.MeshLambertMaterial(
-      Dynamic
-        .literal(color = 0x222222)
-        .asInstanceOf[MeshLambertMaterialParameters]
-    )
-    val ski = new THREE.MeshLambertMaterial(
-      Dynamic
-        .literal(color = 0x222222)
-        .asInstanceOf[MeshLambertMaterialParameters]
-    )
-    val skiTip = new THREE.MeshLambertMaterial(
-      Dynamic
-        .literal(color = 0xEE2222)
-        .asInstanceOf[MeshLambertMaterialParameters]
-    )
-    val snowball = new THREE.MeshLambertMaterial(
-      Dynamic
-        .literal(color = 0x1878f0)
-        .asInstanceOf[MeshLambertMaterialParameters]
-    )
-    val healthColor = new THREE.MeshBasicMaterial(
-      Dynamic
-        .literal(
-          color = 0x59B224,
-          transparent = true,
-          depthTest = false
-        )
-        .asInstanceOf[MeshBasicMaterialParameters]
-    )
-    val enemyHealth = new THREE.MeshBasicMaterial(
-      Dynamic
-        .literal(
-          color = 0xF43131,
-          transparent = true,
-          depthTest = false
-        )
-        .asInstanceOf[MeshBasicMaterialParameters]
-    )
-  }
-
-  object Groups {
-    val threeTrees     = new THREE.Object3D()
-    val threeSnowballs = new THREE.Object3D()
-    val threeSleds     = new THREE.Object3D()
-  }
-
 }
 
-class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
-  import DrawPlayfield._
+class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds) {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
@@ -152,7 +79,7 @@ class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
 
   val stats = new Stats()
 
-  def setup(): Unit = {
+  private def setup(): Unit = {
     stats.showPanel(0)
     document.body.appendChild(stats.dom)
 
@@ -166,9 +93,9 @@ class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
 
     scene.add(CreateGrid.newGrid())
 
-    scene.add(Groups.threeTrees)
-    scene.add(Groups.threeSnowballs)
-    scene.add(Groups.threeSleds)
+    scene.add(ThreeTrees.treeGroup.group)
+    scene.add(ThreeSnowballs.snowballGroup.group)
+    scene.add(threeSleds.sledGroup.group)
   }
 
   setup()
@@ -185,45 +112,23 @@ class DrawPlayfield(renderer: WebGLRenderer, threeSleds: ThreeSleds) {
     ThreeSnowballs.updateThreeSnowballs(snowballs, myPos)
     threeSleds.updateThreeSleds(sleds, mySled)
 
-    camera.position.set(mySled.position.x, 1200 + myPos.y, mySled.position.y + 400)
-    camera.lookAt(new THREE.Vector3(mySled.position.x, 0, mySled.position.y))
+    camera.position.set(myPos.x, 1200, myPos.z + 400)
+    camera.lookAt(myPos)
 
     renderState()
     stats.end()
   }
 
-  def gameActive(): Boolean = GameState.mySledId.isDefined
-
   def renderState(): Unit = {
-    if (gameActive()) renderer.render(scene, camera)
+    if (ClientMain.gameScreenActive) renderer.render(scene, camera)
   }
-
-  private val playfieldAnimation = new Animation(animate)
-
-  /** Update the client's playfield objects and draw the new playfield to the screen */
-  private def animate(timestamp: Double): Unit = {
-    val deltaSeconds = nextTimeSlice()
-    val newState     = nextState(math.max(deltaSeconds, 0))
-
-    drawPlayfield(
-      newState.snowballs,
-      newState.sleds,
-      newState.mySled,
-      newState.trees,
-      newState.playfield
-    )
-  }
-
-  def startRedraw(): Unit = playfieldAnimation.start()
-
-  def stopRedraw(): Unit = playfieldAnimation.cancel()
 
   window.addEventListener(
     "resize", { _: Event =>
       camera.aspect = math.min(getWidth / getHeight, 3)
       camera.updateProjectionMatrix()
 
-      if (gameActive() && playfieldAnimation.animating()) ClientMain.resize()
+      if (ClientMain.gameScreenActive) ClientMain.resize()
       renderState()
     }
   )
