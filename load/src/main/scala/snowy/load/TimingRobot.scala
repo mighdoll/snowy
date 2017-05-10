@@ -14,36 +14,33 @@ import snowy.util.{Span, StartedSpan}
   * and measures how long it takes for the server to respond */
 class TimingRobot[_: Actors: Measurement](url: String) extends StrictLogging {
   implicit val dispatcher = implicitly[ActorSystem].dispatcher
-  var send: Option[SourceQueueWithComplete[GameServerMessage]] = None
+  val period              = 1.second
+  val gameSocket          = new GameSocket(url, messageReceived)
+  var span                = Span.root("loadTest.ClientPing")
 
-  var span: StartedSpan = Span.root("loadTest.ClientPing")
+  gameSocket.connect()
+  timePing()
 
-  val sink = Sink.foreach[GameClientMessage] {
-    case ClientPong =>
-      logger.trace("ClientPong received")
-      span.finish()
-      timePing()
-    case _ =>
+  def messageReceived(message: GameClientMessage): Unit = {
+    message match {
+      case ClientPong =>
+        logger.trace("ClientPong received")
+        span.finish()
+        timePing()
+      case _ =>
+    }
   }
-
-  for ((sendQ, _) <- connectSinkToServer(url, sink)) {
-    send = Some(sendQ)
-    timePing()
-  }
-
-  val period = 1.second
 
   def timePing(): Unit = {
     implicitly[ActorSystem].scheduler.scheduleOnce(period) {
       span = span.restart()
       logger.trace("ClientPing sent")
-      send.foreach(_.offer(ClientPing))
+      gameSocket.sendMessage(ClientPing)
     }
   }
 
   def shutdown(): Unit = {
-    send.foreach(_.complete())
-    send = None
+    gameSocket.socket.close()
   }
 
 }

@@ -102,7 +102,8 @@ lazy val load = (project in file("load"))
   .settings(
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-testkit"        % V.akka,
-      "com.typesafe.akka" %% "akka-stream-testkit" % V.akka
+      "com.typesafe.akka" %% "akka-stream-testkit" % V.akka,
+      "org.asynchttpclient" % "async-http-client" % "2.1.0-alpha17"
     )
   )
   .dependsOn(server)
