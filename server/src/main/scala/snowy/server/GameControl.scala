@@ -154,13 +154,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   /** Send the current playfield state to the clients */
-  private def sendState():Unit = {
+  private def sendState(): Unit = {
     val state = currentState()
-    withPickledClientMessage(state) { pickledState =>
-      connections.keys.foreach { connectionId =>
-        sendBinaryMessage(pickledState, connectionId)
-      }
-    }
+    sendToAllClients(state)
   }
 
   /** Send the current score to the clients */
@@ -235,7 +231,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   private def reportExpiredSnowballs(expiredBalls: Traversable[BallId]): Unit = {
     if (expiredBalls.nonEmpty) {
       val deaths = SnowballDeaths(expiredBalls.toSeq)
-      connections.keys.foreach(sendMessage(deaths, _))
+      sendToAllClients(deaths)
     }
   }
 
@@ -284,7 +280,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
     if (deadSleds.nonEmpty) {
       val deaths = SledDeaths(deadSleds)
-      connections.keys.foreach(sendMessage(deaths, _))
+      sendToAllClients(deaths)
 
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
@@ -299,6 +295,14 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   private def reapSled(sledId: SledId): Unit = {
     sendDied(sledId)
     sledId.sled.foreach(_.remove())
+  }
+
+  private def sendToAllClients(message: GameClientMessage): Unit = {
+    withPickledClientMessage(message) { pickledState =>
+      connections.keys.foreach { connectionId =>
+        sendBinaryMessage(pickledState, connectionId)
+      }
+    }
   }
 
   private def sendDied(sledId: SledId): Unit = {
