@@ -19,6 +19,7 @@ import snowy.util.{MeasurementRecorder, Span}
 import snowy.util.Span.time
 import socketserve._
 import vector.Vec2d
+import snowy.server.CommonPicklers.withPickledClientMessage
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
                                    measurementRecorder: MeasurementRecorder)
@@ -32,6 +33,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   import gameStateImplicits._
   import gameTurns.gameTime
   import messageIO.sendMessage
+  import messageIO.sendBinaryMessage
 
   robotSleds()
 
@@ -145,12 +147,20 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
+  /** update game clients with the current state of the game */
   private def sendUpdates(): Unit = {
-    val state = currentState()
-    connections.keys.foreach { connectionId =>
-      sendMessage(state, connectionId)
-    }
+    sendState()
     sendScores()
+  }
+
+  /** Send the current playfield state to the clients */
+  private def sendState():Unit = {
+    val state = currentState()
+    withPickledClientMessage(state) { pickledState =>
+      connections.keys.foreach { connectionId =>
+        sendBinaryMessage(pickledState, connectionId)
+      }
+    }
   }
 
   /** Send the current score to the clients */
