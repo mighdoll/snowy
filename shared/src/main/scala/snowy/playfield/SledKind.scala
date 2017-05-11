@@ -161,4 +161,5 @@ case object PrototypeSled extends SledKind {
   override val mass               = .1
   override val maxSpeed           = 650
   override val minRechargeTime    = 175
+  override val rotationSpeed      = math.Pi * 2
 }
