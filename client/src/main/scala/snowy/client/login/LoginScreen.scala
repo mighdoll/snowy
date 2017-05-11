@@ -20,7 +20,8 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
   private val playButton       = document.getElementById("play").asInstanceOf[html.Button]
   var skiColor: SkiColor       = BasicSkis
   var sledKind: SledKind       = BasicSled
-  private var spawned: Boolean = false
+  // True if the ingame sled has the sledkind and color that is currently selected in the ui
+  private var sledSelected: Boolean = false
 
   private val loginGeometries =
     new LoginGeometries(
@@ -35,12 +36,12 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
     playButton.innerHTML = "Join Game"
   }
 
-  def clearConnection(): Unit = { spawned = false }
+  def clearConnection(): Unit = { sledSelected = false }
 
   def loginPressed(e: Event): Unit = {
     e.preventDefault()
-    if (!spawned) {
-      spawned = true
+    if (!sledSelected) {
+      sledSelected = true
       ClientMain.freshStartGame(textInput.value, sledKind, skiColor)
     } else {
       ClientMain.rejoinGame()
