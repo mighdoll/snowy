@@ -5,8 +5,9 @@ import akka.util.ByteString
 import boopickle.Default._
 import snowy.playfield.Picklers._
 import io.netty.buffer.Unpooled
-import snowy.GameClientProtocol.GameClientMessage
+import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
+import snowy.load.FastUnpickle.partialUnpickleClientMessage
 
 class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
       implicit execution: ExecutionContext
@@ -14,10 +15,9 @@ class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
   val socket = NettyWebSocket.connect(wsUrl, receive)
 
   private def receive(byteString: ByteString): Unit = {
-    val byteBuffer = byteString.toByteBuffer
-
-    val msg = Unpickle[GameClientMessage].fromBytes(byteBuffer)
-    messageFn(msg)
+    partialUnpickleClientMessage(byteString).foreach { msg =>
+      messageFn(msg)
+    }
   }
 
   def sendMessage(msg: GameServerMessage): Unit = {
