@@ -26,9 +26,9 @@ object Playfield {
     result
   }
 }
+
 class Playfield(val size:Vec2d) {
-
-
+  
   /** constrain a position to be within the playfield */
   def wrapInPlayfield(pos: Vec2d): Vec2d = {
     Vec2d(
