@@ -7,9 +7,9 @@ import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{PlayfieldTracker, _}
 import vector.Vec2d
-
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
+import snowy.GameConstants
 
 case class PlayfieldState(mySled: Sled,
                           sleds: Set[Sled],
@@ -25,6 +25,8 @@ class GameState(drawPlayfield: DrawPlayfield) {
   implicit val nullSledTracker     = PlayfieldTracker.nullSledTracker
 
   val playfieldAnimation = new Animation(animate)
+  val playfield          = new Playfield(GameConstants.oldPlayfieldSize)
+  val motion             = new GameMotion(playfield)
 
   /** Update the client's playfield objects and draw the new playfield to the screen */
   private def animate(timestamp: Double): Unit = {
@@ -74,24 +76,24 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   private def applyTurn(sled: Sled, deltaSeconds: Double): Unit = {
     turning match {
-      case RightTurn => GameMotion.turnSled(sled, RightTurn, deltaSeconds)
-      case LeftTurn  => GameMotion.turnSled(sled, LeftTurn, deltaSeconds)
+      case RightTurn => motion.turnSled(sled, RightTurn, deltaSeconds)
+      case LeftTurn  => motion.turnSled(sled, LeftTurn, deltaSeconds)
       case NoTurn    => None
     }
   }
 
   private def moveOneSled(sled: Sled, deltaSeconds: Double): Unit = {
-    moveSleds(List(sled), deltaSeconds)
+    motion.moveSleds(List(sled), deltaSeconds)
   }
 
   // TODO Use the same turns that the server does
   def nextState(deltaSeconds: Double): PlayfieldState = {
-    moveSnowballs(serverSnowballs, deltaSeconds)
+    motion.moveSnowballs(serverSnowballs, deltaSeconds)
     serverMySled.foreach { mySled =>
       applyTurn(mySled, deltaSeconds)
       moveOneSled(mySled, deltaSeconds)
     }
-    moveSleds(serverSleds, deltaSeconds)
+    motion.moveSleds(serverSleds, deltaSeconds)
     PlayfieldState(
       serverMySled.getOrElse(Sled.dummy),
       serverSleds.toSet,

@@ -36,7 +36,7 @@ object DrawPlayfield {
     val newPos = playfieldWrap(
       new Vector3(playfieldItem.position.x, 0, playfieldItem.position.y),
       myPos,
-      new Vector3(GameConstants.playfield.x, 0, GameConstants.playfield.y)
+      new Vector3(GameConstants.oldPlayfieldSize.x, 0, GameConstants.oldPlayfieldSize.y)
     )
     obj.position.x = newPos.x
     obj.position.z = newPos.z

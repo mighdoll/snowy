@@ -9,8 +9,8 @@ import scala.scalajs.js.Dynamic
 
 object CreateGrid {
   private val spacing     = 50
-  private val gridColumns = math.ceil(GameConstants.playfield.x / spacing).toInt
-  private val gridRows    = math.ceil(GameConstants.playfield.y / spacing).toInt
+  private val gridColumns = math.ceil(GameConstants.oldPlayfieldSize.x / spacing).toInt
+  private val gridRows    = math.ceil(GameConstants.oldPlayfieldSize.y / spacing).toInt
 
   // Plus one to include bottom and right borders
   private val gridColumns1 = gridColumns + 1
@@ -63,8 +63,8 @@ object CreateGrid {
 
   def newGrid(): Mesh = {
     val grid = new THREE.PlaneGeometry(
-      GameConstants.playfield.x * 3,
-      GameConstants.playfield.y * 3,
+      GameConstants.oldPlayfieldSize.x * 3,
+      GameConstants.oldPlayfieldSize.y * 3,
       gridColumns * 3,
       gridRows * 3
     )
@@ -78,8 +78,8 @@ object CreateGrid {
 
     val mesh = new THREE.Mesh(grid, material)
     mesh.rotation.x = 1.5 * math.Pi
-    mesh.position.x = GameConstants.playfield.x / 2
-    mesh.position.z = GameConstants.playfield.y / 2
+    mesh.position.x = GameConstants.oldPlayfieldSize.x / 2
+    mesh.position.z = GameConstants.oldPlayfieldSize.y / 2
     mesh
   }
 }

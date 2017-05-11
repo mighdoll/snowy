@@ -17,7 +17,7 @@ class TestGameMotion extends PropSpec with PropertyChecks {
 
   def wrapInRange(value: Double): Unit = {
     val max     = 100
-    val wrapped = GameMotion.wrapBorder(value, max)
+    val wrapped = Playfield.wrapBorder(value, max)
     assert(wrapped >= 0)
     assert(wrapped <= max)
   }

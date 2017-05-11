@@ -10,16 +10,15 @@ import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants._
 import snowy.GameServerProtocol._
-import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.RobotPlayer
-import snowy.server.GameSeeding.randomSpot
 import snowy.util.{MeasurementRecorder, Span}
 import snowy.util.Span.time
 import socketserve._
 import vector.Vec2d
 import snowy.server.CommonPicklers.withPickledClientMessage
+import snowy.playfield.GameMotion._
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
                                    measurementRecorder: MeasurementRecorder)
@@ -41,7 +40,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   override def open(id: ConnectionId): Unit = {
     logger.trace(s"open $id")
     connections(id) = new ClientConnection(id, messageIO)
-    val clientPlayfield = Playfield(playfield.x.toInt, playfield.y.toInt)
+    val clientPlayfield = PlayfieldBounds(playfield.size.x.toInt, playfield.size.y.toInt)
     sendMessage(clientPlayfield, id)
     sendMessage(Trees(trees.toSeq), id)
   }
@@ -220,8 +219,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
-          case Left     => turnSled(sled, LeftTurn, deltaSeconds)
-          case Right    => turnSled(sled, RightTurn, deltaSeconds)
+          case Left     => motion.turnSled(sled, LeftTurn, deltaSeconds)
+          case Right    => motion.turnSled(sled, RightTurn, deltaSeconds)
           case Shooting => shootSnowball(sled)
         }
       }
@@ -261,7 +260,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
         health = sled.bulletHealth,
         lifetime = sled.bulletLifetime
       )
-      ball.setInitialPosition(wrapInPlayfield(sled.position + launchPos))
+      ball.setInitialPosition(playfield.wrapInPlayfield(sled.position + launchPos))
       snowballs.add(ball)
 
       val recoilForce = direction * -sled.bulletRecoil
@@ -326,7 +325,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
-      initialPosition = randomSpot(),
+      initialPosition = gameSeeding.randomSpot(),
       kind = sledKind,
       color = color
     )

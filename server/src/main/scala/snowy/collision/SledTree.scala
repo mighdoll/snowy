@@ -3,11 +3,10 @@ package snowy.collision
 import snowy.GameConstants.Collision._
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.GameCollide._
-import snowy.playfield.GameMotion.wrapInPlayfield
-import snowy.playfield.{Circle, PlayfieldTracker, Sled, Tree}
+import snowy.playfield._
 import vector.Vec2d
 
-object SledTree {
+class SledTree(playfield:Playfield) {
 
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
@@ -52,7 +51,7 @@ object SledTree {
       val result =
         if (edgeToSledLength < sledBody.radius) {
           val adjust = edgeToSled.unit * (sledBody.radius + treePadding - edgeToSledLength)
-          wrapInPlayfield(sled.position + adjust)
+          playfield.wrapInPlayfield(sled.position + adjust)
         } else {
           sled.position
         }

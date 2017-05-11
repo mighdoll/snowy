@@ -5,7 +5,6 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameConstants._
 import snowy.collision.{CollideThings, Death, DeathList, SledTree}
-import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.{Sled, _}
 import snowy.util.Span
@@ -38,9 +37,9 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
 
-      moveSnowballs(state.snowballs, deltaSeconds)
+      state.motion.moveSnowballs(state.snowballs, deltaSeconds)
 
-      val moveAwards = moveSleds(state.sleds, deltaSeconds)
+      val moveAwards = state.motion.moveSleds(state.sleds, deltaSeconds)
       val collided   = time("checkCollisions")(checkCollisions())
       val died       = gameHealth.collectDead()
 
@@ -93,7 +92,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     for {
       sled <- state.sleds
       nearTrees = state.treeGrid.inside(sled.boundingBox)
-    } SledTree.collide(sled, nearTrees)
+    } state.sledTree.collide(sled, nearTrees)
 
     // collide sleds with each other
     val sledDeaths = CollideThings.collideCollection(state.sleds, state.sledGrid)

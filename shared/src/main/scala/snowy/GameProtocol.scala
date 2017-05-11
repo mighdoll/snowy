@@ -65,7 +65,7 @@ object GameClientProtocol {
 
   case class SnowballDeaths(snowballs: Seq[BallId]) extends GameClientMessage
 
-  case class Playfield(width: Int, height: Int) extends GameClientMessage
+  case class PlayfieldBounds(width: Int, height: Int) extends GameClientMessage
 
   case class Trees(trees: Seq[Tree]) extends GameClientMessage
 

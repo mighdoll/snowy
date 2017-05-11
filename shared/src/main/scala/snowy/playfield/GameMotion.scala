@@ -2,14 +2,28 @@ package snowy.playfield
 
 import scala.collection.mutable
 import snowy.Awards.Travel
-import snowy.GameConstants.{playfield, turnTime}
+import snowy.GameConstants.turnTime
 import vector.Vec2d
 import Friction.friction
 import Gravity.gravity
 import Skid.skid
+import snowy.playfield.GameMotion._
 
-/** Moving objects in each game time slice */
 object GameMotion {
+  sealed trait Turning
+  sealed trait Turn {
+    def rotationSign: Int
+  }
+  case object NoTurn extends Turning
+  case object LeftTurn extends Turning with Turn {
+    override val rotationSign = 1
+  }
+  case object RightTurn extends Turning with Turn {
+    override val rotationSign = -1
+  }
+}
+/** Moving objects in each game time slice */
+class GameMotion(playfield:Playfield) {
 
   /** update sleds and snowballs speeds and positions */
   def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
@@ -28,23 +42,12 @@ object GameMotion {
       val wrappedPos = {
         val deltaPosition = snowball.speed * deltaSeconds
         val newPosition   = snowball.position + deltaPosition
-        wrapInPlayfield(newPosition)
+        playfield.wrapInPlayfield(newPosition)
       }
       snowball.position = wrappedPos
     }
   }
 
-  sealed trait Turning
-  sealed trait Turn {
-    def rotationSign: Int
-  }
-  case object NoTurn extends Turning
-  case object LeftTurn extends Turning with Turn {
-    override val rotationSign = 1
-  }
-  case object RightTurn extends Turning with Turn {
-    override val rotationSign = -1
-  }
 
   /** Rotate a sled at a rate controlled by GameConstants.turnTime
     *
@@ -63,35 +66,6 @@ object GameMotion {
     sled.turretRotation = wrappedRotation
   }
 
-  /** Constrain a value between 0 and a max value.
-    * values past one border of the range are wrapped to the other side
-    *
-    * @return the wrapped value */
-  def wrapBorder(value: Double, max: Double): Double = {
-    val result =
-      if (value >= max * 2.0)
-        max
-      else if (value >= max)
-        value - max
-      else if (value < -max)
-        0
-      else if (value < 0)
-        max + value
-      else
-        value
-    if (result < 0 || result > max) {
-      println(s"wrapBorder error: wrap $value  between (0 < $max) = $result")
-    }
-    result
-  }
-
-  /** constrain a position to be within the playfield */
-  def wrapInPlayfield(pos: Vec2d): Vec2d = {
-    Vec2d(
-      wrapBorder(pos.x, playfield.x),
-      wrapBorder(pos.y, playfield.y)
-    )
-  }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
   private def updateSledSpeedVector(sleds: Traversable[Sled],
@@ -115,7 +89,7 @@ object GameMotion {
     val awards = sleds.flatMap { sled =>
       val positionChange = sled.speed * deltaSeconds
       val moved          = sled.position + positionChange
-      val wrappedPos     = wrapInPlayfield(moved)
+      val wrappedPos     = playfield.wrapInPlayfield(moved)
       sled.position = wrappedPos
 
       val distance = positionChange.length

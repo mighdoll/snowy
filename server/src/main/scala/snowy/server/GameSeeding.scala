@@ -1,26 +1,22 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
-
 import com.typesafe.scalalogging.StrictLogging
-import snowy.GameConstants.playfield
-import snowy.playfield.GameMotion.wrapInPlayfield
-import snowy.playfield.{PlayfieldTracker, Tree}
+import snowy.playfield.{Playfield, PlayfieldTracker, Tree}
 import vector.Vec2d
-
 import scala.annotation.tailrec
 import scala.collection.mutable
 
 /** Utilities for putting game objects in random places on the field */
-object GameSeeding extends StrictLogging {
+class GameSeeding(playfield:Playfield) extends StrictLogging {
 
   /** Initialize a set of playfield obstacles */
   def randomTrees()(implicit tracker: PlayfieldTracker[Tree]): Set[Tree] = {
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
-    val width       = playfield.x.toInt
-    val height      = playfield.y.toInt
+    val width       = playfield.size.x.toInt
+    val height      = playfield.size.y.toInt
     val numClumps   = width * height / clumpAmount
     val inClump     = .75 // chance a tree is in an existing clump
     val clumpSize   = 200 // in the range pixels away
@@ -34,7 +30,7 @@ object GameSeeding extends StrictLogging {
     def nearbyTree(pos: Vec2d): Tree = {
       val x      = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)
       val y      = pos.y + random.nextInt(-clumpSize / 2, clumpSize / 2)
-      val newPos = wrapInPlayfield(Vec2d(x, y))
+      val newPos = playfield.wrapInPlayfield(Vec2d(x, y))
       Tree(newPos)
     }
 
@@ -84,8 +80,8 @@ object GameSeeding extends StrictLogging {
   def randomSpot(): Vec2d = {
     val random = ThreadLocalRandom.current
     Vec2d(
-      random.nextInt(playfield.x.toInt),
-      random.nextInt(playfield.y.toInt)
+      random.nextInt(playfield.size.x.toInt),
+      random.nextInt(playfield.size.y.toInt)
     )
   }
 

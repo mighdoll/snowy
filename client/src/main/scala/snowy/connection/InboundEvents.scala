@@ -45,14 +45,14 @@ class InboundEvents(gameState: GameState,
 
   private def handleMessage(message: GameClientMessage): Unit = {
     message match {
-      case state: State                => gameState.receivedState(state)
-      case Playfield(width, height)    => gameState.gPlayField = Vec2d(width, height)
-      case trees: Trees                => gameState.serverTrees = trees.trees.toSet
-      case Died                        => ClientMain.death()
-      case Ping                        => sendMessage(Pong)
-      case ClientPong                  => // currently used only by the load test client
-      case GameTime(time, oneWayDelay) => updateClock(time, oneWayDelay)
-      case MySled(sledId)              => gameState.mySledId = Some(sledId)
+      case state: State                   => gameState.receivedState(state)
+      case PlayfieldBounds(width, height) => gameState.gPlayField = Vec2d(width, height)
+      case trees: Trees                   => gameState.serverTrees = trees.trees.toSet
+      case Died                           => ClientMain.death()
+      case Ping                           => sendMessage(Pong)
+      case ClientPong                     => // currently used only by the load test client
+      case GameTime(time, oneWayDelay)    => updateClock(time, oneWayDelay)
+      case MySled(sledId)                 => gameState.mySledId = Some(sledId)
       case SnowballDeaths(balls)       => gameState.removeSnowballs(balls)
       case SledDeaths(sleds)           => gameState.removeSleds(sleds)
       case newScoreboard: Scoreboard   => ClientMain.updateScoreboard(newScoreboard)

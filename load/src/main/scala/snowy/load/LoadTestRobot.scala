@@ -27,18 +27,18 @@ class LoadTestRobot[_: Actors: Measurement](
 
   def receiveMessage(message: GameClientMessage): Unit = {
     message match {
-      case Ping =>
+      case Ping                           =>
         api.sendToServer(Pong)
-      case Died =>
+      case Died                           =>
         robot.killed()
-      case Playfield(width, height) =>
+      case PlayfieldBounds(width, height) =>
         hostedState = hostedState.copy(playfield = Vec2d(width, height))
-      case Trees(trees) =>
+      case Trees(trees)                   =>
         hostedState = hostedState.copy(trees = trees)
-      case MySled(sledId) =>
+      case MySled(sledId)                 =>
         logger.info(s"load robot joined. sledId $sledId")
         hostedState = hostedState.copy(mySledId = sledId)
-      case state: State =>
+      case state: State                   =>
         logger.trace(s"state $state")
         hostedState = hostedState.copy(
           allSleds = state.sleds,
