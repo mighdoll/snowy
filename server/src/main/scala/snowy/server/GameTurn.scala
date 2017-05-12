@@ -37,13 +37,20 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
 
-      state.motion.moveSnowballs(state.snowballs, deltaSeconds)
+      time("GameTurn.moveSnowballs") {
+        state.motion.moveSnowballs(state.snowballs, deltaSeconds)
+      }
 
-      val moveAwards = state.motion.moveSleds(state.sleds, deltaSeconds)
-      val collided   = time("checkCollisions")(checkCollisions())
-      val died       = gameHealth.collectDead()
+      val moveAwards = time("GameTurn.moveSleds") {
+        state.motion.moveSleds(state.sleds, deltaSeconds)
+      }
+      val collided = time("GameTurn.checkCollisions")(checkCollisions())
+      val died     = gameHealth.collectDead()
 
-      updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
+      time("GameTurn.updateScore") {
+        updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
+      }
+
       TurnDeaths(died, expiredBalls ++ collided.killedSnowballs)
     }
 
