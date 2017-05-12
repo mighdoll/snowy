@@ -70,7 +70,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     }
     val bodyMat = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = bodyColor, shading = THREE.FlatShading)
+        .literal(color = bodyColor)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
 

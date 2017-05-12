@@ -76,7 +76,7 @@ class LoginGeometries(renderer: WebGLRenderer,
       val newThreeSled = threeSleds.createSled(sled, true, new Vector3(0, 0, 0))
       newThreeSled.children = newThreeSled.children.slice(0, 2)
       newThreeSled.scale.multiplyScalar(0.1)
-      newThreeSled.position.y = 3
+      newThreeSled.position.set(0, 3, 1)
       threeSled = newThreeSled
       Groups.selector.add(threeSled)
       renderLoginScreen()
