@@ -23,7 +23,7 @@ object FastUnpickle {
     bytes pmatch {
       case `diedBytes`       => Died
       case `pingBytes`       => Ping
-      case `clientPongBytes` => Ping
+      case `clientPongBytes` => ClientPong
     }
   }
 
