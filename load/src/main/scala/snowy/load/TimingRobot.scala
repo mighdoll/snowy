@@ -25,7 +25,7 @@ class TimingRobot[_: Actors: Measurement](url: String) extends StrictLogging {
     message match {
       case ClientPong =>
         logger.trace("ClientPong received")
-        span.finish()
+        span.finishNow()
         timePing()
       case _ =>
     }

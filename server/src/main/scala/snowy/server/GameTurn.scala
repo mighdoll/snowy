@@ -8,7 +8,7 @@ import snowy.collision.{CollideThings, Death, DeathList, SledTree}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.{Sled, _}
 import snowy.util.Span
-import snowy.util.Span.time
+import snowy.util.Span.{time, timeSpan}
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   val gameHealth         = new GameHealth(state)
@@ -33,21 +33,21 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   def turn(deltaSeconds: Double)(implicit snowballTracker: PlayfieldTracker[Snowball],
                                  sledTracker: PlayfieldTracker[Sled],
                                  span: Span): TurnDeaths =
-    time("GameTurn.turn") {
+    timeSpan("GameTurn.turn") { turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
 
-      time("GameTurn.moveSnowballs") {
+      turnSpan.time("GameTurn.moveSnowballs") {
         state.motion.moveSnowballs(state.snowballs, deltaSeconds)
       }
 
-      val moveAwards = time("GameTurn.moveSleds") {
+      val moveAwards = turnSpan.time("GameTurn.moveSleds") {
         state.motion.moveSleds(state.sleds, deltaSeconds)
       }
-      val collided = time("GameTurn.checkCollisions")(checkCollisions())
+      val collided = turnSpan.time("GameTurn.checkCollisions")(checkCollisions())
       val died     = gameHealth.collectDead()
 
-      time("GameTurn.updateScore") {
+      turnSpan.time("GameTurn.updateScore") {
         updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
       }
 
