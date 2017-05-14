@@ -18,27 +18,27 @@ trait GameState { self: GameControl =>
     val height          = playfieldConfig.getInt("height")
     new Playfield(Vec2d(width, height))
   }
-  private val gridSpacing   = 100.0
-  implicit val sledGrid     = new Grid[Sled](playfield.size, gridSpacing)
   val users                 = mutable.Map[ClientId, User]()
   val sledMap               = mutable.Map[ClientId, SledId]()
   val pendingControls       = new PendingControls
   val gameStateImplicits    = new GameStateImplicits(this)
-  val sleds                 = mutable.HashSet[Sled]()
+
+  val sleds                 = new Sleds(playfield)
   val snowballs             = new Snowballs(playfield)
   val trees                 = new Trees(playfield)
   val powerUps              = new PowerUps(playfield)
+
   val motion                = new GameMotion(playfield)
   val sledTree              = new SledTree(playfield)
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
-    State(gameTurns.gameTime, sleds.toSeq, snowballs.items.toSeq)
+    State(gameTurns.gameTime, sleds.items.toSeq, snowballs.items.toSeq)
   }
 
   def debugVerifyGridState(): Unit = {
-    val sledSet     = sleds.toSet
-    val sledGridSet = sledGrid.items
+    val sledSet     = sleds.items.toSet
+    val sledGridSet = sleds.grid.items
     if (sledSet != sledGridSet) {
       logger.error("sledSet != sledGridSet")
       logger.error(s"sledSet:     $sledSet")

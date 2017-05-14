@@ -40,7 +40,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       }
 
       val moveAwards = turnSpan.time("GameTurn.moveSleds") {
-        state.motion.moveSleds(state.sleds, deltaSeconds)
+        state.motion.moveSleds(state.sleds.items, deltaSeconds)
       }
       val collided = turnSpan.time("GameTurn.checkCollisions")(checkCollisions())
       val died     = gameHealth.collectDead()
@@ -63,7 +63,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideCollectionWithGrid(
-        state.sleds,
+        state.sleds.items,
         state.snowballs.grid
       )
 
@@ -95,12 +95,12 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     // collide sleds with trees
     for {
-      sled <- state.sleds
+      sled <- state.sleds.items
       nearTrees = state.trees.grid.inside(sled.boundingBox)
     } state.sledTree.collide(sled, nearTrees)
 
     // collide sleds with each other
-    val sledDeaths = CollideThings.collideCollection(state.sleds, state.sledGrid)
+    val sledDeaths = CollideThings.collideCollection(state.sleds.items, state.sleds.grid)
 
     // accumulate awards
     val snowballAwards =

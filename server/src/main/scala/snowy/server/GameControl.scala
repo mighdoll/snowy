@@ -195,7 +195,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   private def applyTurn(deltaSeconds: Double): Unit = {
-    for (sled <- sleds) {
+    for (sled <- sleds.items) {
       val tau             = math.Pi * 2
       val distanceBetween = (sled.turretRotation - sled.rotation) % tau
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
@@ -207,7 +207,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   private def applyDrive(deltaSeconds: Double): Unit = {
-    for (sled <- sleds) {
+    for (sled <- sleds.items) {
       sled.driveMode.driveSled(sled, deltaSeconds)
     }
   }
@@ -358,7 +358,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def createSled(connectionId: ClientId, user: User, sledKind: SledKind): Sled = {
     val sled = newRandomSled(user.name, sledKind, user.skiColor)
-    sleds.add(sled)
+    sleds.items.add(sled)
     sledMap(connectionId) = sled.id
     sled
   }

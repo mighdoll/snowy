@@ -10,7 +10,7 @@ class GameHealth(state: GameState) {
 
   /** slowly recover some health points */
   def recoverHealth(deltaSeconds: Double): Unit = {
-    state.sleds.foreach { sled =>
+    state.sleds.items.foreach { sled =>
       val deltaHealth = deltaSeconds / sled.healthRecoveryTime
       val newHealth   = min(sled.maxHealth, sled.health + deltaHealth)
       sled.health = newHealth
@@ -31,7 +31,7 @@ class GameHealth(state: GameState) {
 
   /** @return the sleds with no health left */
   def collectDead(): Traversable[SledDied] = {
-    state.sleds.find(_.health <= 0).map { sled =>
+    state.sleds.items.find(_.health <= 0).map { sled =>
       SledDied(sled.id)
     }
   }

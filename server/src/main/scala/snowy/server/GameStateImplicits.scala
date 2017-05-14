@@ -9,7 +9,7 @@ class GameStateImplicits(state: GameState) {
 
   implicit class SledIdOps(id: SledId) {
     def sled: Option[Sled] = {
-      state.sleds.find(_.id == id)
+      state.sleds.items.find(_.id == id)
     }
 
     def user: Option[User] = id.connectionId.map(state.users(_))
@@ -43,12 +43,12 @@ class GameStateImplicits(state: GameState) {
 
     def remove(): Unit = {
       sled.id.connectionId.foreach(state.sledMap.remove(_))
-      state.sledGrid.remove(sled)
-      state.sleds.remove(sled)
+      state.sleds.grid.remove(sled)
+      state.sleds.items.remove(sled)
     }
   }
 
   implicit def snowballGrid = state.snowballs.grid
   implicit def treeGrid = state.trees.grid
-  implicit def sledGrid = state.sledGrid
+  implicit def sledGrid = state.sleds.grid
 }
