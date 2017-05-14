@@ -211,14 +211,14 @@ class Face3(var a: Int,
 
 @ScalaJSDefined
 trait MorphTargetParameters extends js.Object {
-  val name: js.UndefOr[String]                = js.undefined
-  val vertices: js.UndefOr[js.Array[Vector3]] = js.undefined
+  val name: String
+  val vertices: js.Array[Vector3]
 }
 
 @ScalaJSDefined
 trait MorphNormalParameters extends js.Object {
-  val name: js.UndefOr[String]               = js.undefined
-  val normals: js.UndefOr[js.Array[Vector3]] = js.undefined
+  val name: String
+  val normals: js.Array[Vector3]
 }
 
 @js.native
@@ -275,7 +275,7 @@ class Geometry extends js.Object with EventDispatcher {
 @JSGlobal("THREE.InstancedBufferAttribute")
 class InstancedBufferAttribute(array: ArrayBuffer,
                                itemSize: Int,
-                               normalized: js.UndefOr[Boolean])
+                               normalized: js.UndefOr[Boolean] = js.native)
     extends BufferAttribute(array, itemSize, normalized) {
   val meshPerAttribute: Int               = js.native
   val isInstancedBufferAttribute: Boolean = js.native
@@ -426,22 +426,22 @@ class Object3D extends EventDispatcher {
 // TODO: Are (js.Object)s the same as (Dynamic.literal)s
 @ScalaJSDefined
 trait RaycasterParameters extends js.Object {
-  val Mesh: js.UndefOr[js.Object]   = js.undefined
-  val Line: js.UndefOr[js.Object]   = js.undefined
-  val LOD: js.UndefOr[js.Object]    = js.undefined
-  val Points: js.UndefOr[js.Object] = js.undefined
-  val Sprite: js.UndefOr[js.Object] = js.undefined
+  val Mesh: js.Object
+  val Line: js.Object
+  val LOD: js.Object
+  val Points: js.Object
+  val Sprite: js.Object
 }
 
 @ScalaJSDefined
 trait Intersection extends js.Object {
-  val distance: js.UndefOr[Double]      = js.undefined
-  val distanceToRay: js.UndefOr[Double] = js.undefined
-  val point: js.UndefOr[Vector3]        = js.undefined
-  val index: js.UndefOr[Int]            = js.undefined
-  val face: js.UndefOr[Face3]           = js.undefined
-  val faceIndex: js.UndefOr[Int]        = js.undefined
-  val `object`: js.UndefOr[Object3D]    = js.undefined
+  val distance: Double
+  val distanceToRay: Double
+  val point: Vector3
+  val index: Int
+  val face: Face3
+  val faceIndex: Int
+  val `object`: Object3D
 }
 
 @js.native
