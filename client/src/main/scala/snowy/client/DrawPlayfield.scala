@@ -69,7 +69,9 @@ object DrawPlayfield {
   }
 }
 
-class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds, val threeSnowballs: ThreeSnowballs) {
+class DrawPlayfield(renderer: WebGLRenderer,
+                    val threeSleds: ThreeSleds,
+                    val threeSnowballs: ThreeSnowballs) {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
@@ -83,12 +85,9 @@ class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds, val thr
     stats.showPanel(0)
     document.body.appendChild(stats.dom)
 
-    camera.position.set(0, 1200, 400)
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
+    light.position.set(0, 2, 1)
 
     scene.add(amb)
-
-    light.position.set(0, 2, 1)
     scene.add(light)
 
     scene.add(CreateGrid.newGrid())
