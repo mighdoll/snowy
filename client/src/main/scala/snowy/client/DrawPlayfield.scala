@@ -106,12 +106,12 @@ class DrawPlayfield(renderer: WebGLRenderer,
                     trees: Set[Tree],
                     border: Vec2d): Unit = {
     stats.begin()
-    val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
+    val myPos = new Vector3(mySled.position.x, 2.9 * mySled.radius, mySled.position.y)
     ThreeTrees.updateThreeTrees(trees, myPos)
     threeSnowballs.updateThreeSnowballs(snowballs, myPos)
     threeSleds.updateThreeSleds(sleds, mySled)
 
-    camera.position.set(myPos.x, 1200, myPos.z + 400)
+    camera.position.set(myPos.x, 1000, myPos.z + 300)
     camera.lookAt(myPos)
 
     renderState()
