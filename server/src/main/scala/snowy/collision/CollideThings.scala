@@ -13,7 +13,7 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideCollectionWithGrid[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[
+  def collideCollectionWithGrid[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
         aCollection: Traversable[A],
@@ -47,7 +47,7 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideCollection[A <: CircularObject[A]: PlayfieldTracker](
+  def collideCollection[A <: MovableCircularItem[A]: PlayfieldTracker](
         collection: Traversable[A],
         grid: Grid[A]
   ): Traversable[Death[A, A]] = {
@@ -83,7 +83,7 @@ object CollideThings {
 
   /** Modify two objects with the effects of a collision.
     * (the effects are deferred until all collisions are calculated) */
-  private def applyTwoEffects[A <: CircularObject[A]: PlayfieldTracker, B <: CircularObject[
+  private def applyTwoEffects[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
         effectA: CollisionEffect[A],
@@ -104,7 +104,7 @@ object CollideThings {
     DeathList(aDeaths, bDeaths)
   }
 
-  private def collideCircular[A <: CircularObject[A], B <: CircularObject[B]](
+  private def collideCircular[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
@@ -117,7 +117,7 @@ object CollideThings {
   }
 
   /** @return the damage to sled a from a collision with sled b */
-  private def impactDamage[A <: CircularObject[A], B <: CircularObject[B]](
+  private def impactDamage[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
         objA: A,
         objB: B
   ): Double = {
@@ -129,7 +129,7 @@ object CollideThings {
 }
 
 /** Pending changes to an objects health,speed, etc. after a collision */
-case class CollisionEffect[A <: CircularObject[A]](collided: Collided[A], damage: Double) {
+case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A], damage: Double) {
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
@@ -156,16 +156,16 @@ case class CollisionEffect[A <: CircularObject[A]](collided: Collided[A], damage
 }
 
 /** A report that one of the objects in a collision has run out of health */
-case class Death[A <: CircularObject[A], B <: CircularObject[B]](killed: A, killer: B)
+case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](killed: A, killer: B)
 
 /** a report of one or more objects that have been killed */
-case class DeathList[A <: CircularObject[A], B <: CircularObject[B]](
+case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
       a: Traversable[Death[A, B]],
       b: Traversable[Death[B, A]]
 )
 
 object DeathList {
-  implicit def deathListMonoid[A <: CircularObject[A], B <: CircularObject[B]]
+  implicit def deathListMonoid[A <: MovableCircularItem[A], B <: MovableCircularItem[B]]
     : Monoid[DeathList[A, B]] = {
     new Monoid[DeathList[A, B]] {
       def empty = DeathList[A, B](Nil, Nil)

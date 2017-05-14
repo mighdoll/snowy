@@ -12,7 +12,7 @@ object Tree {
   }
 }
 
-case class Tree(var health: Double = 100)
+case class Tree()
     extends PlayfieldItem[Tree] {
   override def boundingBox = Rect(position, GameConstants.treeSize)
 

@@ -44,7 +44,7 @@ case class Sled(userName: String,
                 var turretRotation: Double = downhillRotation,
                 var lastShotTime: Long = 0,
                 var lastBoostTime: Long = 0)
-    extends CircularObject[Sled] {
+    extends MovableCircularItem[Sled] {
 
   type MyType = Sled
 

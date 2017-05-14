@@ -53,7 +53,6 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
   def compareTrees(a: Tree, b: Tree): Unit = {
     assert(a.id === b.id)
-    assert(a.health === b.health)
     assert(a.position === b.position)
   }
 
@@ -76,7 +75,6 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
   property("pickle tree") {
     val tree = Tree()
-    tree.health = 2.0
     tree.position = Vec2d.unitLeft
     val tree2 = pickleUnpickle(tree)
     compareTrees(tree, tree2)

@@ -34,11 +34,11 @@ object Picklers {
       _.id
     }
 
-  private def treeToTuple(tree: Tree): (TreeId, Double, Vec2d) =
-    (tree.id, tree.health, tree.position)
+  private def treeToTuple(tree: Tree): (TreeId, Vec2d) =
+    (tree.id, tree.position)
 
-  private def tupleToTree(treeId: TreeId, health: Double, newPosition: Vec2d): Tree = {
-    new Tree(health = health) {
+  private def tupleToTree(treeId: TreeId, newPosition: Vec2d): Tree = {
+    new Tree() {
       override val id = treeId
       position = newPosition
     }

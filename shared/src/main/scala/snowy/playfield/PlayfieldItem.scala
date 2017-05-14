@@ -9,7 +9,6 @@ import vector.Vec2d
   */
 trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
   private var internalPosition = Vec2d.zero
-  var health: Double
   val id: PlayId[A]            = PlayId.nextId[A]()
 
   def position: Vec2d = internalPosition

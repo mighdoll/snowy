@@ -7,12 +7,12 @@ import snowy.playfield.Intersect._
 import vector.Vec2d
 
 case class Ball(x: Double, y: Double)(implicit playfieldTracker: PlayfieldTracker[Ball])
-    extends PlayfieldItem[Ball] {
-  override var health = 1.0
-  val radius                    = 5
+    extends MovableCircularItem[Ball] {
+  override var health           = 1.0
+  override val radius           = 5
+  override var speed            = Vec2d.zero
+  override val mass             = 1.0
   override def toString: String = s"Ball(${position.x}, ${position.y})"
-  override def boundingBox =
-    Rect(position - Vec2d(radius, radius), Vec2d(radius * 2, radius * 2))
 
   position_=(Vec2d(x, y))(Ball.nullTracker)
   playfieldTracker.add(this)
