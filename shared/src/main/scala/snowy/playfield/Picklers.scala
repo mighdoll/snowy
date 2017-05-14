@@ -1,18 +1,14 @@
 package snowy.playfield
 import boopickle.Default._
-import snowy.playfield.PlayId.{BallId, SledId, TreeId}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
-import snowy.playfield.PlayfieldTracker.{
-  nullSledTracker,
-  nullSnowballTracker,
-  nullTreeTracker
-}
 
 object Picklers {
 
   implicit val sledIdPickler = playIdPickler[Sled]
   implicit val ballIdPickler = playIdPickler[Snowball]
   implicit val TreeIdPickler = playIdPickler[Tree]
+  implicit val powerUpIdPickler = playIdPickler[PowerUp]
 
   implicit val sledPickler = {
     transformPickler((tupleToSled _).tupled)(sledToTuple _)
@@ -23,9 +19,10 @@ object Picklers {
   implicit val snowballPickler = {
     transformPickler((tupleToSnowball _).tupled)(snowballToTuple _)
   }
-  implicit val nullSled     = nullSledTracker
-  implicit val nullSnowball = nullSnowballTracker
-  implicit val nullTree     = nullTreeTracker
+  implicit val powerUpPickler = {
+    transformPickler((tupleToPowerUp _).tupled)(powerUpToTuple _)
+  }
+  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
 
   private def playIdPickler[A]: Pickler[PlayId[A]] =
     transformPickler[PlayId[A], Int] { (id: Int) =>
@@ -138,6 +135,17 @@ object Picklers {
       sled.lastShotTime,
       sled.lastBoostTime
     )
+  }
+
+  private def powerUpToTuple(powerUp: PowerUp): (PowerUpId, Vec2d) = {
+    (powerUp.id, powerUp.position) // TODO pickle subtype of PowerUp
+  }
+
+  private def tupleToPowerUp(newId: PowerUpId, newPosition: Vec2d): PowerUp = {
+    new HealthPowerUp() {
+      override val id: PowerUpId = newId
+      position = newPosition
+    }
   }
 
 }

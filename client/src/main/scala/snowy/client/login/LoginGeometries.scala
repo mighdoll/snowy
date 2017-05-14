@@ -8,7 +8,7 @@ import snowy.AllLists
 import snowy.client.ClientMain
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.draw.ThreeSleds
-import snowy.playfield.PlayfieldTracker.nullSledTracker
+import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
 import snowy.playfield._
 import vector.Vec2d
 
@@ -21,7 +21,6 @@ class LoginGeometries(renderer: WebGLRenderer,
                       clearConnection: => Unit,
                       loginScreenActive: => Boolean,
                       threeSledsFuture: Future[ThreeSleds]) {
-  private implicit val sledTracker = nullSledTracker
   private val scene                = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)

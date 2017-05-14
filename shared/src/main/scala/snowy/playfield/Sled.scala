@@ -2,11 +2,11 @@ package snowy.playfield
 
 import vector.Vec2d
 import snowy.GameConstants.downhillRotation
-import snowy.playfield.PlayfieldTracker.nullSledTracker
 
 object Sled {
   val dummy = {
     val sled = new Sled(userName = "dummy")
+    import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
     sled.position_=(Vec2d(-1,-1))(nullSledTracker)
     sled
   }

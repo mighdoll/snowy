@@ -1,6 +1,6 @@
 package snowy
 
-import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield._
 
 /** messages sent to the server */
@@ -80,5 +80,11 @@ object GameClientProtocol {
   case object ClientPong extends GameClientMessage
 
   case class GameTime(millis: Long, oneWayDelay: Int) extends GameClientMessage
+
+  case class RemovePowerUps(ids: Seq[PowerUpId]) extends GameClientMessage
+  case class RemoveSleds(ids: Seq[SledId]) extends GameClientMessage
+  case class RemoveSnowballs(ids: Seq[BallId]) extends GameClientMessage
+
+  case class AddPowerUps(powerUps: Seq[PowerUp])       extends GameClientMessage
 
 }

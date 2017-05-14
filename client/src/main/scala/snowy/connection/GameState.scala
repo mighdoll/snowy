@@ -4,7 +4,7 @@ import snowy.GameClientProtocol._
 import snowy.client.{Animation, ClientMain, DrawPlayfield}
 import snowy.draw.ThreeSnowballs
 import snowy.playfield.GameMotion._
-import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{PlayfieldTracker, _}
 import vector.Vec2d
 import scala.collection.mutable
@@ -21,8 +21,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
   var gPlayField                   = Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard                   = Scoreboard(0, Seq())
   var mySledId: Option[SledId]     = None
-  implicit val nullSnowballTracker = PlayfieldTracker.nullSnowballTracker
-  implicit val nullSledTracker     = PlayfieldTracker.nullSledTracker
+  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
 
   val playfieldAnimation = new Animation(animate)
   val playfield          = new Playfield(GameConstants.oldPlayfieldSize)
@@ -50,6 +49,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
   var serverTrees             = Set[Tree]()
   private var serverSnowballs = mutable.HashSet[Snowball]()
   private var serverSleds     = mutable.HashSet[Sled]()
+  private val serverPowerUps  = new mutable.HashSet[PowerUp]()
   var gameTime                = 0L
 
   def serverMySled: Option[Sled] = {
@@ -122,6 +122,16 @@ class GameState(drawPlayfield: DrawPlayfield) {
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {
     removeById[Snowball](removedIds, serverSnowballs)
     ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threeSnowballs.removeSnowballs(removedIds))
+  }
+
+  def removePowerUps(removedIds: Seq[PowerUpId]): Unit = {
+    removeById(removedIds, serverPowerUps)
+    // TODO remove three powerUps
+  }
+
+  def addPowerUps(newUps: Seq[PowerUp]): Unit = {
+    serverPowerUps ++= newUps
+    // TODO dd three powerUps
   }
 
   /** remove a collection of sled or snowballs from from the store */

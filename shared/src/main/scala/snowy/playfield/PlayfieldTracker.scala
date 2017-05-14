@@ -13,7 +13,10 @@ object PlayfieldTracker {
     override def add(item: A)    = {}
     override def remove(item: A) = {}
   }
-  val nullSnowballTracker = nullTracker[Snowball]
-  val nullSledTracker = nullTracker[Sled]
-  val nullTreeTracker = nullTracker[Tree]
+  object ImplicitNullTrackers {
+    implicit val nullSnowballTracker = nullTracker[Snowball]
+    implicit val nullSledTracker     = nullTracker[Sled]
+    implicit val nullTreeTracker     = nullTracker[Tree]
+    implicit val nullPowerUpTracker  = nullTracker[PowerUp]
+  }
 }

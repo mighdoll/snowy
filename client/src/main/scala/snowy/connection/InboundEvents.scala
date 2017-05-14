@@ -1,5 +1,6 @@
 package snowy.connection
 
+import scala.collection.mutable
 import boopickle.Default._
 import network.NetworkSocket
 import org.scalajs.dom._
@@ -8,8 +9,8 @@ import snowy.GameServerProtocol._
 import snowy.client.{ClientMain, UpdateScoreboard}
 import snowy.playfield.Picklers._
 import vector.Vec2d
-
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
+import snowy.playfield.{PlayId, PowerUp, Sled, Snowball}
 
 class InboundEvents(gameState: GameState,
                     socket: NetworkSocket,
@@ -54,8 +55,12 @@ class InboundEvents(gameState: GameState,
       case GameTime(time, oneWayDelay)    => updateClock(time, oneWayDelay)
       case MySled(sledId)                 => gameState.mySledId = Some(sledId)
       case SnowballDeaths(balls)          => gameState.removeSnowballs(balls)
-      case SledDeaths(sleds)           => gameState.removeSleds(sleds)
-      case newScoreboard: Scoreboard   => ClientMain.updateScoreboard(newScoreboard)
+      case SledDeaths(sleds)              => gameState.removeSleds(sleds)
+      case AddPowerUps(ids)               => gameState.addPowerUps(ids)
+      case RemovePowerUps(ids)            => gameState.removePowerUps(ids)
+      case RemoveSleds(ids)               => gameState.removeSleds(ids)
+      case RemoveSnowballs(ids)           => gameState.removeSnowballs(ids)
+      case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
     }
   }
 
