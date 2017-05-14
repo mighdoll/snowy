@@ -6,6 +6,7 @@ import snowy.client.DrawPlayfield.removeDeaths
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.{BasicSled, Snowball}
+import vector.Vec2d
 
 import scala.scalajs.js.Dynamic
 
@@ -18,10 +19,19 @@ object ThreeSnowballs {
   )
 
   val snowballGroup = new UpdateGroup[Snowball](new THREE.Object3D())
+
+  def updateSnowball(playfieldSnowball: Snowball,
+                     threeSnowball: Object3D,
+                     myPos: Vector3): Unit = {
+    DrawPlayfield.setThreePosition(threeSnowball, playfieldSnowball, myPos)
+
+    threeSnowball.rotation.y = playfieldSnowball.speed.unit.angle(Vec2d.unitUp)
+  }
+
   def updateThreeSnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       snowballGroup.map.get(snowball1.id) match {
-        case Some(snowball) => DrawPlayfield.setThreePosition(snowball, snowball1, myPos)
+        case Some(snowball) => updateSnowball(snowball1, snowball, myPos)
         case None           => snowballGroup.add(createSnowball(snowball1, myPos))
       }
     }
