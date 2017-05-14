@@ -67,7 +67,7 @@ object GameClientProtocol {
 
   case class PlayfieldBounds(width: Int, height: Int) extends GameClientMessage
 
-  case class Trees(trees: Seq[Tree]) extends GameClientMessage
+  case class InitialTrees(trees: Seq[Tree]) extends GameClientMessage
 
   case object Died extends GameClientMessage
 

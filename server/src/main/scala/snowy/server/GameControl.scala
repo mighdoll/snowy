@@ -42,7 +42,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     connections(id) = new ClientConnection(id, messageIO)
     val clientPlayfield = PlayfieldBounds(playfield.size.x.toInt, playfield.size.y.toInt)
     sendMessage(clientPlayfield, id)
-    sendMessage(Trees(trees.toSeq), id)
+    sendMessage(InitialTrees(trees.toSeq), id)
   }
 
   /** Called when a connection is dropped */

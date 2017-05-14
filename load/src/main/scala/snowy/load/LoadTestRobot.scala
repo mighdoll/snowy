@@ -33,7 +33,7 @@ class LoadTestRobot[_: Actors: Measurement](
         robot.killed()
       case PlayfieldBounds(width, height) =>
         hostedState = hostedState.copy(playfield = Vec2d(width, height))
-      case Trees(trees)                   =>
+      case InitialTrees(trees)            =>
         hostedState = hostedState.copy(trees = trees)
       case MySled(sledId)                 =>
         logger.info(s"load robot joined. sledId $sledId")
@@ -45,7 +45,7 @@ class LoadTestRobot[_: Actors: Measurement](
           snowballs = state.snowballs
         )
         robot.refresh(hostedState)
-      case _ =>
+      case _                              =>
     }
   }
 }
