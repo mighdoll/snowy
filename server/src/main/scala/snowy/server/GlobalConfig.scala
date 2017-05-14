@@ -10,7 +10,7 @@ object GlobalConfig {
     ConfigUtil.writeConfig(newConfig)
     newConfig
   }
-  lazy val snowyConfig = config.getConfig("snowy")
+  lazy val snowy = config.getConfig("snowy")
   private val files = ListBuffer[File]()
 
   /** add .conf file that will be accessible to the program */

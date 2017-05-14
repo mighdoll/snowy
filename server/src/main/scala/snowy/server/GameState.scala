@@ -13,7 +13,7 @@ import vector.Vec2d
 trait GameState { self: GameControl =>
 
   val playfield = {
-    val playfieldConfig = GlobalConfig.snowyConfig.getConfig("playfield")
+    val playfieldConfig = GlobalConfig.snowy.getConfig("playfield")
     val width           = playfieldConfig.getInt("width")
     val height          = playfieldConfig.getInt("height")
     new Playfield(Vec2d(width, height))
@@ -21,7 +21,6 @@ trait GameState { self: GameControl =>
   val users                 = mutable.Map[ClientId, User]()
   val sledMap               = mutable.Map[ClientId, SledId]()
   val pendingControls       = new PendingControls
-  val gameStateImplicits    = new GameStateImplicits(this)
 
   val sleds                 = new Sleds(playfield)
   val snowballs             = new Snowballs(playfield)
@@ -30,6 +29,8 @@ trait GameState { self: GameControl =>
 
   val motion                = new GameMotion(playfield)
   val sledTree              = new SledTree(playfield)
+
+  val gameStateImplicits    = new GameStateImplicits(this)
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
