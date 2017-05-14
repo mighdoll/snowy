@@ -86,29 +86,25 @@ object CreateTree {
       leaveN.position.y = leaveHeight
       branch.position.y = leaveHeight
 
-      if (math.random() > 0.5) {
-        leaveN.position.z = offsetFromBranch
-        leaveN.position.x = offsetFromTrunk
+      val branchAxis = math.random() > 0.5
+      val oppositeVec =
+        if (branchAxis) new THREE.Vector3(0, 0, 1) else new THREE.Vector3(1, 0, 0)
+      val axisVec =
+        if (!branchAxis) new THREE.Vector3(0, 0, 1) else new THREE.Vector3(1, 0, 0)
 
-        branch.scale.x = math.abs(offsetFromTrunk) / 2
+      leaveN.position.add(oppositeVec.clone().multiplyScalar(offsetFromBranch))
+      leaveN.position.add(axisVec.clone().multiplyScalar(offsetFromTrunk))
 
-        branch.position.x = offsetFromTrunk / 2
-        tree.add(branch)
-      } else {
-        leaveN.position.x = offsetFromBranch
-        leaveN.position.z = offsetFromTrunk
+      branch.scale.add(axisVec.clone().multiplyScalar(math.abs(offsetFromTrunk) / 2))
+      branch.position.add(axisVec.clone().multiplyScalar(offsetFromTrunk / 2))
 
-        branch.scale.z = math.abs(offsetFromTrunk) / 2
-
-        branch.position.z = offsetFromTrunk / 2
-        tree.add(branch)
-      }
       snowOnLeaf.position.set(
         leaveN.position.x,
         leaveHeight + size / 2,
         leaveN.position.z
       )
 
+      tree.add(branch)
       tree.add(leaveN)
       tree.add(snowOnLeaf)
     }
