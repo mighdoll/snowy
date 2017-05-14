@@ -23,7 +23,7 @@ class GameHealth(state: GameState) {
     def expired(snowball: Snowball): Boolean =
       now > snowball.spawned + snowball.lifetime * 1000
 
-    for { oldBall <- state.snowballs.filter(expired) } yield {
+    for { oldBall <- state.snowballs.items.filter(expired) } yield {
       oldBall.remove()
       oldBall.id
     }

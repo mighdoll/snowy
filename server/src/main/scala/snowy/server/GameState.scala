@@ -20,13 +20,12 @@ trait GameState { self: GameControl =>
   }
   private val gridSpacing   = 100.0
   implicit val sledGrid     = new Grid[Sled](playfield.size, gridSpacing)
-  implicit val snowballGrid = new Grid[Snowball](playfield.size, gridSpacing)
   val users                 = mutable.Map[ClientId, User]()
   val sledMap               = mutable.Map[ClientId, SledId]()
   val pendingControls       = new PendingControls
   val gameStateImplicits    = new GameStateImplicits(this)
   val sleds                 = mutable.HashSet[Sled]()
-  val snowballs             = mutable.HashSet[Snowball]()
+  val snowballs             = new Snowballs(playfield)
   val trees                 = new Trees(playfield)
   val powerUps              = new PowerUps(playfield)
   val motion                = new GameMotion(playfield)
@@ -34,7 +33,7 @@ trait GameState { self: GameControl =>
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
-    State(gameTurns.gameTime, sleds.toSeq, snowballs.toSeq)
+    State(gameTurns.gameTime, sleds.toSeq, snowballs.items.toSeq)
   }
 
   def debugVerifyGridState(): Unit = {
@@ -45,8 +44,8 @@ trait GameState { self: GameControl =>
       logger.error(s"sledSet:     $sledSet")
       logger.error(s"sledGridSet: $sledGridSet")
     }
-    val snowballSet     = snowballs.toSet
-    val snowballGridSet = snowballGrid.items
+    val snowballSet     = snowballs.items.toSet
+    val snowballGridSet = snowballs.grid.items
     if (snowballSet != snowballGridSet) {
       logger.error("snowballSet != snowballGridSet")
       logger.error(s"snowballSet:     $snowballSet")

@@ -54,7 +54,7 @@ object InternalRobotState {
     RobotGameState(
       mySledId = sledId,
       allSleds = state.sleds,
-      snowballs = state.snowballs,
+      snowballs = state.snowballs.items,
       trees = state.trees.items,
       playfield = state.playfield.size
     )

@@ -26,10 +26,10 @@ class GameStateImplicits(state: GameState) {
     def sled: Option[Sled] = state.sledMap.get(id).flatMap(_.sled)
   }
 
-  implicit class SnowballOps(val snowball:Snowball) {
+  implicit class SnowballOps(val snowball: Snowball) {
     def remove(): Unit = {
-      state.snowballGrid.remove(snowball)
-      state.snowballs.remove(snowball)
+      state.snowballs.grid.remove(snowball)
+      state.snowballs.items.remove(snowball)
     }
   }
 
@@ -47,4 +47,8 @@ class GameStateImplicits(state: GameState) {
       state.sleds.remove(sled)
     }
   }
+
+  implicit def snowballGrid = state.snowballs.grid
+  implicit def treeGrid = state.trees.grid
+  implicit def sledGrid = state.sledGrid
 }

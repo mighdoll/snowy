@@ -11,10 +11,10 @@ import snowy.util.Span
 import snowy.util.Span.{time, timeSpan}
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
-  val gameHealth         = new GameHealth(state)
-  val gameStateImplicits = new GameStateImplicits(state)
   var gameTime           = System.currentTimeMillis()
   var lastGameTime       = gameTime - tickDelta.toMillis
+  val gameHealth         = new GameHealth(state)
+  val gameStateImplicits = new GameStateImplicits(state)
   import gameStateImplicits._
 
   /** advance to the next game time
@@ -30,15 +30,13 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
                         deadSnowBalls: Traversable[BallId])
 
   /** Called to update game state on a regular timer */
-  def turn(deltaSeconds: Double)(implicit snowballTracker: PlayfieldTracker[Snowball],
-                                 sledTracker: PlayfieldTracker[Sled],
-                                 span: Span): TurnDeaths =
+  def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnDeaths =
     timeSpan("GameTurn.turn") { turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
 
       turnSpan.time("GameTurn.moveSnowballs") {
-        state.motion.moveSnowballs(state.snowballs, deltaSeconds)
+        state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
 
       val moveAwards = turnSpan.time("GameTurn.moveSleds") {
@@ -66,7 +64,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
       CollideThings.collideCollectionWithGrid(
         state.sleds,
-        state.snowballGrid
+        state.snowballs.grid
       )
 
     val deadBalls: Traversable[Snowball] =
@@ -77,7 +75,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     // collide snowballs with trees
     val snowballTreeDeaths =
       for {
-        snowball <- state.snowballs
+        snowball <- state.snowballs.items
         nearTrees = state.trees.grid.inside(snowball.boundingBox)
         if snowballTrees(snowball, nearTrees)
       } yield snowball
@@ -89,7 +87,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     // collide snowballs with each other
     val snowballDeaths =
       CollideThings
-        .collideCollection(state.snowballs, state.snowballGrid)
+        .collideCollection(state.snowballs.items, state.snowballs.grid)
         .map(_.killed)
         .toSet
 
