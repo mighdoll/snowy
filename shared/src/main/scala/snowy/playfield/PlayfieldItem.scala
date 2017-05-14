@@ -19,9 +19,10 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
     tracker.add(this)
   }
 
-  def setInitialPosition(pos: Vec2d)(implicit tracker: PlayfieldTracker[A]): Unit = {
+  def setInitialPosition(pos: Vec2d)(implicit tracker: PlayfieldTracker[A]): A = {
     internalPosition = pos
     tracker.add(this)
+    this
   }
 
   def canEqual(a: Any): Boolean = a.isInstanceOf[PlayfieldItem[A]]

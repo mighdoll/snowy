@@ -78,7 +78,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     val snowballTreeDeaths =
       for {
         snowball <- state.snowballs
-        nearTrees = state.treeGrid.inside(snowball.boundingBox)
+        nearTrees = state.trees.grid.inside(snowball.boundingBox)
         if snowballTrees(snowball, nearTrees)
       } yield snowball
 
@@ -98,7 +98,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     // collide sleds with trees
     for {
       sled <- state.sleds
-      nearTrees = state.treeGrid.inside(sled.boundingBox)
+      nearTrees = state.trees.grid.inside(sled.boundingBox)
     } state.sledTree.collide(sled, nearTrees)
 
     // collide sleds with each other

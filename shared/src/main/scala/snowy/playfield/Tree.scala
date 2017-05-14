@@ -6,9 +6,7 @@ import vector.Vec2d
 
 object Tree {
   def apply(initialPosition: Vec2d)(implicit tracker: PlayfieldTracker[Tree]): Tree = {
-    val tree = new Tree()
-    tree.setInitialPosition(initialPosition)
-    tree
+    new Tree().setInitialPosition(initialPosition)
   }
 }
 

@@ -13,8 +13,7 @@ class PowerUps(protected val playfield: Playfield) extends GridItems[PowerUp] {
   private def initialPowerUps(): Set[PowerUp] = {
     (1 to targetCount).map { _ =>
       val powerUp = new HealthPowerUp()
-      powerUp.position = playfield.randomSpot()
-      powerUp
+      powerUp.setInitialPosition(playfield.randomSpot())
     }.toSet
   }
 }

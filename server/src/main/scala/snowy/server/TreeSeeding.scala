@@ -8,7 +8,7 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 
 /** Utilities for putting game objects in random places on the field */
-class GameSeeding(playfield:Playfield) extends StrictLogging {
+class TreeSeeding(playfield: Playfield) extends StrictLogging {
 
   /** Initialize a set of playfield obstacles */
   def randomTrees()(implicit tracker: PlayfieldTracker[Tree]): Set[Tree] = {
@@ -75,7 +75,6 @@ class GameSeeding(playfield:Playfield) extends StrictLogging {
     }
     forest.flatten.toSet
   }
-
 
   /** @return true if the two trees overlap visually on the screen */
   private def treesOverlap(a: Tree, b: Tree): Boolean = {

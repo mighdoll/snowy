@@ -26,7 +26,6 @@ object Sled {
       health = kind.maxHealth
     )
     sled.setInitialPosition(initialPosition)
-    sled
   }
 }
 
