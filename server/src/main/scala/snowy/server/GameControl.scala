@@ -327,7 +327,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       initialPosition = playfield.randomSpot(),
       kind = sledKind,
       color = color
-    )(gameStateImplicits.sledGrid)  // SCALA shouldn't this be available already?
+    )
   }
 
   /** Called when a user sends her name and starts in the game */
