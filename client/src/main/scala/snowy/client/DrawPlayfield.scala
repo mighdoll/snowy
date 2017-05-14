@@ -69,7 +69,7 @@ object DrawPlayfield {
   }
 }
 
-class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds) {
+class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds, val threeSnowballs: ThreeSnowballs) {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
@@ -94,7 +94,7 @@ class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds) {
     scene.add(CreateGrid.newGrid())
 
     scene.add(ThreeTrees.treeGroup.group)
-    scene.add(ThreeSnowballs.snowballGroup.group)
+    scene.add(threeSnowballs.snowballGroup.group)
     scene.add(threeSleds.sledGroup.group)
   }
 
@@ -109,7 +109,7 @@ class DrawPlayfield(renderer: WebGLRenderer, val threeSleds: ThreeSleds) {
     stats.begin()
     val myPos = new Vector3(mySled.position.x, 0, mySled.position.y)
     ThreeTrees.updateThreeTrees(trees, myPos)
-    ThreeSnowballs.updateThreeSnowballs(snowballs, myPos)
+    threeSnowballs.updateThreeSnowballs(snowballs, myPos)
     threeSleds.updateThreeSleds(sleds, mySled)
 
     camera.position.set(myPos.x, 1200, myPos.z + 400)

@@ -6,7 +6,6 @@ import org.scalajs.dom.{document, window}
 import snowy.GameClientProtocol.Scoreboard
 import snowy.client.login.LoginScreen
 import snowy.connection.GameState
-import snowy.draw.ThreeSleds
 import snowy.playfield.{SkiColor, SledKind}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -14,17 +13,17 @@ import scala.concurrent.{Future, Promise}
 import scala.scalajs.js.{Dynamic, JSApp}
 
 object ClientMain extends JSApp {
-  val loadedGeometry            = new LoadedGeometries()
+  val loadedGeometry            = new GeometryLoader()
   var gameScreenActive: Boolean = false
 
   private val promisedConnection                            = Promise[Connection]()
   private val renderer                                      = createRenderer()
-  private val loginScreen                                   = new LoginScreen(renderer, loadedGeometry.threeSledsFuture)
+  private val loginScreen                                   = new LoginScreen(renderer, loadedGeometry.threeGroupsFuture.map(_.threeSleds))
   private var drawPlayfieldOpt: Option[DrawPlayfield]       = None
   private var gameStateOpt: Option[GameState]               = None
   private var updateScoreboardOpt: Option[UpdateScoreboard] = None
 
-  loadedGeometry.threeSledsFuture.foreach(initializeGame)
+  loadedGeometry.threeGroupsFuture.foreach(initializeGame)
 
   def getWidth(): Double   = window.innerWidth
   def getHeight(): Double  = window.innerHeight
@@ -48,8 +47,8 @@ object ClientMain extends JSApp {
   def main(): Unit = {}
 
   // Wait until geometries and threesleds are loaded, then initialize the game variables
-  def initializeGame(threeSleds: ThreeSleds): Unit = {
-    val drawPlayfield    = new DrawPlayfield(renderer, threeSleds)
+  def initializeGame(geometries: LoadedGeometries): Unit = {
+    val drawPlayfield    = new DrawPlayfield(renderer, geometries.threeSleds, geometries.threeSnowballs)
     val gameState        = new GameState(drawPlayfield)
     val updateScoreboard = new UpdateScoreboard(gameState)
 

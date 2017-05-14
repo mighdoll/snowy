@@ -116,12 +116,12 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   def removeSleds(removedIds: Seq[SledId]): Unit = {
     removeById[Sled](removedIds, serverSleds)
-    ClientMain.loadedGeometry.threeSledsFuture.foreach(_.removeSleds(removedIds))
+    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threeSleds.removeSleds(removedIds))
   }
 
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {
     removeById[Snowball](removedIds, serverSnowballs)
-    ThreeSnowballs.removeSnowballs(removedIds)
+    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threeSnowballs.removeSnowballs(removedIds))
   }
 
   /** remove a collection of sled or snowballs from from the store */

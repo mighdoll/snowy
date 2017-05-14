@@ -10,8 +10,7 @@ import vector.Vec2d
 
 import scala.scalajs.js.Dynamic
 
-object ThreeSnowballs {
-  val snowballGeo = new THREE.BoxGeometry(2, 2, 2)
+class ThreeSnowballs(snowballGeo: THREE.Geometry) {
   val snowballMat = new THREE.MeshLambertMaterial(
     Dynamic
       .literal(color = 0x1878f0)
