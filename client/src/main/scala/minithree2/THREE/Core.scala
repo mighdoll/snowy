@@ -1,5 +1,7 @@
 package minithree2.THREE
 
+import org.scalajs.dom.raw.Event
+
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 import scala.scalajs.js.typedarray.ArrayBuffer
@@ -11,8 +13,8 @@ import scala.scalajs.js.|
 // TODO: Should this be @ScalaJSDefined
 @ScalaJSDefined
 trait UpdateRangeParameters extends js.Object {
-  val offset: js.UndefOr[Int] = js.undefined
-  val count: js.UndefOr[Int]  = js.undefined
+  val offset: Int
+  val count: Int
 }
 
 @js.native
@@ -21,103 +23,124 @@ class BufferAttribute(var array: ArrayBuffer,
                       var itemSize: Int,
                       var normalized: js.UndefOr[Boolean])
     extends js.Object {
-  var count: Int                                                        = js.native
-  var dynamic: Boolean                                                  = js.native
-  var isBufferAttribute: Boolean                                        = js.native
-  var needsUpdate: Boolean                                              = js.native
-  var onUploadCallback: js.Function                                     = js.native
-  var updateRange: UpdateRangeParameters                                = js.native
-  var uuid: String                                                      = js.native
-  var version: Int                                                      = js.native
-  override def clone(): BufferAttribute                                 = js.native
-  def copyArray(array: js.Array[Double] | ArrayBuffer): BufferAttribute = js.native
-  def copyAt(index1: Int, bufferAttribute: BufferAttribute, index2: Int): Unit =
+  var uuid: String                       = js.native
+  var dynamic: Boolean                   = js.native
+  var updateRange: UpdateRangeParameters = js.native
+  var version: Int                       = js.native
+  var needsUpdate: Boolean               = js.native
+  var count: Int                         = js.native
+
+  def setDynamic(value: Boolean): BufferAttribute    = js.native
+  override def clone(): BufferAttribute              = js.native
+  def copy(source: BufferAttribute): BufferAttribute = js.native
+  def copyAt(index1: Int,
+             bufferAttribute: BufferAttribute,
+             index2: Int): BufferAttribute                                 = js.native
+  def copyArray(array: ArrayBuffer): BufferAttribute                       = js.native
+  def copyColorsArray(colors: js.Array[Color]): BufferAttribute            = js.native
+  def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute          = js.native
+  def copyVector2sArray(vectors: js.Array[Vector2]): BufferAttribute       = js.native
+  def copyVector3sArray(vectors: js.Array[Vector3]): BufferAttribute       = js.native
+  def copyVector4sArray(vectors: js.Array[Vector4]): BufferAttribute       = js.native
+  def set(value: js.Array[Double], offset: Int): Unit                      = js.native
+  def getX(index: Int): Double                                             = js.native
+  def setX(index: Int, x: Double): BufferAttribute                         = js.native
+  def getY(index: Int): Double                                             = js.native
+  def setY(index: Int, y: Double): BufferAttribute                         = js.native
+  def getZ(index: Int): Double                                             = js.native
+  def setZ(index: Int, z: Double): BufferAttribute                         = js.native
+  def getW(index: Int): Double                                             = js.native
+  def setW(index: Int, w: Double): BufferAttribute                         = js.native
+  def setXY(index: Int, x: Double, y: Double): BufferAttribute             = js.native
+  def setXYZ(index: Int, x: Double, y: Double, z: Double): BufferAttribute = js.native
+  def setXYZW(index: Int, x: Double, y: Double, z: Double, w: Double): BufferAttribute =
     js.native
-  def copyColorsArray(colors: js.Array[Color]): BufferAttribute             = js.native
-  def copyIndicesArray(indices: js.Array[Face3]): BufferAttribute           = js.native
-  def copyVector2sArray(vectors: js.Array[Vector2]): BufferAttribute        = js.native
-  def copyVector3sArray(vectors: js.Array[Vector3]): BufferAttribute        = js.native
-  def copyVector4sArray(vectors: js.Array[Vector4]): BufferAttribute        = js.native
-  def getX(index: Int): Double                                              = js.native
-  def getY(index: Int): Double                                              = js.native
-  def getZ(index: Int): Double                                              = js.native
-  def getW(index: Int): Double                                              = js.native
-  def onUpload(callback: js.Function): Unit                                 = js.native
-  def set(value: js.Array[Double], offset: Int): Unit                       = js.native
-  def setArray(array: ArrayBuffer): Unit                                    = js.native
-  def setDynamic(value: Boolean): BufferAttribute                           = js.native
-  def setX(index: Int, x: Double): Unit                                     = js.native
-  def setY(index: Int, y: Double): Unit                                     = js.native
-  def setZ(index: Int, z: Double): Unit                                     = js.native
-  def setW(index: Int, w: Double): Unit                                     = js.native
-  def setXY(index: Int, x: Double, y: Double): Unit                         = js.native
-  def setXYZ(index: Int, x: Double, y: Double, z: Double): Unit             = js.native
-  def setXYZW(index: Int, x: Double, y: Double, z: Double, w: Double): Unit = js.native
 }
 
 @ScalaJSDefined
 trait DrawRangeParameters extends js.Object {
-  val start: js.UndefOr[Int] = js.undefined
-  val count: js.UndefOr[Int] = js.undefined
+  val start: Int
+  val count: Int
 }
 
 @ScalaJSDefined
 trait GroupsParameters extends js.Object {
-  val start: js.UndefOr[Int]         = js.undefined
-  val count: js.UndefOr[Int]         = js.undefined
-  val materialIndex: js.UndefOr[Int] = js.undefined
+  val start: Int
+  val count: Int
+  val materialIndex: js.UndefOr[Int]
 }
 
 @js.native
 @JSGlobal("THREE.BufferGeometry")
 class BufferGeometry extends js.Object with EventDispatcher {
-  var attributes: js.Object                                        = js.native
-  var boundingBox: Box3                                            = js.native
-  var boundingSphere: Sphere                                       = js.native
-  var drawRange: DrawRangeParameters                               = js.native
-  var groups: GroupsParameters                                     = js.native
-  var id: Int                                                      = js.native
-  var index: BufferAttribute                                       = js.native
-  var isBufferGeometry: Boolean                                    = js.native
-  var MaxIndex: Int                                                = js.native
-  var morphAttributes: js.Object                                   = js.native
-  var name: String                                                 = js.native
-  var uuid: String                                                 = js.native
-  def addAttribute(name: String, attribute: BufferAttribute): Unit = js.native
-  def addGroup(start: Int, count: Int, materialIndex: Int): Unit   = js.native
-  def applyMatrix(matrix: Matrix4): Unit                           = js.native
-  def center(): Unit                                               = js.native
-  override def clone(): BufferGeometry                             = js.native
-  def copy(bufferGeometry: BufferGeometry): BufferGeometry         = js.native
-  def clearGroups(): Unit                                          = js.native
-  def computeBoundingBox(): Unit                                   = js.native
-  def computeBoundingSphere(): Unit                                = js.native
-  def computeVertexNormals(): Unit                                 = js.native
-  def dispose(): Unit                                              = js.native
-  def fromDirectGeometry(Geometry: Geometry): BufferGeometry       = js.native
-  def fromGeometry(Geometry: Geometry): BufferGeometry             = js.native
-  def getAttribute(name: String): BufferAttribute                  = js.native
-  def getIndex(): BufferAttribute                                  = js.native
-  def lookAt(vector: Vector3): BufferGeometry                      = js.native
-  def merge(bufferGeometry: BufferGeometry, offset: Int): Unit     = js.native
-  def normalizeNormals(): Unit                                     = js.native
-  def removeAttribute(name: String): BufferAttribute               = js.native
-  def rotateX(radians: Float): BufferGeometry                      = js.native
-  def rotateY(radians: Float): BufferGeometry                      = js.native
-  def rotateZ(radians: Float): BufferGeometry                      = js.native
-  def scale(x: Float, y: Float, z: Float): BufferGeometry          = js.native
-  def setIndex(index: BufferAttribute): Unit                       = js.native
-  def setDrawRange(start: Int, count: Int): Unit                   = js.native
-  def setFromObject(`object`: Object3D): BufferGeometry            = js.native
-  def toJSON(): js.Object                                          = js.native
-  def toNonIndexed(): BufferGeometry                               = js.native
-  def translate(x: Float, y: Float, z: Float): BufferGeometry      = js.native
-  def updateFromObject(`object`: Object3D): BufferGeometry         = js.native
+  val MaxIndex: Int = js.native
+
+  var id: Int                                                            = js.native
+  var uuid: String                                                       = js.native
+  var name: String                                                       = js.native
+  var `type`: String                                                     = js.native
+  var index: BufferAttribute                                             = js.native
+  var attributes: BufferAttribute | js.Array[InterleavedBufferAttribute] = js.native
+  var morphAttributes: js.Any                                            = js.native
+  var groups: js.Array[GroupsParameters]                                 = js.native
+  var boundingBox: Box3                                                  = js.native
+  var boundingSphere: Sphere                                             = js.native
+  var drawRange: DrawRangeParameters                                     = js.native
+
+  def getIndex(): BufferAttribute            = js.native
+  def setIndex(index: BufferAttribute): Unit = js.native
+
+  def addAttribute(
+        name: String,
+        attribute: BufferAttribute | InterleavedBufferAttribute
+  ): BufferGeometry = js.native
+
+  def getAttribute(name: String): BufferAttribute    = js.native
+  def removeAttribute(name: String): BufferAttribute = js.native
+
+  def addGroup(start: Int, count: Int, materialIndex: Int): Unit = js.native
+  def clearGroups(): Unit                                        = js.native
+
+  def setDrawRange(start: Int, count: Int): Unit = js.native
+
+  def applyMatrix(matrix: Matrix4): Unit = js.native
+
+  def rotateX(angle: Float): BufferGeometry                   = js.native
+  def rotateY(angle: Float): BufferGeometry                   = js.native
+  def rotateZ(angle: Float): BufferGeometry                   = js.native
+  def translate(x: Float, y: Float, z: Float): BufferGeometry = js.native
+  def scale(x: Float, y: Float, z: Float): BufferGeometry     = js.native
+  def lookAt(vector: Vector3): BufferGeometry                 = js.native
+
+  def center(): Vector3 = js.native
+
+  def setFromObject(`object`: Object3D): BufferGeometry    = js.native
+  def updateFromObject(`object`: Object3D): BufferGeometry = js.native
+
+  def fromGeometry(Geometry: Geometry): BufferGeometry = js.native
+
+  def fromDirectGeometry(Geometry: Geometry): BufferGeometry = js.native
+
+  def computeBoundingBox(): Unit    = js.native
+  def computeBoundingSphere(): Unit = js.native
+  def computeVertexNormals(): Unit  = js.native
+
+  def merge(bufferGeometry: BufferGeometry, offset: Int): BufferGeometry = js.native
+  def normalizeNormals(): Unit                                           = js.native
+
+  def toNonIndexed(): BufferGeometry = js.native
+
+  def toJSON(): js.Object = js.native
+
+  override def clone(): BufferGeometry                     = js.native
+  def copy(bufferGeometry: BufferGeometry): BufferGeometry = js.native
+
+  def dispose(): Unit = js.native
 }
 
 @js.native
 @JSGlobal("THREE.Clock")
-class Clock(autoStart: js.UndefOr[Boolean]) extends js.Object {
+class Clock(var autoStart: js.UndefOr[Boolean] = js.native) extends js.Object {
   val startTime: Float        = js.native
   val oldTime: Float          = js.native
   val elapsedTime: Float      = js.native
@@ -129,21 +152,56 @@ class Clock(autoStart: js.UndefOr[Boolean]) extends js.Object {
 }
 
 @js.native
+@JSGlobal("THREE.DirectGeometry")
+class DirectGeometry extends js.Object with EventDispatcher {
+  var id: Int                            = js.native
+  var uuid: String                       = js.native
+  var name: String                       = js.native
+  var `type`: String                     = js.native
+  var indices: js.Array[Int]             = js.native
+  var vertices: js.Array[Vector3]        = js.native
+  var normals: js.Array[Vector3]         = js.native
+  var colors: js.Array[Color]            = js.native
+  var uvs: js.Array[Vector2]             = js.native
+  var uvs2: js.Array[Vector2]            = js.native
+  var groups: js.Array[GroupsParameters] = js.native
+  //var morphTargets: js.Array[MorphTarget] = js.native
+  var skinWeights: js.Array[Double] = js.native
+  var skinIndices: js.Array[Int]    = js.native
+  var boundingBox: Box3             = js.native
+  var boundingSphere: Sphere        = js.native
+  var verticesNeedUpdate: Boolean   = js.native
+  var normalsNeedUpdate: Boolean    = js.native
+  var colorsNeedUpdate: Boolean     = js.native
+  var uvsNeedUpdate: Boolean        = js.native
+  var groupsNeedUpdate: Boolean     = js.native
+
+  def computeBoundingBox(): Unit                       = js.native
+  def computeBoundingSphere(): Unit                    = js.native
+  def computeGroups(geometry: Geometry): Unit          = js.native
+  def fromGeometry(geometry: Geometry): DirectGeometry = js.native
+  def dispose(): Unit                                  = js.native
+}
+
+@js.native
 trait EventDispatcher extends js.Object {
-  def addEventListener(`type`: String, listener: js.Function): Unit    = js.native
-  def hasEventListener(`type`: String, listener: js.Function): Boolean = js.native
-  def removeEventListener(`type`: String, listener: js.Function): Unit = js.native
-  def dispatchEvent(event: js.Object): Unit                            = js.native
+  def addEventListener(`type`: String, listener: js.Function1[Event, _]): Unit =
+    js.native
+  def hasEventListener(`type`: String, listener: js.Function1[Event, _]): Boolean =
+    js.native
+  def removeEventListener(`type`: String, listener: js.Function1[Event, _]): Unit =
+    js.native
+  def dispatchEvent(event: js.Object): Unit = js.native
 }
 
 @js.native
 @JSGlobal("THREE.Face3")
-class Face3(a: Int,
-            b: Int,
-            c: Int,
-            normal: js.UndefOr[Vector3],
-            color: js.UndefOr[Color],
-            materialIndex: js.UndefOr[Int])
+class Face3(var a: Int,
+            var b: Int,
+            var c: Int,
+            normal: js.UndefOr[Vector3 | js.Array[Vector3]] = js.native,
+            color: js.UndefOr[Color | js.Array[Color]] = js.native,
+            materialIndex: js.UndefOr[Int] = js.native)
     extends js.Object {
   val vertexNormals: js.Array[Vector3] = js.native
   val vertexColors: js.Array[Color]    = js.native
@@ -375,16 +433,35 @@ trait RaycasterParameters extends js.Object {
   val Sprite: js.UndefOr[js.Object] = js.undefined
 }
 
+@ScalaJSDefined
+trait Intersection extends js.Object {
+  val distance: js.UndefOr[Double]      = js.undefined
+  val distanceToRay: js.UndefOr[Double] = js.undefined
+  val point: js.UndefOr[Vector3]        = js.undefined
+  val index: js.UndefOr[Int]            = js.undefined
+  val face: js.UndefOr[Face3]           = js.undefined
+  val faceIndex: js.UndefOr[Int]        = js.undefined
+  val `object`: js.UndefOr[Object3D]    = js.undefined
+}
+
 @js.native
 @JSGlobal("THREE.Raycaster")
-class Raycaster(origin: Vector3,
-                direction: Vector3,
-                var near: Float = js.native,
-                var far: Float = js.native)
+class Raycaster(origin: js.UndefOr[Vector3],
+                direction: js.UndefOr[Vector3],
+                var near: js.UndefOr[Float] = js.native,
+                var far: js.UndefOr[Float] = js.native)
     extends js.Object {
-  var linePrecision: Float        = js.native
-  var params: RaycasterParameters = js.native
-  var ray: Ray                    = js.native
+  var linePrecision: Float                           = js.native
+  var params: RaycasterParameters                    = js.native
+  var ray: Ray                                       = js.native
+  def set(origin: Vector3, direction: Vector3): Unit = js.native
+  //def setFromCamera(coords: Vector2, camera: Camera): Unit = js.native
+  def intersectObject(`object`: Object3D,
+                      recursive: js.UndefOr[Boolean]): js.Array[Intersection] = js.native
+  def intersectObjects(objects: js.Array[Object3D],
+                       recursive: js.UndefOr[Boolean]): js.Array[Intersection] =
+    js.native
+
 }
 
 @js.native
