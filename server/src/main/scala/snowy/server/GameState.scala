@@ -30,6 +30,7 @@ trait GameState { self: GameControl =>
   val trees: Set[Tree]      = gameSeeding.randomTrees()
   val sleds                 = mutable.HashSet[Sled]()
   val snowballs             = mutable.HashSet[Snowball]()
+  val powerUps              = new PowerUps(playfield)
   val motion                = new GameMotion(playfield)
   val sledTree              = new SledTree(playfield)
 

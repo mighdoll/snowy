@@ -325,7 +325,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
-      initialPosition = gameSeeding.randomSpot(),
+      initialPosition = playfield.randomSpot(),
       kind = sledKind,
       color = color
     )

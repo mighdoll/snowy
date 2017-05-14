@@ -1,5 +1,6 @@
 package snowy.playfield
 
+import java.util.concurrent.ThreadLocalRandom
 import vector.Vec2d
 import snowy.playfield.Playfield._
 
@@ -34,6 +35,15 @@ class Playfield(val size:Vec2d) {
     Vec2d(
       wrapBorder(pos.x, size.x),
       wrapBorder(pos.y, size.y)
+    )
+  }
+
+  /** pick a random spot on the playfield */
+  def randomSpot(): Vec2d = {
+    val random = ThreadLocalRandom.current
+    Vec2d(
+      random.nextInt(size.x.toInt),
+      random.nextInt(size.y.toInt)
     )
   }
 }

@@ -22,8 +22,9 @@ object GameMotion {
     override val rotationSign = -1
   }
 }
+
 /** Moving objects in each game time slice */
-class GameMotion(playfield:Playfield) {
+class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
   def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
@@ -48,7 +49,6 @@ class GameMotion(playfield:Playfield) {
     }
   }
 
-
   /** Rotate a sled at a rate controlled by GameConstants.turnTime
     *
     * @return a rotated sled instance
@@ -65,7 +65,6 @@ class GameMotion(playfield:Playfield) {
       else rotation
     sled.turretRotation = wrappedRotation
   }
-
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
   private def updateSledSpeedVector(sleds: Traversable[Sled],

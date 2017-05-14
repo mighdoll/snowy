@@ -64,26 +64,18 @@ class GameSeeding(playfield:Playfield) extends StrictLogging {
         forest(clump) += tree
       } else {
         forest += mutable.Buffer(nonOverlapping {
-          Tree(randomSpot())
+          Tree(playfield.randomSpot())
         })
       }
     }
     (0 to numTrees).foreach { _ =>
       forest += mutable.Buffer(nonOverlapping {
-        Tree(randomSpot())
+        Tree(playfield.randomSpot())
       })
     }
     forest.flatten.toSet
   }
 
-  /** pick a random spot on the playfield */
-  def randomSpot(): Vec2d = {
-    val random = ThreadLocalRandom.current
-    Vec2d(
-      random.nextInt(playfield.size.x.toInt),
-      random.nextInt(playfield.size.y.toInt)
-    )
-  }
 
   /** @return true if the two trees overlap visually on the screen */
   private def treesOverlap(a: Tree, b: Tree): Boolean = {
