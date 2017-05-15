@@ -6,7 +6,7 @@ import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants
 import snowy.client.ClientMain.{getHeight, getWidth}
-import snowy.draw.{CreateGrid, ThreeSleds, ThreeSnowballs, ThreeTrees}
+import snowy.draw._
 import snowy.playfield._
 import vector.Vec2d
 
@@ -29,14 +29,15 @@ class UpdateGroup[A](val group: Object3D) {
 }
 
 object DrawPlayfield {
-
+  val playfieldSize =
+    new Vector3(GameConstants.oldPlayfieldSize.x, 0, GameConstants.oldPlayfieldSize.y)
   def setThreePosition(obj: Object3D,
                        playfieldItem: PlayfieldItem[_],
                        myPos: Vector3): Unit = {
     val newPos = playfieldWrap(
       new Vector3(playfieldItem.position.x, 0, playfieldItem.position.y),
       myPos,
-      new Vector3(GameConstants.oldPlayfieldSize.x, 0, GameConstants.oldPlayfieldSize.y)
+      playfieldSize
     )
     obj.position.x = newPos.x
     obj.position.z = newPos.z
@@ -71,7 +72,8 @@ object DrawPlayfield {
 
 class DrawPlayfield(renderer: WebGLRenderer,
                     val threeSleds: ThreeSleds,
-                    val threeSnowballs: ThreeSnowballs) {
+                    val threeSnowballs: ThreeSnowballs,
+                    val threePowerups: ThreePowerups) {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
@@ -95,6 +97,7 @@ class DrawPlayfield(renderer: WebGLRenderer,
     scene.add(ThreeTrees.treeGroup.group)
     scene.add(threeSnowballs.snowballGroup.group)
     scene.add(threeSleds.sledGroup.group)
+    scene.add(threePowerups.powerupGroup.group)
   }
 
   setup()
@@ -110,6 +113,7 @@ class DrawPlayfield(renderer: WebGLRenderer,
     ThreeTrees.updateThreeTrees(trees, myPos)
     threeSnowballs.updateThreeSnowballs(snowballs, myPos)
     threeSleds.updateThreeSleds(sleds, mySled)
+    threePowerups.wrapThreePowerups(myPos)
 
     camera.position.set(myPos.x, 1000, myPos.z + 300)
     camera.lookAt(myPos)

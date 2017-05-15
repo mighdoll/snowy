@@ -126,12 +126,14 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   def removePowerUps(removedIds: Seq[PowerUpId]): Unit = {
     removeById(removedIds, serverPowerUps)
-    // TODO remove three powerUps
+    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threePowerups.removePowerup(removedIds))
   }
 
   def addPowerUps(newUps: Seq[PowerUp]): Unit = {
     serverPowerUps ++= newUps
-    // TODO dd three powerUps
+    ClientMain.loadedGeometry.threeGroupsFuture.foreach { group =>
+      newUps.foreach(group.threePowerups.addPowerup)
+    }
   }
 
   /** remove a collection of sled or snowballs from from the store */

@@ -48,7 +48,7 @@ object ClientMain extends JSApp {
 
   // Wait until geometries and threesleds are loaded, then initialize the game variables
   def initializeGame(geometries: LoadedGeometries): Unit = {
-    val drawPlayfield    = new DrawPlayfield(renderer, geometries.threeSleds, geometries.threeSnowballs)
+    val drawPlayfield    = new DrawPlayfield(renderer, geometries.threeSleds, geometries.threeSnowballs, geometries.threePowerups)
     val gameState        = new GameState(drawPlayfield)
     val updateScoreboard = new UpdateScoreboard(gameState)
 
