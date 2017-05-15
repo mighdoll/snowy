@@ -1,6 +1,8 @@
 package snowy.playfield
 
-sealed trait PowerUp extends CircularItem[PowerUp] {
+trait InSharedSet
+
+sealed trait PowerUp extends CircularItem[PowerUp] with InSharedSet {
 
   def radius: Double = 5
 

@@ -54,13 +54,13 @@ class InboundEvents(gameState: GameState,
       case ClientPong                     => // currently used only by the load test client
       case GameTime(time, oneWayDelay)    => updateClock(time, oneWayDelay)
       case MySled(sledId)                 => gameState.mySledId = Some(sledId)
-      case SnowballDeaths(balls)          => gameState.removeSnowballs(balls)
-      case SledDeaths(sleds)              => gameState.removeSleds(sleds)
-      case AddPowerUps(ids)               => gameState.addPowerUps(ids)
-      case RemovePowerUps(ids)            => gameState.removePowerUps(ids)
-      case RemoveSleds(ids)               => gameState.removeSleds(ids)
-      case RemoveSnowballs(ids)           => gameState.removeSnowballs(ids)
-      case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
+      case SnowballDeaths(balls)     => gameState.removeSnowballs(balls)
+      case SledDeaths(sleds)         => gameState.removeSleds(sleds)
+      case RemovePowerUps(ids)       => gameState.removePowerUps(ids)
+      case RemoveSleds(ids)          => gameState.removeSleds(ids)
+      case RemoveSnowballs(ids)      => gameState.removeSnowballs(ids)
+      case newScoreboard: Scoreboard => ClientMain.updateScoreboard(newScoreboard)
+      case AddItems(items)           => gameState.addPlayfieldItems(items)
     }
   }
 

@@ -18,9 +18,9 @@ case class PlayfieldState(mySled: Sled,
                           playfield: Vec2d)
 
 class GameState(drawPlayfield: DrawPlayfield) {
-  var gPlayField                   = Vec2d(0, 0) // A playfield dummy until the game receives a different one
-  var scoreboard                   = Scoreboard(0, Seq())
-  var mySledId: Option[SledId]     = None
+  var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
+  var scoreboard               = Scoreboard(0, Seq())
+  var mySledId: Option[SledId] = None
   import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
 
   val playfieldAnimation = new Animation(animate)
@@ -116,12 +116,14 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   def removeSleds(removedIds: Seq[SledId]): Unit = {
     removeById[Sled](removedIds, serverSleds)
-    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threeSleds.removeSleds(removedIds))
+    ClientMain.loadedGeometry.threeGroupsFuture
+      .foreach(_.threeSleds.removeSleds(removedIds))
   }
 
   def removeSnowballs(removedIds: Seq[BallId]): Unit = {
     removeById[Snowball](removedIds, serverSnowballs)
-    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threeSnowballs.removeSnowballs(removedIds))
+    ClientMain.loadedGeometry.threeGroupsFuture
+      .foreach(_.threeSnowballs.removeSnowballs(removedIds))
   }
 
   def removePowerUps(removedIds: Seq[PowerUpId]): Unit = {
@@ -129,11 +131,19 @@ class GameState(drawPlayfield: DrawPlayfield) {
     ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threePowerups.removePowerup(removedIds))
   }
 
-  def addPowerUps(newUps: Seq[PowerUp]): Unit = {
+  def addPlayfieldItems(items: Seq[InSharedSet]): Unit = {
+    val newUps       = items.collect { case powerUp: PowerUp   => powerUp }
+    val newSleds     = items.collect { case sled: Sled         => sled }
+    val newSnowballs = items.collect { case snowball: Snowball => snowball }
+
     serverPowerUps ++= newUps
     ClientMain.loadedGeometry.threeGroupsFuture.foreach { group =>
       newUps.foreach(group.threePowerups.addPowerup)
     }
+    serverSleds ++= newSleds
+    serverSnowballs ++= newSnowballs
+
+    // TODO add three objects for sleds and snowballs
   }
 
   /** remove a collection of sled or snowballs from from the store */

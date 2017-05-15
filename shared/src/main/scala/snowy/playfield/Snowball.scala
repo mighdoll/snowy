@@ -11,7 +11,7 @@ case class Snowball( ownerId: SledId,
                     var health: Double,
                     lifetime: Double,
                     override val impactDamage: Double)
-    extends MovableCircularItem[Snowball] {
+    extends MovableCircularItem[Snowball] with InSharedSet {
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Snowball]
 }

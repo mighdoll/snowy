@@ -43,7 +43,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     val clientPlayfield = PlayfieldBounds(playfield.size.x.toInt, playfield.size.y.toInt)
     sendMessage(clientPlayfield, id)
     sendMessage(InitialTrees(trees.items.toSeq), id)
-    sendMessage(AddPowerUps(powerUps.items.toSeq), id)
+    sendMessage(AddItems(powerUps.items.toSeq), id)
   }
 
   /** Called when a connection is dropped */

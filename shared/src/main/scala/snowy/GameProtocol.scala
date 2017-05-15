@@ -85,6 +85,6 @@ object GameClientProtocol {
   case class RemoveSleds(ids: Seq[SledId]) extends GameClientMessage
   case class RemoveSnowballs(ids: Seq[BallId]) extends GameClientMessage
 
-  case class AddPowerUps(powerUps: Seq[PowerUp])       extends GameClientMessage
+  case class AddItems(items:Seq[InSharedSet]) extends GameClientMessage
 
 }

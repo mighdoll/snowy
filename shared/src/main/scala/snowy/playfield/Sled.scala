@@ -7,7 +7,7 @@ object Sled {
   val dummy = {
     val sled = new Sled(userName = "dummy")
     import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
-    sled.position_=(Vec2d(-1,-1))(nullSledTracker)
+    sled.position_=(Vec2d(-1, -1))(nullSledTracker)
     sled
   }
 
@@ -15,10 +15,9 @@ object Sled {
     new Sled(userName = userName)
   }
 
-  def apply(userName: String,
-            initialPosition: Vec2d,
-            kind: SledKind,
-            color: SkiColor)(implicit tracker:PlayfieldTracker[Sled]): Sled = {
+  def apply(userName: String, initialPosition: Vec2d, kind: SledKind, color: SkiColor)(
+        implicit tracker: PlayfieldTracker[Sled]
+  ): Sled = {
     val sled = new Sled(
       userName = userName,
       kind = kind,
@@ -43,7 +42,7 @@ case class Sled(userName: String,
                 var turretRotation: Double = downhillRotation,
                 var lastShotTime: Long = 0,
                 var lastBoostTime: Long = 0)
-    extends MovableCircularItem[Sled] {
+    extends MovableCircularItem[Sled] with InSharedSet {
 
   type MyType = Sled
 
