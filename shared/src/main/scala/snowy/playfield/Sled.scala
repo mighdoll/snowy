@@ -42,7 +42,7 @@ case class Sled(userName: String,
                 var turretRotation: Double = downhillRotation,
                 var lastShotTime: Long = 0,
                 var lastBoostTime: Long = 0)
-    extends MovableCircularItem[Sled] with InSharedSet {
+    extends MovableCircularItem[Sled] with SharedItem {
 
   type MyType = Sled
 

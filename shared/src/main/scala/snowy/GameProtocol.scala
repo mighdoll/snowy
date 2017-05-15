@@ -54,6 +54,7 @@ object GameServerProtocol {
 /** messages sent to the web client */
 object GameClientProtocol {
 
+
   sealed abstract class GameClientMessage
 
   case class State(gameTime: Long, sleds: Seq[Sled], snowballs: Seq[Snowball])
@@ -85,6 +86,6 @@ object GameClientProtocol {
   case class RemoveSleds(ids: Seq[SledId]) extends GameClientMessage
   case class RemoveSnowballs(ids: Seq[BallId]) extends GameClientMessage
 
-  case class AddItems(items:Seq[InSharedSet]) extends GameClientMessage
+  case class AddItems(items:Seq[SharedItem]) extends GameClientMessage
 
 }

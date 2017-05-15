@@ -26,7 +26,7 @@ object Picklers {
   }
 
   implicit val shareSetPickler =
-    compositePickler[InSharedSet]
+    compositePickler[SharedItem]
       .addConcreteType[HealthPowerUp]
       .addConcreteType[Snowball]
       .addConcreteType[Sled]

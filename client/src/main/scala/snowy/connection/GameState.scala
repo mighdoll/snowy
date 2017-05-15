@@ -131,7 +131,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
     ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threePowerups.removePowerup(removedIds))
   }
 
-  def addPlayfieldItems(items: Seq[InSharedSet]): Unit = {
+  def addPlayfieldItems(items: Seq[SharedItem]): Unit = {
     val newUps       = items.collect { case powerUp: PowerUp   => powerUp }
     val newSleds     = items.collect { case sled: Sled         => sled }
     val newSnowballs = items.collect { case snowball: Snowball => snowball }

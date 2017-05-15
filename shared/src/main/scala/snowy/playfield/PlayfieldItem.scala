@@ -1,6 +1,9 @@
 package snowy.playfield
 import vector.Vec2d
 
+/** A playfield item in a mutable set mirrored to clients */
+trait SharedItem
+
 /** A mutable game object positionable on the playfield.
   *
   * The position of the object is tracked externally via a PlayfieldTracker
