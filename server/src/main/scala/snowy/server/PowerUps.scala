@@ -16,4 +16,5 @@ class PowerUps(protected val playfield: Playfield) extends GridItems[PowerUp] {
       powerUp.setInitialPosition(playfield.randomSpot())
     }.toSet
   }
+
 }

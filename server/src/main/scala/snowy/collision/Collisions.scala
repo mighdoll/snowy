@@ -1,6 +1,6 @@
 package snowy.collision
 
-import snowy.playfield.{Circle, MovableCircularItem, Rect}
+import snowy.playfield._
 import vector.Vec2d
 
 object Collisions {
@@ -21,6 +21,14 @@ object Collisions {
 
     // LATER if point is interior to rectangle, move it to the edge
     closestPoint
+  }
+
+  def circularCollide[A <: CircularItem[A], B <: CircularItem[B]](a: A, b: B): Boolean = {
+
+    val collisionDistance = a.radius + b.radius
+    val collisionVector   = a.position - b.position // vector between the centers
+    val distance          = collisionVector.length
+    distance < collisionDistance
   }
 
   /** Collide two circular objects

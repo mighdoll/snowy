@@ -10,7 +10,7 @@ import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameConstants._
 import snowy.GameServerProtocol._
-import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.RobotPlayer
 import snowy.util.{MeasurementRecorder, Span}
@@ -69,13 +69,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   override def turn(): Unit = {
     Span.root("GameControl.turn").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
-      time("GameControl.robotsTurn") { robots.robotsTurn() }
+      time("robotsTurn") { robots.robotsTurn() }
       applyTurn(deltaSeconds)
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
       val turnDeaths = gameTurns.turn(deltaSeconds)
-      reapAndReportDeadSleds(turnDeaths.deadSleds)
-      reportExpiredSnowballs(turnDeaths.deadSnowBalls)
+      time("reportExpired") {
+        reapAndReportDeadSleds(turnDeaths.deadSleds)
+        reportExpiredSnowballs(turnDeaths.deadSnowBalls)
+        reportUsedPowerUps(turnDeaths.usedPowerUps)
+      }
       time("sendUpdates") {
         sendUpdates()
       }
@@ -225,6 +228,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
           case Shooting => shootSnowball(sled)
         }
       }
+    }
+  }
+
+  private def reportUsedPowerUps(usedPowerUps: Traversable[PowerUpId]): Unit = {
+    if (usedPowerUps.nonEmpty) {
+      val removeItems = RemoveItems(PowerUpItem, usedPowerUps.toSeq)
+      sendToAllClients(removeItems)
     }
   }
 

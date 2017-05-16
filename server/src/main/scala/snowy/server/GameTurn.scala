@@ -1,11 +1,12 @@
 package snowy.server
 
+import scala.collection.mutable
 import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameConstants._
-import snowy.collision.{CollideThings, Death, DeathList, SledTree}
-import snowy.playfield.PlayId.BallId
+import snowy.collision._
+import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.util.Span
 import snowy.util.Span.{time, timeSpan}
@@ -27,7 +28,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   }
 
   case class TurnDeaths(deadSleds: Traversable[SledDied],
-                        deadSnowBalls: Traversable[BallId])
+                        deadSnowBalls: Traversable[BallId],
+                        usedPowerUps: Traversable[PowerUpId])
 
   /** Called to update game state on a regular timer */
   def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnDeaths =
@@ -35,25 +37,49 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
 
-      turnSpan.time("GameTurn.moveSnowballs") {
+      turnSpan.time("moveSnowballs") {
         state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
 
-      val moveAwards = turnSpan.time("GameTurn.moveSleds") {
+      val moveAwards = turnSpan.time("moveSleds") {
         state.motion.moveSleds(state.sleds.items, deltaSeconds)
       }
-      val collided = turnSpan.time("GameTurn.checkCollisions")(checkCollisions())
-      val died     = gameHealth.collectDead()
 
-      turnSpan.time("GameTurn.updateScore") {
+      val usedPowerUps = turnSpan.time("applyPowerUps") {
+        applyPowerUps(state.sleds, state.powerUps)
+      }
+
+      val collided = turnSpan.time("checkCollisions") {
+        checkCollisions()
+      }
+      val died = gameHealth.collectDead()
+
+      turnSpan.time("updateScore") {
         updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
       }
 
-      TurnDeaths(died, expiredBalls ++ collided.killedSnowballs)
+      TurnDeaths(died, expiredBalls ++ collided.killedSnowballs, usedPowerUps)
     }
 
   case class CollisionResult(killedSleds: Traversable[SledKill],
                              killedSnowballs: Traversable[BallId])
+
+  private def applyPowerUps(sleds: Sleds, powerUps: PowerUps): Iterable[PowerUpId] = {
+    val winners =
+      for {
+        powerUp <- powerUps.items
+        sled    <- sleds.grid.inside(powerUp.boundingBox)
+        if Collisions.circularCollide(powerUp, sled)
+      } yield {
+        (powerUp, sled)
+      }
+
+    for { (powerUp, sled) <- winners } yield {
+      powerUp.powerUpSled(sled)
+      powerUps.remove(powerUp)
+      powerUp.id
+    }
+  }
 
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
@@ -62,7 +88,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     // collide snowballs with sleds
     val sledSnowballDeaths: DeathList[Sled, Snowball] =
-      CollideThings.collideCollectionWithGrid(
+      CollideThings.collideWithGrid(
         state.sleds.items,
         state.snowballs.grid
       )

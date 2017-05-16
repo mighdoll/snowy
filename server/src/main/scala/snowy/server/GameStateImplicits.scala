@@ -28,8 +28,7 @@ class GameStateImplicits(state: GameState) {
 
   implicit class SnowballOps(val snowball: Snowball) {
     def remove(): Unit = {
-      state.snowballs.grid.remove(snowball)
-      state.snowballs.items.remove(snowball)
+      state.snowballs.remove(snowball)
     }
   }
 
@@ -43,8 +42,7 @@ class GameStateImplicits(state: GameState) {
 
     def remove(): Unit = {
       sled.id.connectionId.foreach(state.sledMap.remove(_))
-      state.sleds.grid.remove(sled)
-      state.sleds.items.remove(sled)
+      state.sleds.remove(sled)
     }
   }
 

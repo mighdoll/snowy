@@ -13,7 +13,7 @@ object CollideThings {
     * The objects speeds, positions, and health are modified based on the collision.
     *
     * @return a list of any killed objects */
-  def collideCollectionWithGrid[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
+  def collideWithGrid[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
         aCollection: Traversable[A],

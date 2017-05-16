@@ -4,10 +4,11 @@ sealed trait PowerUp extends CircularItem[PowerUp] with SharedItem {
 
   def radius: Double = 5
 
+  def powerUpSled(sled: Sled): Unit
 }
 
 class HealthPowerUp() extends PowerUp {
-  def powerUpSled(sled: Sled): Unit = {
+  override def powerUpSled(sled: Sled): Unit = {
     sled.health = sled.maxHealth
   }
 }
