@@ -230,7 +230,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   private def reportExpiredSnowballs(expiredBalls: Traversable[BallId]): Unit = {
     if (expiredBalls.nonEmpty) {
-      val deaths = SnowballDeaths(expiredBalls.toSeq)
+      val deaths = RemoveItems(SnowballItem, expiredBalls.toSeq)
       sendToAllClients(deaths)
     }
   }
@@ -278,7 +278,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       }.toSeq
 
     if (deadSleds.nonEmpty) {
-      val deaths = SledDeaths(deadSleds)
+      val deaths = RemoveItems(SledItem, deadSleds)
       sendToAllClients(deaths)
 
       for { sledId <- deadSleds; sled <- sledId.sled } {

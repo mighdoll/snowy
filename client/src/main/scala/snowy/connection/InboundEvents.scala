@@ -10,6 +10,7 @@ import snowy.client.{ClientMain, UpdateScoreboard}
 import snowy.playfield.Picklers._
 import vector.Vec2d
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{PlayId, PowerUp, Sled, Snowball}
 
 class InboundEvents(gameState: GameState,
@@ -54,13 +55,17 @@ class InboundEvents(gameState: GameState,
       case ClientPong                     => // currently used only by the load test client
       case GameTime(time, oneWayDelay)    => updateClock(time, oneWayDelay)
       case MySled(sledId)                 => gameState.mySledId = Some(sledId)
-      case SnowballDeaths(balls)     => gameState.removeSnowballs(balls)
-      case SledDeaths(sleds)         => gameState.removeSleds(sleds)
-      case RemovePowerUps(ids)       => gameState.removePowerUps(ids)
-      case RemoveSleds(ids)          => gameState.removeSleds(ids)
-      case RemoveSnowballs(ids)      => gameState.removeSnowballs(ids)
-      case newScoreboard: Scoreboard => ClientMain.updateScoreboard(newScoreboard)
-      case AddItems(items)           => gameState.addPlayfieldItems(items)
+      case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
+      case AddItems(items)                => gameState.addPlayfieldItems(items)
+      case RemoveItems(itemType, items)   => removeItems(itemType, items)
+    }
+  }
+
+  private def removeItems(itemType: SharedItemType, items: Seq[PlayId[_]]): Unit = {
+    itemType match {
+      case SnowballItem => gameState.removeSnowballs(items.asInstanceOf[Seq[BallId]])
+      case PowerUpItem  => gameState.removePowerUps(items.asInstanceOf[Seq[PowerUpId]])
+      case SledItem     => gameState.removeSleds(items.asInstanceOf[Seq[SledId]])
     }
   }
 

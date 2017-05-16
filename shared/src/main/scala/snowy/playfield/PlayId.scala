@@ -12,7 +12,9 @@ object PlayId {
   type TreeId    = PlayId[Tree]
   type PowerUpId = PlayId[PowerUp]
 
+
   def nextId[A <: PlayfieldItem[A]](): PlayId[A] = PlayId(idCounter.getAndIncrement())
 
   private val idCounter = new AtomicInteger()
 }
+

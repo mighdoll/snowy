@@ -62,10 +62,6 @@ object GameClientProtocol {
 
   case class MySled(id: SledId) extends GameClientMessage
 
-  case class SledDeaths(sleds: Seq[SledId]) extends GameClientMessage
-
-  case class SnowballDeaths(snowballs: Seq[BallId]) extends GameClientMessage
-
   case class PlayfieldBounds(width: Int, height: Int) extends GameClientMessage
 
   case class InitialTrees(trees: Seq[Tree]) extends GameClientMessage
@@ -82,10 +78,13 @@ object GameClientProtocol {
 
   case class GameTime(millis: Long, oneWayDelay: Int) extends GameClientMessage
 
-  case class RemovePowerUps(ids: Seq[PowerUpId]) extends GameClientMessage
-  case class RemoveSleds(ids: Seq[SledId]) extends GameClientMessage
-  case class RemoveSnowballs(ids: Seq[BallId]) extends GameClientMessage
+  case class RemoveItems[A](sharedItemType:SharedItemType, ids: Seq[PlayId[A]]) extends GameClientMessage
 
   case class AddItems(items:Seq[SharedItem]) extends GameClientMessage
+
+  sealed trait SharedItemType
+  case object PowerUpItem extends SharedItemType
+  case object SledItem extends SharedItemType
+  case object SnowballItem extends SharedItemType
 
 }

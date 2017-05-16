@@ -10,6 +10,7 @@ object Picklers {
   implicit val ballIdPickler    = playIdPickler[Snowball]
   implicit val TreeIdPickler    = playIdPickler[Tree]
   implicit val powerUpIdPickler = playIdPickler[PowerUp]
+  implicit val anyPlayIdPickler = playIdPickler[Any]
 
   implicit val sledPickler = {
     transformPickler((tupleToSled _).tupled)(sledToTuple _)
@@ -31,7 +32,7 @@ object Picklers {
       .addConcreteType[Snowball]
       .addConcreteType[Sled]
 
-  private def playIdPickler[A]: Pickler[PlayId[A]] =
+  def playIdPickler[A]: Pickler[PlayId[A]] =
     transformPickler[PlayId[A], Int] { (id: Int) =>
       new PlayId[A](id)
     } {
