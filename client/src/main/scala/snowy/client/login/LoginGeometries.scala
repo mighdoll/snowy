@@ -72,7 +72,7 @@ class LoginGeometries(renderer: WebGLRenderer,
     threeSledsFuture.foreach { threeSleds =>
       Groups.selector.remove(threeSled)
       val sled         = Sled("", Vec2d(0, 0), sledKind, skiColor)
-      val newThreeSled = threeSleds.createSled(sled, true, new Vector3(0, 0, 0))
+      val newThreeSled = threeSleds.createSled(sled, true)
       newThreeSled.children = newThreeSled.children.slice(0, 2)
       newThreeSled.scale.multiplyScalar(0.1)
       newThreeSled.position.set(0, 3, 1)

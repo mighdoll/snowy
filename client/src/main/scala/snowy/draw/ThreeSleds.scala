@@ -44,13 +44,16 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     sleds.foreach { sled1 =>
       sledGroup.map.get(sled1.id) match {
         case Some(sled) => updateSled(sled1, sled, myPos)
-        case None       => sledGroup.add(createSled(sled1, sled1.id == mySled.id, myPos))
+        case None       => addSled(sled1, sled1.id == mySled.id)
       }
     }
   }
 
+  def addSled(sled: Sled, friendly: Boolean): Unit =
+    sledGroup.add(createSled(sled, friendly))
+
   /** @return a threejs sled containing body, skis, health, and name */
-  def createSled(sled: Sled, friendly: Boolean, myPos: Vector3): Object3D = {
+  def createSled(sled: Sled, friendly: Boolean): Object3D = {
     val newSled = new THREE.Object3D()
 
     val skiMat = new THREE.MeshLambertMaterial(
@@ -99,8 +102,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
       newSled.add(text)
     }
 
-    newSled.position.y = sled.radius + 2.5
-    DrawPlayfield.setThreePosition(newSled, sled, myPos)
+    newSled.position.set(sled.position.x, sled.radius + 2.5, sled.position.y)
 
     newSled.name = sled.id.id.toString
     newSled

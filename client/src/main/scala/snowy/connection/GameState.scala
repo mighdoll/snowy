@@ -127,8 +127,9 @@ class GameState(drawPlayfield: DrawPlayfield) {
   }
 
   def removePowerUps(removedIds: Seq[PowerUpId]): Unit = {
-    removeById(removedIds, serverPowerUps)
-    ClientMain.loadedGeometry.threeGroupsFuture.foreach(_.threePowerups.removePowerup(removedIds))
+    removeById[PowerUp](removedIds, serverPowerUps)
+    ClientMain.loadedGeometry.threeGroupsFuture
+      .foreach(_.threePowerups.removePowerup(removedIds))
   }
 
   def addPlayfieldItems(items: Seq[SharedItem]): Unit = {
@@ -137,13 +138,14 @@ class GameState(drawPlayfield: DrawPlayfield) {
     val newSnowballs = items.collect { case snowball: Snowball => snowball }
 
     serverPowerUps ++= newUps
-    ClientMain.loadedGeometry.threeGroupsFuture.foreach { group =>
-      newUps.foreach(group.threePowerups.addPowerup)
-    }
     serverSleds ++= newSleds
     serverSnowballs ++= newSnowballs
 
-    // TODO add three objects for sleds and snowballs
+    ClientMain.loadedGeometry.threeGroupsFuture.foreach { groups =>
+      newUps.foreach(groups.threePowerups.addPowerup)
+      newSleds.foreach(groups.threeSleds.addSled(_, false))
+      newSnowballs.foreach(groups.threeSnowballs.addSnowball)
+    }
   }
 
   /** remove a collection of sled or snowballs from from the store */

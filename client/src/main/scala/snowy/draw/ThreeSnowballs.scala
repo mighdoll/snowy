@@ -31,12 +31,14 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
     snowballs.foreach { snowball1 =>
       snowballGroup.map.get(snowball1.id) match {
         case Some(snowball) => updateSnowball(snowball1, snowball, myPos)
-        case None           => snowballGroup.add(createSnowball(snowball1, myPos))
+        case None           => addSnowball(snowball1)
       }
     }
   }
 
-  def createSnowball(snowball: Snowball, myPos: Vector3): Object3D = {
+  def addSnowball(snowball: Snowball): Unit = snowballGroup.add(createSnowball(snowball))
+
+  def createSnowball(snowball: Snowball): Object3D = {
     val newSnowball: Object3D = new THREE.Mesh(snowballGeo, snowballMat)
     newSnowball.scale.set(
       snowball.radius,
@@ -44,10 +46,12 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
       snowball.radius
     )
 
-    DrawPlayfield.setThreePosition(newSnowball, snowball, myPos)
+    newSnowball.position.set(
+      snowball.position.x,
+      BasicSled.radius * 2,
+      snowball.position.y
+    )
 
-    // TODO: Use actual sled height instead
-    newSnowball.position.y = BasicSled.radius * 2
     newSnowball.name = snowball.id.id.toString
     newSnowball
   }
