@@ -1,4 +1,5 @@
 package snowy.playfield
+import boopickle.CompositePickler
 import boopickle.Default._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
@@ -12,21 +13,20 @@ object Picklers {
   implicit val powerUpIdPickler = playIdPickler[PowerUp]
   implicit val anyPlayIdPickler = playIdPickler[Any]
 
-  implicit val sledPickler = {
-    transformPickler((tupleToSled _).tupled)(sledToTuple _)
+  implicit val sledPickler: Pickler[Sled] = {
+    transformPickler((tupleToSled _).tupled)(sledToTuple)
   }
-  implicit val treePickler = {
-    transformPickler((tupleToTree _).tupled)(treeToTuple _)
+  implicit val treePickler: Pickler[Tree] = {
+    transformPickler((tupleToTree _).tupled)(treeToTuple)
   }
-  implicit val snowballPickler = {
-    transformPickler((tupleToSnowball _).tupled)(snowballToTuple _)
+  implicit val snowballPickler: Pickler[Snowball] = {
+    transformPickler((tupleToSnowball _).tupled)(snowballToTuple)
+  }
+  implicit val healhPowerUpPickler: Pickler[HealthPowerUp] = {
+    transformPickler((tupleToHealthPowerUp _).tupled)(healthPowerUpToTuple)
   }
 
-  implicit val healhPowerUpPickler = {
-    transformPickler((tupleToHealthPowerUp _).tupled)(healthPowerUpToTuple _)
-  }
-
-  implicit val shareSetPickler =
+  implicit val shareSetPickler: CompositePickler[SharedItem] =
     compositePickler[SharedItem]
       .addConcreteType[HealthPowerUp]
       .addConcreteType[Snowball]
