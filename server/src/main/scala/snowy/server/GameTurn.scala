@@ -27,12 +27,13 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     deltaSeconds
   }
 
-  case class TurnDeaths(deadSleds: Traversable[SledDied],
-                        deadSnowBalls: Traversable[BallId],
-                        usedPowerUps: Traversable[PowerUpId])
+  case class TurnResults(deadSleds: Traversable[SledDied],
+                         deadSnowBalls: Traversable[BallId],
+                         usedPowerUps: Traversable[PowerUpId],
+                         newPowerUps: Traversable[PowerUp])
 
   /** Called to update game state on a regular timer */
-  def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnDeaths =
+  def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
     timeSpan("GameTurn.turn") { turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
@@ -58,7 +59,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
       }
 
-      TurnDeaths(died, expiredBalls ++ collided.killedSnowballs, usedPowerUps)
+      val newPowerUps = state.powerUps.refresh(gameTime)
+
+      TurnResults(
+        died,
+        expiredBalls ++ collided.killedSnowballs,
+        usedPowerUps,
+        newPowerUps
+      )
     }
 
   case class CollisionResult(killedSleds: Traversable[SledKill],
@@ -76,7 +84,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     for { (powerUp, sled) <- winners } yield {
       powerUp.powerUpSled(sled)
-      powerUps.remove(powerUp)
+      powerUps.removePowerUp(powerUp, gameTime)
       powerUp.id
     }
   }

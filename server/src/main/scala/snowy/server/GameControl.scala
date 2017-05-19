@@ -73,11 +73,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       applyTurn(deltaSeconds)
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
-      val turnDeaths = gameTurns.turn(deltaSeconds)
-      time("reportExpired") {
-        reapAndReportDeadSleds(turnDeaths.deadSleds)
-        reportExpiredSnowballs(turnDeaths.deadSnowBalls)
-        reportUsedPowerUps(turnDeaths.usedPowerUps)
+      val turnResults = gameTurns.turn(deltaSeconds)
+      time("reportTurnResults") {
+        reapAndReportDeadSleds(turnResults.deadSleds)
+        reportExpiredSnowballs(turnResults.deadSnowBalls)
+        reportUsedPowerUps(turnResults.usedPowerUps)
+        reportNewPowerUps(turnResults.newPowerUps)
       }
       time("sendUpdates") {
         sendUpdates()
@@ -228,6 +229,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
           case Shooting => shootSnowball(sled)
         }
       }
+    }
+  }
+
+  private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
+    if (newPowerUps.nonEmpty) {
+      val newItems = AddItems(newPowerUps.toSeq)
+      sendToAllClients(newItems)
     }
   }
 

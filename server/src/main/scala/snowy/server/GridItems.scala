@@ -14,5 +14,10 @@ trait GridItems[A <: PlayfieldItem[A]] {
     grid.remove(item)
     items.remove(item)
   }
+
+  def ++=(addItems :Iterable[A]):Unit = {
+    items ++= addItems
+    addItems.foreach(grid.add(_))
+  }
 }
 

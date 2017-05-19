@@ -30,7 +30,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     array
   }
 
-  def add(item: A): Unit = {
+  override def add(item: A): Unit = {
     for (cell <- coveredCells(item.boundingBox)) {
       val added = cell.add(item)
       if (!added) {
@@ -43,7 +43,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     *
     * Note that the bounding box of the item must unchanged since insertion
     */
-  def remove(item: A): Unit = {
+  override def remove(item: A): Unit = {
     for (cell <- coveredCells(item.boundingBox)) {
       val found =
         cell.remove(item)
