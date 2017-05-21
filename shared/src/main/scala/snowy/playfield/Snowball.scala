@@ -3,7 +3,7 @@ package snowy.playfield
 import snowy.playfield.PlayId._
 import vector.Vec2d
 
-case class Snowball( ownerId: SledId,
+case class Snowball(ownerId: SledId,
                     override var speed: Vec2d,
                     radius: Double,
                     mass: Double,

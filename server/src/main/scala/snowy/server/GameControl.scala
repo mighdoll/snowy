@@ -279,7 +279,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
         health = sled.bulletHealth,
         lifetime = sled.bulletLifetime
       )
-      snowballs.addBall(ball,playfield.wrapInPlayfield(sled.position + launchPos))
+      snowballs.addBall(ball, playfield.wrapInPlayfield(sled.position + launchPos))
 
       val recoilForce = direction * -sled.bulletRecoil
       sled.speed = sled.speed + recoilForce

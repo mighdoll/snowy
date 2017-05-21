@@ -51,7 +51,7 @@ class BlindRobotPlayer[_: Actors](api: RobotApi, userName: String)
     else modAngle
   }
 
-  private def updateAngle(angle:Double): Unit = {
+  private def updateAngle(angle: Double): Unit = {
     currentAngle = roundAngle(angle)
     api.sendToServer(TargetAngle(currentAngle))
   }

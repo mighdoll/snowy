@@ -15,9 +15,10 @@ object ClientMain extends JSApp {
   val loadedGeometry            = new GeometryLoader()
   var gameScreenActive: Boolean = false
 
-  private val promisedConnection                            = Promise[Connection]()
-  private val renderer                                      = createRenderer()
-  private val loginScreen                                   = new LoginScreen(renderer, loadedGeometry.threeGroupsFuture.map(_.threeSleds))
+  private val promisedConnection = Promise[Connection]()
+  private val renderer           = createRenderer()
+  private val loginScreen =
+    new LoginScreen(renderer, loadedGeometry.threeGroupsFuture.map(_.threeSleds))
   private var drawPlayfieldOpt: Option[DrawPlayfield]       = None
   private var gameStateOpt: Option[GameState]               = None
   private var updateScoreboardOpt: Option[UpdateScoreboard] = None
@@ -47,7 +48,12 @@ object ClientMain extends JSApp {
 
   // Wait until geometries and threesleds are loaded, then initialize the game variables
   def initializeGame(geometries: LoadedGeometries): Unit = {
-    val drawPlayfield    = new DrawPlayfield(renderer, geometries.threeSleds, geometries.threeSnowballs, geometries.threePowerups)
+    val drawPlayfield = new DrawPlayfield(
+      renderer,
+      geometries.threeSleds,
+      geometries.threeSnowballs,
+      geometries.threePowerups
+    )
     val gameState        = new GameState(drawPlayfield)
     val updateScoreboard = new UpdateScoreboard(gameState)
 

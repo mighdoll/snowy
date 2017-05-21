@@ -1,5 +1,3 @@
 package snowy.playfield
 
-class MoveTracking {
-
-}
+class MoveTracking {}

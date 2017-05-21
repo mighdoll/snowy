@@ -5,6 +5,7 @@ import vector.Vec2d
 import snowy.playfield.Playfield._
 
 object Playfield {
+
   /** Constrain a value between 0 and a max value.
     * values past one border of the range are wrapped to the other side
     *
@@ -28,8 +29,8 @@ object Playfield {
   }
 }
 
-class Playfield(val size:Vec2d) {
-  
+class Playfield(val size: Vec2d) {
+
   /** constrain a position to be within the playfield */
   def wrapInPlayfield(pos: Vec2d): Vec2d = {
     Vec2d(

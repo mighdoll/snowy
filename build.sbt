@@ -20,12 +20,12 @@ lazy val commonSettings = Seq(
 )
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
-    libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
-      "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
-      "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
-    )
+  libraryDependencies ++= Seq(
+    "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
+    "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
+    "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
   )
+)
 
 lazy val V = new Object {
   val scala      = "2.12.2"
@@ -101,9 +101,9 @@ lazy val load = (project in file("load"))
   .settings(itSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-testkit"        % V.akka,
-      "com.typesafe.akka" %% "akka-stream-testkit" % V.akka,
-      "org.asynchttpclient" % "async-http-client" % "2.1.0-alpha17"
+      "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
+      "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
+      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha17"
     )
   )
   .dependsOn(server)

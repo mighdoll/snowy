@@ -7,6 +7,7 @@ import snowy.GameClientProtocol.GameClientMessage
 import snowy.playfield.Picklers._
 
 object CommonPicklers {
+
   /** Run a function with a pickled message, then release the message from the
     * picklers buffer pool.
     */

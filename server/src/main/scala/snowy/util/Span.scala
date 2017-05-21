@@ -50,14 +50,14 @@ case class StartedSpan(
   }
 
   /** time a function within a new span nested within this one */
-  def time[T](name:String)(fn: => T):T = {
+  def time[T](name: String)(fn: => T): T = {
     val newSpan = Span(name)(this)
     try { fn } finally { newSpan.finishNow() }
   }
 
   /** time a function within a new span nested within this one.
     * The nested span is passed to the provided function. */
-  def timeSpan[T](name:String)(fn: StartedSpan => T):T = {
+  def timeSpan[T](name: String)(fn: StartedSpan => T): T = {
     val newSpan = Span(name)(this)
     try { fn(newSpan) } finally { newSpan.finishNow() }
   }

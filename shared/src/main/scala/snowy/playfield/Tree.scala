@@ -10,8 +10,7 @@ object Tree {
   }
 }
 
-case class Tree()
-    extends PlayfieldItem[Tree] {
+case class Tree() extends PlayfieldItem[Tree] {
   override def boundingBox = Rect(position, GameConstants.treeSize)
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Tree]

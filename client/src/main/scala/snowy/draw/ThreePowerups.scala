@@ -19,11 +19,16 @@ class ThreePowerups(powerupGeo: THREE.Geometry) {
   val powerupGroup = new UpdateGroup[PowerUp](new THREE.Object3D())
 
   def wrapThreePowerups(myPos: Vector3): Unit = {
-     powerupGroup.map.foreach { case (_, powerup) =>
-       val newPos = DrawPlayfield.playfieldWrap(powerup.position, myPos, DrawPlayfield.playfieldSize)
-       powerup.position.x = newPos.x
-       powerup.position.z = newPos.z
-     }
+    powerupGroup.map.foreach {
+      case (_, powerup) =>
+        val newPos = DrawPlayfield.playfieldWrap(
+          powerup.position,
+          myPos,
+          DrawPlayfield.playfieldSize
+        )
+        powerup.position.x = newPos.x
+        powerup.position.z = newPos.z
+    }
   }
 
   def addPowerup(powerup: PowerUp): Unit = {

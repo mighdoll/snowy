@@ -18,19 +18,19 @@ trait GameState { self: GameControl =>
     val height          = playfieldConfig.getInt("height")
     new Playfield(Vec2d(width, height))
   }
-  val users                 = mutable.Map[ClientId, User]()
-  val sledMap               = mutable.Map[ClientId, SledId]()
-  val pendingControls       = new PendingControls
+  val users           = mutable.Map[ClientId, User]()
+  val sledMap         = mutable.Map[ClientId, SledId]()
+  val pendingControls = new PendingControls
 
-  val sleds                 = new Sleds(playfield)
-  val snowballs             = new Snowballs(playfield)
-  val trees                 = new Trees(playfield)
-  val powerUps              = new PowerUps(playfield)
+  val sleds     = new Sleds(playfield)
+  val snowballs = new Snowballs(playfield)
+  val trees     = new Trees(playfield)
+  val powerUps  = new PowerUps(playfield)
 
-  val motion                = new GameMotion(playfield)
-  val sledTree              = new SledTree(playfield)
+  val motion   = new GameMotion(playfield)
+  val sledTree = new SledTree(playfield)
 
-  val gameStateImplicits    = new GameStateImplicits(this)
+  val gameStateImplicits = new GameStateImplicits(this)
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {

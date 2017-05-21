@@ -21,7 +21,7 @@ class LoginGeometries(renderer: WebGLRenderer,
                       clearConnection: => Unit,
                       loginScreenActive: => Boolean,
                       threeSledsFuture: Future[ThreeSleds]) {
-  private val scene                = new THREE.Scene()
+  private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
   private val amb                  = new THREE.AmbientLight(0xFFFFFF, 0.7)

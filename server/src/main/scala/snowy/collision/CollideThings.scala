@@ -129,7 +129,8 @@ object CollideThings {
 }
 
 /** Pending changes to an objects health,speed, etc. after a collision */
-case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A], damage: Double) {
+case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A],
+                                                        damage: Double) {
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
@@ -156,7 +157,8 @@ case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A], d
 }
 
 /** A report that one of the objects in a collision has run out of health */
-case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](killed: A, killer: B)
+case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](killed: A,
+                                                                           killer: B)
 
 /** a report of one or more objects that have been killed */
 case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](

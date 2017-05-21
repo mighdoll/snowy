@@ -12,7 +12,7 @@ object SingleLoadTestClient {
 import SingleLoadTestClient.nextUserId
 
 class SingleLoadTestClient[_: Actors: Measurement](wsUrl: String) extends StrictLogging {
-  val userName = s"loadTest-${nextUserId.getAndIncrement}"
+  val userName  = s"loadTest-${nextUserId.getAndIncrement}"
   val robotHost = new LoadTestRobot(wsUrl)(api => new BlindRobotPlayer(api, userName))
 //  val robotHost = new LoadTestRobot(wsUrl)(api => new RobotPlayer(api, userName))
 }

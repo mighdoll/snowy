@@ -47,6 +47,6 @@ class GameStateImplicits(state: GameState) {
   }
 
   implicit def snowballGrid = state.snowballs.grid
-  implicit def treeGrid = state.trees.grid
-  implicit def sledGrid = state.sleds.grid
+  implicit def treeGrid     = state.trees.grid
+  implicit def sledGrid     = state.sleds.grid
 }

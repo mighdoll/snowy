@@ -6,13 +6,13 @@ import snowy.collision.GameCollide._
 import snowy.playfield._
 import vector.Vec2d
 
-class SledTree(playfield:Playfield) {
+class SledTree(playfield: Playfield) {
 
   /** Intersect the sled with all potentially overlapping trees on the playfield.
     *
     * @return a damaged sled if it overlaps with a tree */
-  def collide(sled: Sled, trees: Iterable[Tree])
-             (implicit tracker:PlayfieldTracker[Sled]): Unit = {
+  def collide(sled: Sled,
+              trees: Iterable[Tree])(implicit tracker: PlayfieldTracker[Sled]): Unit = {
     val sledBody = Circle(sled.position, sled.radius)
 
     trees.collectFirst {
@@ -22,8 +22,9 @@ class SledTree(playfield:Playfield) {
   }
 
   /** modify a sled after impacting with a tree */
-  private def applyDamage(sled: Sled, sledBody: Circle, tree: Tree)
-                         (implicit tracker:PlayfieldTracker[Sled]): Unit = {
+  private def applyDamage(sled: Sled, sledBody: Circle, tree: Tree)(
+        implicit tracker: PlayfieldTracker[Sled]
+  ): Unit = {
     // take damage proportional to speed
     val health = {
       val speed = sled.speed.length
@@ -46,7 +47,7 @@ class SledTree(playfield:Playfield) {
     val newPosition = {
       val trunk            = treeTrunk(tree)
       val edge             = Collisions.rectClosestPerimeterPoint(trunk, sledBody)
-      val edgeToSled       = sled.position- edge
+      val edgeToSled       = sled.position - edge
       val edgeToSledLength = edgeToSled.length
       val result =
         if (edgeToSledLength < sledBody.radius) {

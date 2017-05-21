@@ -7,10 +7,14 @@ import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
-import org.asynchttpclient.{AsyncHttpClientConfig, BoundRequestBuilder, DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}
+import org.asynchttpclient.{
+  AsyncHttpClientConfig,
+  BoundRequestBuilder,
+  DefaultAsyncHttpClient,
+  DefaultAsyncHttpClientConfig
+}
 import socketserve.ActorTypes.Execution
 //import org.asynchttpclient.AsyncHttpClientConfig
-
 
 object NettyWebSocket extends StrictLogging {
 
