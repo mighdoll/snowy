@@ -1,13 +1,13 @@
-addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M15-2")
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC3")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.2.0-M6")
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.1.6")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.16")
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.8.0")
 
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.5.6")
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")
 
-addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")
+addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.1")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.0")
