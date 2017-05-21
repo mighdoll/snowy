@@ -27,7 +27,6 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     assert(a.id === b.id)
     assert(a.position === b.position)
     assert(a.speed === b.speed)
-    assert(a.kind === b.kind)
     assert(a.skiColor === b.skiColor)
     assert(a.rotation === b.rotation)
     assert(a.health === b.health)
@@ -37,6 +36,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     assert(a.lastBoostTime === b.lastBoostTime)
     assert(a.mass === b.mass)
     assert(a.position === b.position)
+    assert(a === b)
   }
   def compareSnowballs(a: Snowball, b: Snowball): Unit = {
     assert(a.id === b.id)

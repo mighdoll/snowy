@@ -32,7 +32,7 @@ class LoginGeometries(renderer: WebGLRenderer,
   var hoverSled: Direction         = Middle
   var hoverColor: Option[SkiColor] = Some(BasicSkis)
 
-  threeSledsFuture.foreach(_ => updateSelector(BasicSled, BasicSkis))
+  threeSledsFuture.foreach(_ => updateSelector(BasicSledType, BasicSkis))
 
   def updateColors(skiColor: SkiColor): Option[SkiColor] = {
     if (loginScreenActive) {
@@ -50,8 +50,8 @@ class LoginGeometries(renderer: WebGLRenderer,
     } else None
   }
 
-  def updateSledSelector(sledKind: SledKind): SledKind = {
-    val currentIndex = AllLists.allSleds.indexOf(sledKind)
+  def updateSledSelector(currentType: SledType): SledType = {
+    val currentIndex = AllLists.allSleds.indexOf(currentType)
 
     if (loginScreenActive && hoverSled != Middle) clearConnection
 
@@ -63,15 +63,15 @@ class LoginGeometries(renderer: WebGLRenderer,
         case Left                                  => allSleds.last
         case Right if currentIndex < lastSledIndex => allSleds(currentIndex + 1)
         case Right                                 => allSleds.head
-        case Middle                                => sledKind
+        case Middle                                => currentType
       }
-    } else sledKind
+    } else currentType
   }
 
-  def updateSelector(sledKind: SledKind, skiColor: SkiColor): Unit = {
+  def updateSelector(sledType: SledType, skiColor: SkiColor): Unit = {
     threeSledsFuture.foreach { threeSleds =>
       Groups.selector.remove(threeSled)
-      val sled         = Sled("", Vec2d(0, 0), sledKind, skiColor)
+      val sled         = Sled("", Vec2d(0, 0), sledType, skiColor)
       val newThreeSled = threeSleds.createSled(sled, true)
       newThreeSled.children = newThreeSled.children.slice(0, 2)
       newThreeSled.scale.multiplyScalar(0.1)

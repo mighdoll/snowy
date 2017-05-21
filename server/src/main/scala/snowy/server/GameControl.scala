@@ -90,8 +90,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   def handleMessage(id: ClientId, msg: GameServerMessage): Unit = {
     logger.trace(s"handleMessage: $msg received from client $id")
     msg match {
-      case Join(name, sledKind, skiColor) =>
-        userJoin(id, name.slice(0, 15), sledKind, skiColor)
+      case Join(name, sledType, skiColor) =>
+        userJoin(id, name.slice(0, 15), sledType, skiColor)
       case TargetAngle(angle) => targetDirection(id, angle)
       case Shoot(time)        => id.sled.foreach(shootSnowball(_))
       case Start(cmd, time)   => startControl(id, cmd, time)
@@ -205,7 +205,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       val distanceBetween = (sled.turretRotation - sled.rotation) % tau
       val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
       val dir             = math.round(wrapping * 10).signum // precision of when to stop
-      sled.rotation += deltaSeconds * dir * sled.kind.rotationSpeed
+      sled.rotation += deltaSeconds * dir * sled.rotationSpeed
     }
   }
 
@@ -338,13 +338,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   private def newRandomSled(userName: String,
-                            sledKind: SledKind,
+                            sledType: SledType,
                             color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
       initialPosition = playfield.randomSpot(),
-      kind = sledKind,
+      sledType = sledType,
       color = color
     )
   }
@@ -352,15 +352,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   /** Called when a user sends her name and starts in the game */
   private def userJoin(id: ClientId,
                        userName: String,
-                       sledKind: SledKind,
+                       sledType: SledType,
                        skiColor: SkiColor): Unit = {
     logger.info(
-      s"user joined: $userName  id: $id  kind: $sledKind  userCount:${users.size}"
+      s"user joined: $userName  id: $id  sledType: $sledType userCount:${users.size}"
     )
     val user =
-      new User(userName, createTime = gameTime, sledKind = sledKind, skiColor = skiColor)
+      new User(userName, createTime = gameTime, sledType = sledType, skiColor = skiColor)
     users(id) = user
-    val sled = createSled(id, user, sledKind)
+    val sled = createSled(id, user, sledType)
     reportJoinedSled(id, sled.id)
   }
 
@@ -368,15 +368,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     users.get(id) match {
       case Some(user) =>
         logger.info(s"user rejoined: ${user.name}")
-        val sled = createSled(id, user, user.sledKind)
+        val sled = createSled(id, user, user.sledType)
         reportJoinedSled(id, sled.id)
       case None =>
         logger.warn(s"user not found to rejoin: $id")
     }
   }
 
-  private def createSled(connectionId: ClientId, user: User, sledKind: SledKind): Sled = {
-    val sled = newRandomSled(user.name, sledKind, user.skiColor)
+  private def createSled(connectionId: ClientId, user: User, sledType: SledType): Sled = {
+    val sled = newRandomSled(user.name, sledType, user.skiColor)
     sleds.items.add(sled)
     sledMap(connectionId) = sled.id
     sled

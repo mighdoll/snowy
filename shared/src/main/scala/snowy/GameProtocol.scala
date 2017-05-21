@@ -15,7 +15,7 @@ object GameServerProtocol {
   sealed trait PersistentControl extends StartStopControl
 
   case class Join(userName: String,
-                  sledKind: SledKind = BasicSled,
+                  sledType: SledType = BasicSledType,
                   skiColor: SkiColor = BasicSkis)
       extends GameServerMessage
 
@@ -54,7 +54,6 @@ object GameServerProtocol {
 /** messages sent to the web client */
 object GameClientProtocol {
 
-
   sealed abstract class GameClientMessage
 
   case class State(gameTime: Long, sleds: Seq[Sled], snowballs: Seq[Snowball])
@@ -78,13 +77,14 @@ object GameClientProtocol {
 
   case class GameTime(millis: Long, oneWayDelay: Int) extends GameClientMessage
 
-  case class RemoveItems[A](sharedItemType:SharedItemType, ids: Seq[PlayId[A]]) extends GameClientMessage
+  case class RemoveItems[A](sharedItemType: SharedItemType, ids: Seq[PlayId[A]])
+      extends GameClientMessage
 
-  case class AddItems(items:Seq[SharedItem]) extends GameClientMessage
+  case class AddItems(items: Seq[SharedItem]) extends GameClientMessage
 
   sealed trait SharedItemType
-  case object PowerUpItem extends SharedItemType
-  case object SledItem extends SharedItemType
+  case object PowerUpItem  extends SharedItemType
+  case object SledItem     extends SharedItemType
   case object SnowballItem extends SharedItemType
 
 }

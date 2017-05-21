@@ -5,9 +5,8 @@ import minithree.THREE.{MeshLambertMaterialParameters, Object3D, Vector3}
 import snowy.client.DrawPlayfield.removeDeaths
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
-import snowy.playfield.{BasicSled, Snowball}
+import snowy.playfield.{BasicSled, Sled, Snowball}
 import vector.Vec2d
-
 import scala.scalajs.js.Dynamic
 
 class ThreeSnowballs(snowballGeo: THREE.Geometry) {
@@ -48,7 +47,7 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
 
     newSnowball.position.set(
       snowball.position.x,
-      BasicSled.radius * 2,
+      Sled.basicRadius * 2,
       snowball.position.y
     )
 

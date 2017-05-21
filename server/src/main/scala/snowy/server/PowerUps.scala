@@ -36,7 +36,7 @@ class PowerUps(protected val playfield: Playfield)
     val ready        = replaces.takeWhile(_.time < gameTime)
     val replacements = ready.map(replace => newPowerUp(replace.old))
     if (replacements.nonEmpty) {
-      logger.warn(s"new powerUps: $replacements")
+      logger.info(s"new powerUps: $replacements")
     }
 
     ready.foreach(replaces.remove(_))
@@ -45,10 +45,13 @@ class PowerUps(protected val playfield: Playfield)
     replacements.toSeq
   }
 
-  override def remove(item: PowerUp): Unit = ??? // don't call this directly
+  case class IllegalCallException() extends RuntimeException
+
+  /** don't call this directly, call removePowerUp instead */
+  override def remove(item: PowerUp): Unit = throw IllegalCallException()
 
   def removePowerUp(item: PowerUp, gameTime: Long): Unit = {
-    logger.warn(s"removing PowerUp: $item")
+    logger.info(s"removing PowerUp: $item")
     super.remove(item)
     scheduleReplacement(item, gameTime)
   }
@@ -64,7 +67,6 @@ class PowerUps(protected val playfield: Playfield)
     val replaceTime = {
       val delay =
         (ThreadLocalRandom.current().nextDouble() * maxDelaySeconds * 1000).toInt
-      logger.warn(s"delay for powerUp: $delay $item")
       gameTime + delay
     }
     replaces += Replace(item, replaceTime)

@@ -1,5 +1,5 @@
 package snowy.playfield
-import boopickle.CompositePickler
+import boopickle.{CompositePickler, ConstPickler}
 import boopickle.Default._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
@@ -13,9 +13,36 @@ object Picklers {
   implicit val powerUpIdPickler = playIdPickler[PowerUp]
   implicit val anyPlayIdPickler = playIdPickler[Any]
 
-  implicit val sledPickler: Pickler[Sled] = {
+  implicit val basicSledTypePickler: Pickler[BasicSledType.type] =
+    ConstPickler(BasicSledType)
+
+  implicit val tankSledTypePickler: Pickler[TankSledType.type] =
+    ConstPickler(TankSledType)
+
+  implicit val gunnerSledTypePickler: Pickler[GunnerSledType.type] =
+    ConstPickler(GunnerSledType)
+
+  implicit val speedySledTypePickler: Pickler[SpeedySledType.type] =
+    ConstPickler(SpeedySledType)
+
+  implicit val spikySledTypePickler: Pickler[SpikySledType.type] =
+    ConstPickler(SpikySledType)
+
+  implicit val prototypeSledTypePickler: Pickler[PrototypeSledType.type] =
+    ConstPickler(PrototypeSledType)
+
+  implicit val sledTypePickler: Pickler[SledType] =
+    compositePickler[SledType]
+      .addConcreteType[BasicSledType.type]
+      .addConcreteType[TankSledType.type]
+      .addConcreteType[GunnerSledType.type]
+      .addConcreteType[SpeedySledType.type]
+      .addConcreteType[SpikySledType.type]
+      .addConcreteType[PrototypeSledType.type]
+
+  implicit val sledPickler: Pickler[Sled] =
     transformPickler((tupleToSled _).tupled)(sledToTuple)
-  }
+
   implicit val treePickler: Pickler[Tree] = {
     transformPickler((tupleToTree _).tupled)(treeToTuple)
   }
@@ -91,51 +118,126 @@ object Picklers {
     }
   }
 
-  private def tupleToSled(newId: SledId,
+  private def tupleToSled(sledType: SledType,
+                          newId: SledId,
                           userName: String,
                           newPosition: Vec2d,
-                          speed: Vec2d,
-                          kind: SledKind,
+                          newSpeed: Vec2d,
                           skiColor: SkiColor,
-                          rotation: Double,
-                          health: Double,
-                          turretRotation: Double,
-                          lastShotTime: Long,
-                          lastBoostTime: Long): Sled = {
-    new Sled(
-      userName = userName,
-      speed = speed,
-      kind = kind,
-      skiColor = skiColor,
-      rotation = rotation,
-      health = health,
-      turretRotation = turretRotation,
-      lastShotTime = lastShotTime,
-      lastBoostTime = lastBoostTime
-    ) {
-      override val id: SledId = newId
+                          newRotation: Double,
+                          newHealth: Double,
+                          newTurretRotation: Double,
+                          newLastShotTime: Long,
+                          newLastBoostTime: Long): Sled = {
 
-      position = newPosition
+    def setFields[A <: Sled](sled: A): A = {
+      sled.rotation = newRotation
+      sled.health = newHealth
+      sled.turretRotation = newTurretRotation
+      sled.lastShotTime = newLastShotTime
+      sled.lastBoostTime = newLastBoostTime
+      sled.speed = newSpeed
+      sled.position = newPosition
+      sled
     }
+
+    def basicSled(): BasicSled = {
+      val sled = new BasicSled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    def tankSled(): TankSled = {
+      val sled = new TankSled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    def gunnerSled(): GunnerSled = {
+      val sled = new GunnerSled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    def speedySled(): SpeedySled = {
+      val sled = new SpeedySled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    def spikySled(): SpikySled = {
+      val sled = new SpikySled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    def prototypeSled(): PrototypeSled = {
+      val sled = new PrototypeSled(
+        userName = userName,
+        skiColor = skiColor
+      ) {
+        override val id: SledId = newId
+      }
+      setFields(sled)
+    }
+
+    sledType match {
+      case BasicSledType     => basicSled()
+      case TankSledType      => tankSled()
+      case GunnerSledType    => gunnerSled()
+      case SpeedySledType    => speedySled()
+      case SpikySledType     => spikySled()
+      case PrototypeSledType => prototypeSled()
+    }
+
   }
 
-  private def sledToTuple(sled: Sled): (SledId,
+  private def sledToTuple(sled: Sled): (SledType,
+                                        SledId,
                                         String,
                                         Vec2d,
                                         Vec2d,
-                                        SledKind,
                                         SkiColor,
                                         Double,
                                         Double,
                                         Double,
                                         Long,
                                         Long) = {
+    val sledType: SledType = sled match {
+      case _: BasicSled     => BasicSledType
+      case _: TankSled      => TankSledType
+      case _: GunnerSled    => GunnerSledType
+      case _: SpeedySled    => SpeedySledType
+      case _: SpikySled     => SpikySledType
+      case _: PrototypeSled => PrototypeSledType
+    }
+
     (
+      sledType,
       sled.id,
       sled.userName,
       sled.position,
       sled.speed,
-      sled.kind,
       sled.skiColor,
       sled.rotation,
       sled.health,

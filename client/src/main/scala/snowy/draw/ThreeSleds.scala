@@ -1,8 +1,13 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Vector3}
-import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
+import minithree.THREE.{
+  MeshBasicMaterialParameters,
+  MeshLambertMaterialParameters,
+  Object3D,
+  Vector3
+}
+import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
 import snowy.client.DrawPlayfield._
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.SledId
@@ -62,14 +67,14 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
         .asInstanceOf[MeshLambertMaterialParameters]
     )
 
-    val bodyColor = sled.kind match {
-      case BasicSled     => 0x00FFFF
-      case TankSled      => 0xFF0000
-      case GunnerSled    => 0x0000FF
-      case SpeedySled    => 0x00FF00
-      case SpikySled     => 0x888888
-      case PrototypeSled => 0xFFFF00
-      case _             => 0xFFFFFF
+    val bodyColor = sled match {
+      case _: BasicSled     => 0x00FFFF
+      case _: TankSled      => 0xFF0000
+      case _: GunnerSled    => 0x0000FF
+      case _: SpeedySled    => 0x00FF00
+      case _: SpikySled     => 0x888888
+      case _: PrototypeSled => 0xFFFF00
+      case _                => 0xFFFFFF
     }
     val bodyMat = new THREE.MeshLambertMaterial(
       Dynamic

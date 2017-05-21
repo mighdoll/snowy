@@ -5,8 +5,7 @@ import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.connection.{GameState, InboundEvents}
-import snowy.playfield.{SkiColor, SledKind}
-
+import snowy.playfield.{SkiColor, SledType}
 import scala.concurrent.duration._
 import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 
@@ -28,8 +27,8 @@ class Connection(gameState: GameState) {
     document.getElementById("login-div").asInstanceOf[html.Div].classList.add("hide")
   }
 
-  def join(name: String, kind: SledKind, color: SkiColor): Unit = {
-    sendMessage(Join(name, kind, color))
+  def join(name: String, sledType: SledType, color: SkiColor): Unit = {
+    sendMessage(Join(name, sledType, color))
   }
 
   def sendMessage(item: GameServerMessage): Unit = {

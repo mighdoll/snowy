@@ -6,8 +6,7 @@ import org.scalajs.dom.{document, window}
 import snowy.GameClientProtocol.Scoreboard
 import snowy.client.login.LoginScreen
 import snowy.connection.GameState
-import snowy.playfield.{SkiColor, SledKind}
-
+import snowy.playfield.{SkiColor, SledType}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js.{Dynamic, JSApp}
@@ -67,9 +66,9 @@ object ClientMain extends JSApp {
 
   def connectedToServer: Future[Unit] = promisedConnection.future.map(_ => ())
 
-  def freshStartGame(name: String, kind: SledKind, color: SkiColor): Unit = {
+  def freshStartGame(name: String, sledType: SledType, color: SkiColor): Unit = {
     promisedConnection.future.foreach { connection =>
-      connection.join(name, kind, color)
+      connection.join(name, sledType, color)
       startGame()
     }
   }
