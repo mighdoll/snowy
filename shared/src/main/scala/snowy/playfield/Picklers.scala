@@ -52,10 +52,14 @@ object Picklers {
   implicit val healhPowerUpPickler: Pickler[HealthPowerUp] = {
     transformPickler((tupleToHealthPowerUp _).tupled)(healthPowerUpToTuple)
   }
+  implicit val speedPowerupPickler: Pickler[SpeedPowerUp] = {
+    transformPickler((tupleToSpeedPowerUp _).tupled)(speedPowerUpToTuple)
+  }
 
   implicit val shareSetPickler: CompositePickler[SharedItem] =
     compositePickler[SharedItem]
       .addConcreteType[HealthPowerUp]
+      .addConcreteType[SpeedPowerUp]
       .addConcreteType[Snowball]
       .addConcreteType[Sled]
 
@@ -262,4 +266,14 @@ object Picklers {
     }
   }
 
+  private def speedPowerUpToTuple(powerUp: SpeedPowerUp): (PowerUpId, Vec2d) = {
+    (powerUp.id, powerUp.position)
+  }
+
+  private def tupleToSpeedPowerUp(newId: PowerUpId, newPosition: Vec2d): SpeedPowerUp = {
+    new SpeedPowerUp() {
+      override val id: PowerUpId = newId
+      position = newPosition
+    }
+  }
 }

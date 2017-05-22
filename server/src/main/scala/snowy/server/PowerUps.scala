@@ -1,9 +1,10 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
+
 import scala.collection.mutable
 import com.typesafe.scalalogging.StrictLogging
-import snowy.playfield.{HealthPowerUp, Playfield, PowerUp}
+import snowy.playfield.{HealthPowerUp, Playfield, PowerUp, SpeedPowerUp}
 
 object PowerUps {
   case class Replace(old: PowerUp, time: Long)
@@ -74,7 +75,10 @@ class PowerUps(protected val playfield: Playfield)
 
   private def initialPowerUps(): Set[PowerUp] = {
     (1 to targetCount).map { _ =>
-      val powerUp = new HealthPowerUp()
+      val powerUp = math.random match {
+        case x if x < 0.5 => new HealthPowerUp()
+        case x if x < 1.0 => new SpeedPowerUp()
+      }
       powerUp.setInitialPosition(playfield.randomSpot())
     }.toSet
   }
