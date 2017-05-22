@@ -29,7 +29,7 @@ trait AppController {
   def message(id: ConnectionId, msg: ByteString): Unit
 
   /** called to process the next game turn */
-  def turn(): Unit = {}
+  def tick(): Unit = {}
 
   /** period for game turns */
   def turnPeriod: FiniteDuration = 0 seconds

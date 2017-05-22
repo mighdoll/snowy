@@ -30,7 +30,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
 
   private val tickSource =
     Source
-      .tick[GameCommand](tickTime, tickTime, Turn)
+      .tick[GameCommand](tickTime, tickTime, Tick)
       .conflate(tickBehind)
       .named("tickSource")
 
@@ -47,7 +47,7 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
       case Open(id, out)             => open(id, out)
       case Gone(id)                  => gone(id)
       case RegisterApp(newApp)       => app = Some(newApp)
-      case Turn                      => app.foreach(_.turn())
+      case Tick                      => app.foreach(_.tick())
     })
     .named("handlerSink")
 
@@ -126,7 +126,7 @@ object AppHost {
 
     case class RegisterApp(app: AppController) extends GameCommand
 
-    case object Turn extends GameCommand
+    case object Tick extends GameCommand
 
   }
 

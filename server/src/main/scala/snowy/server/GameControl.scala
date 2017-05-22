@@ -66,7 +66,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   /** Run the next game turn. (called on a periodic timer) */
-  override def turn(): Unit = {
+  override def tick(): Unit = {
     Span.root("GameControl.turn").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
       time("robotsTurn") { robots.robotsTurn() }
