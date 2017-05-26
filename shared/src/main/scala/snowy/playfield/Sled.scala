@@ -94,7 +94,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def bulletLifetime: Double = 4
 
   /** health of this sled. If it falls to zero, the sled dies. */
-  def maxHealth: Double = 1
+  def maxHealth: Double = .5 + (level * .5)
 
   /** time in seconds to recover 1 full point of health */
   def healthRecoveryTime: Double = 50.0
@@ -153,7 +153,7 @@ class TankSled(override val userName: String,
   override val boostAcceleration = super.boostAcceleration * .5
   override val rotationSpeed     = math.Pi / 2
   override val maxImpactDamage   = 0.5
-  override val maxHealth         = 3.0
+  override def maxHealth         = 2.5 + (level * .5)
   override val minRechargeTime   = 1000
   override val bulletHealth      = 2
   override val bulletImpact      = 0.25
@@ -175,7 +175,7 @@ class GunnerSled(override val userName: String,
   override val driveAcceleration  = super.driveAcceleration * 1.2
   override val boostAcceleration  = super.boostAcceleration * .8
   override val maxSpeed           = 600
-  override val maxHealth          = 1.5
+  override val maxHealth          = 1 + (level * .5)
   override val healthRecoveryTime = 10
   override val minRechargeTime    = 100
   override val bulletSpeed        = 400
@@ -213,7 +213,7 @@ class SpikySled(override val userName: String,
   override val boostAcceleration  = super.boostAcceleration * .65
   override val driveAcceleration  = super.driveAcceleration * .5
   override val armor              = 1.0
-  override val maxHealth          = 4.0
+  override val maxHealth          = 3.5 + (level * .5)
   override val maxImpactDamage    = 2.0
   override val mass               = 1.0
   override val rotationSpeed      = math.Pi * 2 / 3
