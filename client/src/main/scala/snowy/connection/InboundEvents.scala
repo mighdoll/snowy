@@ -59,6 +59,8 @@ class InboundEvents(gameState: GameState,
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
       case Notification(message)          => displayNotification(message)
+      case KilledBy(sledId)               => println(s"killed by: $sledId")  // TODO display on screen
+      case KilledSled(sledId)             => println(s"killed sled: $sledId")// TODO display on screen
     }
   }
 

@@ -64,7 +64,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         expiredBalls ++ collided.killedSnowballs,
         usedPowerUps,
         newPowerUps,
-        levelUps
+        levelUps,
+        collided.killedSleds
       )
     }
 
@@ -227,5 +228,6 @@ object GameTurn {
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],
                          newPowerUps: Traversable[PowerUp],
-                         levelUps: Traversable[LevelUp])
+                         levelUps: Traversable[LevelUp],
+                         sledKills: Traversable[SledKill])
 }

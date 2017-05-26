@@ -67,6 +67,10 @@ object GameClientProtocol {
 
   case object Died extends GameClientMessage
 
+  case class KilledSled(sledId: SledId) extends GameClientMessage
+
+  case class KilledBy(sledId: SledId) extends GameClientMessage
+
   case class Score(userName: String, score: Double)
 
   case class Scoreboard(myScore: Double, scores: Seq[Score]) extends GameClientMessage

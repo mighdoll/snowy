@@ -82,11 +82,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       applyCommands(deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
       time("reportTurnResults") {
+        reportLevelUps(turnResults.levelUps)
+        reportSledKills(turnResults.sledKills)
         reapAndReportDeadSleds(turnResults.deadSleds)
         reportExpiredSnowballs(turnResults.deadSnowBalls)
         reportUsedPowerUps(turnResults.usedPowerUps)
         reportNewPowerUps(turnResults.newPowerUps)
-        reportLevelUps(turnResults.levelUps)
       }
       time("sendUpdates") {
         sendUpdates()
@@ -240,13 +241,43 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
+  private def reportSledKills(sledKills: Traversable[SledKill]): Unit = {
+    for {
+      SledKill(killerSledId, deadSledId) <- sledKills
+    } {
+      reportKiller(killerSledId, deadSledId)
+      reportDeadSled(killerSledId, deadSledId)
+    }
+
+    def reportKiller(killerSledId: SledId, deadSledId: SledId): Unit = {
+      for {
+        killerClientId     <- killerSledId.connectionId
+        killerConnectionId <- optNetId(killerClientId)
+      } {
+        val killedSled = KilledSled(deadSledId)
+        sendMessage(killedSled, killerConnectionId)
+      }
+    }
+
+    def reportDeadSled(killerSledId: SledId, deadSledId: SledId): Unit = {
+      for {
+        deadClientId     <- deadSledId.connectionId
+        deadConnectionId <- optNetId(deadClientId)
+      } {
+        val killedBy = KilledBy(killerSledId)
+        sendMessage(killedBy, deadConnectionId)
+      }
+    }
+
+  }
+
   private def reportLevelUps(levelUps: Traversable[LevelUp]): Unit = {
     for {
       LevelUp(clientId, newLevel) <- levelUps
       connectionId                <- optNetId(clientId)
     } {
       val message = Notification(s"Level $newLevel !")
-      messageIO.sendMessage(message, connectionId)
+      sendMessage(message, connectionId)
     }
   }
   private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
