@@ -20,15 +20,22 @@ import vector.Vec2d
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.playfield.GameMotion._
 import snowy.server.GameTurn.LevelUp
+import snowy.playfield.Picklers._
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
                                    measurementRecorder: MeasurementRecorder)
     extends AppController with GameState with StrictLogging {
   override val turnPeriod = 20 milliseconds
-  val messageIO           = new MessageIO(api)
-  val connections         = mutable.Map[ConnectionId, ClientConnection]()
   val gameTurns           = new GameTurn(this, turnPeriod)
-  val robots              = new RobotHost(this)
+
+  private val messageIO   = new MessageIO(api)
+  private val connections = mutable.Map[ConnectionId, ClientConnection]()
+  private val robots      = new RobotHost(this)
+  private lazy val pickledTrees = {
+    val message: GameClientMessage = InitialTrees(trees.items.toSeq)
+    val bytes                      = Pickle.intoBytes(message)
+    ByteString(bytes)
+  }
 
   import gameStateImplicits._
   import gameTurns.gameTime
@@ -43,7 +50,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     connections(id) = new ClientConnection(id, messageIO)
     val clientPlayfield = PlayfieldBounds(playfield.size.x.toInt, playfield.size.y.toInt)
     sendMessage(clientPlayfield, id)
-    sendMessage(InitialTrees(trees.items.toSeq), id)
+    sendBinaryMessage(pickledTrees, id)
     sendMessage(AddItems(powerUps.items.toSeq), id)
   }
 
@@ -234,10 +241,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
-  private def reportLevelUps(levelUps:Traversable[LevelUp]):Unit = {
+  private def reportLevelUps(levelUps: Traversable[LevelUp]): Unit = {
     for {
       LevelUp(clientId, newLevel) <- levelUps
-      connectionId <- optNetId(clientId)
+      connectionId                <- optNetId(clientId)
     } {
       val message = Notification(s"Level $newLevel !")
       messageIO.sendMessage(message, connectionId)
