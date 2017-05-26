@@ -19,6 +19,7 @@ import socketserve._
 import vector.Vec2d
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.playfield.GameMotion._
+import snowy.server.GameTurn.LevelUp
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
                                    measurementRecorder: MeasurementRecorder)
@@ -79,6 +80,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
         reportExpiredSnowballs(turnResults.deadSnowBalls)
         reportUsedPowerUps(turnResults.usedPowerUps)
         reportNewPowerUps(turnResults.newPowerUps)
+        reportLevelUps(turnResults.levelUps)
       }
       time("sendUpdates") {
         sendUpdates()
@@ -232,6 +234,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
+  private def reportLevelUps(levelUps:Traversable[LevelUp]):Unit = {
+    for {
+      LevelUp(clientId, newLevel) <- levelUps
+      connectionId <- optNetId(clientId)
+    } {
+      val message = Notification(s"Level $newLevel !")
+      messageIO.sendMessage(message, connectionId)
+    }
+  }
   private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
     if (newPowerUps.nonEmpty) {
       val newItems = AddItems(newPowerUps.toSeq)

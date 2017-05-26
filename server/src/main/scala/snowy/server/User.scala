@@ -3,6 +3,7 @@ package snowy.server
 import java.util.concurrent.ThreadLocalRandom
 import scala.concurrent.duration._
 import snowy.playfield.{SkiColor, SledType}
+import snowy.server.ScoreLevels.levelForScore
 
 object User {
   val scoreFrequency = 1.second.toMillis
@@ -18,8 +19,11 @@ class User(val name: String,
            val sledType: SledType,
            val skiColor: SkiColor,
            val createTime: Long) {
-  private var theScore: Double    = 10
+
+  /** points earned in the game */
+  var score: Double               = 10
   private var nextScoreSend: Long = 0
+  private var level: Int          = 1
 
   /** Scores are sent to users once per second (see scoreFrequency).
     * Users receive scores at jittered times, to spread the network load.
@@ -34,15 +38,13 @@ class User(val name: String,
     nextScoreSend = gameTime + jitter.toInt
   }
 
-  /** points earned in the game */
-  def score: Double = theScore
-
-  /** modify the score by adding a value */
-  def addScore(value: Double): Unit = theScore = theScore + value
-
-  /** modify the score by multiplying the current score */
-  def multiplyScore(value: Double): Unit = theScore = theScore * value
-
-  /** Set the score given a function that takes a score and returns a score */
-  def setScore(fn: (Double) => (Double)): Unit = theScore = fn(theScore)
+  /** check if the player is ready for a new level based on the score
+    * Optionally return the new level if the user has leveled up */
+  def possiblyLevelUp(): Option[Int] = {
+    val targetLevel = levelForScore(score)
+    if (level != targetLevel) {
+      level = targetLevel
+      Some(level)
+    } else None
+  }
 }

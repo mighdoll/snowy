@@ -71,6 +71,8 @@ object GameClientProtocol {
 
   case class Scoreboard(myScore: Double, scores: Seq[Score]) extends GameClientMessage
 
+  case class Notification(message: String) extends GameClientMessage
+
   case object Ping extends GameClientMessage
 
   case object ClientPong extends GameClientMessage

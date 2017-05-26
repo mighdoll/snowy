@@ -25,6 +25,8 @@ class LoadTestRobot[_: Actors: Measurement](
 
   connection.connect()
 
+  // Note that the current message only unpickles Died and Ping
+  // (so most of these messages are never received)
   def receiveMessage(message: GameClientMessage): Unit = {
     message match {
       case Ping =>

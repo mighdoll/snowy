@@ -58,6 +58,7 @@ class InboundEvents(gameState: GameState,
       case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
+      case Notification(message)          => displayNotification(message)
     }
   }
 
@@ -71,5 +72,10 @@ class InboundEvents(gameState: GameState,
 
   private def updateClock(time: Long, oneWayDelay: Int): Unit = {
     gameState.serverGameClock.foreach(_.updateClock(time, oneWayDelay))
+  }
+
+  private def displayNotification(message: String): Unit = {
+    // TODO display message
+    println(s"notification: $message")
   }
 }

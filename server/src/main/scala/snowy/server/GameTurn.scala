@@ -10,6 +10,8 @@ import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.util.Span
 import snowy.util.Span.{time, timeSpan}
+import socketserve.ClientId
+import GameTurn._
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   var gameTime           = System.currentTimeMillis()
@@ -26,11 +28,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     recordTurnJitter(deltaSeconds)
     deltaSeconds
   }
-
-  case class TurnResults(deadSleds: Traversable[SledDied],
-                         deadSnowBalls: Traversable[BallId],
-                         usedPowerUps: Traversable[PowerUpId],
-                         newPowerUps: Traversable[PowerUp])
 
   /** Called to update game state on a regular timer */
   def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
@@ -55,9 +52,11 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       }
       val died = gameHealth.collectDead()
 
-      turnSpan.time("updateScore") {
-        updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
-      }
+      val levelUps =
+        turnSpan.time("updateScore") {
+          updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
+          levelUp()
+        }
 
       val newPowerUps = state.powerUps.refresh(gameTime)
 
@@ -65,7 +64,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         died,
         expiredBalls ++ collided.killedSnowballs,
         usedPowerUps,
-        newPowerUps
+        newPowerUps,
+        levelUps
       )
     }
 
@@ -166,7 +166,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           loser              <- loserId.user
         } {
           val points = loser.score * Points.sledKill
-          winner.addScore(points)
+          winner.score += points
         }
       case Travel(sledId, distance) =>
         for {
@@ -174,7 +174,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           user         <- sledId.user
         } {
           val points = distance * Points.travel
-          user.addScore(points)
+          user.score += points
         }
       case SnowballHit(winnerId) =>
       case SledDied(loserId) =>
@@ -182,10 +182,22 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           connectionId <- loserId.connectionId
           user         <- loserId.user
         } {
-          user.setScore((score: Double) => {
-            math.max(score * Points.sledLoss, Points.minPoints)
-          })
+          user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
         }
+    }
+  }
+
+  /** Update the user/sled level if the users score is high enough.
+    * optionally @return the new level
+    */
+  private def levelUp(): Traversable[LevelUp] = {
+    for {
+      (clientId, user) <- state.users
+      newLevel         <- user.possiblyLevelUp()
+      sled             <- clientId.sled
+    } yield {
+      sled.level = newLevel
+      LevelUp(clientId, newLevel)
     }
   }
 
@@ -207,4 +219,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 //    Perf.record("deltaSeconds", deltaMicros)
   }
 
+}
+
+object GameTurn {
+  case class LevelUp(clientId: ClientId, newLevel: Int)
+
+  case class TurnResults(deadSleds: Traversable[SledDied],
+                         deadSnowBalls: Traversable[BallId],
+                         usedPowerUps: Traversable[PowerUpId],
+                         newPowerUps: Traversable[PowerUp],
+                         levelUps: Traversable[LevelUp])
 }
