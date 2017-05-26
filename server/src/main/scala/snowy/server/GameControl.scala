@@ -8,7 +8,6 @@ import boopickle.Default._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameClientProtocol._
-import snowy.GameConstants._
 import snowy.GameServerProtocol._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
