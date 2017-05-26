@@ -109,6 +109,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       case Pong               => optNetId(id).foreach(pong(_))
       case ReJoin             => rejoin(id)
       case TestDie            => reapSled(sledMap(id))
+      case DebugKey(key)      => debugCommand(id, key)
       case RequestGameTime(clientTime) =>
         optNetId(id).foreach(reportGameTime(_, clientTime))
       case ClientPing => optNetId(id).foreach(sendMessage(ClientPong, _))
@@ -434,6 +435,27 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   private def targetDirection(id: ClientId, angle: Double): Unit = {
     id.sled.foreach { sled =>
       sled.turretRotation = -angle
+    }
+  }
+
+  lazy val clientDebugEnabled = GlobalConfig.snowy.getBoolean("clientDebugMessages")
+  private def debugCommand(id: ClientId, key: Char): Unit = {
+    if (clientDebugEnabled) {
+      key match {
+        case 't' => logNearbyTrees(id)
+        case x   => logger.warn(s"debug key $x not recognized from client $id")
+      }
+    }
+  }
+
+  private def logNearbyTrees(id: ClientId): Unit = {
+    for { sled <- id.sled } {
+      logger.warn(s"logNearbyTrees.sled: $sled  position: ${sled.position}")
+      val bounds = sled.boundingBox
+      val bigger = Rect(bounds.pos - Vec2d(25, 25), bounds.size + Vec2d(25, 25))
+      for {tree <- trees.grid.inside(bigger) } {
+        logger.warn(s"logNearbyTrees.tree: $tree  position: ${tree.position}")
+      }
     }
   }
 

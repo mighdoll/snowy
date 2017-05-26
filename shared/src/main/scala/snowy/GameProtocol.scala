@@ -47,6 +47,8 @@ object GameServerProtocol {
 
   case object TestDie extends GameServerMessage
 
+  case class DebugKey(key: Char) extends GameServerMessage
+
   case class RequestGameTime(clientTime: Long) extends GameServerMessage
 
 }
