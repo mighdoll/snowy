@@ -1,6 +1,7 @@
 package snowy.client
 
 import boopickle.Default._
+import snowy.playfield.Picklers._
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
