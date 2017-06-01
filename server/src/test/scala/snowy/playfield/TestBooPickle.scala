@@ -4,6 +4,7 @@ import boopickle.Default._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
+import snowy.GameServerProtocol.{GameServerMessage, Join}
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, SledId}
 import snowy.playfield.SnowballFixture.testSnowball
@@ -117,6 +118,15 @@ class TestBooPickle extends PropSpec with PropertyChecks {
       case Ping =>
       case _    => fail
     }
+  }
+
+  property("pickle SledType") {
+    pickleUnpickle[SledType](TankSledType)
+  }
+
+  property("pickle game server Join message") {
+    val join = Join("d", TankSledType, RedSkis)
+    pickleUnpickle[GameServerMessage](join)
   }
 
 }
