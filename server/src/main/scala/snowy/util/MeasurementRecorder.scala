@@ -39,18 +39,19 @@ class MeasurementToTsvFile(directoryName: String,
     extends MeasurementRecorder with StrictLogging {
   implicit val materializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
-  val spans = startTsvFile(
+  val records = startTsvFile(
     path.resolve(s"$baseName.tsv"),
-    "name\tspanId\tparentId\tstartEpochMicros\tdurationMicros\n"
+    "recordType\tname\tspanId\tparentId\tstartEpochMicros\tdurationMicros\n"
   )
 
   override def close(): Unit = {
-    spans.complete()
+    records.complete()
   }
 
   override def publish(measurement: Measurement): Unit = {
     measurement match {
       case span: CompletedSpan => publishSpan(span)
+      case gauge: Gauged[_]    => publishGauge(gauge)
     }
   }
 
@@ -60,8 +61,18 @@ class MeasurementToTsvFile(directoryName: String,
     val duration    = span.end.value - startMicros
     val spanId      = span.id.value.toHexString
     val parentId    = span.parent.map(_.id.value.toHexString).getOrElse("_")
-    val csv         = s"$name\t$spanId\t$parentId\t$startMicros\t$duration\n"
-    spans.offer(csv)
+    val csv         = s"S\t$name\t$spanId\t$parentId\t$startMicros\t$duration\n"
+    records.offer(csv)
+  }
+
+  private def publishGauge(gauge: Gauged[_]): Unit = {
+    val name        = gauge.name
+    val startMicros = gauge.start.value
+    val spanId      = gauge.id.value.toHexString
+    val parentId    = gauge.parentSpan.id.value.toHexString
+    val valueString = gauge.value.toString
+    val csv         = s"G\t$name\t$spanId\t$parentId\t$startMicros\t$valueString\n"
+    records.offer(csv)
   }
 
   private def startTsvFile(path: Path, header: String): SourceQueueWithComplete[String] = {

@@ -8,7 +8,7 @@ import snowy.collision._
 import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
-import snowy.util.Span
+import snowy.util.{Gauged, Span}
 import snowy.util.Span.timeSpan
 import socketserve.ClientId
 
@@ -22,7 +22,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   /** advance to the next game time
     * @return seconds since the last turn
     */
-  def nextTurn(): Double = {
+  def nextTurn()(implicit parentSpan: Span): Double = {
     val deltaSeconds = nextTimeSlice()
     recordTurnJitter(deltaSeconds)
     deltaSeconds
@@ -213,10 +213,10 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     deltaSeconds
   }
 
-  private def recordTurnJitter(deltaSeconds: Double): Unit = {
+  private def recordTurnJitter(deltaSeconds: Double)(implicit parentSpan: Span): Unit = {
     val secondsToMicros = 1000000
     val deltaMicros     = (deltaSeconds * secondsToMicros).toLong
-//    Perf.record("deltaSeconds", deltaMicros)
+    Gauged("deltaMicroseconds", deltaMicros)
   }
 
 }
