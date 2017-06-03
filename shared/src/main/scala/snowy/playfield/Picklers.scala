@@ -13,32 +13,8 @@ object Picklers {
   implicit val powerUpIdPickler = playIdPickler[PowerUp]
   implicit val anyPlayIdPickler = playIdPickler[Any]
 
-  implicit val basicSledTypePickler: Pickler[BasicSledType.type] =
-    ConstPickler(BasicSledType)
-
-  implicit val tankSledTypePickler: Pickler[TankSledType.type] =
-    ConstPickler(TankSledType)
-
-  implicit val gunnerSledTypePickler: Pickler[GunnerSledType.type] =
-    ConstPickler(GunnerSledType)
-
-  implicit val speedySledTypePickler: Pickler[SpeedySledType.type] =
-    ConstPickler(SpeedySledType)
-
-  implicit val spikySledTypePickler: Pickler[SpikySledType.type] =
-    ConstPickler(SpikySledType)
-
-  implicit val prototypeSledTypePickler: Pickler[PrototypeSledType.type] =
-    ConstPickler(PrototypeSledType)
-
   implicit val sledTypePickler: Pickler[SledType] =
-    compositePickler[SledType]
-      .addConcreteType[BasicSledType.type]
-      .addConcreteType[TankSledType.type]
-      .addConcreteType[GunnerSledType.type]
-      .addConcreteType[SpeedySledType.type]
-      .addConcreteType[SpikySledType.type]
-      .addConcreteType[PrototypeSledType.type]
+    generatePickler[SledType]
 
   implicit val sledPickler: Pickler[Sled] =
     transformPickler((tupleToSled _).tupled)(sledToTuple)
