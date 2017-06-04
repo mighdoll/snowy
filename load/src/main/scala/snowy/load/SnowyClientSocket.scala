@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.ws._
 import akka.stream.scaladsl._
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.util.ByteString
-import boopickle.Default._
+import boopickle.DefaultBasic.{Unpickle, Pickle}
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
 import socketserve.ActorTypes._
@@ -23,9 +23,9 @@ object SnowyClientSocket {
   }
 
   private val fastUnpickle = {
-    val diedBytes       = Pickle(Died).toByteBuffer
-    val pingBytes       = Pickle(Ping).toByteBuffer
-    val clientPongBytes = Pickle(ClientPong).toByteBuffer
+    val diedBytes       = Pickle[GameClientMessage](Died).toByteBuffer
+    val pingBytes       = Pickle[GameClientMessage](Ping).toByteBuffer
+    val clientPongBytes = Pickle[GameClientMessage](ClientPong).toByteBuffer
 
     Flow[Message]
       .collect { case BinaryMessage.Strict(msg) => msg.toByteBuffer }

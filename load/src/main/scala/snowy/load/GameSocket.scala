@@ -2,7 +2,7 @@ package snowy.load
 
 import scala.concurrent.ExecutionContext
 import akka.util.ByteString
-import boopickle.Default._
+import boopickle.DefaultBasic.Pickle
 import snowy.playfield.Picklers._
 import io.netty.buffer.Unpooled
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}

@@ -1,11 +1,16 @@
 package snowy.playfield
 import boopickle.{CompositePickler, ConstPickler}
 import boopickle.Default._
+import snowy.GameClientProtocol.GameClientMessage
+import snowy.GameServerProtocol.GameServerMessage
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
 
 object Picklers {
   import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
+
+  implicit val vec2dPickler: Pickler[Vec2d] =
+    generatePickler[Vec2d]
 
   implicit val sledIdPickler    = playIdPickler[Sled]
   implicit val ballIdPickler    = playIdPickler[Snowball]
@@ -31,6 +36,12 @@ object Picklers {
   implicit val speedPowerupPickler: Pickler[SpeedPowerUp] = {
     transformPickler((tupleToSpeedPowerUp _).tupled)(speedPowerUpToTuple)
   }
+
+  implicit val gameClientMessage: Pickler[GameClientMessage] =
+    generatePickler[GameClientMessage]
+
+  implicit val gameServerMessage: Pickler[GameServerMessage] =
+    generatePickler[GameServerMessage]
 
   implicit val shareSetPickler: CompositePickler[SharedItem] =
     compositePickler[SharedItem]

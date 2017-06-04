@@ -1,7 +1,7 @@
 package snowy.connection
 
 import scala.collection.mutable
-import boopickle.Default._
+import boopickle.DefaultBasic.Unpickle
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._

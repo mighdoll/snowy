@@ -1,7 +1,7 @@
 package snowy.server
 
 import akka.util.ByteString
-import boopickle.Default._
+import boopickle.DefaultBasic.{PickleState, Pickle}
 import boopickle.{BufferPool, EncoderSize}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.GameClientMessage

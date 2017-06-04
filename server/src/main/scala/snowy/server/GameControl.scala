@@ -4,7 +4,7 @@ import scala.collection.mutable
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.util.ByteString
-import boopickle.Default._
+import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameClientProtocol._

@@ -5,7 +5,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.scaladsl._
 import akka.stream.{ActorMaterializer, ClosedShape, OverflowStrategy}
 import akka.util.ByteString
-import boopickle.Default._
+import boopickle.DefaultBasic.Pickle
 import snowy.playfield.Picklers._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{GameClientMessage, GameTime, Ping}

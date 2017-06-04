@@ -1,6 +1,6 @@
 package snowy.playfield
 
-import boopickle.Default._
+import boopickle.DefaultBasic._
 import org.scalatest._
 import org.scalatest.prop._
 import snowy.GameClientProtocol._
@@ -59,7 +59,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
 
   property("pickle Died") {
-    pickleUnpickle(Died)
+    pickleUnpickle[GameClientMessage](Died)
   }
   property("pickle Vec2d") {
     pickleUnpickle(Vec2d.unitUp)
@@ -83,12 +83,12 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     compareTrees(tree, tree2)
   }
   property("pickle state") {
-    pickleUnpickle(
+    pickleUnpickle[GameClientMessage](
       State(1L, sleds = Seq(sled), snowballs = Seq(ball))
     )
   }
   property("pickle scoreboard") {
-    pickleUnpickle(
+    pickleUnpickle[GameClientMessage](
       Scoreboard(1.1, Seq(Score("fred", .8)))
     )
   }
