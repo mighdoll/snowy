@@ -8,7 +8,7 @@ import akka.http.scaladsl.model.ws._
 import akka.stream.scaladsl._
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.util.ByteString
-import boopickle.DefaultBasic.{Unpickle, Pickle}
+import boopickle.DefaultBasic.{Pickle, Unpickle}
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
 import socketserve.ActorTypes._

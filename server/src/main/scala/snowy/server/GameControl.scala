@@ -453,7 +453,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
       logger.warn(s"logNearbyTrees.sled: $sled  position: ${sled.position}")
       val bounds = sled.boundingBox
       val bigger = Rect(bounds.pos - Vec2d(25, 25), bounds.size + Vec2d(25, 25))
-      for {tree <- trees.grid.inside(bigger) } {
+      for { tree <- trees.grid.inside(bigger) } {
         logger.warn(s"logNearbyTrees.tree: $tree  position: ${tree.position}")
       }
     }
