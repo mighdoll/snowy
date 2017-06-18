@@ -53,8 +53,8 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
   bindingFuture.failed.foreach { failure =>
     logger.error(s"Server unable to start at http://localhost:$port/  $failure")
     failure match {
-      case BindFailedException => logger.error(s"is port $port already in use?")
-      case _                   =>
+      case _: BindFailedException => logger.error(s"is port $port already in use?")
+      case _                      =>
     }
     sys.exit(1)
   }

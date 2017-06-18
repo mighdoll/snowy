@@ -29,8 +29,9 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 
 lazy val V = new Object {
   val scala      = "2.12.2"
-  val akka       = "2.5.1"
-  val akkaHttp   = "10.0.6"
+  val akka       = "2.5.2"
+  val akkaHttp   = "10.0.7"
+  val jackson    = "2.8.9"
   val log4j      = "2.8.2"
   val scalacheck = "1.13.5"
   val scalactic  = "3.0.3"
@@ -55,12 +56,12 @@ lazy val server = (project in file("server"))
     ),
     javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
-      "com.github.scopt"                 %% "scopt"                  % "3.5.0",
+      "com.github.scopt"                 %% "scopt"                  % "3.6.0",
       "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
       "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
-      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.8.8",
-      "com.fasterxml.jackson.core"       % "jackson-databind"        % "2.8.8.1",
+      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
+      "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
       "com.typesafe.scala-logging"       %% "scala-logging"          % "3.5.0",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
@@ -88,7 +89,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % "0.9.2"
     ),
     jsDependencies ++= Seq(
-      "org.webjars.npm"   % "three"                      % "0.84.0" / "0.84.0/build/three.min.js",
+      "org.webjars.bower" % "three.js"                   % "0.85.0" / "0.85.0/three.min.js",
       "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
     )
   )
@@ -103,7 +104,7 @@ lazy val load = (project in file("load"))
     libraryDependencies ++= Seq(
       "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
       "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha17"
+      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha20"
     )
   )
   .dependsOn(server)
