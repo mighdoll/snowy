@@ -1,4 +1,4 @@
-package snowy.client
+package snowy.client.hud
 
 import org.scalajs.dom._
 import snowy.GameClientProtocol.Scoreboard

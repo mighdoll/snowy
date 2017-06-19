@@ -6,6 +6,7 @@ import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.client.ClientMain
+import snowy.client.hud.DeathMessage
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
@@ -17,6 +18,7 @@ class InboundEvents(gameState: GameState,
                     socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit) {
 
+  val deathMessage = new DeathMessage()
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
     val message    = Unpickle[GameClientMessage].fromBytes(byteBuffer)
@@ -59,8 +61,9 @@ class InboundEvents(gameState: GameState,
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
       case Notification(message)          => displayNotification(message)
-      case KilledBy(sledId)               => println(s"killed by: $sledId")  // TODO display on screen
-      case KilledSled(sledId)             => println(s"killed sled: $sledId")// TODO display on screen
+      case KilledBy(sledId)               => println(s"killed by: $sledId") // TODO display on screen
+      case KilledSled(sledId) =>
+        gameState.sledNameFromId(sledId).foreach(deathMessage.killedSled)
     }
   }
 

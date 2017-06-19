@@ -47,8 +47,8 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   // TODO add a gametime timestamp to these, and organize together into a class
   var serverTrees             = Set[Tree]()
-  private var serverSnowballs = mutable.HashSet[Snowball]()
   private var serverSleds     = mutable.HashSet[Sled]()
+  private var serverSnowballs = mutable.HashSet[Snowball]()
   private val serverPowerUps  = new mutable.HashSet[PowerUp]()
   var gameTime                = 0L
 
@@ -147,6 +147,9 @@ class GameState(drawPlayfield: DrawPlayfield) {
       newSnowballs.foreach(groups.threeSnowballs.addSnowball)
     }
   }
+
+  def sledNameFromId(sledId: SledId): Option[String] =
+    serverSleds.find(_.id == sledId).map(_.userName)
 
   /** remove a collection of sled or snowballs from from the store */
   private def removeById[A <: PlayfieldItem[A]](ids: Traversable[PlayId[A]],
