@@ -1,10 +1,11 @@
 package snowy.load
 
-import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import snowy.server.CommandLine.BasicArgs
 import snowy.server.{CommandLine, GlobalConfig}
 import snowy.util.MeasurementRecorder
+
+import scala.concurrent.duration._
 
 object LoadTest {
 
@@ -19,7 +20,6 @@ object LoadTest {
     basicArgs.conf.foreach(GlobalConfig.addConfigFiles(_))
 
     implicit val actorSystem = ActorSystem()
-    import actorSystem.dispatcher
 
     val testDuration = 1 hour
 

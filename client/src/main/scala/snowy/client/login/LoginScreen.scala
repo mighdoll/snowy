@@ -6,6 +6,7 @@ import org.scalajs.dom.raw.Event
 import snowy.client.ClientMain
 import snowy.draw.ThreeSleds
 import snowy.playfield._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 

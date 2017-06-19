@@ -1,16 +1,17 @@
 package snowy.server
 
-import scala.concurrent.duration._
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.scaladsl._
-import akka.stream.{ActorMaterializer, ClosedShape, OverflowStrategy}
+import akka.stream.{ClosedShape, OverflowStrategy}
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
-import snowy.playfield.Picklers._
 import com.typesafe.scalalogging.StrictLogging
-import snowy.GameClientProtocol.{GameClientMessage, GameTime, Ping}
-import socketserve.{ClientId, ConnectionId}
+import snowy.GameClientProtocol.{GameClientMessage, Ping}
+import snowy.playfield.Picklers._
 import socketserve.ActorUtil.materializerWithLogging
+import socketserve.ConnectionId
+
+import scala.concurrent.duration._
 
 object ClientConnection {
   val pingMessage = {

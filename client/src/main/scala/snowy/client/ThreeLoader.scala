@@ -1,11 +1,8 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE.MeshLambertMaterialParameters
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.scalajs.js.Dynamic
 import scala.util.Success
 
 class ThreeLoader() {

@@ -1,11 +1,12 @@
 package snowy.server
 
-import scala.concurrent.Future
 import org.scalatest._
 import org.scalatest.prop._
-import snowy.GameClientProtocol.{Died, MySled, State}
+import snowy.GameClientProtocol.{Died, MySled}
 import snowy.GameServerProtocol.{Join, ReJoin, TestDie}
 import snowy.load.SnowyServerFixture.withServer
+
+import scala.concurrent.Future
 
 class TestReJoin extends PropSpec with PropertyChecks {
   property("ReJoin registers user with a new sled") {

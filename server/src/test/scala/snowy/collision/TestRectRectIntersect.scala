@@ -2,8 +2,8 @@ package snowy.collision
 
 import org.scalatest.PropSpec
 import org.scalatest.prop.PropertyChecks
-import snowy.playfield.Rect
 import snowy.playfield.Intersect._
+import snowy.playfield.Rect
 
 class TestRectRectIntersect extends PropSpec with PropertyChecks {
   val rectCases =

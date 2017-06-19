@@ -1,7 +1,5 @@
 package socketserve
 
-import scala.collection.mutable
-import scala.concurrent.duration._
 import akka.NotUsed
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
@@ -9,10 +7,12 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
-import snowy.playfield.GameMotion.Turn
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
+
+import scala.collection.mutable
+import scala.concurrent.duration._
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLogging {
   private implicit val materializer      = materializerWithLogging(logger)

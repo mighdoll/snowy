@@ -1,6 +1,5 @@
 package socketserve
 
-import scala.util.Properties
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
@@ -9,6 +8,8 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
 import socketserve.ActorUtil.materializerWithLogging
+
+import scala.util.Properties
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,

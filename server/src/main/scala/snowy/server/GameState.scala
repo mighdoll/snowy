@@ -1,13 +1,13 @@
 package snowy.server
 
-import scala.collection.mutable
 import snowy.GameClientProtocol._
-import snowy.GameConstants
 import snowy.collision.SledTree
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import socketserve.ClientId
 import vector.Vec2d
+
+import scala.collection.mutable
 
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState { self: GameControl =>

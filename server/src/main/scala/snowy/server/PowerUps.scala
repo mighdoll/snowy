@@ -2,9 +2,10 @@ package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
 
-import scala.collection.mutable
 import com.typesafe.scalalogging.StrictLogging
 import snowy.playfield.{HealthPowerUp, Playfield, PowerUp, SpeedPowerUp}
+
+import scala.collection.mutable
 
 object PowerUps {
   case class Replace(old: PowerUp, time: Long)
@@ -21,7 +22,7 @@ object PowerUps {
   }
 }
 
-import PowerUps._
+import snowy.server.PowerUps._
 
 /** A managed collection of PowerUps on the playfield */
 class PowerUps(protected val playfield: Playfield)

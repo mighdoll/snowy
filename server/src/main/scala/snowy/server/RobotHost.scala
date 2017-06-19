@@ -1,11 +1,11 @@
 package snowy.server
 
-import scala.collection.mutable
-import snowy.GameConstants
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.playfield.PlayId.SledId
 import snowy.robot.{Robot, RobotApi, RobotGameState}
 import socketserve.{ClientId, RobotId}
+
+import scala.collection.mutable
 
 /** */
 class RobotHost(gameControl: GameControl) {

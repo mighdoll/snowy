@@ -1,19 +1,14 @@
 package snowy.load
 
-import java.util.concurrent.ForkJoinPool
-import scala.concurrent.{ExecutionContext, Future, Promise}
-import scala.util.Success
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
-import org.asynchttpclient.{
-  AsyncHttpClientConfig,
-  BoundRequestBuilder,
-  DefaultAsyncHttpClient,
-  DefaultAsyncHttpClientConfig
-}
+import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}
 import socketserve.ActorTypes.Execution
+
+import scala.concurrent.Promise
+import scala.util.Success
 //import org.asynchttpclient.AsyncHttpClientConfig
 
 object NettyWebSocket extends StrictLogging {

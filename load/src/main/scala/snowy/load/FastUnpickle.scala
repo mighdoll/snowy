@@ -1,9 +1,9 @@
 package snowy.load
 
-import boopickle.DefaultBasic.Pickle
-import snowy.playfield.Picklers._
 import akka.util.ByteString
+import boopickle.DefaultBasic.Pickle
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
+import snowy.playfield.Picklers._
 import snowy.util.PartialMatch._
 
 object FastUnpickle {

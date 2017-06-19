@@ -1,14 +1,13 @@
 package snowy.load
 
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Sink, SourceQueueWithComplete}
-import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
-import snowy.GameServerProtocol.{ClientPing, GameServerMessage}
-import socketserve.ActorTypes._
-import snowy.load.SnowyClientSocket.connectSinkToServer
-import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
-import snowy.util.{Span, StartedSpan}
+import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
+import snowy.GameServerProtocol.ClientPing
+import snowy.util.Span
+import socketserve.ActorTypes._
+
+import scala.concurrent.duration._
 
 /** A game client that sends ClientPing messages to the server
   * and measures how long it takes for the server to respond */

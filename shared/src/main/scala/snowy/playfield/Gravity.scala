@@ -1,7 +1,8 @@
 package snowy.playfield
 
 import vector.Vec2d
-import math.cos
+
+import scala.math.cos
 
 object Gravity {
 

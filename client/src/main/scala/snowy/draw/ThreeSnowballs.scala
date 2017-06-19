@@ -5,8 +5,9 @@ import minithree.THREE.{MeshLambertMaterialParameters, Object3D, Vector3}
 import snowy.client.DrawPlayfield.removeDeaths
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.BallId
-import snowy.playfield.{BasicSled, Sled, Snowball}
+import snowy.playfield.{Sled, Snowball}
 import vector.Vec2d
+
 import scala.scalajs.js.Dynamic
 
 class ThreeSnowballs(snowballGeo: THREE.Geometry) {

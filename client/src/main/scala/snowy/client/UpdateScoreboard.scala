@@ -1,7 +1,7 @@
 package snowy.client
 
-import snowy.GameClientProtocol.Scoreboard
 import org.scalajs.dom._
+import snowy.GameClientProtocol.Scoreboard
 import snowy.connection.GameState
 import snowy.playfield.Sled
 

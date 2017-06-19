@@ -1,7 +1,6 @@
 package snowy.playfield
 
 import snowy.GameConstants
-import snowy.playfield.PlayId.TreeId
 import vector.Vec2d
 
 object Tree {

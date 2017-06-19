@@ -1,8 +1,8 @@
 package vector
 
+import org.scalacheck.Gen._
 import org.scalatest._
 import org.scalatest.prop._
-import org.scalacheck.Gen._
 
 class TestVec2d extends PropSpec with PropertyChecks {
   def angleZero(d: Double): Unit = {

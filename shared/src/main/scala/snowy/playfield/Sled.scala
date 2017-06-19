@@ -1,9 +1,8 @@
 package snowy.playfield
 
 import snowy.GameConstants
-import vector.Vec2d
 import snowy.GameConstants.downhillRotation
-import snowy.playfield.PlayId.SledId
+import vector.Vec2d
 
 object Sled {
   val dummy = {

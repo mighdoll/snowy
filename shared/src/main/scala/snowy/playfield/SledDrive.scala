@@ -1,6 +1,6 @@
 package snowy.playfield
-import vector.Vec2d
 import snowy.util.DoubleUtil._
+import vector.Vec2d
 
 object SledDrive {
   sealed trait Drive
@@ -24,7 +24,7 @@ object SledDrive {
   }
 }
 
-import SledDrive._
+import snowy.playfield.SledDrive._
 
 /** driving mode of the sled: coasting, driving, or braking */
 class SledDrive {

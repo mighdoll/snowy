@@ -1,12 +1,13 @@
 package snowy.client
 
 import boopickle.DefaultBasic.Pickle
-import snowy.playfield.Picklers._
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.connection.{GameState, InboundEvents}
+import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledType}
+
 import scala.concurrent.duration._
 import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 

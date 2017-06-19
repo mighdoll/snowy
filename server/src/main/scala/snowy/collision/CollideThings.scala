@@ -1,11 +1,12 @@
 package snowy.collision
 
-import scala.collection.mutable.ListBuffer
+import cats._
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield._
-import cats._
 import vector.Vec2d
+
+import scala.collection.mutable.ListBuffer
 
 object CollideThings {
 

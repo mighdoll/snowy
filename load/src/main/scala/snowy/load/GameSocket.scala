@@ -1,13 +1,14 @@
 package snowy.load
 
-import scala.concurrent.ExecutionContext
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
-import snowy.playfield.Picklers._
 import io.netty.buffer.Unpooled
-import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
+import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.FastUnpickle.partialUnpickleClientMessage
+import snowy.playfield.Picklers._
+
+import scala.concurrent.ExecutionContext
 
 class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
       implicit execution: ExecutionContext

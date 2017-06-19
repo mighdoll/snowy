@@ -1,6 +1,5 @@
 package snowy.playfield
 
-import snowy.GameConstants.Bullet
 import snowy.playfield.PlayId.{BallId, SledId}
 import vector.Vec2d
 

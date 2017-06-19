@@ -1,7 +1,5 @@
 package snowy.load
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.scaladsl._
@@ -14,6 +12,9 @@ import snowy.server.GameControl
 import snowy.util.FutureAwaiting._
 import snowy.util.NullMeasurementRecorder
 import socketserve.WebServer.socketApplication
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()

@@ -6,7 +6,7 @@ import org.scalatest.prop._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol.{GameServerMessage, Join}
 import snowy.playfield.Picklers._
-import snowy.playfield.PlayId.{BallId, SledId}
+import snowy.playfield.PlayId.BallId
 import snowy.playfield.SnowballFixture.testSnowball
 import vector.Vec2d
 

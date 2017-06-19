@@ -1,6 +1,5 @@
 package snowy.server
 
-import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameConstants._
@@ -8,9 +7,11 @@ import snowy.collision._
 import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
-import snowy.util.{Gauged, Span}
 import snowy.util.Span.timeSpan
+import snowy.util.{Gauged, Span}
 import socketserve.ClientId
+
+import scala.concurrent.duration._
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   var gameTime           = System.currentTimeMillis()

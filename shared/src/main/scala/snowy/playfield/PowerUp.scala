@@ -1,7 +1,5 @@
 package snowy.playfield
 
-import vector.Vec2d
-
 sealed trait PowerUp extends CircularItem[PowerUp] with SharedItem {
 
   def radius: Double = 5

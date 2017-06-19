@@ -7,6 +7,7 @@ import snowy.GameClientProtocol.Scoreboard
 import snowy.client.login.LoginScreen
 import snowy.connection.GameState
 import snowy.playfield.{SkiColor, SledType}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js.{Dynamic, JSApp}

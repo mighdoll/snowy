@@ -1,7 +1,5 @@
 package snowy.server
 
-import scala.collection.mutable
-import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
@@ -9,17 +7,20 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
+import snowy.playfield.GameMotion._
+import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.RobotPlayer
-import snowy.util.{MeasurementRecorder, Span}
+import snowy.server.CommonPicklers.withPickledClientMessage
+import snowy.server.GameTurn.LevelUp
 import snowy.util.Span.time
+import snowy.util.{MeasurementRecorder, Span}
 import socketserve._
 import vector.Vec2d
-import snowy.server.CommonPicklers.withPickledClientMessage
-import snowy.playfield.GameMotion._
-import snowy.server.GameTurn.LevelUp
-import snowy.playfield.Picklers._
+
+import scala.collection.mutable
+import scala.concurrent.duration._
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
                                    measurementRecorder: MeasurementRecorder)
@@ -38,8 +39,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   import gameStateImplicits._
   import gameTurns.gameTime
-  import messageIO.sendMessage
-  import messageIO.sendBinaryMessage
+  import messageIO.{sendBinaryMessage, sendMessage}
 
   robotSleds()
 

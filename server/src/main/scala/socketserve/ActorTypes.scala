@@ -1,7 +1,8 @@
 package socketserve
-import scala.concurrent.ExecutionContext
 import akka.actor.ActorSystem
 import snowy.util.MeasurementRecorder
+
+import scala.concurrent.ExecutionContext
 
 /** some convenient syntax for passing common implicit parameters */
 object ActorTypes {

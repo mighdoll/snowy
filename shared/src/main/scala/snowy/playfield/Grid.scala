@@ -1,10 +1,11 @@
 package snowy.playfield
 
-import scala.collection.mutable.HashSet
-import scala.math.{ceil, floor}
 import snowy.playfield.Intersect._
 import snowy.util.DoubleUtil._
 import vector.Vec2d
+
+import scala.collection.mutable.HashSet
+import scala.math.{ceil, floor}
 
 /** A rectangular grid of cells that contain PlayfieldItems.
   * Each cell contains the items whose bounding boxes overlap that cell.

@@ -1,6 +1,7 @@
 package snowy.server
 
 import java.io.File
+
 import scala.collection.mutable.ListBuffer
 
 /** singleton that holds the global .conf based config for the entire app */

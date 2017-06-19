@@ -1,9 +1,10 @@
 package snowy.server
 
-import scala.math.min
 import snowy.Awards._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
+
+import scala.math.min
 
 class GameHealth(state: GameState) {
   import state.gameStateImplicits._

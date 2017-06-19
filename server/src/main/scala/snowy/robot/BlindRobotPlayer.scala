@@ -1,11 +1,13 @@
 package snowy.robot
 
 import java.util.concurrent.ThreadLocalRandom
+
+import akka.actor.ActorSystem
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameServerProtocol._
 import socketserve.ActorTypes.Actors
+
 import scala.concurrent.duration._
-import akka.actor.ActorSystem
 
 class BlindRobotPlayer[_: Actors](api: RobotApi, userName: String)
     extends Robot with StrictLogging {

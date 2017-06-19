@@ -3,8 +3,10 @@ package snowy.server
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
-import scala.collection.JavaConverters._
+
 import com.typesafe.config.{Config, ConfigFactory}
+
+import scala.collection.JavaConverters._
 
 object ConfigUtil {
 

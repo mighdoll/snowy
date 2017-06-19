@@ -1,8 +1,9 @@
 package snowy.server
 
-import scala.collection.mutable
 import snowy.GameServerProtocol.PersistentControl
 import socketserve.ClientId
+
+import scala.collection.mutable
 
 case class PendingControl(start: Millis, command: PersistentControl)
 

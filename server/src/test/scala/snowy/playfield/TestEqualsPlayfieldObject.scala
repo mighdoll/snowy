@@ -3,7 +3,6 @@ package snowy.playfield
 import org.scalatest.PropSpec
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.SnowballFixture.testSnowball
-import vector.Vec2d
 
 class TestEqualsPlayfieldObject extends PropSpec {
   property("different sleds with same id are =") {
@@ -26,7 +25,6 @@ class TestEqualsPlayfieldObject extends PropSpec {
   }
 
   property("sleds with the same id but different types are !=") {
-    import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
     val one = new BasicSled("sled")
     val two = new TankSled("sled") {
       override val id = one.id

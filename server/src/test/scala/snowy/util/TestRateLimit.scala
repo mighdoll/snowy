@@ -2,7 +2,8 @@ package snowy.util
 
 import org.scalatest.PropSpec
 import org.scalatest.prop._
-import RateLimit.rateLimit
+import snowy.util.RateLimit.rateLimit
+
 import scala.concurrent.duration._
 
 class TestRateLimit extends PropSpec with PropertyChecks {

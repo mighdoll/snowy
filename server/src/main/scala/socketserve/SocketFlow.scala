@@ -1,9 +1,7 @@
 package socketserve
 
-import scala.concurrent.Future
 import akka.actor._
 import akka.http.scaladsl.model.ws.{BinaryMessage, Message}
-import akka.socketserve.FixedBuffer
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.{Done, NotUsed}
@@ -11,9 +9,8 @@ import com.typesafe.scalalogging.StrictLogging
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
-import snowy.util.RateLimit.rateLimit
-import scala.concurrent.duration._
-import snowy.GameServerProtocol.ClientPing
+
+import scala.concurrent.Future
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictLogging {
   val outputBufferSize              = 1000

@@ -1,5 +1,5 @@
 package vector
-import math.{cos, sin}
+import scala.math.{cos, sin}
 
 case class Vec2d(x: Double, y: Double) {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)

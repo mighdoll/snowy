@@ -1,17 +1,17 @@
 package snowy.connection
 
-import scala.collection.mutable
 import boopickle.DefaultBasic.Unpickle
 import network.NetworkSocket
 import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.client.{ClientMain, UpdateScoreboard}
+import snowy.client.ClientMain
 import snowy.playfield.Picklers._
-import vector.Vec2d
-import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
+import snowy.playfield.PlayId
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
-import snowy.playfield.{PlayId, PowerUp, Sled, Snowball}
+import vector.Vec2d
+
+import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
 
 class InboundEvents(gameState: GameState,
                     socket: NetworkSocket,

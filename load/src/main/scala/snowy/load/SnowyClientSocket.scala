@@ -1,7 +1,5 @@
 package snowy.load
 
-import scala.concurrent.Future
-import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.ws._
@@ -11,8 +9,10 @@ import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
-import socketserve.ActorTypes._
 import snowy.playfield.Picklers._
+import socketserve.ActorTypes._
+
+import scala.concurrent.Future
 
 object SnowyClientSocket {
   private val unpickleMessage: Flow[Message, GameClientMessage, _] = {

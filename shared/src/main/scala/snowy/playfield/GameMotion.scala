@@ -1,13 +1,11 @@
 package snowy.playfield
 
-import scala.collection.mutable
 import snowy.Awards.Travel
 import snowy.GameConstants.turnTime
-import vector.Vec2d
-import Friction.friction
-import Gravity.gravity
-import Skid.skid
+import snowy.playfield.Friction.friction
 import snowy.playfield.GameMotion._
+import snowy.playfield.Gravity.gravity
+import snowy.playfield.Skid.skid
 
 object GameMotion {
   sealed trait Turning
@@ -70,7 +68,7 @@ class GameMotion(playfield: Playfield) {
   private def updateSledSpeedVector(sleds: Traversable[Sled],
                                     deltaSeconds: Double): Unit = {
     sleds.foreach { sled =>
-      import sled.{gravity => grav, mass, maxSpeed, rotation}
+      import sled.{mass, maxSpeed, rotation, gravity => grav}
       val newSpeed = {
         val afterGravity = gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
         val afterSkid    = skid(afterGravity, rotation, maxSpeed, mass, deltaSeconds)

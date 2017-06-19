@@ -1,9 +1,11 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
-import scala.concurrent.duration._
+
 import snowy.playfield.{SkiColor, SledType}
 import snowy.server.ScoreLevels.levelForScore
+
+import scala.concurrent.duration._
 
 object User {
   val scoreFrequency = 1.second.toMillis

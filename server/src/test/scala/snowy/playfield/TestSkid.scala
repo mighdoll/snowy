@@ -1,12 +1,13 @@
 package snowy.playfield
 
-import scala.math.Pi
 import org.scalactic.Equality
 import org.scalactic.Tolerance._
 import org.scalatest.PropSpec
 import snowy.GameConstants
 import snowy.playfield.Skid.skid
 import vector.Vec2d
+
+import scala.math.Pi
 
 class TestSkid extends PropSpec {
   implicit val equals = new Equality[Vec2d] {

@@ -1,7 +1,8 @@
 package snowy.server
 
-import scala.collection.mutable
 import snowy.playfield.{Grid, Playfield, PlayfieldItem}
+
+import scala.collection.mutable
 
 trait GridItems[A <: PlayfieldItem[A]] {
   protected val playfield: Playfield

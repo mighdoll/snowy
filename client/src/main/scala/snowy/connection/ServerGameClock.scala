@@ -1,7 +1,7 @@
 package snowy.connection
 
-import snowy.GameServerProtocol.{GameServerMessage, RequestGameTime}
 import org.scalajs.dom.window
+import snowy.GameServerProtocol.{GameServerMessage, RequestGameTime}
 
 /** Track the clients estimate of the servers game clock */
 class ServerGameClock(sendMessage: GameServerMessage => Unit) {

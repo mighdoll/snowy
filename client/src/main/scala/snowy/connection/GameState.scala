@@ -1,15 +1,15 @@
 package snowy.connection
 
 import snowy.GameClientProtocol._
+import snowy.GameConstants
 import snowy.client.{Animation, ClientMain, DrawPlayfield}
-import snowy.draw.ThreeSnowballs
 import snowy.playfield.GameMotion._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
-import snowy.playfield.{PlayfieldTracker, _}
+import snowy.playfield._
 import vector.Vec2d
+
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
-import snowy.GameConstants
 
 case class PlayfieldState(mySled: Sled,
                           sleds: Set[Sled],

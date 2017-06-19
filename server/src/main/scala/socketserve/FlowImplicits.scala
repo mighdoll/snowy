@@ -1,11 +1,12 @@
 package socketserve
 
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{Future, Promise}
-import scala.util.Success
 import akka.socketserve.FixedBuffer
 import akka.stream.scaladsl.{Flow, Source}
 import snowy.util.Nanoseconds
+
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Future, Promise}
+import scala.util.Success
 
 object FlowImplicits {
 

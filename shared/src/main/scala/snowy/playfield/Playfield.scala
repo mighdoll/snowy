@@ -1,8 +1,9 @@
 package snowy.playfield
 
 import java.util.concurrent.ThreadLocalRandom
-import vector.Vec2d
+
 import snowy.playfield.Playfield._
+import vector.Vec2d
 
 object Playfield {
 
