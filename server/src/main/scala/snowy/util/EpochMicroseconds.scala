@@ -10,7 +10,7 @@ object Nanoseconds {
   def current(): Nanoseconds = Nanoseconds(System.nanoTime())
 }
 
-/** An microsecond clock aligned within 1msec of the system clock.
+/** A microsecond clock aligned within 1msec of the system clock.
   *
   * The jvm provides real time clock to milliseconds and an interval
   * timer to nanoseconds. EpochMicroseconds synthesizes a microsecond

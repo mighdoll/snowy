@@ -11,6 +11,7 @@ import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.FlowImplicits._
+import snowy.util.PartialMatch._
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {
@@ -26,12 +27,12 @@ object MeasurementRecorder {
 
 /** a measurement recording system, allows publishing duration Span measurements to various backends */
 trait MeasurementRecorder {
-  def publish(measurement: Measurement)
+  def publish(measurement: CompletedMeasurement[_])
   def close(): Unit = {}
 }
 
 object NullMeasurementRecorder extends MeasurementRecorder {
-  override def publish(measurement: Measurement) = {}
+  override def publish(measurement: CompletedMeasurement[_]) = {}
 }
 
 /** a measurement system that sends measurements to a file */
@@ -42,38 +43,37 @@ class MeasurementToTsvFile(directoryName: String,
   val path                  = Paths.get(directoryName)
   val records = startTsvFile(
     path.resolve(s"$baseName.tsv"),
-    "recordType\tname\tspanId\tparentId\tstartEpochMicros\tdurationMicros\n"
+    "recordType\tname\tspanId\tparentId\tstartEpochMicros\tvalue\n"
   )
 
   override def close(): Unit = {
     records.complete()
   }
 
-  override def publish(measurement: Measurement): Unit = {
-    measurement match {
-      case span: CompletedSpan => publishSpan(span)
-      case gauge: Gauged[_]    => publishGauge(gauge)
+  override def publish(measurement: CompletedMeasurement[_]): Unit = {
+    measurementValue(measurement) match {
+      case Some((recordType, value)) =>
+        val name        = measurement.name
+        val startMicros = measurement.start.value
+        val typeCode    = recordType.code
+        val spanId      = measurement.id.value.toHexString
+        val parentId    = measurement.parent.map(_.id.value.toHexString).getOrElse("_")
+        val csv         = s"$typeCode\t$name\t$spanId\t$parentId\t$startMicros\t$value\n"
+        records.offer(csv)
+      case None =>
+        logger.warn(s"unhandled measurement type: $measurement")
     }
   }
 
-  private def publishSpan(span: CompletedSpan): Unit = {
-    val name        = span.name
-    val startMicros = span.start.value
-    val duration    = span.end.value - startMicros
-    val spanId      = span.id.value.toHexString
-    val parentId    = span.parent.map(_.id.value.toHexString).getOrElse("_")
-    val csv         = s"S\t$name\t$spanId\t$parentId\t$startMicros\t$duration\n"
-    records.offer(csv)
-  }
-
-  private def publishGauge(gauge: Gauged[_]): Unit = {
-    val name        = gauge.name
-    val startMicros = gauge.start.value
-    val spanId      = gauge.id.value.toHexString
-    val parentId    = gauge.parentSpan.id.value.toHexString
-    val valueString = gauge.value.toString
-    val csv         = s"G\t$name\t$spanId\t$parentId\t$startMicros\t$valueString\n"
-    records.offer(csv)
+  private def measurementValue(
+        measurement: CompletedMeasurement[_]
+  ): Option[(RecordType, String)] = {
+    measurement pmatch {
+      case span: CompletedSpan         => DurationRecord -> measurement.value.toString
+      case Gauged(_, value: Long, _)   => LongRecord     -> value.toString
+      case Gauged(_, value: String, _) => StringRecord   -> value.toString
+      case Gauged(_, value: Double, _) => DoubleRecord   -> value.toString
+    }
   }
 
   private def startTsvFile(path: Path, header: String): SourceQueueWithComplete[String] = {
@@ -95,5 +95,21 @@ class MeasurementToTsvFile(directoryName: String,
     if (!Files.exists(parentDir)) {
       Files.createDirectories(parentDir)
     }
+  }
+
+  sealed trait RecordType {
+    def code: String
+  }
+  case object DurationRecord extends RecordType {
+    override def code = "S"
+  }
+  case object LongRecord extends RecordType {
+    override def code = "L"
+  }
+  case object DoubleRecord extends RecordType {
+    override def code = "D"
+  }
+  case object StringRecord extends RecordType {
+    override def code = "r"
   }
 }

@@ -4,15 +4,18 @@ import java.util.concurrent.ThreadLocalRandom
 
 trait Measurement {
   val name: String
-  val start: EpochMicroseconds
-}
-
-trait Span {
-  val name: String
+  val start: EpochMicroseconds = EpochMicroseconds()
+  val id                       = SpanId()
   val parent: Option[Span]
   val recorder: MeasurementRecorder
-  val id                     = SpanId()
-  def restart(): StartedSpan = StartedSpan(name, parent, recorder)
+}
+
+trait CompletedMeasurement[T] extends Measurement {
+  val value: T
+}
+
+trait Span extends Measurement {
+  def restart(): StartedSpan = StartedSpan(name, parent, recorder, start)
 }
 
 case class CompletedSpan(
@@ -20,9 +23,10 @@ case class CompletedSpan(
       override val name: String,
       override val parent: Option[Span],
       override val recorder: MeasurementRecorder,
-      start: EpochMicroseconds,
+      override val start: EpochMicroseconds,
       end: EpochMicroseconds
-) extends Span with Measurement {
+) extends Span with CompletedMeasurement[Long] {
+  override val value: Long = end.value - start.value
   recorder.publish(this)
 }
 
@@ -30,7 +34,7 @@ case class StartedSpan(
       override val name: String,
       override val parent: Option[Span],
       override val recorder: MeasurementRecorder,
-      start: EpochMicroseconds = EpochMicroseconds()
+      override val start: EpochMicroseconds = EpochMicroseconds()
 ) extends Span {
   def finishNow(): CompletedSpan =
     CompletedSpan(id, name, parent, recorder, start, EpochMicroseconds())

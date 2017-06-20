@@ -1,11 +1,10 @@
 package snowy.util
 
-case class Gauged[T](override val name: String,
-                     val value: T,
-                     val parentSpan: Span,
-                     override val start: EpochMicroseconds = EpochMicroseconds(),
-                     val id: SpanId = SpanId())
-    extends Measurement
+case class Gauged[T](override val name: String, override val value: T, val parentSpan: Span)
+    extends CompletedMeasurement[T] {
+  override val parent   = Some(parentSpan)
+  override val recorder = parentSpan.recorder
+}
 
 object Gauged {
   def apply[T](name: String, value: T)(implicit parentSpan: Span): Unit = {
