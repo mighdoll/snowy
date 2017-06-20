@@ -57,6 +57,7 @@ lazy val server = (project in file("server"))
     javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
       "com.github.scopt"                 %% "scopt"                  % "3.6.0",
+      "org.typelevel"                    %% "squants"                % "1.3.0",
       "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
       "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
