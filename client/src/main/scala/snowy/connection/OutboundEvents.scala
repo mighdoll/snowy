@@ -6,6 +6,8 @@ import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.client.Keys
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
 
+import scala.collection.mutable
+
 class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => Unit) {
   sealed trait FiringState
   case object Firing     extends FiringState
@@ -129,6 +131,22 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
       shooting = Firing
     }
   }
+
+  private val down = mutable.Set[Char]()
+  window.addEventListener(
+    "keydown", { e: KeyboardEvent =>
+      down += e.keyCode.toChar
+      if (down.contains('Y')) {
+        down.foreach {
+          case key if key != 'Y' => sendMessage(DebugKey(key))
+          case _                 =>
+        }
+      }
+    }
+  )
+  window.addEventListener("keyup", (e: KeyboardEvent) => {
+    down -= e.keyCode.toChar
+  })
 
   window.addEventListener(
     "mousedown", { e: MouseEvent =>

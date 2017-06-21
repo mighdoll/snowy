@@ -438,11 +438,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
     }
   }
 
-  lazy val clientDebugEnabled = GlobalConfig.snowy.getBoolean("clientDebugMessages")
+  lazy val clientDebugEnabled = GlobalConfig.snowy.getBoolean("client-debug-messages")
   private def debugCommand(id: ClientId, key: Char): Unit = {
     if (clientDebugEnabled) {
       key match {
-        case 't' => logNearbyTrees(id)
+        case 'T' => logNearbyTrees(id)
         case x   => logger.warn(s"debug key $x not recognized from client $id")
       }
     }
