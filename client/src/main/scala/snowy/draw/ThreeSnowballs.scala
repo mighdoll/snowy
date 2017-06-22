@@ -22,7 +22,7 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
   def updateSnowball(playfieldSnowball: Snowball,
                      threeSnowball: Object3D,
                      myPos: Vector3): Unit = {
-    DrawPlayfield.setThreePosition(threeSnowball, playfieldSnowball, myPos)
+    DrawPlayfield.playfieldWrap(threeSnowball, playfieldSnowball.position, myPos)
 
     threeSnowball.rotation.y = playfieldSnowball.speed.unit.angle(Vec2d.unitUp)
   }

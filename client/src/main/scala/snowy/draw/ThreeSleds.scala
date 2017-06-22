@@ -20,7 +20,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
 
   /** Revise position, etc. of a three js sled to match a playfield sled */
   def updateSled(playfieldSled: Sled, threeSled: Object3D, myPos: Vector3): Unit = {
-    DrawPlayfield.setThreePosition(threeSled, playfieldSled, myPos)
+    DrawPlayfield.playfieldWrap(threeSled, playfieldSled.position, myPos)
 
     val threeSledBody   = threeSled.children(0)
     val threeSledSkis   = threeSled.children(1)

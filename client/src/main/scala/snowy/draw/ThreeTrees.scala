@@ -10,7 +10,7 @@ object ThreeTrees {
   def updateThreeTrees(trees: Set[Tree], myPos: Vector3): Unit = {
     trees.foreach { tree1 =>
       treeGroup.map.get(tree1.id) match {
-        case Some(tree) => DrawPlayfield.setThreePosition(tree, tree1, myPos)
+        case Some(tree) => DrawPlayfield.playfieldWrap(tree, tree1.position, myPos)
         case None       => treeGroup.add(createTree(tree1, myPos))
       }
     }
@@ -19,7 +19,7 @@ object ThreeTrees {
   def createTree(tree: Tree, myPos: Vector3): Object3D = {
     val newTree: Object3D = CreateTree.randomTree()
 
-    DrawPlayfield.setThreePosition(newTree, tree, myPos)
+    DrawPlayfield.playfieldWrap(newTree, tree.position, myPos)
 
     newTree.name = tree.id.id.toString
     newTree

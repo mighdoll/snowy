@@ -4,7 +4,7 @@ import minithree.THREE
 import minithree.THREE._
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
-import snowy.GameConstants
+import snowy.GameConstants.oldPlayfieldSize
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.draw._
 import snowy.playfield._
@@ -29,34 +29,17 @@ class UpdateGroup[A](val group: Object3D) {
 }
 
 object DrawPlayfield {
-  val playfieldSize =
-    new Vector3(GameConstants.oldPlayfieldSize.x, 0, GameConstants.oldPlayfieldSize.y)
-  def setThreePosition(obj: Object3D,
-                       playfieldItem: PlayfieldItem[_],
-                       myPos: Vector3): Unit = {
-    val newPos = playfieldWrap(
-      new Vector3(playfieldItem.position.x, 0, playfieldItem.position.y),
-      myPos,
-      playfieldSize
-    )
-    obj.position.x = newPos.x
-    obj.position.z = newPos.z
-  }
-
   /** if the object's position is closer to the wrapped side
     * returns the position with */
-  def playfieldWrap(pos: Vector3, mySled: Vector3, wrap: Vector3): Vector3 = {
+  def playfieldWrap(obj: Object3D, pos: Vec2d, mySled: Vector3): Unit = {
 
     /** Return coord or wrapped coord depending on which is closer to center */
     def wrapAxis(coord: Double, center: Double, max: Double): Double = {
       ((coord - center + max / 2) % max + max) % max + center - max / 2
     }
 
-    new Vector3(
-      wrapAxis(pos.x, mySled.x, wrap.x),
-      pos.y,
-      wrapAxis(pos.z, mySled.z, wrap.z)
-    )
+    obj.position.x = wrapAxis(pos.x, mySled.x, oldPlayfieldSize.x)
+    obj.position.z = wrapAxis(pos.y, mySled.z, oldPlayfieldSize.y)
   }
 
   def removeDeaths[A](group: UpdateGroup[A], deaths: Seq[PlayId[A]]): Unit = {

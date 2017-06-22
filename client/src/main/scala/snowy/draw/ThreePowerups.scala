@@ -6,6 +6,7 @@ import snowy.client.DrawPlayfield.removeDeaths
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.PlayId.PowerUpId
 import snowy.playfield.{HealthPowerUp, PowerUp, SpeedPowerUp}
+import vector.Vec2d
 
 import scala.scalajs.js.Dynamic
 
@@ -16,13 +17,11 @@ class ThreePowerups(powerupGeo: THREE.Geometry) {
   def wrapThreePowerups(myPos: Vector3): Unit = {
     powerupGroup.map.foreach {
       case (_, powerup) =>
-        val newPos = DrawPlayfield.playfieldWrap(
-          powerup.position,
-          myPos,
-          DrawPlayfield.playfieldSize
+        DrawPlayfield.playfieldWrap(
+          powerup,
+          Vec2d(powerup.position.x, powerup.position.z),
+          myPos
         )
-        powerup.position.x = newPos.x
-        powerup.position.z = newPos.z
     }
   }
 
