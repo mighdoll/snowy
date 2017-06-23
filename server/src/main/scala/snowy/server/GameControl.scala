@@ -41,7 +41,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   import gameTurns.gameTime
   import messageIO.{sendBinaryMessage, sendMessage}
 
-  robotSleds()
+//  robotSleds()
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {
@@ -449,10 +449,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   }
 
   private def logNearbyTrees(id: ClientId): Unit = {
+    debugVerifyGridState()
+    debugVerifyTreeState()
+
     for { sled <- id.sled } {
       logger.warn(s"logNearbyTrees.sled: $sled  position: ${sled.position}")
       val bounds = sled.boundingBox
-      val bigger = Rect(bounds.pos - Vec2d(25, 25), bounds.size + Vec2d(25, 25))
+      val bigger = Rect(bounds.pos - Vec2d(25, 25), bounds.size + Vec2d(50, 50))
       for { tree <- trees.grid.inside(bigger) } {
         logger.warn(s"logNearbyTrees.tree: $tree  position: ${tree.position}")
       }

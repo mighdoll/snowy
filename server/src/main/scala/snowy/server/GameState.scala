@@ -6,11 +6,11 @@ import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import socketserve.ClientId
 import vector.Vec2d
-
 import scala.collection.mutable
+import com.typesafe.scalalogging.StrictLogging
 
 /** Records the current state of sleds, trees, snowballs etc. */
-trait GameState { self: GameControl =>
+trait GameState extends StrictLogging { self: GameControl =>
 
   val playfield = {
     val playfieldConfig = GlobalConfig.snowy.getConfig("playfield")
@@ -31,6 +31,8 @@ trait GameState { self: GameControl =>
   val sledTree = new SledTree(playfield)
 
   val gameStateImplicits = new GameStateImplicits(this)
+
+  debugVerifyTreeState()
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
@@ -53,4 +55,15 @@ trait GameState { self: GameControl =>
       logger.error(s"snowballGridSet: $snowballGridSet")
     }
   }
+
+  def debugVerifyTreeState():Unit = {
+    val treeSet     = trees.items.toSet
+    val treeGridSet = trees.grid.items
+    if (treeSet != treeGridSet) {
+      logger.error("treeSet != treeGridSet")
+      logger.error(s"treeSet:     $treeSet")
+      logger.error(s"treeGridSet: $treeGridSet")
+    }
+  }
+
 }

@@ -13,7 +13,8 @@ import scala.collection.mutable
 class TreeSeeding(playfield: Playfield) extends StrictLogging {
 
   /** Initialize a set of playfield obstacles */
-  def randomTrees()(implicit tracker: PlayfieldTracker[Tree]): Set[Tree] = {
+  def randomTrees(): Set[Tree] = {
+    import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullTreeTracker
     val random = ThreadLocalRandom.current
 
     val clumpAmount = 80000 // average one clump in this many pixels
