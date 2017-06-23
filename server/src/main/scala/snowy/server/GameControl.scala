@@ -41,7 +41,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
   import gameTurns.gameTime
   import messageIO.{sendBinaryMessage, sendMessage}
 
-//  robotSleds()
+  robotSleds()
 
   /** a new player has connected */
   override def open(id: ConnectionId): Unit = {

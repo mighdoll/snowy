@@ -3,7 +3,7 @@ package snowy.server
 import java.util.concurrent.ThreadLocalRandom
 
 import com.typesafe.scalalogging.StrictLogging
-import snowy.playfield.{Playfield, PlayfieldTracker, Tree}
+import snowy.playfield.{Playfield, Tree}
 import vector.Vec2d
 
 import scala.annotation.tailrec

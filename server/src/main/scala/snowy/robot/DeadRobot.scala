@@ -4,8 +4,6 @@ import java.util.concurrent.ThreadLocalRandom
 
 import snowy.AllLists
 import snowy.GameServerProtocol._
-import snowy.playfield._
-import vector.Vec2d
 
 import scala.util.Random
 

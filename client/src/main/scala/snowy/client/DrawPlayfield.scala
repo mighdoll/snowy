@@ -29,6 +29,7 @@ class UpdateGroup[A](val group: Object3D) {
 }
 
 object DrawPlayfield {
+
   /** if the object's position is closer to the wrapped side
     * returns the position with */
   def playfieldWrap(obj: Object3D, pos: Vec2d, mySled: Vector3): Unit = {

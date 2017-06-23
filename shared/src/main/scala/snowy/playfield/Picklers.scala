@@ -1,5 +1,5 @@
 package snowy.playfield
-import boopickle.{CompositePickler, ConstPickler}
+import boopickle.CompositePickler
 import boopickle.Default._
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage

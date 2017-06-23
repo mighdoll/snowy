@@ -9,9 +9,9 @@ import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
 import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
+import snowy.util.PartialMatch._
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.FlowImplicits._
-import snowy.util.PartialMatch._
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {

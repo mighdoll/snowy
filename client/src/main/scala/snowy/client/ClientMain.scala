@@ -4,9 +4,9 @@ import minithree.THREE
 import minithree.THREE.{WebGLRenderer, WebGLRendererParameters}
 import org.scalajs.dom.{document, window}
 import snowy.GameClientProtocol.Scoreboard
+import snowy.client.hud.UpdateScoreboard
 import snowy.client.login.LoginScreen
 import snowy.connection.GameState
-import snowy.client.hud.UpdateScoreboard
 import snowy.playfield.{SkiColor, SledType}
 
 import scala.concurrent.ExecutionContext.Implicits.global

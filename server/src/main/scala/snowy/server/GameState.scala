@@ -1,13 +1,14 @@
 package snowy.server
 
+import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
 import snowy.collision.SledTree
 import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import socketserve.ClientId
 import vector.Vec2d
+
 import scala.collection.mutable
-import com.typesafe.scalalogging.StrictLogging
 
 /** Records the current state of sleds, trees, snowballs etc. */
 trait GameState extends StrictLogging { self: GameControl =>
@@ -56,7 +57,7 @@ trait GameState extends StrictLogging { self: GameControl =>
     }
   }
 
-  def debugVerifyTreeState():Unit = {
+  def debugVerifyTreeState(): Unit = {
     val treeSet     = trees.items.toSet
     val treeGridSet = trees.grid.items
     if (treeSet != treeGridSet) {
