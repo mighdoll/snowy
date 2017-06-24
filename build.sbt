@@ -90,7 +90,7 @@ lazy val client = (project in file("client"))
       "org.scala-js" %%% "scalajs-dom" % "0.9.2"
     ),
     jsDependencies ++= Seq(
-      "org.webjars.bower" % "three.js"                   % "0.85.0" / "0.85.0/three.min.js",
+      "org.webjars.bower" % "three.js"                   % "0.86.0" / "0.86.0/three.min.js",
       "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
     )
   )
@@ -115,7 +115,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= Seq(
-      "me.chrons" %%% "boopickle" % "1.2.5"
+      "io.suzaku" %%% "boopickle" % "1.2.6"
     ),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
