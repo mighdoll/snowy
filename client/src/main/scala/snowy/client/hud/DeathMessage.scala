@@ -7,7 +7,7 @@ class DeathMessage {
     document.getElementById("notifications").asInstanceOf[html.Div]
 
   private def createHtml(killed: String): String = {
-    s"<div class='message'><b>You Iced <div class='kill'>$killed</div></b></div>"
+    s"<div class='message'><b>You iced <div class='kill'>$killed</div></b></div>"
   }
 
   def killedSled(killed: String): Unit = {
