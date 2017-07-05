@@ -264,6 +264,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       } {
         val killedSled = KilledSled(deadSledId)
         sendMessage(killedSled, killerConnectionId)
+
+        sleds.items.find(_.id == killerSledId).foreach { killerSled =>
+          killerSled.achievments.kills += 1
+          if (System.currentTimeMillis() - killerSled.achievments.lastKill < 10000)
+            killerSled.achievments.killStreak += 1
+          else killerSled.achievments.killStreak = 1
+
+          killerSled.achievments.lastKill = System.currentTimeMillis()
+        }
       }
     }
 
