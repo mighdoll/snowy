@@ -45,7 +45,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   var lastShotTime: Long     = 0
   var lastBoostTime: Long    = 0
 
-  var level: Int = 1
+  var level: Int  = 1
   val achievments = new Achievments()
 
   val driveMode = new SledDrive()

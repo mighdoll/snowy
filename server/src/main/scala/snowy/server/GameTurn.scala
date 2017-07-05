@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.Awards._
 import snowy.GameConstants._
 import snowy.collision._
-import snowy.playfield.PlayId.{BallId, PowerUpId}
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
 import snowy.measures.Span.timeSpan
@@ -50,6 +50,11 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       val collided = turnSpan.time("checkCollisions") {
         checkCollisions()
       }
+
+      turnSpan.time("sledAchievments") {
+        sledAchievments(collided.killedSleds)
+      }
+
       val died = gameHealth.collectDead()
 
       val levelUps =
@@ -155,6 +160,25 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     }
 
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
+  }
+
+  private def sledAchievments(sledKills: Traversable[SledKill]): Unit = {
+    for {
+      SledKill(killerSledId, deadSledId) <- sledKills
+      killerClientId                     <- killerSledId.connectionId
+    } {
+      killerSledId.sled.foreach { killerSled =>
+        killerSled.achievments.kills += 1
+        if (System.currentTimeMillis() - killerSled.achievments.lastKill < 100000) {
+          killerSled.achievments.killStreak += 1
+          logger.warn(
+            s"sled ${killerSled} kill streak ${killerSled.achievments.killStreak}"
+          )
+        } else killerSled.achievments.killStreak = 1
+
+        killerSled.achievments.lastKill = System.currentTimeMillis()
+      }
+    }
   }
 
   /** update the score based on sled travel distance, sleds killed, etc. */
