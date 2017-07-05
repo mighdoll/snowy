@@ -30,7 +30,7 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 lazy val V = new Object {
   val scala      = "2.12.2"
   val akka       = "2.5.3"
-  val akkaHttp   = "10.0.8"
+  val akkaHttp   = "10.0.9"
   val jackson    = "2.8.9"
   val log4j      = "2.8.2"
   val scalacheck = "1.13.5"
@@ -63,7 +63,7 @@ lazy val server = (project in file("server"))
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
       "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
-      "com.typesafe.scala-logging"       %% "scala-logging"          % "3.5.0",
+      "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.0",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
       "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
@@ -87,7 +87,7 @@ lazy val client = (project in file("client"))
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.2"
+      "org.scala-js" %%% "scalajs-dom" % "0.9.3"
     ),
     jsDependencies ++= Seq(
       "org.webjars.bower" % "three.js"                   % "0.86.0" / "0.86.0/three.min.js",
