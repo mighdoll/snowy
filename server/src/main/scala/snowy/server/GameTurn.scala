@@ -169,14 +169,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     } {
       killerSledId.sled.foreach { killerSled =>
         killerSled.achievments.kills += 1
-        if (System.currentTimeMillis() - killerSled.achievments.lastKill < 100000) {
+        if (gameTime - killerSled.achievments.lastKill < 100000) {
           killerSled.achievments.killStreak += 1
           logger.warn(
             s"sled ${killerSled} kill streak ${killerSled.achievments.killStreak}"
           )
         } else killerSled.achievments.killStreak = 1
 
-        killerSled.achievments.lastKill = System.currentTimeMillis()
+        killerSled.achievments.lastKill = gameTime
       }
     }
   }
