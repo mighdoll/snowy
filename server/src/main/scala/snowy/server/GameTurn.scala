@@ -186,27 +186,16 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     awards.foreach {
       case SledKill(winnerId, loserId) =>
         for {
-          winnerConnectionId <- winnerId.connectionId
-          winner             <- winnerId.user
-          loser              <- loserId.user
+          winner <- winnerId.user
+          loser  <- loserId.user
         } {
           val points = loser.score * Points.sledKill
           winner.score += points
         }
       case Travel(sledId, distance) =>
-        for {
-          connectionId <- sledId.connectionId
-          user         <- sledId.user
-        } {
-          val points = distance * Points.travel
-          user.score += points
-        }
-      case SnowballHit(winnerId) =>
+      case SnowballHit(winnerId)    =>
       case SledDied(loserId) =>
-        for {
-          connectionId <- loserId.connectionId
-          user         <- loserId.user
-        } {
+        for { user <- loserId.user } {
           user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
         }
     }
