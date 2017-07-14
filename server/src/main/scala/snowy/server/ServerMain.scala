@@ -23,9 +23,8 @@ object ServerMain extends LazyLogging {
     cmdLine.conf.foreach(GlobalConfig.addConfigFiles(_))
     logger.info("starting server")
 
-    socketApplication { (api, system) =>
-      val measurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
-      new GameControl(api)(system, measurementRecorder)
+    socketApplication { (api, system, appSpan) =>
+      new GameControl(api)(system, appSpan)
     }
   }
 

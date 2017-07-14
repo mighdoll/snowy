@@ -70,6 +70,7 @@ class MeasurementToTsvFile(directoryName: String,
   ): Option[(RecordType, String)] = {
     measurement pmatch {
       case span: CompletedSpan         => DurationRecord -> measurement.value.toString
+      case Gauged(_, value: Int, _)    => LongRecord     -> value.toString
       case Gauged(_, value: Long, _)   => LongRecord     -> value.toString
       case Gauged(_, value: String, _) => StringRecord   -> value.toString
       case Gauged(_, value: Double, _) => DoubleRecord   -> value.toString

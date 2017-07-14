@@ -1,5 +1,6 @@
 package snowy.client
 
+import java.nio.ByteBuffer
 import boopickle.DefaultBasic.Pickle
 import network.NetworkSocket
 import org.scalajs.dom._
@@ -7,8 +8,8 @@ import snowy.GameServerProtocol._
 import snowy.connection.{GameState, InboundEvents}
 import snowy.playfield.Picklers._
 import snowy.playfield.{SkiColor, SledType}
-
 import scala.concurrent.duration._
+import scala.scalajs.js.typedarray.{ArrayBuffer, Int8Array}
 import scala.scalajs.js.typedarray.TypedArrayBufferOps._
 
 class Connection(gameState: GameState) {
@@ -34,9 +35,10 @@ class Connection(gameState: GameState) {
   }
 
   def sendMessage(item: GameServerMessage): Unit = {
-    val bytes     = Pickle.intoBytes(item)
-    val byteArray = bytes.typedArray().subarray(bytes.position, bytes.limit)
-    socket.socket.send(byteArray.buffer)
+    val bytes: ByteBuffer    = Pickle.intoBytes(item)
+    val byteArray: Int8Array = bytes.typedArray()
+    val buffer: ArrayBuffer = byteArray.buffer.slice(bytes.position, bytes.limit)
+    socket.socket.send(buffer)
   }
 
 }

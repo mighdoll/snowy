@@ -1,7 +1,7 @@
 package socketserve
 
 import akka.actor._
-import akka.http.scaladsl.model.ws.{BinaryMessage, Message}
+import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.{Done, NotUsed}
@@ -9,10 +9,11 @@ import com.typesafe.scalalogging.StrictLogging
 import socketserve.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import socketserve.FlowImplicits._
-
 import scala.concurrent.Future
+import snowy.util.{Gauged, Span}
 
-class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictLogging {
+class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Span)
+    extends StrictLogging {
   val outputBufferSize              = 1000
   val inputBufferSize               = 100
   val internalMessagesSize          = 100
@@ -34,6 +35,11 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
       Source
         .actorRef[Message](3, OverflowStrategy.dropBuffer)
         .fixedBuffer(outputBufferSize, warnOverflow)
+        .foreach {
+          case BinaryMessage.Strict(data) => gaugeOuputSize(data.size)
+          case TextMessage.Strict(data)   => gaugeOuputSize(data.size)
+          case x                          => logger.warn(s"can't Gauge output size of $x")
+        }
         .peekMat
 
     reportOnOpen(connectionId, messagesRefFuture, outRefFuture)
@@ -48,7 +54,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
     */
   private def setupInput(
         connectionId: ConnectionId
-  ): (Sink[Message, NotUsed], Future[ActorRef]) = {
+  )(implicit parentSpan: Span): (Sink[Message, NotUsed], Future[ActorRef]) = {
 
     // watch for closing the socket
     val (inputNotifyDone, terminationFutureMat) =
@@ -61,6 +67,11 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
       inputNotifyDone
         .foreach { m =>
           logger.trace(s"received message on $connectionId. message: $m")
+        }
+        .foreach {
+          case BinaryMessage.Strict(data) => gaugeInputSize(data.size)
+          case TextMessage.Strict(data)   => gaugeInputSize(data.size)
+          case x                          => logger.warn(s"can't Gauge input size of $x")
         }
         .fixedBuffer(inputBufferSize, warnInputOverflow)
         .mapMaterializedValue(_ => NotUsed)
@@ -131,6 +142,14 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem) extends StrictL
         logger.warn(s"reportOnClose $connectionId didn't close normally: $err")
       }
     }
+  }
+
+  private def gaugeInputSize(size: Int): Unit = {
+    Gauged("inputBytes", size)
+  }
+
+  private def gaugeOuputSize(size: Int): Unit = {
+    Gauged("outputBytes", size)
   }
 
 }

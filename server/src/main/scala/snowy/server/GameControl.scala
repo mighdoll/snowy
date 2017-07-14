@@ -23,7 +23,7 @@ import scala.collection.mutable
 import scala.concurrent.duration._
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem,
-                                   measurementRecorder: MeasurementRecorder)
+                                   parentSpan: Span)
     extends AppController with GameState with StrictLogging {
   override val turnPeriod = 20 milliseconds
   val gameTurns           = new GameTurn(this, turnPeriod)
@@ -74,7 +74,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem,
 
   /** Run the next game turn. (called on a periodic timer) */
   override def tick(): Unit = {
-    Span.root("GameControl.turn").finishSpan { implicit span =>
+    Span("GameControl.turn").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
       time("robotsTurn") { robots.robotsTurn() }
       applyTurn(deltaSeconds)

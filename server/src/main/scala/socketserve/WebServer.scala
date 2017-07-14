@@ -8,14 +8,15 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
 import socketserve.ActorUtil.materializerWithLogging
-
 import scala.util.Properties
+import snowy.util.{MeasurementRecorder, Span}
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
   * and a websocket for -connect json messages.
   */
-class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
+class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
+                                               parentSpan: Span)
     extends StrictLogging {
   private implicit val materializer     = materializerWithLogging(logger)
   private implicit val executionContext = system.dispatcher
@@ -72,12 +73,14 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem)
 object WebServer {
 
   /** create a web server hosting the given websocket app controller */
-  def socketApplication(makeController: (AppHostApi, ActorSystem) => AppController,
+  def socketApplication(makeController: (AppHostApi, ActorSystem, Span) => AppController,
                         forcePort: Option[Int] = None): WebServer = {
-    implicit val system = ActorSystem()
-    val server          = new WebServer(forcePort)
-    val appHost         = server.appHost
-    val controller      = makeController(appHost, system)
+    implicit val system              = ActorSystem()
+    implicit val measurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
+    implicit val rootSpan            = Span.root("SocketApplication").finishNow()
+    val server                       = new WebServer(forcePort)
+    val appHost                      = server.appHost
+    val controller                   = makeController(appHost, system, rootSpan)
     appHost.registerApp(controller)
     server
   }
