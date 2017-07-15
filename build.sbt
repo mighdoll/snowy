@@ -63,7 +63,7 @@ lazy val server = (project in file("server"))
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
       "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
-      "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.0",
+      "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.1",
       "com.typesafe.akka"                %% "akka-actor"             % V.akka,
       "com.typesafe.akka"                %% "akka-stream"            % V.akka,
       "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
