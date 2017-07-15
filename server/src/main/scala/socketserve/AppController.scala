@@ -4,7 +4,7 @@ import akka.util.ByteString
 
 import scala.concurrent.duration.{FiniteDuration, _}
 
-/** An API for simple synchronous server apps that support multiple users over websockets.
+/** An API for simple synchronous server apps that support multiple users over WebSockets.
   *
   * The synchronous approach is designed to be analogous to the javascript
   * concurrency model.

@@ -6,7 +6,7 @@ object RateLimit {
 
   /** @return a function that relays calls to a provided function no more than
     * once per period
-    * @param finiteDuration mimimum time between calls
+    * @param finiteDuration minimum time between calls
     * @param fn function to call
     */
   def rateLimit(finiteDuration: FiniteDuration)(fn: => Unit): () => Unit = {

@@ -21,7 +21,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
   private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 
-  /** A flow for each connection received over the /game websocket
+  /** A flow for each connection received over the /game WebSocket
     * The flow is materialized by the WebServer */
   def messages(): Flow[Message, Message, NotUsed] = {
     val connectionId = new ConnectionId // user for this connection
@@ -37,8 +37,8 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
         .actorRef[Message](3, OverflowStrategy.dropBuffer)
         .fixedBuffer(outputBufferSize, warnOverflow)
         .foreach {
-          case BinaryMessage.Strict(data) => gaugeOuputSize(data.size)
-          case TextMessage.Strict(data)   => gaugeOuputSize(data.size)
+          case BinaryMessage.Strict(data) => gaugeOutputSize(data.size)
+          case TextMessage.Strict(data)   => gaugeOutputSize(data.size)
           case x                          => logger.warn(s"can't Gauge output size of $x")
         }
         .peekMat
@@ -49,7 +49,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Setup the input stream.
     *
-    * @return a Sink for incoming web socket messages (for the websocket input flow)
+    * @return a Sink for incoming web socket messages (for the WebSocket input flow)
     * and a future actor ref for GameCommand messages (which the caller can use to
     * inject GameCommand messages from outside the flow.)
     */
@@ -149,7 +149,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     Gauged("inputBytes", size)
   }
 
-  private def gaugeOuputSize(size: Int): Unit = {
+  private def gaugeOutputSize(size: Int): Unit = {
     Gauged("outputBytes", size)
   }
 

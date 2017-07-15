@@ -20,7 +20,7 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
   private val playButton = document.getElementById("play").asInstanceOf[html.Button]
   var skiColor: SkiColor = BasicSkis
   var sledType: SledType = BasicSledType
-  // True if the ingame sled has the sledtype and color that is currently selected in the ui
+  // True if the ingame sled has the sledType and color that is currently selected in the ui
   private var sledSelected: Boolean = false
 
   private val loginGeometries =

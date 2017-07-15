@@ -51,17 +51,11 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         checkCollisions()
       }
 
-      turnSpan.time("sledAchievments") {
-        sledAchievments(collided.killedSleds)
+      turnSpan.time("sledAchievements") {
+        sledAchievements(collided.killedSleds)
       }
 
       val died = gameHealth.collectDead()
-
-      val levelUps =
-        turnSpan.time("updateScore") {
-          updateScore(moveAwards.toSeq ++ collided.killedSleds ++ died)
-          levelUp()
-        }
 
       val newPowerUps = state.powerUps.refresh(gameTime)
 
@@ -70,7 +64,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         expiredBalls ++ collided.killedSnowballs,
         usedPowerUps,
         newPowerUps,
-        levelUps,
         collided.killedSleds
       )
     }
@@ -162,21 +155,21 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
   }
 
-  private def sledAchievments(sledKills: Traversable[SledKill]): Unit = {
+  private def sledAchievements(sledKills: Traversable[SledKill]): Unit = {
     for {
       SledKill(killerSledId, deadSledId) <- sledKills
       killerClientId                     <- killerSledId.connectionId
     } {
       killerSledId.sled.foreach { killerSled =>
-        killerSled.achievments.kills += 1
-        if (gameTime - killerSled.achievments.lastKill < 100000) {
-          killerSled.achievments.killStreak += 1
+        killerSled.achievements.kills += 1
+        if (gameTime - killerSled.achievements.lastKill < 100000) {
+          killerSled.achievements.killStreak += 1
           logger.warn(
-            s"sled ${killerSled} kill streak ${killerSled.achievments.killStreak}"
+            s"sled ${killerSled} kill streak ${killerSled.achievements.killStreak}"
           )
-        } else killerSled.achievments.killStreak = 1
+        } else killerSled.achievements.killStreak = 1
 
-        killerSled.achievments.lastKill = gameTime
+        killerSled.achievements.lastKill = gameTime
       }
     }
   }
@@ -201,20 +194,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     }
   }
 
-  /** Update the user/sled level if the users score is high enough.
-    * optionally @return the new level
-    */
-  private def levelUp(): Traversable[LevelUp] = {
-    for {
-      (clientId, user) <- state.users
-      newLevel         <- user.possiblyLevelUp()
-      sled             <- clientId.sled
-    } yield {
-      sled.level = newLevel
-      LevelUp(clientId, newLevel)
-    }
-  }
-
   /** Advance to the next game simulation state
     *
     * @return the time since the last time slice, in seconds
@@ -236,12 +215,9 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 }
 
 object GameTurn {
-  case class LevelUp(clientId: ClientId, newLevel: Int)
-
   case class TurnResults(deadSleds: Traversable[SledDied],
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],
                          newPowerUps: Traversable[PowerUp],
-                         levelUps: Traversable[LevelUp],
                          sledKills: Traversable[SledKill])
 }

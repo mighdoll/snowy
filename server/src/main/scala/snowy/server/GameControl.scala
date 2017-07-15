@@ -13,7 +13,6 @@ import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
 import snowy.robot.{DeadRobot, RobotPlayer}
 import snowy.server.CommonPicklers.withPickledClientMessage
-import snowy.server.GameTurn.LevelUp
 import snowy.measures.Span.time
 import snowy.measures.MeasurementRecorder
 import socketserve._
@@ -81,7 +80,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       applyCommands(deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
       time("reportTurnResults") {
-        reportLevelUps(turnResults.levelUps)
         reportSledKills(turnResults.sledKills)
         reapAndReportDeadSleds(turnResults.deadSleds)
         reportExpiredSnowballs(turnResults.deadSnowBalls)
@@ -207,7 +205,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
     connections.get(netId) match {
       case Some(connection) => reportGameTime(connection.roundTripTime)
-      case None             => logger.warn(s"reportGameTime: connection $netId not fouud")
+      case None             => logger.warn(s"reportGameTime: connection $netId not found")
     }
 
     def reportGameTime(rtt: Long): Unit = {
@@ -279,15 +277,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   }
 
-  private def reportLevelUps(levelUps: Traversable[LevelUp]): Unit = {
-    for {
-      LevelUp(clientId, newLevel) <- levelUps
-      connectionId                <- optNetId(clientId)
-    } {
-      val message = Notification(s"Level $newLevel !")
-      sendMessage(message, connectionId)
-    }
-  }
   private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
     if (newPowerUps.nonEmpty) {
       val newItems = AddItems(newPowerUps.toSeq)

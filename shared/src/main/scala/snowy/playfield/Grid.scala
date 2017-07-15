@@ -15,7 +15,7 @@ import scala.math.{ceil, floor}
   * Note that a playfield item can be stored in multiple cells if
   * it overlaps multiple cells.
   * @param size size in playfield pixels that the grid covers
-  * @param spacing grid cells are squares convering this number of pixels on a side
+  * @param spacing grid cells are squares covering this number of pixels on a side
   */
 class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     extends PlayfieldTracker[A] {

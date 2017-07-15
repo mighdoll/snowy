@@ -36,7 +36,7 @@ object SnowyClientSocket {
       }
   }
 
-  /** Connect to a Game server websocket.
+  /** Connect to a Game server WebSocket.
     * @param sink Sink to be materialized to accept messages from the server
     * @return a Future containing a SourceQueue for sending messages to the server
     */
@@ -47,7 +47,7 @@ object SnowyClientSocket {
     connectToServer(wsUrl, unpickleMessage, sink)
   }
 
-  /** Connect to a Game server websocket. For efficiency when load testing
+  /** Connect to a Game server WebSocket. For efficiency when load testing
     * with many clients, only three messages are decoded and passed to the
     * sink: Died, Ping, and ClientPong.
     * @param sink Sink to be materialized to accept messages from the server

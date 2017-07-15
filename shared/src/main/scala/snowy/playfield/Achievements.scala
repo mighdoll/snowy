@@ -1,6 +1,6 @@
 package snowy.playfield
 
-class Achievments {
+class Achievements {
   var kills: Int      = 0
   var killStreak: Int = 0
   var lastKill: Long  = 0

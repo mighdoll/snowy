@@ -13,7 +13,7 @@ import snowy.measures.{MeasurementRecorder, Span}
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
-  * and a websocket for -connect json messages.
+  * and a WebSocket for -connect json messages.
   */
 class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
                                                parentSpan: Span)
@@ -72,7 +72,7 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
 
 object WebServer {
 
-  /** create a web server hosting the given websocket app controller */
+  /** create a web server hosting the given WebSocket app controller */
   def socketApplication(makeController: (AppHostApi, ActorSystem, Span) => AppController,
                         forcePort: Option[Int] = None): WebServer = {
     implicit val system              = ActorSystem()

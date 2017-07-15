@@ -43,7 +43,7 @@ trait RobotGameStateInfo {
 
 }
 
-/** gaame state information packaged conveniently for the robot */
+/** game state information packaged conveniently for the robot */
 case class RobotGameState(mySledId: SledId,
                           allSleds: Traversable[Sled],
                           snowballs: Traversable[Snowball],

@@ -30,7 +30,7 @@ object Picklers {
   implicit val snowballPickler: Pickler[Snowball] = {
     transformPickler((tupleToSnowball _).tupled)(snowballToTuple)
   }
-  implicit val healhPowerUpPickler: Pickler[HealthPowerUp] = {
+  implicit val healthPowerUpPickler: Pickler[HealthPowerUp] = {
     transformPickler((tupleToHealthPowerUp _).tupled)(healthPowerUpToTuple)
   }
   implicit val speedPowerupPickler: Pickler[SpeedPowerUp] = {

@@ -77,7 +77,12 @@ object GameClientProtocol {
 
   case class Scoreboard(myScore: Double, scores: Seq[Score]) extends GameClientMessage
 
-  case class Notification(message: String) extends GameClientMessage
+  sealed trait AchievementBonus
+  case object SpeedBonus  extends AchievementBonus
+  case object HealthBonus extends AchievementBonus
+
+  case class Achievement(bonus: AchievementBonus, title: String, description: String)
+      extends GameClientMessage
 
   case object Ping extends GameClientMessage
 

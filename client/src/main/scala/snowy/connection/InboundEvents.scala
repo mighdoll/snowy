@@ -60,7 +60,7 @@ class InboundEvents(gameState: GameState,
       case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
-      case Notification(message)          => displayNotification(message)
+      case Achievement(_, _, _)           =>
       case KilledBy(sledId)               => println(s"killed by: $sledId") // TODO display on screen
       case KilledSled(sledId) =>
         gameState.sledNameFromId(sledId).foreach(deathMessage.killedSled)
@@ -77,10 +77,5 @@ class InboundEvents(gameState: GameState,
 
   private def updateClock(time: Long, oneWayDelay: Int): Unit = {
     gameState.serverGameClock.foreach(_.updateClock(time, oneWayDelay))
-  }
-
-  private def displayNotification(message: String): Unit = {
-    // TODO display message
-    println(s"notification: $message")
   }
 }
