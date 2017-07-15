@@ -1,10 +1,12 @@
 package snowy.server
 
 import com.typesafe.scalalogging.StrictLogging
+import snowy.Achievements.IceStreak
 import snowy.Awards._
+import snowy.Achievements.Achievement
 import snowy.GameConstants._
 import snowy.collision._
-import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
+import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
 import snowy.measures.Span.timeSpan
@@ -51,7 +53,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         checkCollisions()
       }
 
-      turnSpan.time("sledAchievements") {
+      val achievements = turnSpan.time("sledAchievements") {
         sledAchievements(collided.killedSleds)
       }
 
@@ -64,7 +66,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         expiredBalls ++ collided.killedSnowballs,
         usedPowerUps,
         newPowerUps,
-        collided.killedSleds
+        collided.killedSleds,
+        achievements
       )
     }
 
@@ -155,23 +158,32 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
   }
 
-  private def sledAchievements(sledKills: Traversable[SledKill]): Unit = {
-    for {
-      SledKill(killerSledId, deadSledId) <- sledKills
-      killerClientId                     <- killerSledId.connectionId
-    } {
-      killerSledId.sled.foreach { killerSled =>
-        killerSled.achievements.kills += 1
-        if (gameTime - killerSled.achievements.lastKill < 100000) {
-          killerSled.achievements.killStreak += 1
-          logger.warn(
-            s"sled ${killerSled} kill streak ${killerSled.achievements.killStreak}"
-          )
-        } else killerSled.achievements.killStreak = 1
-
+  private def sledAchievements(
+        sledKills: Traversable[SledKill]
+  ): Traversable[Achievement] = {
+    val streaks = for {
+      SledKill(killerSledId, _) <- sledKills
+      killerSled                <- killerSledId.sled
+    } yield {
+      killerSled.achievements.kills += 1
+      if (gameTime - killerSled.achievements.lastKill < 100000) {
+        killerSled.achievements.killStreak += 1
         killerSled.achievements.lastKill = gameTime
+
+        logger.warn(
+          s"sled $killerSled kill streak ${killerSled.achievements.killStreak}"
+        )
+
+        Some(IceStreak(killerSledId, killerSled.achievements.killStreak))
+      } else {
+        killerSled.achievements.killStreak = 1
+        killerSled.achievements.lastKill = gameTime
+
+        None
       }
     }
+
+    streaks.flatten
   }
 
   /** update the score based on sled travel distance, sleds killed, etc. */
@@ -219,5 +231,6 @@ object GameTurn {
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],
                          newPowerUps: Traversable[PowerUp],
-                         sledKills: Traversable[SledKill])
+                         sledKills: Traversable[SledKill],
+                         sledAchievements: Traversable[Achievement])
 }
