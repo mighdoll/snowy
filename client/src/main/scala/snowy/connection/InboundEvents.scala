@@ -60,8 +60,9 @@ class InboundEvents(gameState: GameState,
       case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
-      case Achievement(_, _, _)           =>
-      case KilledBy(sledId)               => println(s"killed by: $sledId") // TODO display on screen
+      case AchievementMessage(bonus, title, desc) =>
+        println(s"Achievement: ${(bonus, title, desc)}")
+      case KilledBy(sledId) => println(s"killed by: $sledId") // TODO display on screen
       case KilledSled(sledId) =>
         gameState.sledNameFromId(sledId).foreach(deathMessage.killedSled)
     }

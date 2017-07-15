@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
+import snowy.Achievements.{Achievement, IceStreak}
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
@@ -275,6 +276,36 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       }
     }
 
+  }
+
+  private def reportAchievements(newAchievements: Traversable[Achievement]): Unit = {
+    newAchievements.foreach {
+      case IceStreak(sled, nth) => {
+        val amountString = nth match {
+          case 2 => "Double Icing"
+          case 3 => "Triple Icing"
+          case n => n + " Icings"
+        }
+        reportOneAchievement(
+          sled.connectionId,
+          AchievementMessage(
+            SpeedBonus,
+            amountString + " Icing",
+            "Descriptions are boring"
+          )
+        )
+      }
+    }
+
+    def reportOneAchievement(sledId: Option[ClientId],
+                             achievement: AchievementMessage): Unit = {
+      for {
+        clientId     <- sledId
+        connectionId <- optNetId(clientId)
+      } {
+        sendMessage(achievement, connectionId)
+      }
+    }
   }
 
   private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {

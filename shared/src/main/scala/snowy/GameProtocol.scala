@@ -81,7 +81,9 @@ object GameClientProtocol {
   case object SpeedBonus  extends AchievementBonus
   case object HealthBonus extends AchievementBonus
 
-  case class Achievement(bonus: AchievementBonus, title: String, description: String)
+  case class AchievementMessage(bonus: AchievementBonus,
+                                title: String,
+                                description: String)
       extends GameClientMessage
 
   case object Ping extends GameClientMessage
