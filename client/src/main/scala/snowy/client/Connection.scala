@@ -37,7 +37,7 @@ class Connection(gameState: GameState) {
   def sendMessage(item: GameServerMessage): Unit = {
     val bytes: ByteBuffer    = Pickle.intoBytes(item)
     val byteArray: Int8Array = bytes.typedArray()
-    val buffer: ArrayBuffer = byteArray.buffer.slice(bytes.position, bytes.limit)
+    val buffer: ArrayBuffer  = byteArray.buffer.slice(bytes.position, bytes.limit)
     socket.socket.send(buffer)
   }
 

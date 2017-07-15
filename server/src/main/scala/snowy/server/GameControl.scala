@@ -22,8 +22,7 @@ import vector.Vec2d
 import scala.collection.mutable
 import scala.concurrent.duration._
 
-class GameControl(api: AppHostApi)(implicit system: ActorSystem,
-                                   parentSpan: Span)
+class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Span)
     extends AppController with GameState with StrictLogging {
   override val turnPeriod = 20 milliseconds
   val gameTurns           = new GameTurn(this, turnPeriod)
