@@ -8,7 +8,7 @@ import boopickle.DefaultBasic.Pickle
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{GameClientMessage, Ping}
 import snowy.playfield.Picklers._
-import socketserve.ActorUtil.materializerWithLogging
+import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.ConnectionId
 
 import scala.concurrent.duration._

@@ -1,8 +1,7 @@
-package snowy.util
+package snowy.measures
 
 import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
 import java.nio.file.{Files, Path, Paths}
-
 import akka.actor.ActorSystem
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
@@ -10,8 +9,8 @@ import akka.util.ByteString
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import snowy.util.PartialMatch._
-import socketserve.ActorUtil.materializerWithLogging
-import socketserve.FlowImplicits._
+import snowy.util.FlowImplicits._
+import snowy.util.ActorUtil._
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {

@@ -1,4 +1,4 @@
-package snowy.util
+package snowy.measures
 
 case class Gauged[T](override val name: String,
                      override val value: T,

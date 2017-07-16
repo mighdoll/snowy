@@ -1,8 +1,8 @@
 package snowy.server
 
 import com.typesafe.scalalogging.LazyLogging
+import snowy.measures.MeasurementRecorder
 import snowy.server.CommandLine.BasicArgs
-import snowy.util.MeasurementRecorder
 import socketserve.WebServer.socketApplication
 
 object ServerMain extends LazyLogging {

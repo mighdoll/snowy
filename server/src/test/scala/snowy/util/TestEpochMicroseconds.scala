@@ -2,6 +2,7 @@ package snowy.util
 
 import org.scalatest.PropSpec
 import org.scalatest.prop._
+import snowy.measures.EpochMicroseconds
 
 class TestEpochMicroseconds extends PropSpec with PropertyChecks {
 

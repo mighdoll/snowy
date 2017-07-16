@@ -38,6 +38,15 @@ lazy val V = new Object {
   val scalatest  = "3.0.3"
 }
 
+lazy val scalaLogging = Seq(
+  "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.1"
+)
+
+lazy val akkaStreams = Seq(
+  "com.typesafe.akka"                %% "akka-actor"             % V.akka,
+  "com.typesafe.akka"                %% "akka-stream"            % V.akka
+)
+
 lazy val server = (project in file("server"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
@@ -63,13 +72,10 @@ lazy val server = (project in file("server"))
       "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
       "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
-      "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.1",
-      "com.typesafe.akka"                %% "akka-actor"             % V.akka,
-      "com.typesafe.akka"                %% "akka-stream"            % V.akka,
       "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
       "com.typesafe.akka"                %% "akka-slf4j"             % V.akka,
       "org.typelevel"                    %% "cats"                   % "0.9.0"
-    ),
+    ) ++ scalaLogging ++ akkaStreams,
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
@@ -78,7 +84,7 @@ lazy val server = (project in file("server"))
     }.taskValue,
     watchSources ++= (watchSources in client).value
   )
-  .dependsOn(sharedJvm)
+  .dependsOn(sharedJvm, measures)
 
 lazy val client = (project in file("client"))
   .enablePlugins(ScalaJSPlugin)
@@ -96,6 +102,12 @@ lazy val client = (project in file("client"))
   )
   .dependsOn(shared.js)
 
+lazy val measures = (project in file("measures"))
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= scalaLogging ++ akkaStreams
+  )
+
 lazy val load = (project in file("load"))
   .enablePlugins(JavaAppPackaging)
   .configs(IntegrationTest)
@@ -108,8 +120,7 @@ lazy val load = (project in file("load"))
       "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha20"
     )
   )
-  .dependsOn(server)
-  .dependsOn(sharedJvm)
+  .dependsOn(server, sharedJvm, measures)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)

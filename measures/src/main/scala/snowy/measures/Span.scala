@@ -1,4 +1,4 @@
-package snowy.util
+package snowy.measures
 
 import java.util.concurrent.ThreadLocalRandom
 

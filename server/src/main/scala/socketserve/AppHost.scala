@@ -7,9 +7,9 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
 import com.typesafe.scalalogging.StrictLogging
-import socketserve.ActorUtil.materializerWithLogging
+import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
-import socketserve.FlowImplicits._
+import snowy.util.FlowImplicits._
 
 import scala.collection.mutable
 import scala.concurrent.duration._

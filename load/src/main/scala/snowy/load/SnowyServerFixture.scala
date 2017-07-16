@@ -10,11 +10,10 @@ import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.SnowyClientSocket.connectSinkToServer
 import snowy.server.GameControl
 import snowy.util.FutureAwaiting._
-import snowy.util.NullMeasurementRecorder
 import socketserve.WebServer.socketApplication
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import snowy.measures.NullMeasurementRecorder
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()

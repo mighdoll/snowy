@@ -3,9 +3,8 @@ package snowy.load
 import akka.actor.ActorSystem
 import snowy.server.CommandLine.BasicArgs
 import snowy.server.{CommandLine, GlobalConfig}
-import snowy.util.MeasurementRecorder
-
 import scala.concurrent.duration._
+import snowy.measures.MeasurementRecorder
 
 object LoadTest {
 

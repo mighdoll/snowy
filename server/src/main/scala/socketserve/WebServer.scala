@@ -7,9 +7,9 @@ import akka.stream.BindFailedException
 import com.typesafe.scalalogging.StrictLogging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
-import socketserve.ActorUtil.materializerWithLogging
+import snowy.util.ActorUtil.materializerWithLogging
 import scala.util.Properties
-import snowy.util.{MeasurementRecorder, Span}
+import snowy.measures.{MeasurementRecorder, Span}
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,

@@ -6,11 +6,12 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.{Done, NotUsed}
 import com.typesafe.scalalogging.StrictLogging
-import socketserve.ActorUtil.materializerWithLogging
+import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
-import socketserve.FlowImplicits._
+import snowy.util.FlowImplicits._
 import scala.concurrent.Future
-import snowy.util.{Gauged, Span}
+import snowy.measures.{Gauged, Span}
+import snowy.measures.Span
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Span)
     extends StrictLogging {

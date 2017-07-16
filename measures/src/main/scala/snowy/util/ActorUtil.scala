@@ -1,4 +1,4 @@
-package socketserve
+package snowy.util
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}

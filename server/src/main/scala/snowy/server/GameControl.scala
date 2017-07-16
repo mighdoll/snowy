@@ -14,12 +14,13 @@ import snowy.playfield.{Sled, _}
 import snowy.robot.{DeadRobot, RobotPlayer}
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.server.GameTurn.LevelUp
-import snowy.util.Span.time
-import snowy.util.{MeasurementRecorder, Span}
+import snowy.measures.Span.time
+import snowy.measures.MeasurementRecorder
 import socketserve._
 import vector.Vec2d
 import scala.collection.mutable
 import scala.concurrent.duration._
+import snowy.measures.Span
 
 class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Span)
     extends AppController with GameState with StrictLogging {

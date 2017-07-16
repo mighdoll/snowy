@@ -1,4 +1,4 @@
-package snowy.util
+package snowy.measures
 
 /** microseconds since midnight January 1, 1970 UTC */
 case class EpochMicroseconds(value: Long) extends AnyVal
