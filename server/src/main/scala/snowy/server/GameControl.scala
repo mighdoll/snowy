@@ -12,7 +12,7 @@ import snowy.playfield.GameMotion._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
-import snowy.robot.{DeadRobot, RobotPlayer}
+import snowy.robot.DeadRobot
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.measures.Span.time
 import snowy.measures.MeasurementRecorder
@@ -83,6 +83,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       time("reportTurnResults") {
         reportSledKills(turnResults.sledKills)
         reapAndReportDeadSleds(turnResults.deadSleds)
+        reportAchievements(turnResults.sledAchievements)
         reportExpiredSnowballs(turnResults.deadSnowBalls)
         reportUsedPowerUps(turnResults.usedPowerUps)
         reportNewPowerUps(turnResults.newPowerUps)
@@ -154,8 +155,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 2).foreach { _ =>
-      robots.createRobot(RobotPlayer.apply)
+    (1 to 100).foreach { _ =>
+      robots.createRobot(DeadRobot.apply)
     }
   }
 
