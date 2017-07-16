@@ -3,9 +3,8 @@ package snowy.connection
 import org.scalajs.dom._
 import snowy.GameServerProtocol._
 import snowy.client.ClientMain.{getHeight, getWidth}
-import snowy.client.Keys
+import snowy.client.{KeyCombos, Keys}
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
-
 import scala.collection.mutable
 
 class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => Unit) {
@@ -21,6 +20,8 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   var coasting: Boolean          = false
   var turret: Option[Direction]  = None
   var mouseDir: Double           = 0
+
+  val keyCombos = new KeyCombos()
 
   sealed trait Direction
 
@@ -132,22 +133,6 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
     }
   }
 
-  private val down = mutable.Set[Char]()
-  window.addEventListener(
-    "keydown", { e: KeyboardEvent =>
-      down += e.keyCode.toChar
-      if (down.contains('Y')) {
-        down.foreach {
-          case key if key != 'Y' => sendMessage(DebugKey(key))
-          case _                 =>
-        }
-      }
-    }
-  )
-  window.addEventListener("keyup", (e: KeyboardEvent) => {
-    down -= e.keyCode.toChar
-  })
-
   window.addEventListener(
     "mousedown", { e: MouseEvent =>
       e.button match {
@@ -164,4 +149,8 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   window.addEventListener("contextmenu", { e: Event =>
     e.preventDefault()
   })
+
+  keyCombos.listen('y'){key =>
+    sendMessage(DebugKey(key))
+  }
 }
