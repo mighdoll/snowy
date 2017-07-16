@@ -11,14 +11,13 @@ import snowy.playfield.GameMotion._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
-import snowy.robot.RobotPlayer
+import snowy.robot.{DeadRobot, RobotPlayer}
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.server.GameTurn.LevelUp
 import snowy.util.Span.time
 import snowy.util.{MeasurementRecorder, Span}
 import socketserve._
 import vector.Vec2d
-
 import scala.collection.mutable
 import scala.concurrent.duration._
 
@@ -158,6 +157,14 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     (1 to 2).foreach { _ =>
       robots.createRobot(RobotPlayer.apply)
     }
+  }
+
+  /** Add some dummy sleds to the game */
+  private def createStationarySleds(number:Int):Unit = {
+    (1 to number).foreach { _ =>
+      robots.createRobot(DeadRobot.apply)
+    }
+
   }
 
   /** update game clients with the current state of the game */
@@ -441,7 +448,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   private def debugCommand(id: ClientId, key: Char): Unit = {
     if (clientDebugEnabled) {
       key match {
-        case 'T' => logNearbyTrees(id)
+        case 't' => logNearbyTrees(id)
+        case '9' => createStationarySleds(99)
         case x   => logger.warn(s"debug key $x not recognized from client $id")
       }
     }
