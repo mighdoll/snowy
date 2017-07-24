@@ -2786,9 +2786,8 @@ class WebGLRenderTarget extends RenderTarget {
   var stencilBuffer: Boolean   = js.native
   var generateMipmaps: Boolean = js.native
 
-  def this(width: Double,
-           height: Double,
-           options: WebGLRenderTargetOptions = js.native) = this()
+  def this(width: Double, height: Double, options: WebGLRenderTargetOptions = js.native) =
+    this()
 
   override def clone(): WebGLRenderTarget = js.native
   def dispose(): Unit                     = js.native
@@ -2806,9 +2805,8 @@ class WebGLRenderTarget extends RenderTarget {
 class WebGLRenderTargetCube extends WebGLRenderTarget {
   var activeCubeFace: Double = js.native
 
-  def this(width: Double,
-           height: Double,
-           options: WebGLRenderTargetOptions = js.native) = this()
+  def this(width: Double, height: Double, options: WebGLRenderTargetOptions = js.native) =
+    this()
 }
 
 @js.native
@@ -3329,8 +3327,8 @@ class CurvePath extends Curve {
   def createSpacedPointsGeometry(divisions: Double): Geometry = js.native
   def createGeometry(points: js.Array[Vector2]): Geometry     = js.native
   def addWrapPath(bendpath: Path): Unit                       = js.native
-  def getTransformedPoints(segments: Double,
-                           bends: Path = js.native): js.Array[Vector2] = js.native
+  def getTransformedPoints(segments: Double, bends: Path = js.native): js.Array[Vector2] =
+    js.native
   def getTransformedSpacedPoints(segments: Double,
                                  bends: js.Array[Path] = js.native): js.Array[Vector2] =
     js.native

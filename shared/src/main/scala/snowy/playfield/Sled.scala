@@ -143,8 +143,7 @@ class BasicSled(override val userName: String,
   override def armor: Double = 2.0
 }
 
-class TankSled(override val userName: String,
-               override val skiColor: SkiColor = BasicSkis)
+class TankSled(override val userName: String, override val skiColor: SkiColor = BasicSkis)
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[TankSled]
 

@@ -39,12 +39,12 @@ lazy val V = new Object {
 }
 
 lazy val scalaLogging = Seq(
-  "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.2"
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
 )
 
 lazy val akkaStreams = Seq(
-  "com.typesafe.akka"                %% "akka-actor"             % V.akka,
-  "com.typesafe.akka"                %% "akka-stream"            % V.akka
+  "com.typesafe.akka" %% "akka-actor"  % V.akka,
+  "com.typesafe.akka" %% "akka-stream" % V.akka
 )
 
 lazy val server = (project in file("server"))

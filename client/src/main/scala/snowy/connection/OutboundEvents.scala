@@ -150,7 +150,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
     e.preventDefault()
   })
 
-  keyCombos.listen('y'){key =>
+  keyCombos.listen('y') { key =>
     sendMessage(DebugKey(key))
   }
 }

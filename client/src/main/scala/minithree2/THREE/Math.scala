@@ -6,13 +6,11 @@ import scala.scalajs.js.annotation.JSGlobal
 // TODO what should be vars?
 @js.native
 @JSGlobal("THREE.Box2")
-class Box2(var min: js.UndefOr[Vector2], var max: js.UndefOr[Vector2])
-    extends js.Object {}
+class Box2(var min: js.UndefOr[Vector2], var max: js.UndefOr[Vector2]) extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Box3")
-class Box3(var min: js.UndefOr[Vector3], var max: js.UndefOr[Vector3])
-    extends js.Object {}
+class Box3(var min: js.UndefOr[Vector3], var max: js.UndefOr[Vector3]) extends js.Object {}
 
 @js.native
 @JSGlobal("THREE.Color")
