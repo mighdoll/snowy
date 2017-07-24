@@ -39,7 +39,7 @@ lazy val V = new Object {
 }
 
 lazy val scalaLogging = Seq(
-  "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.1"
+  "com.typesafe.scala-logging"       %% "scala-logging"          % "3.7.2"
 )
 
 lazy val akkaStreams = Seq(
