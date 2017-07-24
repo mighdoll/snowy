@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
 import snowy.robot.{Robot, RobotApi, RobotGameState}
-import socketserve.ActorTypes._
+import snowy.util.ActorTypes._
 import vector.Vec2d
 
 /** Host for a single robot in a client, e.g. for a load test via a WebSocket.

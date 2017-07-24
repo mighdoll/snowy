@@ -47,6 +47,17 @@ lazy val akkaStreams = Seq(
   "com.typesafe.akka" %% "akka-stream" % V.akka
 )
 
+lazy val loggingProvider = Seq(
+  "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
+  "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
+  "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson
+)
+
+lazy val scopt = Seq(
+  "com.github.scopt" %% "scopt" % "3.6.0"
+)
+
 lazy val server = (project in file("server"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
@@ -65,17 +76,12 @@ lazy val server = (project in file("server"))
     ),
     javaOptions in reStart := javaOptions.value,
     libraryDependencies ++= Seq(
-      "com.github.scopt"                 %% "scopt"                  % "3.6.0",
-      "org.typelevel"                    %% "squants"                % "1.3.0",
-      "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
-      "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
-      "org.apache.logging.log4j"         % "log4j-jul"               % V.log4j,
-      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
-      "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson,
-      "com.typesafe.akka"                %% "akka-http"              % V.akkaHttp,
-      "com.typesafe.akka"                %% "akka-slf4j"             % V.akka,
-      "org.typelevel"                    %% "cats"                   % "0.9.0"
-    ) ++ scalaLogging ++ akkaStreams,
+      "org.typelevel"            %% "squants"    % "1.3.0",
+      "org.apache.logging.log4j" % "log4j-jul"   % V.log4j,
+      "com.typesafe.akka"        %% "akka-http"  % V.akkaHttp,
+      "com.typesafe.akka"        %% "akka-slf4j" % V.akka,
+      "org.typelevel"            %% "cats"       % "0.9.0"
+    ) ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams,
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
@@ -107,6 +113,20 @@ lazy val measures = (project in file("measures"))
   .settings(
     libraryDependencies ++= scalaLogging ++ akkaStreams
   )
+
+lazy val measuresListener = (project in file("measures-listener"))
+  .settings(commonSettings: _*)
+  .settings(
+    javaOptions in reStart ++= Seq(
+      "-XX:MaxDirectMemorySize=512G",
+      "-Xmx3G",
+      "-Xms3G"
+    ),
+      libraryDependencies ++= Seq (
+      "com.orientechnologies" % "orientdb-graphdb" % "2.2.23"
+    ) ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams
+  )
+  .dependsOn(measures)
 
 lazy val load = (project in file("load"))
   .enablePlugins(JavaAppPackaging)

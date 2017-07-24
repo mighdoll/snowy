@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
 import snowy.GameServerProtocol.ClientPing
-import socketserve.ActorTypes._
+import snowy.util.ActorTypes._
 import scala.concurrent.duration._
 import snowy.measures.Span
 

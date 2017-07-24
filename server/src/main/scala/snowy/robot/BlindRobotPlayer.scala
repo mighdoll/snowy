@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom
 import akka.actor.ActorSystem
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameServerProtocol._
-import socketserve.ActorTypes.Actors
+import snowy.util.ActorTypes.Actors
 
 import scala.concurrent.duration._
 

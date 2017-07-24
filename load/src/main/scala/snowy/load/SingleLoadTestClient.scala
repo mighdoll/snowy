@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import com.typesafe.scalalogging.StrictLogging
 import snowy.robot._
-import socketserve.ActorTypes._
+import snowy.util.ActorTypes._
 
 object SingleLoadTestClient {
   val nextUserId = new AtomicInteger()

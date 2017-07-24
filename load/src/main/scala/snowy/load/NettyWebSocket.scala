@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
 import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}
-import socketserve.ActorTypes.Execution
+import snowy.util.ActorTypes.Execution
 
 import scala.concurrent.Promise
 import scala.util.Success

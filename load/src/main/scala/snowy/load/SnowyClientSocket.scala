@@ -10,7 +10,7 @@ import boopickle.DefaultBasic.{Pickle, Unpickle}
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.playfield.Picklers._
-import socketserve.ActorTypes._
+import snowy.util.ActorTypes._
 
 import scala.concurrent.Future
 

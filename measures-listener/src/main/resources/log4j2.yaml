@@ -1,0 +1,29 @@
+Configuration:
+
+  Properties:
+    Property:
+      name: log-path
+      value: "../logs"
+
+  Appenders:
+    Console:
+      name: Console
+      target: SYSTEM_OUT
+      PatternLayout:
+        Pattern: "%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
+
+    File:
+      name: File
+      fileName: ${log-path}/measures-loader.log
+      append: false
+      PatternLayout:
+        Pattern: "%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n"
+
+  Loggers:
+    Root:
+      level: debug
+      AppenderRef:
+        - ref: Console
+          level: warn
+        - ref: File
+          level: info
