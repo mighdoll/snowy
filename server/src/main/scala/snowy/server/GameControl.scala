@@ -12,12 +12,13 @@ import snowy.playfield.GameMotion._
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.{Sled, _}
-import snowy.robot.DeadRobot
+import snowy.robot.{DeadRobot, RobotPlayer}
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.measures.Span.time
 import snowy.measures.MeasurementRecorder
 import socketserve._
 import vector.Vec2d
+
 import scala.collection.mutable
 import scala.concurrent.duration._
 import snowy.measures.Span
@@ -101,11 +102,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       case Join(name, sledType, skiColor) =>
         userJoin(id, name.slice(0, 15), sledType, skiColor)
       case TargetAngle(angle) => targetDirection(id, angle)
-      case Shoot(time)        => id.sled.foreach(shootSnowball(_))
+      case Shoot(_)           => id.sled.foreach(shootSnowball)
       case Start(cmd, time)   => startControl(id, cmd, time)
       case Stop(cmd, time)    => stopControl(id, cmd, time)
       case Boost(time)        => id.sled.foreach(boostSled(_, time))
-      case Pong               => optNetId(id).foreach(pong(_))
+      case Pong               => optNetId(id).foreach(pong)
       case ReJoin             => rejoin(id)
       case TestDie            => reapSled(sledMap(id))
       case DebugKey(key)      => debugCommand(id, key)
@@ -145,7 +146,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   private def optNetId(id: ClientId): Option[ConnectionId] = {
     id match {
       case netId: ConnectionId => Some(netId)
-      case i: RobotId          => None
+      case _: RobotId          => None
     }
   }
 
@@ -155,17 +156,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 100).foreach { _ =>
-      robots.createRobot(DeadRobot.apply)
+    (1 to 2).foreach { _ =>
+      robots.createRobot(RobotPlayer.apply)
     }
   }
 
   /** Add some dummy sleds to the game */
-  private def createStationarySleds(number:Int):Unit = {
+  private def createStationarySleds(number: Int): Unit = {
     (1 to number).foreach { _ =>
       robots.createRobot(DeadRobot.apply)
     }
-
   }
 
   /** update game clients with the current state of the game */
@@ -237,7 +237,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   /** apply any pending but not yet cancelled commands from user actions,
     * e.g. turning or slowing */
   private def applyCommands(deltaSeconds: Double): Unit = {
-
     pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
@@ -281,7 +280,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   private def reportAchievements(newAchievements: Traversable[Achievement]): Unit = {
     newAchievements.foreach {
-      case IceStreak(sled, nth) => {
+      case IceStreak(sled, nth) =>
         val amountString = nth match {
           case 2 => "Double Icing"
           case 3 => "Triple Icing"
@@ -295,7 +294,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
             "Descriptions are boring"
           )
         )
-      }
     }
 
     def reportOneAchievement(sledId: Option[ClientId],
@@ -346,7 +344,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       val launchDistance = sled.bulletLaunchPosition.length + sled.radius
       val launchPos      = sled.bulletLaunchPosition.rotate(launchAngle).unit * launchDistance
       val direction      = Vec2d.fromRotation(launchAngle)
-      val ball = new Snowball(
+      val ball = Snowball(
         ownerId = sled.id,
         speed = sled.speed + (direction * sled.bulletSpeed),
         radius = sled.bulletRadius,
@@ -414,9 +412,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def newRandomSled(userName: String,
-                            sledType: SledType,
-                            color: SkiColor): Sled = {
+  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
