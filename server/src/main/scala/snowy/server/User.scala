@@ -25,7 +25,6 @@ class User(val name: String,
   /** points earned in the game */
   var score: Double               = 10
   private var nextScoreSend: Long = 0
-  private var level: Int          = 1
 
   /** Scores are sent to users once per second (see scoreFrequency).
     * Users receive scores at jittered times, to spread the network load.
@@ -38,15 +37,5 @@ class User(val name: String,
   def scoreSent(gameTime: Long): Unit = {
     val jitter = ThreadLocalRandom.current.nextDouble() * scoreFrequency
     nextScoreSend = gameTime + jitter.toInt
-  }
-
-  /** check if the player is ready for a new level based on the score
-    * Optionally return the new level if the user has leveled up */
-  def possiblyLevelUp(): Option[Int] = {
-    val targetLevel = levelForScore(score)
-    if (level != targetLevel) {
-      level = targetLevel
-      Some(level)
-    } else None
   }
 }

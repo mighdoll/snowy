@@ -45,7 +45,6 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   var lastShotTime: Long     = 0
   var lastBoostTime: Long    = 0
 
-  var level: Int   = 1
   val achievements = new Achievements()
 
   val driveMode = new SledDrive()
@@ -94,7 +93,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def bulletLifetime: Double = 4
 
   /** health of this sled. If it falls to zero, the sled dies. */
-  def maxHealth: Double = .5 + (level * .5)
+  def maxHealth: Double = 1.0
 
   /** time in seconds to recover 1 full point of health */
   def healthRecoveryTime: Double = 50.0
@@ -139,8 +138,6 @@ class BasicSled(override val userName: String,
                 override val skiColor: SkiColor = BasicSkis)
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[BasicSled]
-
-  override def armor: Double = 2.0
 }
 
 class TankSled(override val userName: String, override val skiColor: SkiColor = BasicSkis)
@@ -152,7 +149,7 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override val boostAcceleration = super.boostAcceleration * .5
   override val rotationSpeed     = math.Pi / 2
   override val maxImpactDamage   = 0.5
-  override def maxHealth         = 2.5 + (level * .5)
+  override def maxHealth         = 3.0
   override val minRechargeTime   = 1000
   override val bulletHealth      = 2
   override val bulletImpact      = 0.25
@@ -162,7 +159,6 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override val bulletRecoil      = 70
   override val bulletLifetime    = 10.0
   override val mass              = 3.0
-  override val armor             = 2.0
 }
 
 class GunnerSled(override val userName: String,
@@ -174,7 +170,7 @@ class GunnerSled(override val userName: String,
   override val driveAcceleration  = super.driveAcceleration * 1.2
   override val boostAcceleration  = super.boostAcceleration * .8
   override val maxSpeed           = 600
-  override val maxHealth          = 1 + (level * .5)
+  override val maxHealth          = 1.5
   override val healthRecoveryTime = 10
   override val minRechargeTime    = 100
   override val bulletSpeed        = 400
@@ -184,7 +180,6 @@ class GunnerSled(override val userName: String,
   override val bulletImpact       = 4.5
   override val bulletHealth       = 0.3
   override val mass               = 1.0
-  override val armor              = 2.0
 }
 
 class SpeedySled(override val userName: String,
@@ -200,7 +195,6 @@ class SpeedySled(override val userName: String,
   override val mass               = .1
   override val maxSpeed           = 700
   override val rotationSpeed      = math.Pi * 2
-  override val armor              = 2.0
 }
 
 class SpikySled(override val userName: String,
@@ -211,8 +205,7 @@ class SpikySled(override val userName: String,
   override val gravity            = super.gravity * .5
   override val boostAcceleration  = super.boostAcceleration * .65
   override val driveAcceleration  = super.driveAcceleration * .5
-  override val armor              = 1.0
-  override val maxHealth          = 3.5 + (level * .5)
+  override val maxHealth          = 4.0
   override val maxImpactDamage    = 2.0
   override val mass               = 1.0
   override val rotationSpeed      = math.Pi * 2 / 3
@@ -240,5 +233,4 @@ class PrototypeSled(override val userName: String,
   override val maxSpeed           = 650
   override val minRechargeTime    = 175
   override val rotationSpeed      = math.Pi * 2
-  override val armor              = 2.0
 }

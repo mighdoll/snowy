@@ -124,8 +124,7 @@ object CollideThings {
   ): Double = {
     val collisionSpeed = (objA.speed - objB.speed).length
     val speedFactor    = math.min(1.0, collisionSpeed / absoluteMaxSpeed)
-    val baseDamage     = objB.impactDamage * speedFactor * objB.mass
-    baseDamage / objA.armor
+    objB.impactDamage * speedFactor * objB.mass
   }
 }
 

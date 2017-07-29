@@ -14,7 +14,5 @@ case class Tree() extends PlayfieldItem[Tree] {
 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[Tree]
 
-  override def armor: Double        = 1
   override def impactDamage: Double = 1
-
 }

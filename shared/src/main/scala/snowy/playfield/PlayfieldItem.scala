@@ -37,9 +37,6 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
     case _                      => false
   }
 
-  /** reduce impact by this factor in collisions */
-  def armor: Double = 1.0
-
   /** increase collision impact on opponent by this factor */
   def impactDamage: Double = 1.0
 
