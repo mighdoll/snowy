@@ -28,7 +28,7 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 )
 
 lazy val V = new Object {
-  val scala      = "2.12.2"
+  val scala      = "2.12.3"
   val akka       = "2.5.3"
   val akkaHttp   = "10.0.9"
   val jackson    = "2.8.9"
@@ -117,7 +117,7 @@ lazy val load = (project in file("load"))
     libraryDependencies ++= Seq(
       "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
       "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha20"
+      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha21"
     )
   )
   .dependsOn(server, sharedJvm, measures)
