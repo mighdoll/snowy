@@ -1,3 +1,5 @@
+import Dependencies._
+
 lazy val root =
   (project in file("."))
     .aggregate(server, client, measures, measuresListener, load, sharedJvm, sharedJs)
@@ -24,7 +26,7 @@ lazy val commonSettings = Seq(
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
   libraryDependencies ++= Seq(
-    "org.scalacheck" %% "scalacheck" % V.scalacheck % "it",
+    scalaCheck % "it",
     "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
     "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
   )
@@ -48,13 +50,6 @@ lazy val scalaLogging = Seq(
 lazy val akkaStreams = Seq(
   "com.typesafe.akka" %% "akka-actor"  % V.akka,
   "com.typesafe.akka" %% "akka-stream" % V.akka
-)
-
-lazy val loggingProvider = Seq(
-  "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
-  "org.apache.logging.log4j"         % "log4j-slf4j-impl"        % V.log4j,
-  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % V.jackson,
-  "com.fasterxml.jackson.core"       % "jackson-databind"        % V.jackson
 )
 
 lazy val scopt = Seq(
