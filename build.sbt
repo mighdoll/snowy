@@ -1,5 +1,8 @@
 lazy val root =
-  (project in file(".")).aggregate(server, client).settings(commonSettings: _*)
+  (project in file("."))
+    .aggregate(server, client, measures, measuresListener, load, sharedJvm, sharedJs)
+    .settings(commonSettings: _*)
+
 
 lazy val commonSettings = Seq(
   version := "0.1.0",
@@ -122,7 +125,7 @@ lazy val measuresListener = (project in file("measures-listener"))
       "-Xmx3G",
       "-Xms3G"
     ),
-      libraryDependencies ++= Seq (
+    libraryDependencies ++= Seq(
       "com.orientechnologies" % "orientdb-graphdb" % "2.2.23"
     ) ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams
   )
