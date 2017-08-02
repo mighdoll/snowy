@@ -17,9 +17,9 @@ lazy val commonSettings = Seq(
     "-language:postfixOps"
   ),
   libraryDependencies ++= Seq(
-    "org.scalacheck" %%% "scalacheck" % V.scalacheck % "test",
-    "org.scalactic"  %%% "scalactic"  % V.scalactic  % "test",
-    "org.scalatest"  %%% "scalatest"  % V.scalatest  % "test"
+    scalaCheck % "test",
+    scalactic % "test",
+    scalaTest % "test"
   ),
   test in assembly := {}
 )
@@ -27,33 +27,9 @@ lazy val commonSettings = Seq(
 lazy val itSettings = Defaults.itSettings ++ Seq(
   libraryDependencies ++= Seq(
     scalaCheck % "it",
-    "org.scalactic"  %% "scalactic"  % V.scalactic  % "it",
-    "org.scalatest"  %% "scalatest"  % V.scalatest  % "it"
+    scalactic  % "it",
+    scalaTest  % "it"
   )
-)
-
-lazy val V = new Object {
-  val scala      = "2.12.3"
-  val akka       = "2.5.3"
-  val akkaHttp   = "10.0.9"
-  val jackson    = "2.9.0"
-  val log4j      = "2.8.2"
-  val scalacheck = "1.13.5"
-  val scalactic  = "3.0.3"
-  val scalatest  = "3.0.3"
-}
-
-lazy val scalaLogging = Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
-)
-
-lazy val akkaStreams = Seq(
-  "com.typesafe.akka" %% "akka-actor"  % V.akka,
-  "com.typesafe.akka" %% "akka-stream" % V.akka
-)
-
-lazy val scopt = Seq(
-  "com.github.scopt" %% "scopt" % "3.6.0"
 )
 
 lazy val server = (project in file("server"))
@@ -73,13 +49,7 @@ lazy val server = (project in file("server"))
       "-XX:MaxGCPauseMillis=10"
     ),
     javaOptions in reStart := javaOptions.value,
-    libraryDependencies ++= Seq(
-      "org.typelevel"            %% "squants"    % "1.3.0",
-      "org.apache.logging.log4j" % "log4j-jul"   % V.log4j,
-      "com.typesafe.akka"        %% "akka-http"  % V.akkaHttp,
-      "com.typesafe.akka"        %% "akka-slf4j" % V.akka,
-      "org.typelevel"            %% "cats"       % "0.9.0"
-    ) ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams,
+    libraryDependencies ++= squants ++ log4j ++ akkaHttp ++ akka ++ cats ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams,
     (resourceGenerators in Compile) += Def.task {
       val f1          = (fastOptJS in Compile in client).value.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
@@ -96,13 +66,8 @@ lazy val client = (project in file("client"))
   .settings(
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
-    libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.3"
-    ),
-    jsDependencies ++= Seq(
-      "org.webjars.bower" % "three.js"                   % "0.86.0" / "0.86.0/three.min.js",
-      "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
-    )
+    libraryDependencies ++= scalaJSDom,
+    jsDependencies ++= jsLibraries
   )
   .dependsOn(shared.js)
 
@@ -120,9 +85,7 @@ lazy val measuresListener = (project in file("measures-listener"))
       "-Xmx3G",
       "-Xms3G"
     ),
-    libraryDependencies ++= Seq(
-      "com.orientechnologies" % "orientdb-graphdb" % "2.2.23"
-    ) ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams
+    libraryDependencies ++= orientdb ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams
   )
   .dependsOn(measures)
 
@@ -132,21 +95,15 @@ lazy val load = (project in file("load"))
   .settings(commonSettings: _*)
   .settings(itSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(
-      "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
-      "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-      "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha21"
-    )
+    libraryDependencies ++= akkaLoad
   )
   .dependsOn(server, sharedJvm, measures)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies ++= Seq(
-      "io.suzaku" %%% "boopickle" % "1.2.6"
-    ),
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    libraryDependencies += boopickle,
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
   )
 
 lazy val sharedJvm = shared.jvm
