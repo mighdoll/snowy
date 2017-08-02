@@ -103,7 +103,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies += boopickle,
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full)
+    addCompilerPlugin(macroParadise cross CrossVersion.full)
   )
 
 lazy val sharedJvm = shared.jvm

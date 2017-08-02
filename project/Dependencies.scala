@@ -81,4 +81,6 @@ object Dependencies {
   lazy val orientdb = Seq(
     "com.orientechnologies" % "orientdb-graphdb" % "2.2.23"
   )
+
+  lazy val macroParadise = "org.scalamacros" % "paradise" % "2.1.1"
 }
