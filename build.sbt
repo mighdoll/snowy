@@ -66,7 +66,7 @@ lazy val client = (project in file("client"))
   .settings(
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
-    libraryDependencies ++= scalaJSDom,
+    libraryDependencies ++= scalaJSDomSetting.value,
     jsDependencies ++= jsLibraries
   )
   .dependsOn(shared.js)
@@ -102,7 +102,7 @@ lazy val load = (project in file("load"))
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies += boopickle,
+    libraryDependencies ++= booPickleSetting.value,
     addCompilerPlugin(macroParadise cross CrossVersion.full)
   )
 
