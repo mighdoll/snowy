@@ -22,6 +22,9 @@ object GameConstants {
   /** size of the tree trunk in pixels */
   val treeSize = Vec2d(10, 10)
 
+  /** ice two sleds within this period of milliseconds to qualify for a streak achievement */
+  val iceStreakPeriod = 10000
+
   object Bullet {
     val averageRadius = 5
 

@@ -1,19 +1,17 @@
 package snowy.server
 
 import com.typesafe.scalalogging.StrictLogging
-import snowy.Achievements.IceStreak
+import snowy.Achievements.{Achievement, IceStreak, RevengeIcing}
 import snowy.Awards._
-import snowy.Achievements.Achievement
 import snowy.GameConstants._
 import snowy.collision._
 import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
 import snowy.measures.Span.timeSpan
-import snowy.measures.Span
-import socketserve.ClientId
 import scala.concurrent.duration._
 import snowy.measures.{Gauged, Span}
+import snowy.util.RemoveList.RemoveListOps
 
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   var gameTime           = System.currentTimeMillis()
@@ -54,7 +52,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       }
 
       val achievements = turnSpan.time("sledAchievements") {
-        sledAchievements(collided.killedSleds)
+        trackIcings(collided.killedSleds)
       }
 
       val died = gameHealth.collectDead()
@@ -158,32 +156,61 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
   }
 
-  private def sledAchievements(
+  /** Track icings, to identify revenge and icing streaks */
+  private def trackIcings(sledKills: Traversable[SledKill]): Traversable[Achievement] = {
+    trackIcedBy(sledKills) ++ trackIceStreaks(sledKills)
+  }
+
+  /** track streaks of icing other sleds within a time period.
+    * @return achievements when 2 or more sleds are iced within a period */
+  private def trackIceStreaks(
         sledKills: Traversable[SledKill]
-  ): Traversable[Achievement] = {
-    val streaks = for {
+  ): Traversable[IceStreak] = {
+    for {
       SledKill(killerSledId, _) <- sledKills
-      killerSled                <- killerSledId.sled
+      sled                      <- killerSledId.sled
+      if updateIceStreak(sled.achievements)
     } yield {
-      killerSled.achievements.kills += 1
-      if (gameTime - killerSled.achievements.lastKill < 100000) {
-        killerSled.achievements.killStreak += 1
-        killerSled.achievements.lastKill = gameTime
-
-        logger.warn(
-          s"sled $killerSled kill streak ${killerSled.achievements.killStreak}"
-        )
-
-        Some(IceStreak(killerSledId, killerSled.achievements.killStreak))
-      } else {
-        killerSled.achievements.killStreak = 1
-        killerSled.achievements.lastKill = gameTime
-
-        None
-      }
+      logger.info(s"sled $sled kill streak ${sled.achievements.killStreak}")
+      IceStreak(killerSledId, sled.achievements.killStreak)
     }
+  }
 
-    streaks.flatten
+  /** after an icing, update records to check for a spree of icings within a
+    * limited time period.
+    * @return true if the icing is in a spree */
+  private def updateIceStreak(achievements: Achievements): Boolean = {
+    achievements.kills += 1
+    achievements.killStreak += 1
+    val activeStreak =
+      (gameTime - achievements.lastKill < iceStreakPeriod
+        && achievements.killStreak > 1)
+
+    if (!activeStreak)
+      achievements.killStreak = 1
+    achievements.lastKill = gameTime
+    activeStreak
+  }
+
+  /** Track history of icings, to identify revenge
+    * @return revenge achievements */
+  private def trackIcedBy(
+        sledKills: Traversable[SledKill]
+  ): Traversable[RevengeIcing] = {
+    for {
+      SledKill(winnerSledId, icedId) <- sledKills
+      winningUser                    <- winnerSledId.user
+      losingUser                     <- icedId.user
+      _ = losingUser.icedBy.enqueue(winningUser)
+      if winningUser.icedBy.contains(losingUser)
+    } yield {
+      winningUser.icedBy.removeElement(losingUser)
+      val loserName = losingUser.name
+      logger.info(
+        s"trackIcedBy: sled $winnerSledId (${winningUser.name}) revenge on $loserName"
+      )
+      RevengeIcing(winnerSledId, loserName)
+    }
   }
 
   /** update the score based on sled travel distance, sleds killed, etc. */

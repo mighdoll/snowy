@@ -1,11 +1,11 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
-
 import snowy.playfield.{SkiColor, SledType}
 import snowy.server.ScoreLevels.levelForScore
-
 import scala.concurrent.duration._
+import snowy.playfield.PlayId.SledId
+import snowy.util.FiniteQueue
 
 object User {
   val scoreFrequency = 1.second.toMillis
@@ -25,6 +25,10 @@ class User(val name: String,
   /** points earned in the game */
   var score: Double               = 10
   private var nextScoreSend: Long = 0
+
+  private val trackIcers = 4
+  /** track of users that iced this user */
+  val icedBy                     = new FiniteQueue[User](trackIcers)
 
   /** Scores are sent to users once per second (see scoreFrequency).
     * Users receive scores at jittered times, to spread the network load.

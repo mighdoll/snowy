@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.Achievements.{Achievement, IceStreak}
+import snowy.Achievements.{Achievement, IceStreak, RevengeIcing}
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
@@ -275,25 +275,22 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
         sendMessage(killedBy, deadConnectionId)
       }
     }
-
   }
 
   private def reportAchievements(newAchievements: Traversable[Achievement]): Unit = {
-    newAchievements.foreach {
-      case IceStreak(sled, nth) =>
-        val amountString = nth match {
-          case 2 => "Double Icing"
-          case 3 => "Triple Icing"
-          case n => n + " Icings"
-        }
-        reportOneAchievement(
-          sled.connectionId,
-          AchievementMessage(
-            SpeedBonus,
-            amountString + " Icing",
-            "Descriptions are boring"
-          )
-        )
+    val reports =
+      newAchievements.map {
+        case IceStreak(sledId, nth) =>
+          sledId -> iceStreakMessage(nth)
+        case RevengeIcing(mySledId, loserName) =>
+          mySledId -> revengeMessage(loserName)
+      }
+
+    for { (sled, report) <- reports } {
+      reportOneAchievement(
+        sled.connectionId,
+        report
+      )
     }
 
     def reportOneAchievement(sledId: Option[ClientId],
@@ -307,6 +304,27 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
+  private def revengeMessage(loserName: String): AchievementMessage = {
+    AchievementMessage(
+      SpeedBonus,
+      s"Revenge on $loserName",
+      "You iced someone who iced you"
+    )
+  }
+
+  private def iceStreakMessage(nth: Int): AchievementMessage = {
+    val amountString = nth match {
+      case 2 => "Double Icing"
+      case 3 => "Triple Icing"
+      case n => n + " Icings"
+    }
+
+    AchievementMessage(
+      SpeedBonus,
+      amountString + " Icing",
+      "Descriptions are boring"
+    )
+  }
   private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
     if (newPowerUps.nonEmpty) {
       val newItems = AddItems(newPowerUps.toSeq)
@@ -412,7 +430,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
+  private def newRandomSled(userName: String,
+                            sledType: SledType,
+                            color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
