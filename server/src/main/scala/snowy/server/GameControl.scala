@@ -156,7 +156,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    (1 to 2).foreach { _ =>
+    val numRobotSleds = 2
+    (1 to numRobotSleds).foreach { _ =>
       robots.createRobot(RobotPlayer.apply)
     }
   }
@@ -394,9 +395,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
-        val connectIdStr =
-          sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
-        logger.info(s"sled ${sledId.id} killed $connectIdStr sledCount:${sledMap.size}")
+        if (logger.underlying.isInfoEnabled) {
+          val connectIdStr =
+            sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
+          logger.info(s"reapAndReportDeadSleds: sled ${sledId.id}(${sledId.user.map(_.name)}) killed $connectIdStr sledCount:${sledMap.size}")
+        }
         sled.remove()
       }
     }
@@ -430,9 +433,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def newRandomSled(userName: String,
-                            sledType: SledType,
-                            color: SkiColor): Sled = {
+  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
