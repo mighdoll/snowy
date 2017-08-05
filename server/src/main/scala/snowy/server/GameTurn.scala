@@ -169,26 +169,26 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     for {
       SledKill(killerSledId, _) <- sledKills
       sled                      <- killerSledId.sled
-      if updateIceStreak(sled.achievements)
+      if updateIceStreak(sled.icingRecords)
     } yield {
-      logger.info(s"sled $sled kill streak ${sled.achievements.killStreak}")
-      IceStreak(killerSledId, sled.achievements.killStreak)
+      logger.info(s"sled $sled kill streak ${sled.icingRecords.streak}")
+      IceStreak(killerSledId, sled.icingRecords.streak)
     }
   }
 
   /** after an icing, update records to check for a spree of icings within a
     * limited time period.
     * @return true if the icing is in a spree */
-  private def updateIceStreak(achievements: Achievements): Boolean = {
-    achievements.kills += 1
-    achievements.killStreak += 1
+  private def updateIceStreak(icingRecords: IcingRecords): Boolean = {
+    icingRecords.total += 1
+    icingRecords.streak += 1
     val activeStreak =
-      (gameTime - achievements.lastKill < iceStreakPeriod
-        && achievements.killStreak > 1)
+      (gameTime - icingRecords.lastTime < iceStreakPeriod
+        && icingRecords.streak > 1)
 
     if (!activeStreak)
-      achievements.killStreak = 1
-    achievements.lastKill = gameTime
+      icingRecords.streak = 1
+    icingRecords.lastTime = gameTime
     activeStreak
   }
 
