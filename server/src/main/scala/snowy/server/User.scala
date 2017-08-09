@@ -1,10 +1,8 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
-import snowy.playfield.{SkiColor, SledType}
-import snowy.server.ScoreLevels.levelForScore
 import scala.concurrent.duration._
-import snowy.playfield.PlayId.SledId
+import snowy.playfield.{SkiColor, SledType}
 import snowy.util.FiniteQueue
 
 object User {

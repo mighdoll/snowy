@@ -382,7 +382,6 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  // TODO Notify clients who they kill, and who killed them
   /** Notify clients about sleds that have been killed, remove sleds from the game */
   private def reapAndReportDeadSleds(dead: Traversable[SledDied]): Unit = {
     val deadSleds =

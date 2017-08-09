@@ -14,4 +14,5 @@ object Achievements {
   /** Ice the user that iced you previously */
   case class RevengeIcing(override val sled: ServerSled, otherUserName: String)
       extends Achievement
+
 }
