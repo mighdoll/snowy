@@ -79,7 +79,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
         .named("inputBuffered")
 
     // convert web socket messages into client controller messages
-    val inputConverted: Flow[Message, GameCommand, NotUsed] =
+    val inputConverted: Flow[Message, AppMessage, NotUsed] =
       inputBuffered
         .collect {
           case BinaryMessage.Strict(data) =>
@@ -91,7 +91,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     // target for sending connection open/close messages to the controller
     val (internalMessages, internalRefFuture) =
       Source
-        .actorRef[GameCommand](internalMessagesSize, OverflowStrategy.fail)
+        .actorRef[AppMessage](internalMessagesSize, OverflowStrategy.fail)
         .named("inputInternalMessages")
         .peekMat
 

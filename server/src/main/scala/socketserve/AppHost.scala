@@ -23,25 +23,25 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
   private val internalMessagesQueue = 10
 
   /** if we're behind on ticks, just skip one */
-  private def tickBehind(a: GameCommand, b: GameCommand): GameCommand = {
+  private def tickBehind(a: AppMessage, b: AppMessage): AppMessage = {
     logger.warn("running slowly, skipping turn")
     a
   }
 
   private val tickSource =
     Source
-      .tick[GameCommand](tickTime, tickTime, Tick)
+      .tick[AppMessage](tickTime, tickTime, Tick)
       .conflate(tickBehind)
       .named("tickSource")
 
   private val (internalMessages, messagesRefFuture) =
     Source
-      .actorRef[GameCommand](bufferSize = 2, OverflowStrategy.fail)
+      .actorRef[AppMessage](bufferSize = 2, OverflowStrategy.fail)
       .fixedBuffer(internalMessagesQueue, logger.warn("internal message overflow"))
       .named("internalMessages")
       .peekMat
 
-  private val handlerSink = Flow[GameCommand]
+  private val handlerSink = Flow[AppMessage]
     .to(Sink.foreach {
       case ClientMessage(id, binary) => clientMessage(id, binary)
       case Open(id, out)             => open(id, out)
@@ -53,13 +53,13 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with StrictLoggin
 
   // LATER use mergePreferred ticks and internalMessages
   private val mergeSink = MergeHub
-    .source[GameCommand]
+    .source[AppMessage]
     .merge(tickSource)
     .merge(internalMessages)
     .to(handlerSink)
     .run()
 
-  def messagesSink(): Sink[GameCommand, NotUsed] = mergeSink
+  def messagesSink(): Sink[AppMessage, NotUsed] = mergeSink
 
   import system.dispatcher
 
@@ -116,17 +116,17 @@ object AppHost {
 
   object Protocol {
 
-    sealed trait GameCommand
+    sealed trait AppMessage
 
-    case class Open(id: ConnectionId, out: ActorRef) extends GameCommand
+    case class Open(id: ConnectionId, out: ActorRef) extends AppMessage
 
-    case class ClientMessage(id: ConnectionId, message: ByteString) extends GameCommand
+    case class ClientMessage(id: ConnectionId, message: ByteString) extends AppMessage
 
-    case class Gone(id: ConnectionId) extends GameCommand
+    case class Gone(id: ConnectionId) extends AppMessage
 
-    case class RegisterApp(app: AppController) extends GameCommand
+    case class RegisterApp(app: AppController) extends AppMessage
 
-    case object Tick extends GameCommand
+    case object Tick extends AppMessage
 
   }
 

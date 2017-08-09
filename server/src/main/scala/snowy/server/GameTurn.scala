@@ -12,6 +12,7 @@ import scala.concurrent.duration._
 import snowy.measures.{Gauged, Span}
 import snowy.util.RemoveList.RemoveListOps
 
+/** Support for moving the playfield objects to the next game state */
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
   var gameTime           = System.currentTimeMillis()
   var lastGameTime       = gameTime - tickDelta.toMillis
@@ -28,7 +29,12 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     deltaSeconds
   }
 
-  /** Called to update game state on a regular timer */
+  /** Advance the playfield objects to the next simulation state.
+    *
+    * Moving objects move and collide with with each other. Sleds collect
+    * powerups and other achievements.
+    *
+    * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc. */
   def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
     timeSpan("GameTurn.turn") { turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
@@ -38,7 +44,10 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
 
+      turnSleds(state.sleds.items, deltaSeconds)
+
       val moveAwards = turnSpan.time("moveSleds") {
+        driveSleds(state.sleds.items, deltaSeconds)
         state.motion.moveSleds(state.sleds.items, deltaSeconds)
       }
 
@@ -50,13 +59,18 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         checkCollisions()
       }
 
-      val achievements = turnSpan.time("sledAchievements") {
+      val achievements = turnSpan.time("trackIcings") {
         trackIcings(collided.icings)
       }
 
       val died = gameHealth.collectDead()
 
+      turnSpan.time("applyAchivements") {
+        applyAchievements(achievements ++ died ++ collided.icings)
+      }
+
       val newPowerUps = state.powerUps.refresh(gameTime)
+
 
       TurnResults(
         died,
@@ -67,6 +81,24 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         achievements
       )
     }
+
+  /** apply any pending but not yet cancelled commands from user actions,
+    * e.g. turning or slowing */
+  private def driveSleds(sleds:Traversable[Sled], deltaSeconds: Double): Unit = {
+    for (sled <- sleds) {
+      sled.driveMode.driveSled(sled, deltaSeconds)
+    }
+  }
+
+  private def turnSleds(sleds:Traversable[Sled], deltaSeconds: Double): Unit = {
+    for (sled <- sleds) {
+      val tau             = math.Pi * 2
+      val distanceBetween = (sled.turretRotation - sled.rotation) % tau
+      val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
+      val dir             = math.round(wrapping * 10).signum // precision of when to stop
+      sled.rotation += deltaSeconds * dir * sled.rotationSpeed
+    }
+  }
 
   case class CollisionResult(icings: Traversable[SledIced],
                              killedSnowballs: Traversable[BallId])
@@ -163,6 +195,15 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
   }
 
+  /** reward the sleds and users for their achievements this round */
+  private def applyAchievements(achievements: Traversable[Achievement]): Unit = {
+    for {
+      achievement <- achievements
+    } {
+      achievement.sled.rewards.add(achievement)
+    }
+  }
+
   /** Track icings, to identify revenge and icing streaks */
   private def trackIcings(icings: Traversable[SledIced]): Traversable[Achievement] = {
     trackIcedBy(icings) ++ trackIceStreaks(icings)
@@ -205,9 +246,9 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   ): Traversable[RevengeIcing] = {
     for {
       SledIced(winningSled, losingSled) <- icings
-      winningUser                    = winningSled.user
-      losingUser                      = losingSled.user
-      _ = losingUser.icedBy.enqueue(winningUser)
+      winningUser = winningSled.user
+      losingUser  = losingSled.user
+      _           = losingUser.icedBy.enqueue(winningUser)
       if winningUser.icedBy.contains(losingUser)
     } yield {
       winningUser.icedBy.removeElement(losingUser)

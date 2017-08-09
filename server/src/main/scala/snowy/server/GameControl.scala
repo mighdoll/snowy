@@ -1,34 +1,37 @@
 package snowy.server
 
+import scala.collection.mutable
+import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
-import snowy.playfield.GameMotion._
-import snowy.playfield.Picklers._
-import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
-import snowy.playfield.{Sled, _}
-import snowy.robot.{DeadRobot, RobotPlayer}
-import snowy.server.CommonPicklers.withPickledClientMessage
-import snowy.measures.Span.time
-import socketserve._
-import vector.Vec2d
-import snowy.GameClientProtocol.Score
-import scala.collection.mutable
-import scala.concurrent.duration._
 import snowy.measures.Span
+import snowy.measures.Span.time
+import snowy.playfield.Picklers._
+import snowy.playfield.{Sled, _}
+import snowy.robot.RobotPlayer
+import snowy.server.ClientReporting.optNetId
+import snowy.server.rewards.Achievements._
+import socketserve._
 
+/** Central controller for the game. Delegates protocol messages from clients,
+  * and from the game framework. */
 class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Span)
     extends AppController with GameState with StrictLogging {
   override val turnPeriod = 20 milliseconds
   val gameTurns           = new GameTurn(this, turnPeriod)
 
-  private val messageIO   = new MessageIO(api)
-  private val connections = mutable.Map[ConnectionId, ClientConnection]()
-  private val robots      = new RobotHost(this)
+  private val messageIO     = new MessageIO(api)
+  private val connections   = mutable.Map[ConnectionId, ClientConnection]()
+  private def connectionIds = connections.keys
+  private val robots        = new RobotHost(this)
+  private val clientReport =
+    new ClientReporting(messageIO, gameStateImplicits, connectionIds, robots)
+  private val commands = new PersistentControls(gameStateImplicits)
+  private val gameDebug = new GameDebug(this, robots)
   private lazy val pickledTrees = {
     val message: GameClientMessage = InitialTrees(trees.items.toSeq)
     val bytes                      = Pickle.intoBytes(message)
@@ -60,7 +63,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       serverSled.sled.remove()
     }
     users.remove(connectionId)
-    pendingControls.commands.remove(connectionId)
+    commands.pendingControls.commands.remove(connectionId)
     connections.remove(connectionId)
   }
 
@@ -74,20 +77,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     Span("GameControl.turn").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
       time("robotsTurn") { robots.robotsTurn() }
-      applyTurn(deltaSeconds)
-      applyDrive(deltaSeconds)
-      applyCommands(deltaSeconds)
+      commands.applyCommands(motion, snowballs, gameTime, deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
-      import turnResults._
-      applyAchievements(sledAchievements ++ deadSleds ++ icings)
       time("reportTurnResults") {
-        reportSledKills(icings)
-        reapAndReportDeadSleds(deadSleds)
-        reportAchievements(sledAchievements)
-        reportExpiredSnowballs(deadSnowBalls)
-        reportUsedPowerUps(usedPowerUps)
-        reportNewPowerUps(newPowerUps)
+        clientReport.reportTurnResults(turnResults)
       }
+      reapDeadSleds(turnResults.deadSleds)
       time("sendUpdates") {
         sendUpdates()
       }
@@ -100,52 +95,32 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     msg match {
       case Join(name, sledType, skiColor) =>
         userJoin(id, name.slice(0, 15), sledType, skiColor)
-      case TargetAngle(angle) => targetDirection(id, angle)
-      case Shoot(_)           => id.sled.foreach(shootSnowball)
-      case Start(cmd, time)   => startControl(id, cmd, time)
-      case Stop(cmd, time)    => stopControl(id, cmd, time)
-      case Boost(time)        => id.sled.foreach(boostSled(_, time))
-      case Pong               => optNetId(id).foreach(pong)
-      case ReJoin             => rejoin(id)
-      case TestDie            => reapSled(sledMap(id).sled)
-      case DebugKey(key)      => debugCommand(id, key)
-      case RequestGameTime(clientTime) =>
-        optNetId(id).foreach(reportGameTime(_, clientTime))
-      case ClientPing => optNetId(id).foreach(sendMessage(ClientPong, _))
+      case TargetAngle(angle)          => targetDirection(id, angle)
+      case Shoot(_)                    => shootOneSnowball(id)
+      case Start(cmd, time)            => commands.startControl(id, cmd, time)
+      case Stop(cmd, time)             => commands.stopControl(id, cmd, time)
+      case Boost(time)                 => id.sled.foreach(boostSled(_, time))
+      case Pong                        => optNetId(id).foreach(pong)
+      case ReJoin                      => rejoin(id)
+      case TestDie                     => reapSled(sledMap(id).sled)
+      case DebugKey(key)               => gameDebug.debugCommand(id, key)
+      case RequestGameTime(clientTime) => requestGameTime(id, clientTime)
+      case ClientPing                  => optNetId(id).foreach(sendMessage(ClientPong, _))
     }
   }
 
-  /** client has started to operate a sled control. e.g. shooting, braking */
-  private def startControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
-    cmd match {
-      case persistentControl: PersistentControl =>
-        pendingControls.startCommand(id, persistentControl, time)
-      case driveControl: DriveControl =>
-        for (sled <- id.sled) {
-          driveControl match {
-            case Coasting => sled.driveMode.driveMode(SledDrive.Coasting)
-            case Slowing  => sled.driveMode.driveMode(SledDrive.Braking)
-          }
-        }
+  private def requestGameTime(clientId: ClientId, clientTime: Long): Unit = {
+    for {
+      netId      <- optNetId(clientId)
+      connection <- connections.get(netId)
+    } {
+      clientReport.reportGameTime(netId, connection.roundTripTime)
     }
   }
 
-  /** client has stopped a sled control. e.g. shooting, braking */
-  private def stopControl(id: ClientId, cmd: StartStopControl, time: Long): Unit = {
-    cmd match {
-      case persistentControl: PersistentControl =>
-        pendingControls.stopCommand(id, persistentControl, time)
-      case driveControl: DriveControl =>
-        for (sled <- id.sled) {
-          sled.driveMode.driveMode(SledDrive.Driving)
-        }
-    }
-  }
-
-  private def optNetId(id: ClientId): Option[ConnectionId] = {
-    id match {
-      case netId: ConnectionId => Some(netId)
-      case _: RobotId          => None
+  private def shootOneSnowball(id: ClientId): Unit = {
+    for (sled <- id.sled) {
+      commands.shootSnowball(sled, snowballs, gameTime)
     }
   }
 
@@ -161,195 +136,16 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  /** Add some dummy sleds to the game */
-  private def createStationarySleds(number: Int): Unit = {
-    (1 to number).foreach { _ =>
-      robots.createRobot(DeadRobot.apply)
-    }
-  }
-
   /** update game clients with the current state of the game */
   private def sendUpdates(): Unit = {
     sendState()
-    sendScores()
+    clientReport.sendScores(users, gameTime)
   }
 
   /** Send the current playfield state to the clients */
   private def sendState(): Unit = {
     val state = currentState()
-    sendToAllClients(state)
-  }
-
-  /** Send the current score to the clients */
-  private def sendScores(): Unit = {
-    val scores = {
-      val rawScores = users.values.map { user =>
-        Score(user.name, user.score)
-      }.toSeq
-      val sorted = rawScores.sortWith { (a, b) =>
-        a.score > b.score
-      }
-      sorted.take(10)
-    }
-    users.collect {
-      case (id: ConnectionId, user) if user.timeToSendScore(gameTime) =>
-        user.scoreSent(gameTime)
-        val scoreboard = Scoreboard(user.score, scores)
-        sendMessage(scoreboard, id)
-    }
-  }
-
-  private def reportGameTime(netId: ConnectionId, clientTime: Long): Unit = {
-    logger.trace {
-      val clientTimeDelta = clientTime - System.currentTimeMillis()
-      s"client $netId time vs server time: $clientTimeDelta"
-    }
-
-    connections.get(netId) match {
-      case Some(connection) => reportGameTime(connection.roundTripTime)
-      case None             => logger.warn(s"reportGameTime: connection $netId not found")
-    }
-
-    def reportGameTime(rtt: Long): Unit = {
-      val msg = GameTime(System.currentTimeMillis(), (rtt / 2).toInt)
-      messageIO.sendMessage(msg, netId)
-    }
-  }
-
-  private def applyTurn(deltaSeconds: Double): Unit = {
-    for (sled <- sleds.items) {
-      val tau             = math.Pi * 2
-      val distanceBetween = (sled.turretRotation - sled.rotation) % tau
-      val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-      val dir             = math.round(wrapping * 10).signum // precision of when to stop
-      sled.rotation += deltaSeconds * dir * sled.rotationSpeed
-    }
-  }
-
-  /** apply any pending but not yet cancelled commands from user actions,
-    * e.g. turning or slowing */
-  private def applyDrive(deltaSeconds: Double): Unit = {
-    for (sled <- sleds.items) {
-      sled.driveMode.driveSled(sled, deltaSeconds)
-    }
-  }
-
-  /** apply any pending but not yet cancelled commands from user actions,
-    * e.g. turning or slowing */
-  private def applyCommands(deltaSeconds: Double): Unit = {
-    pendingControls.foreachCommand { (id, command, time) =>
-      id.sled.foreach { sled =>
-        command match {
-          case Left     => motion.turnSled(sled, LeftTurn, deltaSeconds)
-          case Right    => motion.turnSled(sled, RightTurn, deltaSeconds)
-          case Shooting => shootSnowball(sled)
-        }
-      }
-    }
-  }
-
-  /** reward the sleds and users for their achievements this round */
-  private def applyAchievements(achievements: Traversable[Achievement]): Unit = {
-    for {
-      achievement <- achievements
-    } {
-      achievement.sled.rewards.add(achievement)
-    }
-  }
-
-  private def reportSledKills(sledKills: Traversable[SledIced]): Unit = {
-    for {
-      SledIced(serverSled, icedServerSled) <- sledKills
-    } {
-      reportKiller(serverSled.id, icedServerSled.id)
-      reportDeadSled(serverSled.id, icedServerSled.id)
-    }
-
-    def reportKiller(killerSledId: SledId, deadSledId: SledId): Unit = {
-      for {
-        killerClientId     <- killerSledId.connectionId
-        killerConnectionId <- optNetId(killerClientId)
-      } {
-        val killedSled = KilledSled(deadSledId)
-        sendMessage(killedSled, killerConnectionId)
-      }
-    }
-
-    def reportDeadSled(killerSledId: SledId, deadSledId: SledId): Unit = {
-      for {
-        deadClientId     <- deadSledId.connectionId
-        deadConnectionId <- optNetId(deadClientId)
-      } {
-        val killedBy = KilledBy(killerSledId)
-        sendMessage(killedBy, deadConnectionId)
-      }
-    }
-  }
-
-  /** Notify the client about notable achievements */
-  private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
-    val reports =
-      achievements.flatMap {
-        case IcingStreak(sled, nth) =>
-          Some(sled.id -> iceStreakMessage(nth))
-        case RevengeIcing(sled, loserName) =>
-          Some(sled.id -> revengeMessage(loserName))
-        case SledOut(_) =>
-          None
-        case SledIced(_, _) =>
-          None
-      }
-
-    for {
-      (sledId, report) <- reports
-      clientId         <- sledId.connectionId
-      connectionId     <- optNetId(clientId)
-    } {
-      logger.warn(s"reportAchievements. sending report $report")
-      sendMessage(report, connectionId)
-    }
-  }
-
-  private def revengeMessage(loserName: String): AchievementMessage = {
-    AchievementMessage(
-      SpeedBonus,
-      s"Revenge on $loserName",
-      "You iced someone who iced you"
-    )
-  }
-
-  private def iceStreakMessage(nth: Int): AchievementMessage = {
-    val amountString = nth match {
-      case 2 => "Double Icing"
-      case 3 => "Triple Icing"
-      case n => n + " Icings"
-    }
-
-    AchievementMessage(
-      SpeedBonus,
-      amountString + " Icing",
-      "Descriptions are boring"
-    )
-  }
-  private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
-    if (newPowerUps.nonEmpty) {
-      val newItems = AddItems(newPowerUps.toSeq)
-      sendToAllClients(newItems)
-    }
-  }
-
-  private def reportUsedPowerUps(usedPowerUps: Traversable[PowerUpId]): Unit = {
-    if (usedPowerUps.nonEmpty) {
-      val removeItems = RemoveItems(PowerUpItem, usedPowerUps.toSeq)
-      sendToAllClients(removeItems)
-    }
-  }
-
-  private def reportExpiredSnowballs(expiredBalls: Traversable[BallId]): Unit = {
-    if (expiredBalls.nonEmpty) {
-      val deaths = RemoveItems(SnowballItem, expiredBalls.toSeq)
-      sendToAllClients(deaths)
-    }
+    clientReport.sendToAllClients(state)
   }
 
   /** apply a push to a sled */
@@ -360,86 +156,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def shootSnowball(
-        sled: Sled
-  )(implicit snowballTracker: PlayfieldTracker[Snowball]): Unit = {
-    if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
-      val launchAngle    = sled.turretRotation + sled.bulletLaunchAngle
-      val launchDistance = sled.bulletLaunchPosition.length + sled.radius
-      val launchPos      = sled.bulletLaunchPosition.rotate(launchAngle).unit * launchDistance
-      val direction      = Vec2d.fromRotation(launchAngle)
-      val ball = Snowball(
-        ownerId = sled.id,
-        speed = sled.speed + (direction * sled.bulletSpeed),
-        radius = sled.bulletRadius,
-        mass = sled.bulletMass,
-        spawned = gameTime,
-        impactDamage = sled.bulletImpactFactor,
-        health = sled.bulletHealth,
-        lifetime = sled.bulletLifetime
-      )
-      snowballs.addBall(ball, playfield.wrapInPlayfield(sled.position + launchPos))
-
-      val recoilForce = direction * -sled.bulletRecoil
-      sled.speed = sled.speed + recoilForce
-      sled.lastShotTime = gameTime
+  /** Remove dead sleds from the game */
+  private def reapDeadSleds(dead: Traversable[SledOut]): Unit = {
+    for (SledOut(serverSled) <- dead) {
+      serverSled.sled.remove()
     }
   }
 
-  /** Notify clients about sleds that have been killed, remove sleds from the game */
-  private def reapAndReportDeadSleds(dead: Traversable[SledOut]): Unit = {
-    val deadSleds =
-      dead.map {
-        case SledOut(serverSled) => serverSled.id
-      }.toSeq
-
-    if (deadSleds.nonEmpty) {
-      val deaths = RemoveItems(SledItem, deadSleds)
-      sendToAllClients(deaths)
-
-      for { sledId <- deadSleds; sled <- sledId.sled } {
-        sendDied(sledId)
-        if (logger.underlying.isInfoEnabled) {
-          val connectIdStr =
-            sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
-          logger.info(s"reapAndReportDeadSleds: sled ${sledId.id}(${sledId.user
-            .map(_.name)}) killed $connectIdStr sledCount was:${sledMap.size}")
-        }
-        sled.remove()
-      }
-    }
-  }
-
+  /** remove a dead sled and send a message (used by TestDie testing interface) */
   private def reapSled(sled: Sled): Unit = {
-    sendDied(sled.id)
+    clientReport.sendDied(sled.id)
     sled.remove()
-  }
-
-  private def sendToAllClients(message: GameClientMessage): Unit = {
-    withPickledClientMessage(message) { pickledState =>
-      connections.keys.foreach { connectionId =>
-        sendBinaryMessage(pickledState, connectionId)
-      }
-    }
-  }
-
-  private def sendDied(sledId: SledId): Unit = {
-    sledId.connectionId match {
-      case Some(netId: ConnectionId) => sendMessage(Died, netId)
-      case Some(robotId: RobotId)    => robots.died(robotId)
-      case None =>
-        logger.warn(
-          s"reapSled connection not found for sled: " +
-            s"$sledId ${sledId.serverSled.map(_.user.name)}"
-        )
-    }
-  }
-
-  private def reportJoinedSled(connectionId: ClientId, sledId: SledId): Unit = {
-    connectionId match {
-      case robotId: RobotId    => robots.joined(robotId, sledId)
-      case netId: ConnectionId => sendMessage(MySled(sledId), netId)
-    }
   }
 
   private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
@@ -461,7 +188,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       new User(userName, createTime = gameTime, sledType = sledType, skiColor = skiColor)
     users(id) = user
     val sled = createSled(id, user, sledType)
-    reportJoinedSled(id, sled.id)
+    clientReport.joinedSled(id, sled.id)
 
     logger.info(
       s"user joined: $userName  connection: $id  sled: ${sled.id}  sledType: $sledType userCount:${users.size}"
@@ -473,7 +200,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       case Some(user) =>
         val sled = createSled(id, user, user.sledType)
         logger.info(s"user rejoined: ${user.name}  ${sled.id}")
-        reportJoinedSled(id, sled.id)
+        clientReport.joinedSled(id, sled.id)
       case None =>
         logger.warn(s"user not found to rejoin: $id")
     }
@@ -488,33 +215,8 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Point the sled in this direction */
   private def targetDirection(id: ClientId, angle: Double): Unit = {
-    id.sled.foreach { sled =>
+    for (sled <- id.sled) {
       sled.turretRotation = -angle
-    }
-  }
-
-  lazy val clientDebugEnabled = GlobalConfig.snowy.getBoolean("client-debug-messages")
-  private def debugCommand(id: ClientId, key: Char): Unit = {
-    if (clientDebugEnabled) {
-      key match {
-        case 't' => logNearbyTrees(id)
-        case '9' => createStationarySleds(99)
-        case x   => logger.warn(s"debug key $x not recognized from client $id")
-      }
-    }
-  }
-
-  private def logNearbyTrees(id: ClientId): Unit = {
-    debugVerifyGridState()
-    debugVerifyTreeState()
-
-    for { sled <- id.sled } {
-      logger.warn(s"logNearbyTrees.sled: $sled  position: ${sled.position}")
-      val bounds = sled.boundingBox
-      val bigger = Rect(bounds.pos - Vec2d(25, 25), bounds.size + Vec2d(50, 50))
-      for { tree <- trees.grid.inside(bigger) } {
-        logger.warn(s"logNearbyTrees.tree: $tree  position: ${tree.position}")
-      }
     }
   }
 

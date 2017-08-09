@@ -21,7 +21,6 @@ trait GameState extends StrictLogging { self: GameControl =>
   }
   val users           = mutable.Map[ClientId, User]()
   val sledMap         = mutable.Map[ClientId, ServerSled]()
-  val pendingControls = new PendingControls
 
   val sleds     = new Sleds(playfield)
   val snowballs = new Snowballs(playfield)
