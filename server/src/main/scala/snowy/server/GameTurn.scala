@@ -1,7 +1,7 @@
 package snowy.server
 
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing}
+import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing, SledOut}
 import snowy.Awards._
 import snowy.GameConstants._
 import snowy.collision._
@@ -225,10 +225,11 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           val points = loser.score * Points.sledKill
           winner.score += points
         }
-      case SledDied(loserId) =>
-        for { user <- loserId.user } {
-          user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
-        }
+//      case SledDied(loserId) =>
+//        logger.error("TODO move to Rewards")
+//        for { user <- loserId.user } {
+//          user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
+//        }
     }
   }
 
@@ -253,7 +254,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 }
 
 object GameTurn {
-  case class TurnResults(deadSleds: Traversable[SledDied],
+  case class TurnResults(deadSleds: Traversable[SledOut],
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],
                          newPowerUps: Traversable[PowerUp],

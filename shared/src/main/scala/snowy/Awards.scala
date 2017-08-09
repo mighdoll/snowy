@@ -7,5 +7,4 @@ object Awards {
 
   case class SledKill(sledId: SledId, deadSled: SledId) extends Award
 
-  case class SledDied(sledId: SledId) extends Award
 }

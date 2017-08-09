@@ -3,7 +3,7 @@ package snowy.server.rewards
 import scala.collection.mutable
 import com.typesafe.scalalogging.StrictLogging
 import snowy.server.ServerSled
-import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing}
+import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing, SledOut}
 import snowy.server.rewards.IcingStreakRewards.rewardsForStreak
 
 /** Track achievements by a sled, and apply appropriate rewards to the sled/user */
@@ -19,6 +19,8 @@ class Rewards extends StrictLogging {
           rewardsForStreak(streak, already).map(serverSled -> _)
         case RevengeIcing(serverSled, _) =>
           RevengeRewards.rewards().map(serverSled -> _)
+        case SledOut(serverSled) =>
+          Seq(serverSled -> HalveScore)
       }
 
     for { (serverSled, reward) <- rewards } {

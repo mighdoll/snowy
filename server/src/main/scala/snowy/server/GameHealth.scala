@@ -3,8 +3,8 @@ package snowy.server
 import snowy.Awards._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
-
 import scala.math.min
+import snowy.server.rewards.Achievements.SledOut
 
 class GameHealth(state: GameState) {
   import state.gameStateImplicits._
@@ -31,9 +31,13 @@ class GameHealth(state: GameState) {
   }
 
   /** @return the sleds with no health left */
-  def collectDead(): Traversable[SledDied] = {
-    state.sleds.items.find(_.health <= 0).map { sled =>
-      SledDied(sled.id)
+  def collectDead(): Traversable[SledOut] = {
+    for {
+      serverSled <- state.sledMap.values
+      sled = serverSled.sled
+      if sled.health <= 0
+    } yield {
+      SledOut(serverSled)
     }
   }
 

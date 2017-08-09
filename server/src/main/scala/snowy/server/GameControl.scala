@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing}
+import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing, SledOut}
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
@@ -18,7 +18,6 @@ import snowy.measures.Span.time
 import socketserve._
 import vector.Vec2d
 import snowy.GameClientProtocol.Score
-
 import scala.collection.mutable
 import scala.concurrent.duration._
 import snowy.measures.Span
@@ -289,11 +288,13 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
     val reports =
-      achievements.map {
+      achievements.flatMap {
         case IcingStreak(sled, nth) =>
-          sled.id -> iceStreakMessage(nth)
+          Some(sled.id -> iceStreakMessage(nth))
         case RevengeIcing(sled, loserName) =>
-          sled.id -> revengeMessage(loserName)
+          Some(sled.id -> revengeMessage(loserName))
+        case SledOut(serverSled) =>
+          None
       }
 
     for {
@@ -383,10 +384,10 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   }
 
   /** Notify clients about sleds that have been killed, remove sleds from the game */
-  private def reapAndReportDeadSleds(dead: Traversable[SledDied]): Unit = {
+  private def reapAndReportDeadSleds(dead: Traversable[SledOut]): Unit = {
     val deadSleds =
       dead.map {
-        case SledDied(sledId) => sledId
+        case SledOut(serverSled) => serverSled.id
       }.toSeq
 
     if (deadSleds.nonEmpty) {

@@ -15,4 +15,6 @@ object Achievements {
   case class RevengeIcing(override val sled: ServerSled, otherUserName: String)
       extends Achievement
 
+  /** Sled was iced (knocked out). Kind of a negative achievement */
+  case class SledOut(override val sled: ServerSled) extends Achievement
 }

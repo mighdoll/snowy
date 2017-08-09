@@ -30,6 +30,12 @@ case class Score(amount: Int) extends SingleReward {
   }
 }
 
+case object HalveScore extends SingleReward {
+  override def applyToSled(serverSled: ServerSled): Unit = {
+    serverSled.user.score /= 2
+  }
+}
+
 case class MaxSpeedBonus(amount: Int) extends SingleReward {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val current = serverSled.sled.maxSpeed
