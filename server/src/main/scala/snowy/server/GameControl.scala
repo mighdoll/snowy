@@ -424,9 +424,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     sledId.connectionId match {
       case Some(netId: ConnectionId) => sendMessage(Died, netId)
       case Some(robotId: RobotId)    => robots.died(robotId)
-      case None                      =>
-        logger.warn(s"reapSled connection not found for sled: " +
-          s"$sledId ${sledId.serverSled.map(_.user.name)}")
+      case None =>
+        logger.warn(
+          s"reapSled connection not found for sled: " +
+            s"$sledId ${sledId.serverSled.map(_.user.name)}"
+        )
     }
   }
 

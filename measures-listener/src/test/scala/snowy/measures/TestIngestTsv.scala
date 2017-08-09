@@ -17,7 +17,7 @@ class TestIngestTsv extends PropSpec with StrictLogging {
   ODatabaseRecordThreadLocal.INSTANCE
 
   property("reading a tsv file of measurements") {
-    implicit val system = ActorSystem("Test")
+    implicit val system   = ActorSystem("Test")
     implicit val ignored2 = materializerWithLogging(logger)
     import system.dispatcher
 

@@ -5,7 +5,6 @@ lazy val root =
     .aggregate(server, client, measures, measuresListener, load, sharedJvm, sharedJs)
     .settings(commonSettings: _*)
 
-
 lazy val commonSettings = Seq(
   version := "0.1.0",
   scalaVersion := V.scala,
@@ -18,8 +17,8 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= Seq(
     scalaCheck % "test",
-    scalactic % "test",
-    scalaTest % "test"
+    scalactic  % "test",
+    scalaTest  % "test"
   ),
   test in assembly := {}
 )

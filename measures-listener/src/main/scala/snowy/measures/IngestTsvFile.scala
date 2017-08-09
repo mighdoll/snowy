@@ -26,13 +26,13 @@ object IngestTsvFile extends StrictLogging {
   case class IngestResults(spans: Int, gauges: Int, edges: Int)
 
   def ingestTsv[_: Execution: Materializer](path: Path): Future[IngestResults] = {
-    val graphFactory        = new OrientGraphFactory("plocal:/Users/lee/spans-db")
-    val db = graphFactory.getTx
-    val graphDb = db.getRawGraph
+    val graphFactory = new OrientGraphFactory("plocal:/Users/lee/spans-db")
+    val db           = graphFactory.getTx
+    val graphDb      = db.getRawGraph
     graphDb.declareIntent(new OIntentMassiveInsert())
 
     val measureStream = readTsv(path)
-    val span    = Span.root("storeMeasures")(NullMeasurementRecorder)
+    val span          = Span.root("storeMeasures")(NullMeasurementRecorder)
     storeMeasures(db, measureStream).andThen {
       case _ =>
         val timeSpan       = span.finishNow()
@@ -61,9 +61,9 @@ object IngestTsvFile extends StrictLogging {
             case span: ReadSpan =>
               spanCount += 1
               val fields = Map[String, Object](
-                "name" -> span.name,
-                "duration" -> span.duration.asInstanceOf[Object],
-                "start" -> span.start.value.asInstanceOf[Object],
+                "name"      -> span.name,
+                "duration"  -> span.duration.asInstanceOf[Object],
+                "start"     -> span.start.value.asInstanceOf[Object],
                 "measureId" -> span.id.value.asInstanceOf[Object]
               ).asJava
               val vertex = db.addVertex("class:Span", fields)
@@ -71,9 +71,9 @@ object IngestTsvFile extends StrictLogging {
             case gauge: ReadGaugeLong =>
               gaugeCount += 1
               val fields = Map[String, Object](
-                "name" -> gauge.name,
-                "value" -> gauge.value.asInstanceOf[Object],
-                "start" -> gauge.start.value.asInstanceOf[Object],
+                "name"      -> gauge.name,
+                "value"     -> gauge.value.asInstanceOf[Object],
+                "start"     -> gauge.start.value.asInstanceOf[Object],
                 "measureId" -> gauge.id.value.asInstanceOf[Object]
               ).asJava
               val vertex = db.addVertex("class:GaugeLong", fields)
@@ -81,9 +81,9 @@ object IngestTsvFile extends StrictLogging {
             case gauge: ReadGaugeDouble =>
               gaugeCount += 1
               val fields = Map[String, Object](
-                "name" -> gauge.name,
-                "value" -> gauge.value.asInstanceOf[Object],
-                "start" -> gauge.start.value.asInstanceOf[Object],
+                "name"      -> gauge.name,
+                "value"     -> gauge.value.asInstanceOf[Object],
+                "start"     -> gauge.start.value.asInstanceOf[Object],
                 "measureId" -> gauge.id.value.asInstanceOf[Object]
               ).asJava
               val vertex = db.addVertex("class:GaugeDouble", fields)
@@ -123,7 +123,6 @@ object IngestTsvFile extends StrictLogging {
         }
       }
     }
-
 
     val futureDone =
       storeVertices().map { edges =>

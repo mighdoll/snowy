@@ -27,8 +27,9 @@ class User(val name: String,
   private var nextScoreSend: Long = 0
 
   private val trackIcers = 4
+
   /** track of users that iced this user */
-  val icedBy                     = new FiniteQueue[User](trackIcers)
+  val icedBy = new FiniteQueue[User](trackIcers)
 
   /** Scores are sent to users once per second (see scoreFrequency).
     * Users receive scores at jittered times, to spread the network load.

@@ -16,20 +16,20 @@ case class ReadSpan(
 ) extends ReadMeasurement
 
 case class ReadGaugeLong(
-                     override val id: SpanId,
-                     override val name: String,
-                     override val parentId: Option[SpanId],
-                     override val start: EpochMicroseconds,
-                     val value: Long
-                   ) extends ReadMeasurement
+      override val id: SpanId,
+      override val name: String,
+      override val parentId: Option[SpanId],
+      override val start: EpochMicroseconds,
+      val value: Long
+) extends ReadMeasurement
 
 case class ReadGaugeDouble(
-                          override val id: SpanId,
-                          override val name: String,
-                          override val parentId: Option[SpanId],
-                          override val start: EpochMicroseconds,
-                          val value: Double
-                        ) extends ReadMeasurement
+      override val id: SpanId,
+      override val name: String,
+      override val parentId: Option[SpanId],
+      override val start: EpochMicroseconds,
+      val value: Double
+) extends ReadMeasurement
 
 object StreamToMeasurement {
   def rowToMeasurement(row: String): Option[ReadMeasurement] = {
@@ -41,7 +41,7 @@ object StreamToMeasurement {
       case "-" | "_" => None
       case pId       => Some(parseSpanId(pId))
     }
-    val start    = EpochMicroseconds(elems(4).toLong)
+    val start = EpochMicroseconds(elems(4).toLong)
 
     elems(0) match {
       case "S" =>
@@ -49,11 +49,11 @@ object StreamToMeasurement {
         val readSpan = ReadSpan(id, name, parentId, start, duration)
         Some(readSpan)
       case "L" =>
-        val value = elems(5).toLong
+        val value     = elems(5).toLong
         val readGauge = ReadGaugeLong(id, name, parentId, start, value)
         Some(readGauge)
       case "D" =>
-        val value = elems(5).toDouble
+        val value     = elems(5).toDouble
         val readGauge = ReadGaugeDouble(id, name, parentId, start, value)
         Some(readGauge)
       case x =>

@@ -13,8 +13,8 @@ object IcingStreakRewards {
 
   def rewardsForStreak(streak: Int, repeat: Int): Seq[SingleReward] = {
     rewardsByStreak.get(streak).map {
-      case s: SingleReward => s
-      case table:SpeedTable => table.toSingleReward(repeat)
+      case s: SingleReward   => s
+      case table: SpeedTable => table.toSingleReward(repeat)
     }
   }
 }

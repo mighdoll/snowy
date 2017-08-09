@@ -17,8 +17,9 @@ class TestClosestTable extends PropSpec {
     )
 
   property("below, above, and in range indexing works") {
-    forAll(examples) {case (index, expected) =>
-      assert(table.get(index) === expected)
+    forAll(examples) {
+      case (index, expected) =>
+        assert(table.get(index) === expected)
     }
   }
 }

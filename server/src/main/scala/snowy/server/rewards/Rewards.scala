@@ -29,4 +29,3 @@ class Rewards extends StrictLogging {
     achievementHistory(achievement) = already + 1
   }
 }
-

@@ -24,7 +24,7 @@ object MeasureLoader extends StrictLogging {
         tsvFile <- cmdLine.tsvFile
       } yield {
         ingestTsv(tsvFile.toPath).map { ingestResults =>
-          import ingestResults.{spans, gauges}
+          import ingestResults.{gauges, spans}
           println(s"loaded: $spans spans  and $gauges gauges")
           Unit
         }
