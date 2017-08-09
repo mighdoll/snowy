@@ -25,13 +25,10 @@ class KeyCombos {
 
   private def keyDown(e: KeyboardEvent): Unit = {
     for { key <- shiftedKey(e) } {
-      println(s"key down: ${e.keyCode}")
-
       for {
         (activeKey, fn) <- active
         if key != activeKey // ignore key repeats
       } {
-        println(s"combo key pressed: '$activeKey' '$key' ${e.charCode} ${e.keyCode}")
         fn(key) // notify two keys held down
       }
 
