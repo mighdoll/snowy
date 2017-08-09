@@ -4,8 +4,7 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing, SledOut}
-import snowy.Awards._
+import snowy.server.rewards.Achievements._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.playfield.GameMotion._
@@ -79,14 +78,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
-      applyAchievements(turnResults.sledAchievements)
+      import turnResults._
+      applyAchievements(sledAchievements ++ deadSleds ++ icings)
       time("reportTurnResults") {
-        reportSledKills(turnResults.sledKills)
-        reapAndReportDeadSleds(turnResults.deadSleds)
-        reportAchievements(turnResults.sledAchievements)
-        reportExpiredSnowballs(turnResults.deadSnowBalls)
-        reportUsedPowerUps(turnResults.usedPowerUps)
-        reportNewPowerUps(turnResults.newPowerUps)
+        reportSledKills(icings)
+        reapAndReportDeadSleds(deadSleds)
+        reportAchievements(sledAchievements)
+        reportExpiredSnowballs(deadSnowBalls)
+        reportUsedPowerUps(usedPowerUps)
+        reportNewPowerUps(newPowerUps)
       }
       time("sendUpdates") {
         sendUpdates()
@@ -257,12 +257,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def reportSledKills(sledKills: Traversable[SledKill]): Unit = {
+  private def reportSledKills(sledKills: Traversable[SledIced]): Unit = {
     for {
-      SledKill(killerSledId, deadSledId) <- sledKills
+      SledIced(serverSled, icedServerSled) <- sledKills
     } {
-      reportKiller(killerSledId, deadSledId)
-      reportDeadSled(killerSledId, deadSledId)
+      reportKiller(serverSled.id, icedServerSled.id)
+      reportDeadSled(serverSled.id, icedServerSled.id)
     }
 
     def reportKiller(killerSledId: SledId, deadSledId: SledId): Unit = {
@@ -286,6 +286,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
+  /** Notify the client about notable achievements */
   private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
     val reports =
       achievements.flatMap {
@@ -293,7 +294,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
           Some(sled.id -> iceStreakMessage(nth))
         case RevengeIcing(sled, loserName) =>
           Some(sled.id -> revengeMessage(loserName))
-        case SledOut(serverSled) =>
+        case SledOut(_) =>
+          None
+        case SledIced(_, _) =>
           None
       }
 

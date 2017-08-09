@@ -1,8 +1,7 @@
 package snowy.server
 
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing, SledOut}
-import snowy.Awards._
+import snowy.server.rewards.Achievements._
 import snowy.GameConstants._
 import snowy.collision._
 import snowy.playfield.PlayId.{BallId, PowerUpId}
@@ -52,7 +51,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       }
 
       val achievements = turnSpan.time("sledAchievements") {
-        trackIcings(collided.killedSleds)
+        trackIcings(collided.icings)
       }
 
       val died = gameHealth.collectDead()
@@ -64,12 +63,12 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         expiredBalls ++ collided.killedSnowballs,
         usedPowerUps,
         newPowerUps,
-        collided.killedSleds,
+        collided.icings,
         achievements
       )
     }
 
-  case class CollisionResult(killedSleds: Traversable[SledKill],
+  case class CollisionResult(icings: Traversable[SledIced],
                              killedSnowballs: Traversable[BallId])
 
   private def applyPowerUps(sleds: Sleds, powerUps: PowerUps): Iterable[PowerUpId] = {
@@ -138,12 +137,20 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
     // accumulate awards
     val snowballAwards =
-      for (Death(killed: Sled, killer: Snowball) <- sledSnowballDeaths.a)
-        yield SledKill(killer.ownerId, killed.id)
+      for {
+        Death(killed: Sled, killer: Snowball) <- sledSnowballDeaths.a
+        serverSled                            <- killer.ownerId.serverSled
+        icedSled                              <- killed.id.serverSled
+      } yield SledIced(serverSled, icedSled)
 
-    val sledAwards = sledDeaths.map {
-      case Death(killed: Sled, killer: Sled) => SledKill(killer.id, killed.id)
-    }
+    val sledAwards =
+      for {
+        Death(killed: Sled, iced: Sled) <- sledDeaths
+        serverSled                      <- iced.id.serverSled
+        icedSled                        <- killed.id.serverSled
+      } yield {
+        SledIced(serverSled, icedSled)
+      }
 
     val deadSnowballs = {
       val bySled =
@@ -157,22 +164,21 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   }
 
   /** Track icings, to identify revenge and icing streaks */
-  private def trackIcings(sledKills: Traversable[SledKill]): Traversable[Achievement] = {
-    trackIcedBy(sledKills) ++ trackIceStreaks(sledKills)
+  private def trackIcings(icings: Traversable[SledIced]): Traversable[Achievement] = {
+    trackIcedBy(icings) ++ trackIceStreaks(icings)
   }
 
   /** track streaks of icing other sleds within a time period.
     * @return achievements when 2 or more sleds are iced within a period */
   private def trackIceStreaks(
-        sledKills: Traversable[SledKill]
+        icings: Traversable[SledIced]
   ): Traversable[IcingStreak] = {
     for {
-      SledKill(killerSledId, _) <- sledKills
-      sled                      <- killerSledId.serverSled
-      if updateIceStreak(sled.sled.icingRecords)
+      SledIced(serverSled, _) <- icings
+      if updateIceStreak(serverSled.sled.icingRecords)
     } yield {
-      logger.info(s"sled $sled kill streak ${sled.sled.icingRecords.streak}")
-      IcingStreak(sled, sled.sled.icingRecords.streak)
+      logger.info(s"sled $serverSled kill streak ${serverSled.sled.icingRecords.streak}")
+      IcingStreak(serverSled, serverSled.sled.icingRecords.streak)
     }
   }
 
@@ -195,41 +201,21 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   /** Track history of icings, to identify revenge
     * @return revenge achievements */
   private def trackIcedBy(
-        sledKills: Traversable[SledKill]
+        icings: Traversable[SledIced]
   ): Traversable[RevengeIcing] = {
     for {
-      SledKill(winnerSledId, icedId) <- sledKills
-      winningUser                    <- winnerSledId.user
-      losingUser                     <- icedId.user
-      winningSled                    <- winnerSledId.serverSled
+      SledIced(winningSled, losingSled) <- icings
+      winningUser                    = winningSled.user
+      losingUser                      = losingSled.user
       _ = losingUser.icedBy.enqueue(winningUser)
       if winningUser.icedBy.contains(losingUser)
     } yield {
       winningUser.icedBy.removeElement(losingUser)
       val loserName = losingUser.name
       logger.info(
-        s"trackIcedBy: sled $winnerSledId (${winningUser.name}) revenge on $loserName"
+        s"trackIcedBy: sled ${winningSled.id} (${winningUser.name}) revenge on $loserName"
       )
       RevengeIcing(winningSled, loserName)
-    }
-  }
-
-  /** update the score based on sled travel distance, sleds killed, etc. */
-  private def updateScore(awards: Seq[Award]): Unit = {
-    awards.foreach {
-      case SledKill(winnerId, loserId) =>
-        for {
-          winner <- winnerId.user
-          loser  <- loserId.user
-        } {
-          val points = loser.score * Points.sledKill
-          winner.score += points
-        }
-//      case SledDied(loserId) =>
-//        logger.error("TODO move to Rewards")
-//        for { user <- loserId.user } {
-//          user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
-//        }
     }
   }
 
@@ -258,6 +244,6 @@ object GameTurn {
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],
                          newPowerUps: Traversable[PowerUp],
-                         sledKills: Traversable[SledKill],
+                         icings: Traversable[SledIced],
                          sledAchievements: Traversable[Achievement])
 }

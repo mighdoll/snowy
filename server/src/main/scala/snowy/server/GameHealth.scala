@@ -1,6 +1,5 @@
 package snowy.server
 
-import snowy.Awards._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
 import scala.math.min

@@ -1,9 +1,10 @@
 package snowy.server.rewards
 
-import snowy.server.ServerSled
+import snowy.server.{ServerSled, User}
 import snowy.util.ClosestTable
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.GameConstants.absoluteMaxHealth
+import snowy.GameConstants.Points.minPoints
 
 sealed trait RewardTableEntry
 
@@ -30,9 +31,10 @@ case class Score(amount: Int) extends SingleReward {
   }
 }
 
-case object HalveScore extends SingleReward {
+case class AddScoreFrom(fromUser:User, multiple:Double) extends SingleReward {
   override def applyToSled(serverSled: ServerSled): Unit = {
-    serverSled.user.score /= 2
+    val proposedScore = serverSled.user.score + fromUser.score * multiple
+    serverSled.user.score  = math.max(minPoints, proposedScore)
   }
 }
 
