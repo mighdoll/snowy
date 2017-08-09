@@ -1,7 +1,7 @@
 package snowy.server
 
 import com.typesafe.scalalogging.StrictLogging
-import snowy.Achievements.{Achievement, IceStreak, RevengeIcing}
+import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing}
 import snowy.Awards._
 import snowy.GameConstants._
 import snowy.collision._
@@ -165,14 +165,14 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     * @return achievements when 2 or more sleds are iced within a period */
   private def trackIceStreaks(
         sledKills: Traversable[SledKill]
-  ): Traversable[IceStreak] = {
+  ): Traversable[IcingStreak] = {
     for {
       SledKill(killerSledId, _) <- sledKills
-      sled                      <- killerSledId.sled
-      if updateIceStreak(sled.icingRecords)
+      sled                      <- killerSledId.serverSled
+      if updateIceStreak(sled.sled.icingRecords)
     } yield {
-      logger.info(s"sled $sled kill streak ${sled.icingRecords.streak}")
-      IceStreak(killerSledId, sled.icingRecords.streak)
+      logger.info(s"sled $sled kill streak ${sled.sled.icingRecords.streak}")
+      IcingStreak(sled, sled.sled.icingRecords.streak)
     }
   }
 
@@ -201,6 +201,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       SledKill(winnerSledId, icedId) <- sledKills
       winningUser                    <- winnerSledId.user
       losingUser                     <- icedId.user
+      winningSled                    <- winnerSledId.serverSled
       _ = losingUser.icedBy.enqueue(winningUser)
       if winningUser.icedBy.contains(losingUser)
     } yield {
@@ -209,7 +210,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       logger.info(
         s"trackIcedBy: sled $winnerSledId (${winningUser.name}) revenge on $loserName"
       )
-      RevengeIcing(winnerSledId, loserName)
+      RevengeIcing(winningSled, loserName)
     }
   }
 

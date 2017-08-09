@@ -50,7 +50,7 @@ class TreeSeeding(playfield: Playfield) extends StrictLogging {
           upToCount(attempts + 1)
         } else {
           if (attempts >= maxAttempts)
-            logger.error(s"Tree seeding failed, attempts greater than $maxAttempts")
+            logger.warn(s"Tree seeding failed, attempts greater than $maxAttempts")
 
           tree
         }

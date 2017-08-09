@@ -119,7 +119,9 @@ object Picklers {
                           newHealth: Double,
                           newTurretRotation: Double,
                           newLastShotTime: Long,
-                          newLastBoostTime: Long): Sled = {
+                          newLastBoostTime: Long,
+                          maxSpeed: Int,
+                          maxHealth: Double): Sled = {
 
     def setFields[A <: Sled](sled: A): A = {
       sled.rotation = newRotation
@@ -129,6 +131,8 @@ object Picklers {
       sled.lastBoostTime = newLastBoostTime
       sled.speed = newSpeed
       sled.position = newPosition
+      sled.maxSpeed = maxSpeed
+      sled.maxHealth = maxHealth
       sled
     }
 
@@ -213,7 +217,9 @@ object Picklers {
                                         Double,
                                         Double,
                                         Long,
-                                        Long) = {
+                                        Long,
+                                        Int,
+                                        Double) = {
     val sledType: SledType = sled match {
       case _: BasicSled     => BasicSledType
       case _: TankSled      => TankSledType
@@ -234,7 +240,9 @@ object Picklers {
       sled.health,
       sled.turretRotation,
       sled.lastShotTime,
-      sled.lastBoostTime
+      sled.lastBoostTime,
+      sled.maxSpeed,
+      sled.maxHealth
     )
   }
 

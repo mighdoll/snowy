@@ -20,7 +20,7 @@ trait GameState extends StrictLogging { self: GameControl =>
     new Playfield(Vec2d(width, height))
   }
   val users           = mutable.Map[ClientId, User]()
-  val sledMap         = mutable.Map[ClientId, SledId]()
+  val sledMap         = mutable.Map[ClientId, ServerSled]()
   val pendingControls = new PendingControls
 
   val sleds     = new Sleds(playfield)

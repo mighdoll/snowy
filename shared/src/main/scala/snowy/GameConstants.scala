@@ -7,6 +7,9 @@ object GameConstants {
   /** max speed of any sled in pixels per second */
   val absoluteMaxSpeed = 500
 
+  /** max health of any sled (1.0 is the initial max health) */
+  val absoluteMaxHealth = 5.0
+
 //  /** The width and height of the playfield / map */
   val oldPlayfieldSize = Vec2d(2800, 4800) // LATER remove this
 

@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.Achievements.{Achievement, IceStreak, RevengeIcing}
+import snowy.server.rewards.Achievements.{Achievement, IcingStreak, RevengeIcing}
 import snowy.Awards._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
@@ -15,9 +15,9 @@ import snowy.playfield.{Sled, _}
 import snowy.robot.{DeadRobot, RobotPlayer}
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.measures.Span.time
-import snowy.measures.MeasurementRecorder
 import socketserve._
 import vector.Vec2d
+import snowy.GameClientProtocol.Score
 
 import scala.collection.mutable
 import scala.concurrent.duration._
@@ -57,10 +57,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   override def gone(connectionId: ConnectionId): Unit = {
     logger.info(s"gone $connectionId")
     for {
-      sledId <- sledMap.get(connectionId)
-      sled   <- sledId.sled
+      serverSled <- sledMap.get(connectionId)
     } {
-      sled.remove()
+      serverSled.sled.remove()
     }
     users.remove(connectionId)
     pendingControls.commands.remove(connectionId)
@@ -81,6 +80,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       applyDrive(deltaSeconds)
       applyCommands(deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
+      applyAchievements(turnResults.sledAchievements)
       time("reportTurnResults") {
         reportSledKills(turnResults.sledKills)
         reapAndReportDeadSleds(turnResults.deadSleds)
@@ -108,7 +108,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
       case Boost(time)        => id.sled.foreach(boostSled(_, time))
       case Pong               => optNetId(id).foreach(pong)
       case ReJoin             => rejoin(id)
-      case TestDie            => reapSled(sledMap(id))
+      case TestDie            => reapSled(sledMap(id).sled)
       case DebugKey(key)      => debugCommand(id, key)
       case RequestGameTime(clientTime) =>
         optNetId(id).foreach(reportGameTime(_, clientTime))
@@ -249,6 +249,15 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
+  /** reward the sleds and users for their achievements this round */
+  private def applyAchievements(achievements: Traversable[Achievement]): Unit = {
+    for {
+      achievement <- achievements
+    } {
+      achievement.sled.rewards.add(achievement)
+    }
+  }
+
   private def reportSledKills(sledKills: Traversable[SledKill]): Unit = {
     for {
       SledKill(killerSledId, deadSledId) <- sledKills
@@ -278,30 +287,22 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def reportAchievements(newAchievements: Traversable[Achievement]): Unit = {
+  private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
     val reports =
-      newAchievements.map {
-        case IceStreak(sledId, nth) =>
-          sledId -> iceStreakMessage(nth)
-        case RevengeIcing(mySledId, loserName) =>
-          mySledId -> revengeMessage(loserName)
+      achievements.map {
+        case IcingStreak(sled, nth) =>
+          sled.id -> iceStreakMessage(nth)
+        case RevengeIcing(sled, loserName) =>
+          sled.id -> revengeMessage(loserName)
       }
 
-    for { (sled, report) <- reports } {
-      reportOneAchievement(
-        sled.connectionId,
-        report
-      )
-    }
-
-    def reportOneAchievement(sledId: Option[ClientId],
-                             achievement: AchievementMessage): Unit = {
-      for {
-        clientId     <- sledId
-        connectionId <- optNetId(clientId)
-      } {
-        sendMessage(achievement, connectionId)
-      }
+    for {
+      (sledId, report) <- reports
+      clientId         <- sledId.connectionId
+      connectionId     <- optNetId(clientId)
+    } {
+      logger.warn(s"reportAchievements. sending report $report")
+      sendMessage(report, connectionId)
     }
   }
 
@@ -398,16 +399,17 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
         if (logger.underlying.isInfoEnabled) {
           val connectIdStr =
             sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
-          logger.info(s"reapAndReportDeadSleds: sled ${sledId.id}(${sledId.user.map(_.name)}) killed $connectIdStr sledCount:${sledMap.size}")
+          logger.info(s"reapAndReportDeadSleds: sled ${sledId.id}(${sledId.user
+            .map(_.name)}) killed $connectIdStr sledCount was:${sledMap.size}")
         }
         sled.remove()
       }
     }
   }
 
-  private def reapSled(sledId: SledId): Unit = {
-    sendDied(sledId)
-    sledId.sled.foreach(_.remove())
+  private def reapSled(sled: Sled): Unit = {
+    sendDied(sled.id)
+    sled.remove()
   }
 
   private def sendToAllClients(message: GameClientMessage): Unit = {
@@ -422,7 +424,9 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
     sledId.connectionId match {
       case Some(netId: ConnectionId) => sendMessage(Died, netId)
       case Some(robotId: RobotId)    => robots.died(robotId)
-      case None                      => logger.warn(s"reapSled connection not found for sled: $sledId")
+      case None                      =>
+        logger.warn(s"reapSled connection not found for sled: " +
+          s"$sledId ${sledId.serverSled.map(_.user.name)}")
     }
   }
 
@@ -448,21 +452,22 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
                        userName: String,
                        sledType: SledType,
                        skiColor: SkiColor): Unit = {
-    logger.info(
-      s"user joined: $userName  id: $id  sledType: $sledType userCount:${users.size}"
-    )
     val user =
       new User(userName, createTime = gameTime, sledType = sledType, skiColor = skiColor)
     users(id) = user
     val sled = createSled(id, user, sledType)
     reportJoinedSled(id, sled.id)
+
+    logger.info(
+      s"user joined: $userName  connection: $id  sled: ${sled.id}  sledType: $sledType userCount:${users.size}"
+    )
   }
 
   private def rejoin(id: ClientId): Unit = {
     users.get(id) match {
       case Some(user) =>
-        logger.info(s"user rejoined: ${user.name}")
         val sled = createSled(id, user, user.sledType)
+        logger.info(s"user rejoined: ${user.name}  ${sled.id}")
         reportJoinedSled(id, sled.id)
       case None =>
         logger.warn(s"user not found to rejoin: $id")
@@ -472,7 +477,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   private def createSled(connectionId: ClientId, user: User, sledType: SledType): Sled = {
     val sled = newRandomSled(user.name, sledType, user.skiColor)
     sleds.items.add(sled)
-    sledMap(connectionId) = sled.id
+    sledMap(connectionId) = ServerSled(sled, user)
     sled
   }
 

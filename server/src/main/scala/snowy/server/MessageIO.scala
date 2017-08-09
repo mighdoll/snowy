@@ -4,7 +4,7 @@ import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, PickleState}
 import boopickle.{BufferPool, EncoderSize}
 import com.typesafe.scalalogging.StrictLogging
-import snowy.GameClientProtocol.GameClientMessage
+import snowy.GameClientProtocol._
 import snowy.playfield.Picklers._
 import socketserve.{AppHostApi, ConnectionId}
 
@@ -15,7 +15,7 @@ class MessageIO(api: AppHostApi) extends StrictLogging {
 
   /** Send a message to the client */
   def sendMessage(message: GameClientMessage, id: ConnectionId): Unit = {
-    logger.trace(s"sending message: $message  to: $id")
+    logInterestingMessages(message, id)
 
     val bytes      = Pickle.intoBytes(message)
     val byteString = ByteString(bytes)
@@ -27,5 +27,18 @@ class MessageIO(api: AppHostApi) extends StrictLogging {
 
   def sendBinaryMessage(byteString: ByteString, id: ConnectionId): Unit = {
     api.sendBinary(byteString, id)
+  }
+
+  private def logInterestingMessages(message: GameClientMessage, id: ConnectionId): Unit = {
+//    logger.trace(s"sending message: $message  to: $id")
+    message match {
+      case Ping          =>
+      case ClientPong    =>
+      case _: GameTime   =>
+      case _: State      =>
+      case _: Scoreboard =>
+      case m             => logger.trace(s"sending message: $message  to: $id")
+    }
+
   }
 }
