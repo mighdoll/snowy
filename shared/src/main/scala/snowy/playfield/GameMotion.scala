@@ -1,6 +1,5 @@
 package snowy.playfield
 
-import snowy.Awards.Travel
 import snowy.GameConstants.turnTime
 import snowy.playfield.Friction.friction
 import snowy.playfield.GameMotion._
@@ -27,7 +26,7 @@ class GameMotion(playfield: Playfield) {
   /** update sleds and snowballs speeds and positions */
   def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
         implicit tracker: PlayfieldTracker[Sled]
-  ): Traversable[Travel] = {
+  ): Unit = {
 
     updateSledSpeedVector(sleds, deltaSeconds)
     repositionSleds(sleds, deltaSeconds)
@@ -82,21 +81,14 @@ class GameMotion(playfield: Playfield) {
   /** move the sleds to their new location for this time period */
   private def repositionSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
         implicit tracker: PlayfieldTracker[Sled]
-  ): Traversable[Travel] = {
-    val awards = sleds.flatMap { sled =>
-      val positionChange = sled.speed * deltaSeconds
-      val moved          = sled.position + positionChange
-      val wrappedPos     = playfield.wrapInPlayfield(moved)
+  ): Unit = {
+    for {
+      sled <- sleds
+      positionChange = sled.speed * deltaSeconds
+      moved          = sled.position + positionChange
+      wrappedPos     = playfield.wrapInPlayfield(moved)
+    } {
       sled.position = wrappedPos
-
-      val distance = positionChange.length
-      if (distance > 0) {
-        Some(Travel(sled.id, distance))
-      } else {
-        None
-      }
     }
-
-    awards
   }
 }

@@ -225,8 +225,6 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
           val points = loser.score * Points.sledKill
           winner.score += points
         }
-      case Travel(sledId, distance) =>
-      case SnowballHit(winnerId)    =>
       case SledDied(loserId) =>
         for { user <- loserId.user } {
           user.score = math.max(user.score * Points.sledLoss, Points.minPoints)
