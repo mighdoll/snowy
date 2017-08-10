@@ -11,6 +11,8 @@ import snowy.measures.Span.timeSpan
 import scala.concurrent.duration._
 import snowy.measures.{Gauged, Span}
 import snowy.util.RemoveList.RemoveListOps
+import snowy.measures.Span.time
+import snowy.util.ActorTypes.ParentSpan
 
 /** Support for moving the playfield objects to the next game state */
 class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
@@ -36,41 +38,24 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     *
     * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc. */
   def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
-    timeSpan("GameTurn.turn") { turnSpan =>
+    timeSpan("GameTurn.turn") { implicit turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs()
-
-      turnSpan.time("moveSnowballs") {
+      time("moveSnowballs") {
         state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
 
       turnSleds(state.sleds.items, deltaSeconds)
+      time("moveSleds") { state.motion.moveSleds(state.sleds.items, deltaSeconds) }
 
-      val moveAwards = turnSpan.time("moveSleds") {
-        driveSleds(state.sleds.items, deltaSeconds)
-        state.motion.moveSleds(state.sleds.items, deltaSeconds)
-      }
-
-      val usedPowerUps = turnSpan.time("applyPowerUps") {
-        applyPowerUps(state.sleds, state.powerUps)
-      }
-
-      val collided = turnSpan.time("checkCollisions") {
-        checkCollisions()
-      }
-
-      val achievements = turnSpan.time("trackIcings") {
-        trackIcings(collided.icings)
-      }
+      val usedPowerUps = applyPowerUps(state.sleds, state.powerUps)
+      val collided     = checkCollisions()
+      val achievements = trackIcings(collided.icings)
 
       val died = gameHealth.collectDead()
-
-      turnSpan.time("applyAchivements") {
-        applyAchievements(achievements ++ died ++ collided.icings)
-      }
+      applyAchievements(achievements ++ died ++ collided.icings)
 
       val newPowerUps = state.powerUps.refresh(gameTime)
-
 
       TurnResults(
         died,
@@ -82,15 +67,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       )
     }
 
-  /** apply any pending but not yet cancelled commands from user actions,
-    * e.g. turning or slowing */
-  private def driveSleds(sleds:Traversable[Sled], deltaSeconds: Double): Unit = {
-    for (sled <- sleds) {
-      sled.driveMode.driveSled(sled, deltaSeconds)
-    }
-  }
-
-  private def turnSleds(sleds:Traversable[Sled], deltaSeconds: Double): Unit = {
+  private def turnSleds(sleds: Traversable[Sled], deltaSeconds: Double): Unit = {
     for (sled <- sleds) {
       val tau             = math.Pi * 2
       val distanceBetween = (sled.turretRotation - sled.rotation) % tau
@@ -103,100 +80,106 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   case class CollisionResult(icings: Traversable[SledIced],
                              killedSnowballs: Traversable[BallId])
 
-  private def applyPowerUps(sleds: Sleds, powerUps: PowerUps): Iterable[PowerUpId] = {
-    val winners =
-      for {
-        powerUp <- powerUps.items
-        sled    <- sleds.grid.inside(powerUp.boundingBox)
-        if Collisions.circularCollide(powerUp, sled)
-      } yield {
-        (powerUp, sled)
-      }
+  private def applyPowerUps[_: ParentSpan](sleds: Sleds,
+                                           powerUps: PowerUps): Iterable[PowerUpId] =
+    time("applyPowerUps") {
+      val winners =
+        for {
+          powerUp <- powerUps.items
+          sled    <- sleds.grid.inside(powerUp.boundingBox)
+          if Collisions.circularCollide(powerUp, sled)
+        } yield {
+          (powerUp, sled)
+        }
 
-    for { (powerUp, sled) <- winners } yield {
-      powerUp.powerUpSled(sled)
-      powerUps.removePowerUp(powerUp, gameTime)
-      powerUp.id
+      for { (powerUp, sled) <- winners } yield {
+        powerUp.powerUpSled(sled)
+        powerUps.removePowerUp(powerUp, gameTime)
+        powerUp.id
+      }
     }
-  }
 
   /** check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
-                                sledTracker: PlayfieldTracker[Sled]): CollisionResult = {
-    import snowy.collision.GameCollide.snowballTrees
+                                sledTracker: PlayfieldTracker[Sled],
+                                parentSpan: Span): CollisionResult =
+    time("checkCollisions") {
+      import snowy.collision.GameCollide.snowballTrees
+      // collide snowballs with sleds
+      val sledSnowballDeaths: DeathList[Sled, Snowball] =
+        CollideThings.collideWithGrid(
+          state.sleds.items,
+          state.snowballs.grid
+        )
 
-    // collide snowballs with sleds
-    val sledSnowballDeaths: DeathList[Sled, Snowball] =
-      CollideThings.collideWithGrid(
-        state.sleds.items,
-        state.snowballs.grid
-      )
+      val deadBalls: Traversable[Snowball] =
+        for { Death(snowball: Snowball, _) <- sledSnowballDeaths.b } yield { snowball }
+      val uniqueDeadBalls = deadBalls.toSet
+      uniqueDeadBalls.foreach(_.remove())
 
-    val deadBalls: Traversable[Snowball] =
-      for { Death(snowball: Snowball, _) <- sledSnowballDeaths.b } yield { snowball }
-    val uniqueDeadBalls = deadBalls.toSet
-    uniqueDeadBalls.foreach(_.remove())
+      // collide snowballs with trees
+      val snowballTreeDeaths =
+        for {
+          snowball <- state.snowballs.items
+          nearTrees = state.trees.grid.inside(snowball.boundingBox)
+          if snowballTrees(snowball, nearTrees)
+        } yield snowball
 
-    // collide snowballs with trees
-    val snowballTreeDeaths =
-      for {
-        snowball <- state.snowballs.items
-        nearTrees = state.trees.grid.inside(snowball.boundingBox)
-        if snowballTrees(snowball, nearTrees)
-      } yield snowball
-
-    for (ball <- snowballTreeDeaths) {
-      ball.remove()
-    }
-
-    // collide snowballs with each other
-    val snowballDeaths =
-      CollideThings
-        .collideCollection(state.snowballs.items, state.snowballs.grid)
-        .map(_.killed)
-        .toSet
-
-    for (snowball <- snowballDeaths) { snowball.remove() }
-
-    // collide sleds with trees
-    for {
-      sled <- state.sleds.items
-      nearTrees = state.trees.grid.inside(sled.boundingBox)
-    } state.sledTree.collide(sled, nearTrees)
-
-    // collide sleds with each other
-    val sledDeaths = CollideThings.collideCollection(state.sleds.items, state.sleds.grid)
-
-    // accumulate awards
-    val snowballAwards =
-      for {
-        Death(killed: Sled, killer: Snowball) <- sledSnowballDeaths.a
-        serverSled                            <- killer.ownerId.serverSled
-        icedSled                              <- killed.id.serverSled
-      } yield SledIced(serverSled, icedSled)
-
-    val sledAwards =
-      for {
-        Death(killed: Sled, iced: Sled) <- sledDeaths
-        serverSled                      <- iced.id.serverSled
-        icedSled                        <- killed.id.serverSled
-      } yield {
-        SledIced(serverSled, icedSled)
+      for (ball <- snowballTreeDeaths) {
+        ball.remove()
       }
 
-    val deadSnowballs = {
-      val bySled =
-        for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b)
-          yield killed.id
+      // collide snowballs with each other
+      val snowballDeaths =
+        CollideThings
+          .collideCollection(state.snowballs.items, state.snowballs.grid)
+          .map(_.killed)
+          .toSet
 
-      snowballDeaths.map(_.id) ++ bySled ++ snowballTreeDeaths.map(_.id)
+      for (snowball <- snowballDeaths) { snowball.remove() }
+
+      // collide sleds with trees
+      for {
+        sled <- state.sleds.items
+        nearTrees = state.trees.grid.inside(sled.boundingBox)
+      } state.sledTree.collide(sled, nearTrees)
+
+      // collide sleds with each other
+      val sledDeaths =
+        CollideThings.collideCollection(state.sleds.items, state.sleds.grid)
+
+      // accumulate awards
+      val snowballAwards =
+        for {
+          Death(killed: Sled, killer: Snowball) <- sledSnowballDeaths.a
+          serverSled                            <- killer.ownerId.serverSled
+          icedSled                              <- killed.id.serverSled
+        } yield SledIced(serverSled, icedSled)
+
+      val sledAwards =
+        for {
+          Death(killed: Sled, iced: Sled) <- sledDeaths
+          serverSled                      <- iced.id.serverSled
+          icedSled                        <- killed.id.serverSled
+        } yield {
+          SledIced(serverSled, icedSled)
+        }
+
+      val deadSnowballs = {
+        val bySled =
+          for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b)
+            yield killed.id
+
+        snowballDeaths.map(_.id) ++ bySled ++ snowballTreeDeaths.map(_.id)
+      }
+
+      CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
     }
 
-    CollisionResult(snowballAwards ++ sledAwards, deadSnowballs)
-  }
-
   /** reward the sleds and users for their achievements this round */
-  private def applyAchievements(achievements: Traversable[Achievement]): Unit = {
+  private def applyAchievements[_: ParentSpan](
+        achievements: Traversable[Achievement]
+  ): Unit = time("applyAchievements") {
     for {
       achievement <- achievements
     } {
@@ -205,7 +188,9 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   }
 
   /** Track icings, to identify revenge and icing streaks */
-  private def trackIcings(icings: Traversable[SledIced]): Traversable[Achievement] = {
+  private def trackIcings[_: ParentSpan](
+        icings: Traversable[SledIced]
+  ): Traversable[Achievement] = time("trackIcings") {
     trackIcedBy(icings) ++ trackIceStreaks(icings)
   }
 

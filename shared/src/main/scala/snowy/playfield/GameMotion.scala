@@ -28,6 +28,7 @@ class GameMotion(playfield: Playfield) {
         implicit tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
+    driveSleds(sleds, deltaSeconds)
     updateSledSpeedVector(sleds, deltaSeconds)
     repositionSleds(sleds, deltaSeconds)
   }
@@ -61,6 +62,14 @@ class GameMotion(playfield: Playfield) {
       else if (rotation < min) rotation - min
       else rotation
     sled.turretRotation = wrappedRotation
+  }
+
+  /** apply any pending but not yet cancelled commands from user drive,
+    * e.g. braking or driving */
+  private def driveSleds(sleds: Traversable[Sled], deltaSeconds: Double): Unit = {
+    for (sled <- sleds) {
+      sled.driveMode.driveSled(sled, deltaSeconds)
+    }
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */

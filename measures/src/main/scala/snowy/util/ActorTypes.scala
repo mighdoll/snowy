@@ -3,7 +3,7 @@ package snowy.util
 import scala.concurrent.ExecutionContext
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import snowy.measures.MeasurementRecorder
+import snowy.measures.{MeasurementRecorder, Span}
 
 /** some convenient syntax for passing common implicit parameters */
 object ActorTypes {
@@ -11,4 +11,5 @@ object ActorTypes {
   type Actors[_]       = ActorSystem
   type Measurement[_]  = MeasurementRecorder
   type Materializer[_] = ActorMaterializer
+  type ParentSpan[_]   = Span
 }

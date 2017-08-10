@@ -93,7 +93,6 @@ class ClientReporting(messageIO: MessageIO,
       clientId         <- sledId.connectionId
       connectionId     <- optNetId(clientId)
     } {
-      logger.warn(s"reportAchievements. sending report $report")
       sendMessage(report, connectionId)
     }
   }

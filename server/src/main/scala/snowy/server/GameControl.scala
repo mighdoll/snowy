@@ -26,12 +26,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   private val messageIO     = new MessageIO(api)
   private val connections   = mutable.Map[ConnectionId, ClientConnection]()
-  private def connectionIds = connections.keys
   private val robots        = new RobotHost(this)
+  private val commands      = new PersistentControls(gameStateImplicits)
+  private val gameDebug     = new GameDebug(this, robots)
+  private def connectionIds = connections.keys
   private val clientReport =
     new ClientReporting(messageIO, gameStateImplicits, connectionIds, robots)
-  private val commands = new PersistentControls(gameStateImplicits)
-  private val gameDebug = new GameDebug(this, robots)
   private lazy val pickledTrees = {
     val message: GameClientMessage = InitialTrees(trees.items.toSeq)
     val bytes                      = Pickle.intoBytes(message)
@@ -74,7 +74,7 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Run the next game turn. (called on a periodic timer) */
   override def tick(): Unit = {
-    Span("GameControl.turn").finishSpan { implicit span =>
+    Span("GameControl.tick").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
       time("robotsTurn") { robots.robotsTurn() }
       commands.applyCommands(motion, snowballs, gameTime, deltaSeconds)
