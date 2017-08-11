@@ -1,10 +1,9 @@
 package snowy.server.rewards
 
+import snowy.GameConstants.Points.minPoints
+import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed, kingHealthBonus}
 import snowy.server.{ServerSled, User}
 import snowy.util.ClosestTable
-import snowy.GameConstants.absoluteMaxSpeed
-import snowy.GameConstants.absoluteMaxHealth
-import snowy.GameConstants.Points.minPoints
 
 sealed trait RewardTableEntry
 
@@ -51,3 +50,16 @@ case class MaxHealthBonus(amount: Double) extends SingleReward {
     serverSled.sled.maxHealth = math.min(current + amount, absoluteMaxHealth)
   }
 }
+
+case object OnFire extends SingleReward {
+  override def applyToSled(serverSled: ServerSled): Unit = {
+    serverSled.sled.maxHealth += kingHealthBonus
+  }
+}
+
+case object NoMoreFire extends SingleReward {
+  override def applyToSled(serverSled: ServerSled): Unit = {
+    serverSled.sled.maxHealth -= 5
+  }
+}
+

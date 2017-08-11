@@ -56,7 +56,7 @@ object SnowyServerFixture {
     val recorder = NullMeasurementRecorder
     val server =
       socketApplication(
-        (api, system, parentSpan) => new GameControl(api)(system, parentSpan),
+        (api, system, parentSpan) => new GameControl(api, system, parentSpan),
         Some(testPort)
       )
     try {

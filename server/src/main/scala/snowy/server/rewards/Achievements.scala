@@ -19,5 +19,10 @@ object Achievements {
   case class SledOut(override val sled: ServerSled) extends Achievement
 
   /** Sled iced (knocked out) another sled. */
-  case class SledIced(override val sled: ServerSled, icedSled: ServerSled) extends Achievement
+  case class SledIced(override val sled: ServerSled, icedSled: ServerSled)
+      extends Achievement
+
+  /** A new sled tops the score leaderboard */
+  case class Kinged(override val sled: ServerSled, oldKing: Option[ServerSled])
+      extends Achievement
 }

@@ -20,6 +20,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   var lastGameTime       = gameTime - tickDelta.toMillis
   val gameHealth         = new GameHealth(state)
   val gameStateImplicits = new GameStateImplicits(state)
+  var currentKing        = state.serverSleds.headOption
   import gameStateImplicits._
 
   /** advance to the next game time
@@ -50,7 +51,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
       val usedPowerUps = applyPowerUps(state.sleds, state.powerUps)
       val collided     = checkCollisions()
-      val achievements = trackIcings(collided.icings)
+      val achievements = trackIcings(collided.icings) ++ trackKing()
 
       val died = gameHealth.collectDead()
       applyAchievements(achievements ++ died ++ collided.icings)
@@ -66,6 +67,25 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
         achievements
       )
     }
+
+  /** report an achievement if there's a new king */
+  private def trackKing(): Option[Achievement] = {
+    var max:Double     = currentKing.map(_.user.score).getOrElse(0)
+    val oldKing = currentKing
+    val newCandidates =
+      for {
+        serverSled <- state.serverSleds
+        if serverSled.user.score > max
+        if Some(serverSled) != currentKing
+      } yield {
+        max = serverSled.user.score
+        serverSled
+      }
+    newCandidates.lastOption.map { newKing =>
+      currentKing = Some(newKing)
+      Kinged(newKing, oldKing)
+    }
+  }
 
   private def turnSleds(sleds: Traversable[Sled], deltaSeconds: Double): Unit = {
     for (sled <- sleds) {

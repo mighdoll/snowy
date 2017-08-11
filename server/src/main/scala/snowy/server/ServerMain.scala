@@ -24,7 +24,7 @@ object ServerMain extends LazyLogging {
     logger.info("starting server")
 
     socketApplication { (api, system, appSpan) =>
-      new GameControl(api)(system, appSpan)
+      new GameControl(api, system, appSpan)
     }
   }
 

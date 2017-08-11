@@ -39,14 +39,12 @@ object GameConstants {
     /** Minimum number of points a sled can have (also amount of points on join) */
     val minPoints = 10
 
-    /** points earned per pixel travelled */
-    val travel = .0002
-
     /** % of the other users points earned from killing a sled */
     val sledKill = .5
 
     /** % of points lost if the sled is killed */
     val sledLoss = .5
+
   }
 
   object Friction {
@@ -75,5 +73,8 @@ object GameConstants {
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50
   }
+
+  /** temporary health bonus while king */
+  val kingHealthBonus = 5
 
 }

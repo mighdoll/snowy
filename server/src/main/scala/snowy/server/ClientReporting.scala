@@ -9,7 +9,9 @@ import snowy.server.ClientReporting.optNetId
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.server.GameTurn.TurnResults
 import snowy.server.rewards.Achievements._
+import snowy.util.ActorTypes.ParentSpan
 import socketserve.{ClientId, ConnectionId, RobotId}
+import snowy.measures.Span.time
 
 /** Support for sending protocol messages about revised game state to the clients */
 class ClientReporting(messageIO: MessageIO,
@@ -28,15 +30,16 @@ class ClientReporting(messageIO: MessageIO,
     }
   }
 
-  def reportTurnResults(turnResults:TurnResults):Unit = {
-    import turnResults._
-    reportSledIcings(icings)
-    reportDeadSleds(deadSleds)
-    reportAchievements(sledAchievements)
-    reportDeadSnowballs(deadSnowBalls)
-    reportUsedPowerUps(usedPowerUps)
-    reportNewPowerUps(newPowerUps)
-  }
+  def reportTurnResults[_: ParentSpan](turnResults: TurnResults): Unit =
+    time("reportTurnResults") {
+      import turnResults._
+      reportSledIcings(icings)
+      reportDeadSleds(deadSleds)
+      reportAchievements(sledAchievements)
+      reportDeadSnowballs(deadSnowBalls)
+      reportUsedPowerUps(usedPowerUps)
+      reportNewPowerUps(newPowerUps)
+    }
 
   def joinedSled(connectionId: ClientId, sledId: SledId): Unit = {
     connectionId match {
@@ -83,9 +86,11 @@ class ClientReporting(messageIO: MessageIO,
         case RevengeIcing(sled, loserName) =>
           Some(sled.id -> revengeMessage(loserName))
         case SledOut(_) =>
-          None
+          None  // currently reported elsewhere
         case SledIced(_, _) =>
-          None
+          None // currently reported elsewhere
+        case Kinged(sled, _) =>
+          Some(sled.id -> kingMessage)
       }
 
     for {
@@ -134,9 +139,10 @@ class ClientReporting(messageIO: MessageIO,
         if (logger.underlying.isInfoEnabled) {
           val connectIdStr =
             sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
-          logger.info("reportDeadSleds: "
-            + s"sled ${sledId.id}(${sledId.user.map(_.name)}) + "
-            + s"killed $connectIdStr"
+          logger.info(
+            "reportDeadSleds: "
+              + s"sled ${sledId.id}(${sledId.user.map(_.name)}) + "
+              + s"killed $connectIdStr"
           )
         }
       }
@@ -161,7 +167,7 @@ class ClientReporting(messageIO: MessageIO,
   }
 
   /** Send the current score to the clients */
-  def sendScores(users:mutable.Map[ClientId, User], gameTime:Long): Unit = {
+  def sendScores(users: mutable.Map[ClientId, User], gameTime: Long): Unit = {
     val topScores = {
       val rawScores = users.values.map { user =>
         Score(user.name, user.score)
@@ -180,6 +186,13 @@ class ClientReporting(messageIO: MessageIO,
     }
   }
 
+  private val kingMessage: AchievementMessage = {
+    AchievementMessage(
+      SpeedBonus,
+      s"King!",
+      "You have the top score"
+    )
+  }
   private def revengeMessage(loserName: String): AchievementMessage = {
     AchievementMessage(
       SpeedBonus,

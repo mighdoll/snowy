@@ -19,8 +19,9 @@ trait GameState extends StrictLogging { self: GameControl =>
     val height          = playfieldConfig.getInt("height")
     new Playfield(Vec2d(width, height))
   }
-  val users           = mutable.Map[ClientId, User]()
-  val sledMap         = mutable.Map[ClientId, ServerSled]()
+  val users       = mutable.Map[ClientId, User]()
+  val sledMap     = mutable.Map[ClientId, ServerSled]()
+  def serverSleds = sledMap.values
 
   val sleds     = new Sleds(playfield)
   val snowballs = new Snowballs(playfield)

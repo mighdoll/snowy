@@ -15,15 +15,17 @@ import snowy.playfield.{Sled, _}
 import snowy.robot.RobotPlayer
 import snowy.server.ClientReporting.optNetId
 import snowy.server.rewards.Achievements._
+import snowy.util.ActorTypes.ParentSpan
 import socketserve._
 
 /** Central controller for the game. Delegates protocol messages from clients,
   * and from the game framework. */
-class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Span)
+class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
     extends AppController with GameState with StrictLogging {
-  override val turnPeriod = 20 milliseconds
-  val gameTurns           = new GameTurn(this, turnPeriod)
-
+  implicit val theSystem    = system
+  implicit val theSpan      = parentSpan
+  override val turnPeriod   = 20 milliseconds
+  val gameTurns             = new GameTurn(this, turnPeriod)
   private val messageIO     = new MessageIO(api)
   private val connections   = mutable.Map[ConnectionId, ClientConnection]()
   private val robots        = new RobotHost(this)
@@ -76,16 +78,12 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   override def tick(): Unit = {
     Span("GameControl.tick").finishSpan { implicit span =>
       val deltaSeconds = gameTurns.nextTurn()
-      time("robotsTurn") { robots.robotsTurn() }
+      robots.robotsTurn()
       commands.applyCommands(motion, snowballs, gameTime, deltaSeconds)
       val turnResults = gameTurns.turn(deltaSeconds)
-      time("reportTurnResults") {
-        clientReport.reportTurnResults(turnResults)
-      }
+      clientReport.reportTurnResults(turnResults)
       reapDeadSleds(turnResults.deadSleds)
-      time("sendUpdates") {
-        sendUpdates()
-      }
+      sendUpdates()(span)
     }
   }
 
@@ -137,10 +135,11 @@ class GameControl(api: AppHostApi)(implicit system: ActorSystem, parentSpan: Spa
   }
 
   /** update game clients with the current state of the game */
-  private def sendUpdates(): Unit = {
-    sendState()
-    clientReport.sendScores(users, gameTime)
-  }
+  private def sendUpdates()(implicit span: Span): Unit =
+    time("sendUpdates") {
+      sendState()
+      clientReport.sendScores(users, gameTime)
+    }(span)
 
   /** Send the current playfield state to the clients */
   private def sendState(): Unit = {
