@@ -50,10 +50,10 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   val driveMode = new SledDrive()
 
   /** acceleration in pixels / second / second */
-  def gravity: Double = -100
+  def gravity: Double = -50
 
   /** max speed of sled in pixels per second */
-  var maxSpeed: Int = 200
+  var maxSpeed: Int = 250
 
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = 200
@@ -155,7 +155,7 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override val bulletSpeed       = 190
   override val bulletRadius      = 10
   override val bulletMass        = .75
-  override val bulletRecoil      = 70
+  override val bulletRecoil      = 0
   override val bulletLifetime    = 10.0
   override val mass              = 3.0
 
@@ -195,6 +195,7 @@ class SpeedySled(override val userName: String,
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val rotationSpeed      = math.Pi * 2
+  maxSpeed  = 300
 }
 
 class SpikySled(override val userName: String,
