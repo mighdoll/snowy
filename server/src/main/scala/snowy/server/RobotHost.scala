@@ -9,7 +9,7 @@ import snowy.util.ActorTypes.ParentSpan
 import socketserve.{ClientId, RobotId}
 
 
-/** */
+/** Manages autonomous sleds on the playfield */
 class RobotHost(gameControl: GameControl) {
   private val robots     = mutable.Map[RobotId, Robot]()
   private val robotSleds = mutable.Map[RobotId, SledId]()

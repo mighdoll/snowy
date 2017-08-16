@@ -41,4 +41,6 @@ class User(val name: String,
     val jitter = ThreadLocalRandom.current.nextDouble() * scoreFrequency
     nextScoreSend = gameTime + jitter.toInt
   }
+
+  override def toString(): String = s"{$name} score:$score"
 }

@@ -18,10 +18,9 @@ class GameHealth(state: GameState) {
   }
 
   /** remove old snowballs */
-  def expireSnowballs(): Traversable[BallId] = {
-    val now = System.currentTimeMillis()
+  def expireSnowballs(gameTime: Long): Traversable[BallId] = {
     def expired(snowball: Snowball): Boolean =
-      now > snowball.spawned + snowball.lifetime * 1000
+      gameTime > snowball.spawned + snowball.lifetime * 1000
 
     for { oldBall <- state.snowballs.items.filter(expired) } yield {
       oldBall.remove()

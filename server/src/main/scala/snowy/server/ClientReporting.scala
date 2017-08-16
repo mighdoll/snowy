@@ -141,7 +141,7 @@ class ClientReporting(messageIO: MessageIO,
             sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
           logger.info(
             "reportDeadSleds: "
-              + s"sled ${sledId.id}(${sledId.user.map(_.name)}) + "
+              + s"sled id:${sledId.id} user:${sledId.user.getOrElse("")}"
               + s"killed $connectIdStr"
           )
         }

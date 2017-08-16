@@ -1,5 +1,6 @@
 package snowy.server.rewards
 
+import com.typesafe.scalalogging.StrictLogging
 import snowy.GameConstants.Points.minPoints
 import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed, kingHealthBonus}
 import snowy.server.{ServerSled, User}
@@ -30,10 +31,13 @@ case class Score(amount: Int) extends SingleReward {
   }
 }
 
-case class AddScoreFrom(fromUser:User, multiple:Double) extends SingleReward {
+case class ModifyScore(fromUser: User, multiple: Double)
+    extends SingleReward with StrictLogging {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val proposedScore = serverSled.user.score + fromUser.score * multiple
-    serverSled.user.score  = math.max(minPoints, proposedScore)
+    serverSled.user.score = math.max(minPoints, proposedScore)
+    logger.info(s"AddScore to: ${serverSled.user}=${serverSled.user.score} "
+      + s"from: ${fromUser}=${fromUser.score}  multiple: $multiple")
   }
 }
 
@@ -54,12 +58,12 @@ case class MaxHealthBonus(amount: Double) extends SingleReward {
 case object OnFire extends SingleReward {
   override def applyToSled(serverSled: ServerSled): Unit = {
     serverSled.sled.maxHealth += kingHealthBonus
+    serverSled.sled.health = serverSled.sled.maxHealth
   }
 }
 
 case object NoMoreFire extends SingleReward {
   override def applyToSled(serverSled: ServerSled): Unit = {
-    serverSled.sled.maxHealth -= 5
+    serverSled.sled.maxHealth -= kingHealthBonus
   }
 }
-

@@ -45,6 +45,9 @@ object GameConstants {
     /** % of points lost if the sled is killed */
     val sledLoss = .5
 
+    /** points earned for becoming king */
+    val kingBonus = 100
+
   }
 
   object Friction {
@@ -75,6 +78,6 @@ object GameConstants {
   }
 
   /** temporary health bonus while king */
-  val kingHealthBonus = 5
+  val kingHealthBonus = 3
 
 }

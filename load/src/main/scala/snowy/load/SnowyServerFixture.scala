@@ -8,7 +8,7 @@ import akka.stream.testkit.scaladsl.TestSink
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.SnowyClientSocket.connectSinkToServer
-import snowy.server.GameControl
+import snowy.server.{GameControl, GlobalConfig}
 import snowy.util.FutureAwaiting._
 import socketserve.WebServer.socketApplication
 import scala.concurrent.Future
@@ -56,7 +56,7 @@ object SnowyServerFixture {
     val recorder = NullMeasurementRecorder
     val server =
       socketApplication(
-        (api, system, parentSpan) => new GameControl(api, system, parentSpan),
+        (api, system, parentSpan) => new GameControl(api, system, parentSpan, GlobalConfig.snowy),
         Some(testPort)
       )
     try {

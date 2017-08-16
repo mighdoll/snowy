@@ -15,8 +15,9 @@ import snowy.measures.Span.time
 import snowy.util.ActorTypes.ParentSpan
 
 /** Support for moving the playfield objects to the next game state */
-class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLogging {
-  var gameTime           = System.currentTimeMillis()
+class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
+    extends StrictLogging {
+  var gameTime           = clock.currentMillis
   var lastGameTime       = gameTime - tickDelta.toMillis
   val gameHealth         = new GameHealth(state)
   val gameStateImplicits = new GameStateImplicits(state)
@@ -41,7 +42,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
   def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
     timeSpan("GameTurn.turn") { implicit turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
-      val expiredBalls = gameHealth.expireSnowballs()
+      val expiredBalls = gameHealth.expireSnowballs(gameTime)
       time("moveSnowballs") {
         state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
@@ -54,7 +55,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
       val achievements = trackIcings(collided.icings) ++ trackKing()
 
       val died = gameHealth.collectDead()
-      applyAchievements(achievements ++ died ++ collided.icings)
+      applyAchievements(achievements ++ collided.icings ++ died)
 
       val newPowerUps = state.powerUps.refresh(gameTime)
 
@@ -70,7 +71,16 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
 
   /** report an achievement if there's a new king */
   private def trackKing(): Option[Achievement] = {
-    var max:Double     = currentKing.map(_.user.score).getOrElse(0)
+    var max: Double = {
+      val kingScore =
+        for {
+          king <- currentKing
+          if state.sleds.items.contains(king.sled) // sled has not died
+        } yield {
+          king.user.score
+        }
+      kingScore.getOrElse(0)
+    }
     val oldKing = currentKing
     val newCandidates =
       for {
@@ -270,7 +280,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration) extends StrictLoggin
     * @return the time since the last time slice, in seconds
     */
   private def nextTimeSlice(): Double = {
-    val currentTime  = System.currentTimeMillis()
+    val currentTime  = clock.currentMillis
     val deltaSeconds = (currentTime - gameTime) / 1000.0
     lastGameTime = gameTime
     gameTime = currentTime

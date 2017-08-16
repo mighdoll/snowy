@@ -25,7 +25,7 @@ trait GameState extends StrictLogging { self: GameControl =>
 
   val sleds     = new Sleds(playfield)
   val snowballs = new Snowballs(playfield)
-  val trees     = new Trees(playfield)
+  val trees     = new Trees(playfield, self.snowyConfig)
   val powerUps  = new PowerUps(playfield)
 
   val motion   = new GameMotion(playfield)

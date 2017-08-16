@@ -5,6 +5,7 @@ import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
+import com.typesafe.config.Config
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
@@ -17,15 +18,20 @@ import snowy.server.ClientReporting.optNetId
 import snowy.server.rewards.Achievements._
 import snowy.util.ActorTypes.ParentSpan
 import socketserve._
+import vector.Vec2d
 
 /** Central controller for the game. Delegates protocol messages from clients,
   * and from the game framework. */
-class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
+class GameControl(api: AppHostApi,
+                  system: ActorSystem,
+                  parentSpan: Span,
+                  val snowyConfig: Config = GlobalConfig.snowy,
+                  clock: Clock = StandardClock)
     extends AppController with GameState with StrictLogging {
   implicit val theSystem    = system
   implicit val theSpan      = parentSpan
   override val turnPeriod   = 20 milliseconds
-  val gameTurns             = new GameTurn(this, turnPeriod)
+  val gameTurns             = new GameTurn(this, turnPeriod, clock)
   private val messageIO     = new MessageIO(api)
   private val connections   = mutable.Map[ConnectionId, ClientConnection]()
   private val robots        = new RobotHost(this)
@@ -128,7 +134,7 @@ class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
 
   /** Add some autonomous players to the game */
   private def robotSleds(): Unit = {
-    val numRobotSleds = 2
+    val numRobotSleds = snowyConfig.getInt("robot-sleds")
     (1 to numRobotSleds).foreach { _ =>
       robots.createRobot(RobotPlayer.apply)
     }
@@ -159,6 +165,9 @@ class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
   private def reapDeadSleds(dead: Traversable[SledOut]): Unit = {
     for (SledOut(serverSled) <- dead) {
       serverSled.sled.remove()
+      serverSled.sled.connectionId.foreach{id =>
+        commands.pendingControls.commands.remove(id)
+      }
     }
   }
 
@@ -166,6 +175,9 @@ class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
   private def reapSled(sled: Sled): Unit = {
     clientReport.sendDied(sled.id)
     sled.remove()
+    sled.connectionId.foreach{id =>
+      commands.pendingControls.commands.remove(id)
+    }
   }
 
   private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
@@ -183,15 +195,29 @@ class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
                        userName: String,
                        sledType: SledType,
                        skiColor: SkiColor): Unit = {
-    val user =
-      new User(userName, createTime = gameTime, sledType = sledType, skiColor = skiColor)
-    users(id) = user
+    val user = addUser(id, userName, sledType, skiColor)
     val sled = createSled(id, user, sledType)
     clientReport.joinedSled(id, sled.id)
 
     logger.info(
       s"user joined: $userName  connection: $id  sled: ${sled.id}  sledType: $sledType userCount:${users.size}"
     )
+  }
+
+  def testUserJoin(id: ClientId, userName: String, location: Vec2d): ServerSled = {
+    val user = addUser(id, userName)
+    val sled = testSled(userName, location)
+    addSled(sled, id, user)
+  }
+
+  private def addUser(clientId: ClientId,
+                      name: String,
+                      sledType: SledType = BasicSledType,
+                      skiColor: SkiColor = BlueSkis): User = {
+    val user =
+      new User(name, createTime = gameTime, sledType = sledType, skiColor = skiColor)
+    users(clientId) = user
+    user
   }
 
   private def rejoin(id: ClientId): Unit = {
@@ -207,9 +233,22 @@ class GameControl(api: AppHostApi, system: ActorSystem, parentSpan: Span)
 
   private def createSled(connectionId: ClientId, user: User, sledType: SledType): Sled = {
     val sled = newRandomSled(user.name, sledType, user.skiColor)
-    sleds.items.add(sled)
-    sledMap(connectionId) = ServerSled(sled, user)
+    addSled(sled, connectionId, user)
     sled
+  }
+
+  private def testSled(userName: String, location: Vec2d): Sled = {
+    Sled(
+      userName = userName,
+      initialPosition = location
+    )
+  }
+
+  private def addSled(sled: Sled, clientId: ClientId, user: User): ServerSled = {
+    sleds.items.add(sled)
+    val serverSled = ServerSled(sled, user)
+    sledMap(clientId) = serverSled
+    serverSled
   }
 
   /** Point the sled in this direction */

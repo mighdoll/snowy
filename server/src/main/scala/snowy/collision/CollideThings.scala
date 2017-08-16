@@ -2,11 +2,11 @@ package snowy.collision
 
 import cats._
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.Collisions.{collideCircles, Collided}
+import snowy.collision.Collisions.{Collided, collideCircles}
 import snowy.playfield._
 import vector.Vec2d
-
 import scala.collection.mutable.ListBuffer
+import com.typesafe.scalalogging.StrictLogging
 
 object CollideThings {
 
@@ -130,10 +130,11 @@ object CollideThings {
 
 /** Pending changes to an objects health,speed, etc. after a collision */
 case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A],
-                                                        damage: Double) {
+                                                        damage: Double) extends StrictLogging{
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
+    logger.trace(s"applyEffects on $obj  health:${obj.health}")
     if (obj.health > 0) { // don't bother changing position or speed if its dead anyway
       obj.speed = obj.speed + collided.rebound
       obj.position = obj.position + collided.reposition
