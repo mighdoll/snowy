@@ -18,7 +18,7 @@ class TestRewards extends PropSpec {
     rewards.add(achievement)
     rewards.add(achievement)
     assert(serverSled.user.score === 130)    // 60 + 60 + initial 10
-    assert(serverSled.sled.maxSpeed === 230) // initial 200 + 20 + 10
+    assert(serverSled.sled.maxSpeed === 280) // initial 250 + 20 + 10
   }
 
   property("A revenge icing rewards correctly") {

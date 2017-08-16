@@ -25,4 +25,13 @@ object Achievements {
   /** A new sled tops the score leaderboard */
   case class Kinged(override val sled: ServerSled, oldKing: Option[ServerSled])
       extends Achievement
+
 }
+
+/*
+Adding a new Achievement:
+  . Add the achievement here
+  . Produce the achievement in GameTurn
+  . Apply effects of the achievement on the sled in Rewards
+  . Notify the client about the reward in ClientReporting
+ */

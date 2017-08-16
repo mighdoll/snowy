@@ -22,8 +22,8 @@ class Rewards extends StrictLogging {
           RevengeRewards.rewards().map(serverSled -> _)
         case SledOut(serverSled) =>
           Seq(serverSled -> ModifyScore(serverSled.user, -Points.sledLoss))
-        case SledIced(serverSled, icedServerSled) =>
-          Seq(serverSled -> ModifyScore(icedServerSled.user, Points.sledKill))
+        case iced: SledIced =>
+          IceRewards.rewards(iced)
         case kinged: Kinged =>
           KingRewards.rewards(kinged)
       }

@@ -69,7 +69,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
       )
     }
 
-  /** report an achievement if there's a new king */
+  /** Report an achievement if there's a new king */
   private def trackKing(): Option[Achievement] = {
     var max: Double = {
       val kingScore =
@@ -231,10 +231,10 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   ): Traversable[IcingStreak] = {
     for {
       SledIced(serverSled, _) <- icings
-      if updateIceStreak(serverSled.sled.icingRecords)
+      if updateIceStreak(serverSled.icingRecords)
     } yield {
-      logger.info(s"sled $serverSled kill streak ${serverSled.sled.icingRecords.streak}")
-      IcingStreak(serverSled, serverSled.sled.icingRecords.streak)
+      logger.info(s"sled $serverSled kill streak ${serverSled.icingRecords.streak}")
+      IcingStreak(serverSled, serverSled.icingRecords.streak)
     }
   }
 
