@@ -8,13 +8,13 @@ import snowy.measures.Span.{time, timeSpan}
 import snowy.measures.{Gauged, Span}
 import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
-import snowy.server.GameTurn._
+import snowy.server.PlayfieldSteps._
 import snowy.server.rewards.Achievements._
 import snowy.util.ActorTypes.ParentSpan
 import snowy.util.RemoveList.RemoveListOps
 
 /** Support for moving the playfield objects to the next game state */
-class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
+class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     extends StrictLogging {
   var gameTime           = clock.currentMillis
   var lastGameTime       = gameTime - tickDelta.toMillis
@@ -26,7 +26,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   /** advance to the next game time
     * @return seconds since the last turn
     */
-  def nextTurn()(implicit parentSpan: Span): Double = {
+  def nextStep()(implicit parentSpan: Span): Double = {
     val deltaSeconds = nextTimeSlice()
     recordTurnJitter(deltaSeconds)
     deltaSeconds
@@ -38,8 +38,8 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     * powerups and other achievements.
     *
     * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc. */
-  def turn(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
-    timeSpan("GameTurn.turn") { implicit turnSpan =>
+  def step(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
+    timeSpan("Playfield.step") { implicit turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
       val expiredBalls = gameHealth.expireSnowballs(gameTime)
       time("moveSnowballs") {
@@ -308,7 +308,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
 }
 
-object GameTurn {
+object PlayfieldSteps {
   case class TurnResults(deadSleds: Traversable[SledOut],
                          deadSnowBalls: Traversable[BallId],
                          usedPowerUps: Traversable[PowerUpId],

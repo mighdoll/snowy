@@ -32,7 +32,7 @@ object Achievements {
 /*
 Adding a new Achievement:
   . Add the achievement here
-  . Produce the achievement in GameTurn
+  . Produce the achievement in PlayfieldSteps
   . Apply effects of the achievement on the sled in Rewards
   . Notify the client about the reward in ClientReporting
  */

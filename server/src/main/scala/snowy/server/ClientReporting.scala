@@ -7,7 +7,7 @@ import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.PowerUp
 import snowy.server.ClientReporting.optNetId
 import snowy.server.CommonPicklers.withPickledClientMessage
-import snowy.server.GameTurn.TurnResults
+import snowy.server.PlayfieldSteps.TurnResults
 import snowy.server.rewards.Achievements._
 import snowy.util.ActorTypes.ParentSpan
 import socketserve.{ClientId, ConnectionId, RobotId}

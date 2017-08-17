@@ -37,7 +37,7 @@ trait GameState extends StrictLogging { self: GameControl =>
 
   /** Package the relevant state to communicate to the client */
   protected def currentState(): State = {
-    State(gameTurns.gameTime, sleds.items.toSeq, snowballs.items.toSeq)
+    State(playfieldSteps.gameTime, sleds.items.toSeq, snowballs.items.toSeq)
   }
 
   def debugVerifyGridState(): Unit = {

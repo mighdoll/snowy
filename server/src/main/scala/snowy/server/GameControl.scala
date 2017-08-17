@@ -31,7 +31,7 @@ class GameControl(api: AppHostApi,
   implicit val theSystem    = system
   implicit val theSpan      = parentSpan
   override val turnPeriod   = 20 milliseconds
-  val gameTurns             = new GameTurn(this, turnPeriod, clock)
+  val playfieldSteps        = new PlayfieldSteps(this, turnPeriod, clock)
   private val messageIO     = new MessageIO(api)
   private val connections   = mutable.Map[ConnectionId, ClientConnection]()
   private val robots        = new RobotHost(this)
@@ -47,7 +47,7 @@ class GameControl(api: AppHostApi,
   }
 
   import gameStateImplicits._
-  import gameTurns.gameTime
+  import playfieldSteps.gameTime
   import messageIO.{sendBinaryMessage, sendMessage}
 
   robotSleds()
@@ -83,10 +83,10 @@ class GameControl(api: AppHostApi,
   /** Run the next game turn. (called on a periodic timer) */
   override def tick(): Unit = {
     Span("GameControl.tick").finishSpan { implicit span =>
-      val deltaSeconds = gameTurns.nextTurn()
+      val deltaSeconds = playfieldSteps.nextStep()
       robots.robotsTurn()
       commands.applyCommands(motion, snowballs, gameTime, deltaSeconds)
-      val turnResults = gameTurns.turn(deltaSeconds)
+      val turnResults = playfieldSteps.step(deltaSeconds)
       clientReport.reportTurnResults(turnResults)
       reapDeadSleds(turnResults.deadSleds)
       sendUpdates()(span)
@@ -165,7 +165,7 @@ class GameControl(api: AppHostApi,
   private def reapDeadSleds(dead: Traversable[SledOut]): Unit = {
     for (SledOut(serverSled) <- dead) {
       serverSled.sled.remove()
-      serverSled.sled.connectionId.foreach{id =>
+      serverSled.sled.connectionId.foreach { id =>
         commands.pendingControls.commands.remove(id)
       }
     }
@@ -175,7 +175,7 @@ class GameControl(api: AppHostApi,
   private def reapSled(sled: Sled): Unit = {
     clientReport.sendDied(sled.id)
     sled.remove()
-    sled.connectionId.foreach{id =>
+    sled.connectionId.foreach { id =>
       commands.pendingControls.commands.remove(id)
     }
   }

@@ -13,14 +13,14 @@ class TestKing extends PropSpec with StrictLogging {
     withActorSystem { implicit system =>
       withGameControl {
         case game @ GameFixture(gameControl, _) =>
-          def king = s"${gameControl.gameTurns.currentKing}"
+          def king = s"${gameControl.playfieldSteps.currentKing}"
 
           val insertSleds              = game.sledInserter()
           val InsertedSled(id0, sled0) = insertSleds()
           game.tickForward(0 milliseconds) // tick, to pick a king
 
-          assert(gameControl.gameTurns.currentKing === Some(sled0))
-          val kingScore = gameControl.gameTurns.currentKing.get.user.score
+          assert(gameControl.playfieldSteps.currentKing === Some(sled0))
+          val kingScore = gameControl.playfieldSteps.currentKing.get.user.score
 
           val InsertedSled(id1, sled1) = insertSleds()
           game.aimAtSled(sled1, sled0, id1)
@@ -28,10 +28,10 @@ class TestKing extends PropSpec with StrictLogging {
           game.foreachTick(3000 milliseconds) {
             game.aimAtSled(sled1, sled0, id1)
           }
-          assert(gameControl.gameTurns.currentKing === Some(sled1))
+          assert(gameControl.playfieldSteps.currentKing === Some(sled1))
           val expectedScore = Points.minPoints + Points.kingBonus +
             (kingScore * Points.sledKill)
-          assert(gameControl.gameTurns.currentKing.get.user.score === expectedScore)
+          assert(gameControl.playfieldSteps.currentKing.get.user.score === expectedScore)
       }
     }
   }
