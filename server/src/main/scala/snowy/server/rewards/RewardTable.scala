@@ -31,7 +31,7 @@ case class Score(amount: Int) extends SingleReward {
   }
 }
 
-case class ModifyScore(fromUser: User, multiple: Double)
+case class MultiplyScore(fromUser: User, multiple: Double)
     extends SingleReward with StrictLogging {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val proposedScore = serverSled.user.score + fromUser.score * multiple

@@ -86,11 +86,13 @@ class ClientReporting(messageIO: MessageIO,
         case RevengeIcing(sled, loserName) =>
           Some(sled.id -> revengeMessage(loserName))
         case SledOut(_) =>
-          None  // currently reported elsewhere
+          None // currently reported elsewhere
         case SledIced(_, _) =>
           None // currently reported elsewhere
         case Kinged(sled, _) =>
           Some(sled.id -> kingMessage)
+        case IceTotal(sled, total) =>
+          Some(sled.id -> iceTotalMessage(total))
       }
 
     for {
@@ -198,6 +200,14 @@ class ClientReporting(messageIO: MessageIO,
       SpeedBonus,
       s"Revenge on $loserName",
       "You iced someone who iced you"
+    )
+  }
+
+  private def iceTotalMessage(total: Int): AchievementMessage = {
+    AchievementMessage(
+      ScoreBonus,
+      s"Ice total: $total achieved",
+      s"You've knocked out $total other sleds "
     )
   }
 

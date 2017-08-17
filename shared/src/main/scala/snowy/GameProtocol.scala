@@ -80,6 +80,7 @@ object GameClientProtocol {
   sealed trait AchievementBonus
   case object SpeedBonus  extends AchievementBonus
   case object HealthBonus extends AchievementBonus
+  case object ScoreBonus extends AchievementBonus
 
   case class AchievementMessage(bonus: AchievementBonus,
                                 title: String,

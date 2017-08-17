@@ -26,6 +26,7 @@ object Achievements {
   case class Kinged(override val sled: ServerSled, oldKing: Option[ServerSled])
       extends Achievement
 
+  case class IceTotal(override val sled: ServerSled, total: Int) extends Achievement
 }
 
 /*

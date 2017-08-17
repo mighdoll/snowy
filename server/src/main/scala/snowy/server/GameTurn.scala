@@ -1,18 +1,17 @@
 package snowy.server
 
+import scala.concurrent.duration._
 import com.typesafe.scalalogging.StrictLogging
-import snowy.server.rewards.Achievements._
 import snowy.GameConstants._
 import snowy.collision._
+import snowy.measures.Span.{time, timeSpan}
+import snowy.measures.{Gauged, Span}
 import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.GameTurn._
-import snowy.measures.Span.timeSpan
-import scala.concurrent.duration._
-import snowy.measures.{Gauged, Span}
-import snowy.util.RemoveList.RemoveListOps
-import snowy.measures.Span.time
+import snowy.server.rewards.Achievements._
 import snowy.util.ActorTypes.ParentSpan
+import snowy.util.RemoveList.RemoveListOps
 
 /** Support for moving the playfield objects to the next game state */
 class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
@@ -221,7 +220,21 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   private def trackIcings[_: ParentSpan](
         icings: Traversable[SledIced]
   ): Traversable[Achievement] = time("trackIcings") {
-    trackIcedBy(icings) ++ trackIceStreaks(icings)
+    trackRevenge(icings) ++ trackIceStreaks(icings) ++ iceCountAchievements(icings)
+  }
+
+  /** A reward when total icings hit thresholds */
+  private def iceCountAchievements(
+        icings: Traversable[SledIced]
+  ): Traversable[Achievement] = {
+    for {
+      SledIced(serverSled, _) <- icings
+      total = serverSled.icingRecords.total
+      if total > 1
+      if total % iceAwardEvery == 0
+    } yield {
+      IceTotal(serverSled, total)
+    }
   }
 
   /** track streaks of icing other sleds within a time period.
@@ -256,7 +269,7 @@ class GameTurn(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Track history of icings, to identify revenge
     * @return revenge achievements */
-  private def trackIcedBy(
+  private def trackRevenge(
         icings: Traversable[SledIced]
   ): Traversable[RevengeIcing] = {
     for {

@@ -28,6 +28,9 @@ object GameConstants {
   /** ice two sleds within this period of milliseconds to qualify for a streak achievement */
   val iceStreakPeriod = 10000
 
+  /** achievement for icing this many other sleds in one game */
+  val iceAwardEvery = 2
+
   object Bullet {
     val averageRadius = 5
 
@@ -47,6 +50,9 @@ object GameConstants {
 
     /** points earned for becoming king */
     val kingBonus = 100
+
+    /** points earned for icing iceAwardEvery other sleds in a game */
+    val iceAward = 25
 
   }
 

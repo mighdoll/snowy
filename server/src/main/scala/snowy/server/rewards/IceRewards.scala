@@ -8,6 +8,6 @@ object IceRewards {
   def rewards(sledIced: SledIced): Seq[(ServerSled, SingleReward)] = {
     val SledIced(serverSled, icedServerSled) = sledIced
     // half the points from the other sled
-    Seq(serverSled -> ModifyScore(icedServerSled.user, Points.sledKill))
+    Seq(serverSled -> MultiplyScore(icedServerSled.user, Points.sledKill))
   }
 }
