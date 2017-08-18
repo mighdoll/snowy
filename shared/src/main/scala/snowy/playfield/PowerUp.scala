@@ -1,20 +1,9 @@
 package snowy.playfield
 
 sealed trait PowerUp extends CircularItem[PowerUp] with SharedItem {
-
   def radius: Double = 5
-
-  def powerUpSled(sled: Sled): Unit
 }
 
-class HealthPowerUp extends PowerUp {
-  override def powerUpSled(sled: Sled): Unit = {
-    sled.health = sled.maxHealth
-  }
-}
+class HealthPowerUp extends PowerUp
 
-class SpeedPowerUp extends PowerUp {
-  override def powerUpSled(sled: Sled): Unit = {
-    sled.speed = sled.speed * 2
-  }
-}
+class SpeedPowerUp extends PowerUp

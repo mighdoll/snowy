@@ -14,20 +14,22 @@ class Rewards extends StrictLogging {
   /** Record a new achievement by a sled, and apply appropriate rewards */
   def add(achievement: Achievement): Unit = {
     val already: Int = achievementHistory.getOrElse(achievement, 0)
-    val rewards: Seq[(ServerSled, SingleReward)] =
+    val rewards: Seq[(ServerSled, Reward)] =
       achievement match {
-        case IcingStreak(serverSled, streak) =>
+        case IcingStreak(serverSled, streak)      =>
           rewardsForStreak(streak, already).map(serverSled -> _)
-        case RevengeIcing(serverSled, _) =>
+        case RevengeIcing(serverSled, _)          =>
           RevengeRewards.rewards().map(serverSled -> _)
-        case SledOut(serverSled) =>
+        case SledOut(serverSled)                  =>
           Seq(serverSled -> MultiplyScore(serverSled.user, -Points.sledLoss))
-        case iced: SledIced =>
+        case iced: SledIced                       =>
           IceRewards.rewards(iced)
-        case kinged: Kinged =>
+        case kinged: Kinged                       =>
           KingRewards.rewards(kinged)
-        case IceTotal(serverSled, count) =>
+        case IceTotal(serverSled, count)          =>
           Seq(serverSled -> Score(Points.iceAward))
+        case PowerUpCollected(serverSled, reward) =>
+          Seq(serverSled -> reward)
       }
 
     for { (serverSled, reward) <- rewards } {

@@ -10,6 +10,7 @@ import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.{Sled, _}
 import snowy.server.PlayfieldSteps._
 import snowy.server.rewards.Achievements._
+import snowy.server.rewards.PowerUpRewards
 import snowy.util.ActorTypes.ParentSpan
 import snowy.util.RemoveList.RemoveListOps
 
@@ -49,9 +50,10 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
       turnSleds(state.sleds.items, deltaSeconds)
       time("moveSleds") { state.motion.moveSleds(state.sleds.items, deltaSeconds) }
 
-      val usedPowerUps = applyPowerUps(state.sleds, state.powerUps)
+      val (usedPowerUpIds, powerUpAchievements) =
+        collidePowerUps(state.sleds, state.powerUps)
       val collided     = checkCollisions()
-      val achievements = trackIcings(collided.icings) ++ trackKing()
+      val achievements = trackIcings(collided.icings) ++ trackKing() ++ powerUpAchievements
 
       val died = gameHealth.collectDead()
       applyAchievements(achievements ++ collided.icings ++ died)
@@ -61,7 +63,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
       TurnResults(
         died,
         expiredBalls ++ collided.killedSnowballs,
-        usedPowerUps,
+        usedPowerUpIds,
         newPowerUps,
         collided.icings,
         achievements
@@ -109,9 +111,14 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   case class CollisionResult(icings: Traversable[SledIced],
                              killedSnowballs: Traversable[BallId])
 
-  private def applyPowerUps[_: ParentSpan](sleds: Sleds,
-                                           powerUps: PowerUps): Iterable[PowerUpId] =
-    time("applyPowerUps") {
+  /** For any sleds that hit a power up,
+    * @return the power up and an achievement for the sled.
+    */
+  private def collidePowerUps[_: ParentSpan](
+        sleds: Sleds,
+        powerUps: PowerUps
+  ): (Iterable[PowerUpId], Iterable[PowerUpCollected]) =
+    time("collidePowerUps") {
       val winners =
         for {
           powerUp <- powerUps.items
@@ -121,14 +128,20 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
           (powerUp, sled)
         }
 
-      for { (powerUp, sled) <- winners } yield {
-        powerUp.powerUpSled(sled)
-        powerUps.removePowerUp(powerUp, gameTime)
-        powerUp.id
-      }
+      val results =
+        for {
+          (powerUp, sled) <- winners
+          reward = PowerUpRewards.reward(powerUp)
+          serverSled <- sled.id.serverSled
+        } yield {
+          powerUps.removePowerUp(powerUp, gameTime)
+          (powerUp.id, PowerUpCollected(serverSled, reward))
+        }
+
+      results.unzip
     }
 
-  /** check for collisions between the sled and trees or snowballs */
+  /** Check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
                                 sledTracker: PlayfieldTracker[Sled],
                                 parentSpan: Span): CollisionResult =

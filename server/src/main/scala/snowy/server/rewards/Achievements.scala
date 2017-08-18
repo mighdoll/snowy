@@ -26,7 +26,11 @@ object Achievements {
   case class Kinged(override val sled: ServerSled, oldKing: Option[ServerSled])
       extends Achievement
 
+  /** Achieved a notable total number of icings */
   case class IceTotal(override val sled: ServerSled, total: Int) extends Achievement
+
+  /** Collected a power up on the playfield */
+  case class PowerUpCollected(override val sled: ServerSled, reward: Reward) extends Achievement
 }
 
 /*

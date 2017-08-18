@@ -109,7 +109,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def rotationSpeed: Double = math.Pi
 
   /** speedup from drive mode. in pixels / second / second */
-  def driveAcceleration: Double = 150
+  var driveAcceleration: Double = 150
 
   /** speedup from the boost button. in pixels / second / second */
   def boostAcceleration: Double = 400
@@ -143,7 +143,6 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override def canEqual(a: Any): Boolean = a.isInstanceOf[TankSled]
 
   override val gravity           = super.gravity * .35
-  override val driveAcceleration = super.driveAcceleration * .25
   override val boostAcceleration = super.boostAcceleration * .5
   override val rotationSpeed     = math.Pi / 2
   override val maxImpactDamage   = 0.5
@@ -158,6 +157,7 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override val mass              = 3.0
 
   maxHealth = 3.0
+  driveAcceleration = 50
 }
 
 class GunnerSled(override val userName: String,
@@ -166,7 +166,6 @@ class GunnerSled(override val userName: String,
   override def canEqual(a: Any): Boolean = a.isInstanceOf[GunnerSled]
 
   override val gravity            = super.gravity * 1.2
-  override val driveAcceleration  = super.driveAcceleration * 1.2
   override val boostAcceleration  = super.boostAcceleration * .8
   override val healthRecoveryTime = 10
   override val minRechargeTime    = 100
@@ -179,6 +178,7 @@ class GunnerSled(override val userName: String,
   override val mass               = 1.0
 
   maxHealth = 1.5
+  driveAcceleration = 180
 }
 
 class SpeedySled(override val userName: String,
@@ -187,13 +187,13 @@ class SpeedySled(override val userName: String,
   override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
 
   override val gravity            = super.gravity * 1.5
-  override val driveAcceleration  = super.driveAcceleration * 2.5
   override val boostAcceleration  = super.boostAcceleration * 2.5
   override val brakeAcceleration  = super.brakeAcceleration * .25
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val rotationSpeed      = math.Pi * 2
-  maxSpeed  = 300
+  maxSpeed = 300
+  driveAcceleration = 375
 }
 
 class SpikySled(override val userName: String,
@@ -203,7 +203,6 @@ class SpikySled(override val userName: String,
 
   override val gravity            = super.gravity * .5
   override val boostAcceleration  = super.boostAcceleration * .65
-  override val driveAcceleration  = super.driveAcceleration * .5
   override val maxImpactDamage    = 2.0
   override val mass               = 1.0
   override val rotationSpeed      = math.Pi * 2 / 3
@@ -217,6 +216,7 @@ class SpikySled(override val userName: String,
   override val minRechargeTime    = 800
 
   maxHealth = 4.0
+  driveAcceleration = 75
 }
 
 class PrototypeSled(override val userName: String,
@@ -225,11 +225,12 @@ class PrototypeSled(override val userName: String,
   override def canEqual(a: Any): Boolean = a.isInstanceOf[PrototypeSled]
 
   override val gravity            = super.gravity * 1.5
-  override val driveAcceleration  = super.driveAcceleration * 2.5
   override val boostAcceleration  = super.boostAcceleration * 2.5
   override val brakeAcceleration  = super.brakeAcceleration * .25
   override val healthRecoveryTime = 10.0
   override val mass               = .1
   override val minRechargeTime    = 175
   override val rotationSpeed      = math.Pi * 2
+
+  driveAcceleration = 375
 }
