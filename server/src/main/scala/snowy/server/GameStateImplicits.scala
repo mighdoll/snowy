@@ -52,6 +52,21 @@ class GameStateImplicits(state: GameState) {
     }
   }
 
+  implicit class UserOps(user: User) {
+    def sled: Option[ServerSled] = {
+      val optClientId =
+        state.users.collectFirst {
+          case (clientId: ClientId, theUser: User) if user == theUser => clientId
+        }
+      for {
+        clientId <- optClientId
+        sled <- state.sledMap.get(clientId)
+      } yield {
+        sled
+      }
+    }
+  }
+
   implicit def snowballGrid = state.snowballs.grid
   implicit def treeGrid     = state.trees.grid
   implicit def sledGrid     = state.sleds.grid

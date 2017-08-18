@@ -65,7 +65,8 @@ class InboundEvents(gameState: GameState,
       case KilledBy(sledId) => println(s"killed by: $sledId") // TODO display on screen
       case KilledSled(sledId) =>
         gameState.sledNameFromId(sledId).foreach(deathMessage.killedSled)
-      case NewKing(sledId) => println(s"new king is: $sledId")
+      case NewKing(sledId)         => println(s"new king is: $sledId")
+      case RevengeTargets(sledIds) => println(s"revenge by targeting: $sledIds")
     }
   }
 

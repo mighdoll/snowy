@@ -43,8 +43,23 @@ class ClientReporting(messageIO: MessageIO,
 
   def joinedSled(connectionId: ClientId, sledId: SledId): Unit = {
     connectionId match {
-      case robotId: RobotId    => robots.joined(robotId, sledId)
-      case netId: ConnectionId => sendMessage(MySled(sledId), netId)
+      case robotId: RobotId => robots.joined(robotId, sledId)
+      case netId: ConnectionId =>
+        sendMessage(MySled(sledId), netId)
+        sendRevengeTargets(sledId, netId)
+    }
+  }
+
+  /** Send a message to the client showing the sleds to target for revenge */
+  private def sendRevengeTargets(sledId: SledId, netId: ConnectionId): Unit = {
+    val targetUsers = sledId.user.get.icedBy.toSeq
+    val targetSledIds = for {
+      user <- targetUsers
+      sled <- user.sled
+    } yield sled.id
+
+    if (targetSledIds.nonEmpty) {
+      sendMessage(RevengeTargets(targetSledIds), netId)
     }
   }
 
