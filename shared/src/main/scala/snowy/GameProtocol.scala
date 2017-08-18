@@ -69,6 +69,8 @@ object GameClientProtocol {
 
   case object Died extends GameClientMessage
 
+  case class NewKing(id:SledId) extends GameClientMessage
+
   case class KilledSled(sledId: SledId) extends GameClientMessage
 
   case class KilledBy(sledId: SledId) extends GameClientMessage

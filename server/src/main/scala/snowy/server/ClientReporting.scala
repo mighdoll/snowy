@@ -78,21 +78,31 @@ class ClientReporting(messageIO: MessageIO,
   }
 
   /** Notify the client about notable achievements */
-  private def reportAchievements(achievementsCollection: Traversable[Achievement]): Unit = {
+  private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
+    individualReports(achievements)
+    broadcastReports(achievements)
+  }
+
+  private def broadcastReports(achievements: Traversable[Achievement]): Unit = {
     val reports =
-      achievementsCollection.flatMap {
+      achievements.collect {
+        case Kinged(sled, _) => NewKing(sled.id)
+      }
+
+    for (msg <- reports) sendToAllClients(msg)
+  }
+
+  private def individualReports(achievementsCollection: Traversable[Achievement]): Unit = {
+    val reports =
+      achievementsCollection.collect {
         case IcingStreak(sled, nth) =>
-          Some(sled.id -> iceStreakMessage(nth))
+          sled.id -> iceStreakMessage(nth)
         case RevengeIcing(sled, loserName) =>
-          Some(sled.id -> revengeMessage(loserName))
-        case SledOut(_) =>
-          None // currently reported elsewhere
-        case SledIced(_, _) =>
-          None // currently reported elsewhere
+          sled.id -> revengeMessage(loserName)
         case Kinged(sled, _) =>
-          Some(sled.id -> kingMessage)
+          sled.id -> kingMessage
         case IceTotal(sled, total) =>
-          Some(sled.id -> iceTotalMessage(total))
+          sled.id -> iceTotalMessage(total)
       }
 
     for {
