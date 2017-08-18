@@ -24,7 +24,7 @@ class User(val name: String,
   var score: Double               = 10
   private var nextScoreSend: Long = 0
 
-  private val trackIcers = 4
+  private val trackIcers = 1
 
   /** track of users that iced this user */
   val icedBy = new FiniteQueue[User](trackIcers)
