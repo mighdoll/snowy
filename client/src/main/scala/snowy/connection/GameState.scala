@@ -83,7 +83,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
   }
 
   private def moveOneSled(sled: Sled, deltaSeconds: Double): Unit = {
-    motion.moveSleds(List(sled), deltaSeconds)
+    motion.moveSleds(List(sled), deltaSeconds, gameTime)
   }
 
   // TODO Use the same turns that the server does
@@ -93,7 +93,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
       applyTurn(mySled, deltaSeconds)
       moveOneSled(mySled, deltaSeconds)
     }
-    motion.moveSleds(serverSleds, deltaSeconds)
+    motion.moveSleds(serverSleds, deltaSeconds, gameTime)
     PlayfieldState(
       serverMySled.getOrElse(Sled.dummy),
       serverSleds.toSet,

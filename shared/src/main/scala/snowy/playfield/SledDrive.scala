@@ -9,16 +9,18 @@ object SledDrive {
   case object Braking  extends Drive
 
   /** accelerate the sled along its current ski orientation */
-  def accelerate(sled: Sled, acceleration: Double): Unit = {
+  def accelerate(sled: Sled, acceleration: Double, gameTime: Long): Unit = {
     val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * acceleration)
-    sled.speed = newSpeed.clipLength(sled.maxSpeed)
+    val maxSpeed = sled.currentMaxSpeed(gameTime)
+    sled.speed = newSpeed.clipLength(maxSpeed)
   }
 
   /** brake counter the current direction of travel */
-  def brake(sled: Sled, acceleration: Double): Unit = {
+  def brake(sled: Sled, acceleration: Double, gameTime: Long): Unit = {
     sled.speed = sled.speed.transform {
       case speed if !speed.zero =>
-        val speedLength = (speed.length - acceleration).clip(0, sled.maxSpeed)
+        val maxSpeed    = sled.currentMaxSpeed(gameTime)
+        val speedLength = (speed.length - acceleration).clip(0, maxSpeed)
         speed.unit * speedLength
     }
   }
@@ -32,11 +34,13 @@ class SledDrive {
   private var drive: Drive = Driving
 
   /** accelerate or decelerate the sled based on the driving mode */
-  def driveSled(sled: Sled, deltaSeconds: Double): Unit = {
+  def driveSled(sled: Sled, deltaSeconds: Double, gameTime: Long): Unit = {
     drive match {
       case Coasting => // nothing to do
-      case Driving  => accelerate(sled, sled.driveAcceleration * deltaSeconds)
-      case Braking  => brake(sled, sled.brakeAcceleration * deltaSeconds / sled.mass)
+      case Driving  =>
+        accelerate(sled, sled.driveAcceleration * deltaSeconds, gameTime)
+      case Braking =>
+        brake(sled, sled.brakeAcceleration * deltaSeconds / sled.mass, gameTime)
     }
   }
 

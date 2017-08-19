@@ -48,7 +48,9 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
       }
 
       turnSleds(state.sleds.items, deltaSeconds)
-      time("moveSleds") { state.motion.moveSleds(state.sleds.items, deltaSeconds) }
+      time("moveSleds") {
+        state.motion.moveSleds(state.sleds.items, deltaSeconds, gameTime)
+      }
 
       val (usedPowerUpIds, powerUpAchievements) =
         collidePowerUps(state.sleds, state.powerUps)

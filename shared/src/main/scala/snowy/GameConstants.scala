@@ -31,6 +31,12 @@ object GameConstants {
   /** achievement for icing this many other sleds in one game */
   val iceAwardEvery = 2
 
+  /** extra max speed in pixels/sec from collecting a speed power up */
+  val speedPowerUp = 100
+
+  /** length of time that a speed power up lasts, in seconds */
+  val speedPowerUpDuration = 10
+
   object Bullet {
     val averageRadius = 5
 

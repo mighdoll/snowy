@@ -59,8 +59,7 @@ case object FullHealth extends Reward {
 
 case class TemporarySpeed(amount: Int, duration: FiniteDuration) extends Reward {
   override def applyToSled(serverSled: ServerSled): Unit = {
-    serverSled.sled.speed *= 1.1
-    // TODO apply speed boost for a temporary period
+    serverSled.sled.maxSpeedBoost.start(amount, duration, serverSled.gameTime())
   }
 }
 

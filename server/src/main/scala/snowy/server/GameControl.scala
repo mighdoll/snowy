@@ -157,7 +157,7 @@ class GameControl(api: AppHostApi,
   private def boostSled(sled: Sled, clientTime: Long): Unit = {
     if (gameTime - sled.lastBoostTime >= sled.boostRecoveryTime * 1000) {
       sled.lastBoostTime = gameTime
-      SledDrive.accelerate(sled, sled.boostAcceleration)
+      SledDrive.accelerate(sled, sled.boostAcceleration, gameTime)
     }
   }
 
@@ -246,7 +246,7 @@ class GameControl(api: AppHostApi,
 
   private def addSled(sled: Sled, clientId: ClientId, user: User): ServerSled = {
     sleds.items.add(sled)
-    val serverSled = ServerSled(sled, user)
+    val serverSled = ServerSled(sled, user, () => gameTime)
     sledMap(clientId) = serverSled
     serverSled
   }

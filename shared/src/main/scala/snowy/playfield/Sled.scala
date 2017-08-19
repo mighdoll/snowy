@@ -52,6 +52,11 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
 
   /** max speed of sled in pixels per second */
   var maxSpeed: Int = 250
+  val maxSpeedBoost = new DecayingBoost()
+  def currentMaxSpeed(gameTime:Long):Int = {
+    maxSpeed + maxSpeedBoost.current(gameTime)
+  }
+
 
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = 200

@@ -24,12 +24,12 @@ object GameMotion {
 class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
+  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double, gameTime: Long)(
         implicit tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
-    driveSleds(sleds, deltaSeconds)
-    updateSledSpeedVector(sleds, deltaSeconds)
+    driveSleds(sleds, deltaSeconds, gameTime)
+    updateSledSpeedVector(sleds, deltaSeconds, gameTime)
     repositionSleds(sleds, deltaSeconds)
   }
 
@@ -66,20 +66,25 @@ class GameMotion(playfield: Playfield) {
 
   /** apply any pending but not yet cancelled commands from user drive,
     * e.g. braking or driving */
-  private def driveSleds(sleds: Traversable[Sled], deltaSeconds: Double): Unit = {
+  private def driveSleds(sleds: Traversable[Sled],
+                         deltaSeconds: Double,
+                         gameTime: Long): Unit = {
     for (sled <- sleds) {
-      sled.driveMode.driveSled(sled, deltaSeconds)
+      sled.driveMode.driveSled(sled, deltaSeconds, gameTime)
     }
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
   private def updateSledSpeedVector(sleds: Traversable[Sled],
-                                    deltaSeconds: Double): Unit = {
+                                    deltaSeconds: Double,
+                                    gameTime: Long): Unit = {
     sleds.foreach { sled =>
-      import sled.{mass, maxSpeed, rotation, gravity => grav}
+      import sled.{mass, rotation, gravity => grav}
+      val maxSpeed = sled.currentMaxSpeed(gameTime)
       val newSpeed = {
-        val afterGravity = gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
-        val afterSkid    = skid(afterGravity, rotation, maxSpeed, mass, deltaSeconds)
+        val afterGravity =
+          gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
+        val afterSkid = skid(afterGravity, rotation, maxSpeed, mass, deltaSeconds)
         friction(afterSkid, rotation, deltaSeconds, mass)
       }
 
