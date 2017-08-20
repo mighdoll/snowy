@@ -6,7 +6,7 @@ import org.scalajs.dom._
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.client.ClientMain
-import snowy.client.hud.DeathMessage
+import snowy.client.hud.{AchievementMessage, DeathMessage}
 import snowy.playfield.Picklers._
 import snowy.playfield.PlayId
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
@@ -18,7 +18,9 @@ class InboundEvents(gameState: GameState,
                     socket: NetworkSocket,
                     sendMessage: (GameServerMessage) => Unit) {
 
-  val deathMessage = new DeathMessage()
+  val deathMessage       = new DeathMessage()
+  val achievementMessage = new AchievementMessage()
+
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
     val message    = Unpickle[GameClientMessage].fromBytes(byteBuffer)
@@ -61,7 +63,7 @@ class InboundEvents(gameState: GameState,
       case AddItems(items)                => gameState.addPlayfieldItems(items)
       case RemoveItems(itemType, items)   => removeItems(itemType, items)
       case AchievementMessage(bonus, title, desc) =>
-        println(s"Achievement: ${(bonus, title, desc)}")
+        achievementMessage.display(bonus, title, desc)
       case KilledBy(sledId) => println(s"killed by: $sledId") // TODO display on screen
       case KilledSled(sledId) =>
         gameState.sledNameFromId(sledId).foreach(deathMessage.killedSled)

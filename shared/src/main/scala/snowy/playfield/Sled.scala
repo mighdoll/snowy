@@ -18,12 +18,9 @@ object Sled {
   ): Sled = {
     val sled =
       sledType match {
-        case BasicSledType     => new BasicSled(userName, color)
-        case TankSledType      => new TankSled(userName, color)
-        case PrototypeSledType => new PrototypeSled(userName, color)
-        case GunnerSledType    => new GunnerSled(userName, color)
-        case SpeedySledType    => new SpeedySled(userName, color)
-        case SpikySledType     => new SpikySled(userName, color)
+        case BasicSledType  => new BasicSled(userName, color)
+        case SpeedySledType => new SpeedySled(userName, color)
+        case TankSledType   => new TankSled(userName, color)
       }
     sled.setInitialPosition(initialPosition)
   }
@@ -53,10 +50,9 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   /** max speed of sled in pixels per second */
   var maxSpeed: Int = 250
   val maxSpeedBoost = new DecayingBoost()
-  def currentMaxSpeed(gameTime:Long):Int = {
+  def currentMaxSpeed(gameTime: Long): Int = {
     maxSpeed + maxSpeedBoost.current(gameTime)
   }
-
 
   /** minimum time between shots, in milliseconds */
   def minRechargeTime: Int = 200
@@ -130,17 +126,29 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
 }
 
 sealed trait SledType
-case object BasicSledType     extends SledType
-case object TankSledType      extends SledType
-case object GunnerSledType    extends SledType
-case object SpeedySledType    extends SledType
-case object SpikySledType     extends SledType
-case object PrototypeSledType extends SledType
+case object BasicSledType  extends SledType
+case object SpeedySledType extends SledType
+case object TankSledType   extends SledType
 
 class BasicSled(override val userName: String,
                 override val skiColor: SkiColor = BasicSkis)
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[BasicSled]
+}
+
+class SpeedySled(override val userName: String,
+                 override val skiColor: SkiColor = BasicSkis)
+    extends Sled {
+  override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
+
+  override val gravity            = super.gravity * 1.5
+  override val boostAcceleration  = super.boostAcceleration * 2.5
+  override val brakeAcceleration  = super.brakeAcceleration * .25
+  override val healthRecoveryTime = 10.0
+  override val mass               = .1
+  override val rotationSpeed      = math.Pi * 2
+
+  driveAcceleration *= 2.5
 }
 
 class TankSled(override val userName: String, override val skiColor: SkiColor = BasicSkis)
@@ -163,79 +171,4 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
 
   maxHealth = 3.0
   driveAcceleration = 50
-}
-
-class GunnerSled(override val userName: String,
-                 override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
-  override def canEqual(a: Any): Boolean = a.isInstanceOf[GunnerSled]
-
-  override val gravity            = super.gravity * 1.2
-  override val boostAcceleration  = super.boostAcceleration * .8
-  override val healthRecoveryTime = 10
-  override val minRechargeTime    = 100
-  override val bulletSpeed        = 400
-  override val bulletRadius       = 3
-  override val bulletLifetime     = 2
-  override val bulletMass         = .01
-  override val bulletImpact       = 4.5
-  override val bulletHealth       = 0.3
-  override val mass               = 1.0
-
-  maxHealth = 1.5
-  driveAcceleration = 180
-}
-
-class SpeedySled(override val userName: String,
-                 override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
-  override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
-
-  override val gravity            = super.gravity * 1.5
-  override val boostAcceleration  = super.boostAcceleration * 2.5
-  override val brakeAcceleration  = super.brakeAcceleration * .25
-  override val healthRecoveryTime = 10.0
-  override val mass               = .1
-  override val rotationSpeed      = math.Pi * 2
-  maxSpeed = 300
-  driveAcceleration = 375
-}
-
-class SpikySled(override val userName: String,
-                override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
-  override def canEqual(a: Any): Boolean = a.isInstanceOf[SpikySled]
-
-  override val gravity            = super.gravity * .5
-  override val boostAcceleration  = super.boostAcceleration * .65
-  override val maxImpactDamage    = 2.0
-  override val mass               = 1.0
-  override val rotationSpeed      = math.Pi * 2 / 3
-  override val healthRecoveryTime = 10.0
-  override val bulletHealth       = 2.0
-  override val bulletSpeed        = 250
-  override val bulletRadius       = 12
-  override val bulletMass         = 30
-  override val bulletImpact       = 0.002
-  override val bulletLifetime     = 0.25
-  override val minRechargeTime    = 800
-
-  maxHealth = 4.0
-  driveAcceleration = 75
-}
-
-class PrototypeSled(override val userName: String,
-                    override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
-  override def canEqual(a: Any): Boolean = a.isInstanceOf[PrototypeSled]
-
-  override val gravity            = super.gravity * 1.5
-  override val boostAcceleration  = super.boostAcceleration * 2.5
-  override val brakeAcceleration  = super.brakeAcceleration * .25
-  override val healthRecoveryTime = 10.0
-  override val mass               = .1
-  override val minRechargeTime    = 175
-  override val rotationSpeed      = math.Pi * 2
-
-  driveAcceleration = 375
 }

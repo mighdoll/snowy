@@ -146,26 +146,6 @@ object Picklers {
       setFields(sled)
     }
 
-    def tankSled(): TankSled = {
-      val sled = new TankSled(
-        userName = userName,
-        skiColor = skiColor
-      ) {
-        override val id: SledId = newId
-      }
-      setFields(sled)
-    }
-
-    def gunnerSled(): GunnerSled = {
-      val sled = new GunnerSled(
-        userName = userName,
-        skiColor = skiColor
-      ) {
-        override val id: SledId = newId
-      }
-      setFields(sled)
-    }
-
     def speedySled(): SpeedySled = {
       val sled = new SpeedySled(
         userName = userName,
@@ -176,18 +156,8 @@ object Picklers {
       setFields(sled)
     }
 
-    def spikySled(): SpikySled = {
-      val sled = new SpikySled(
-        userName = userName,
-        skiColor = skiColor
-      ) {
-        override val id: SledId = newId
-      }
-      setFields(sled)
-    }
-
-    def prototypeSled(): PrototypeSled = {
-      val sled = new PrototypeSled(
+    def tankSled(): TankSled = {
+      val sled = new TankSled(
         userName = userName,
         skiColor = skiColor
       ) {
@@ -197,14 +167,10 @@ object Picklers {
     }
 
     sledType match {
-      case BasicSledType     => basicSled()
-      case TankSledType      => tankSled()
-      case GunnerSledType    => gunnerSled()
-      case SpeedySledType    => speedySled()
-      case SpikySledType     => spikySled()
-      case PrototypeSledType => prototypeSled()
+      case BasicSledType  => basicSled()
+      case SpeedySledType => speedySled()
+      case TankSledType   => tankSled()
     }
-
   }
 
   private def sledToTuple(sled: Sled): (SledType,
@@ -221,12 +187,9 @@ object Picklers {
                                         Int,
                                         Double) = {
     val sledType: SledType = sled match {
-      case _: BasicSled     => BasicSledType
-      case _: TankSled      => TankSledType
-      case _: GunnerSled    => GunnerSledType
-      case _: SpeedySled    => SpeedySledType
-      case _: SpikySled     => SpikySledType
-      case _: PrototypeSled => PrototypeSledType
+      case _: BasicSled  => BasicSledType
+      case _: SpeedySled => SpeedySledType
+      case _: TankSled   => TankSledType
     }
 
     (

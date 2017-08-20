@@ -60,7 +60,7 @@ class GameStateImplicits(state: GameState) {
         }
       for {
         clientId <- optClientId
-        sled <- state.sledMap.get(clientId)
+        sled     <- state.sledMap.get(clientId)
       } yield {
         sled
       }

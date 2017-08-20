@@ -4,7 +4,7 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 object Dependencies {
   object V {
     val scala      = "2.12.3"
-    val akka       = "2.5.3"
+    val akka       = "2.5.4"
     val akkaHttp   = "10.0.9"
     val jackson    = "2.9.0"
     val log4j      = "2.8.2"
@@ -55,7 +55,7 @@ object Dependencies {
 
   val cats = Seq(
     "org.typelevel" %% "cats"           % "0.9.0",
-    "org.typelevel" %% "alleycats-core" % "0.1.9"
+    "org.typelevel" %% "alleycats-core" % "0.2.0"
   )
 
   val scalaJSDomSetting = Def.setting(
@@ -74,7 +74,7 @@ object Dependencies {
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha22"
+    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha23"
   )
 
   val orientdb = Seq(

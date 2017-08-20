@@ -30,7 +30,8 @@ object Achievements {
   case class IceTotal(override val sled: ServerSled, total: Int) extends Achievement
 
   /** Collected a power up on the playfield */
-  case class PowerUpCollected(override val sled: ServerSled, reward: Reward) extends Achievement
+  case class PowerUpCollected(override val sled: ServerSled, reward: Reward)
+      extends Achievement
 }
 
 /*

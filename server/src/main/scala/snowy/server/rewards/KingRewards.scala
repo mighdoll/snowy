@@ -7,7 +7,7 @@ import snowy.GameConstants.Points.kingBonus
 object KingRewards {
   def rewards(kinged: Kinged): Seq[(ServerSled, Reward)] = {
 
-    val kingRewards = Seq(kinged.sled -> Score(kingBonus), kinged.sled -> OnFire)
+    val kingRewards   = Seq(kinged.sled      -> Score(kingBonus), kinged.sled -> OnFire)
     val oldKingReward = kinged.oldKing.map(_ -> NoMoreFire)
 
     kingRewards ++ oldKingReward

@@ -37,7 +37,7 @@ class SledDrive {
   def driveSled(sled: Sled, deltaSeconds: Double, gameTime: Long): Unit = {
     drive match {
       case Coasting => // nothing to do
-      case Driving  =>
+      case Driving =>
         accelerate(sled, sled.driveAcceleration * deltaSeconds, gameTime)
       case Braking =>
         brake(sled, sled.brakeAcceleration * deltaSeconds / sled.mass, gameTime)

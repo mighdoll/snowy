@@ -20,7 +20,6 @@ lazy val commonSettings = Seq(
     scalactic  % "test",
     scalaTest  % "test"
   ),
-  test in assembly := {}
 )
 
 lazy val itSettings = Defaults.itSettings ++ Seq(
@@ -35,9 +34,6 @@ lazy val server = (project in file("server"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
   .settings(
-    assemblyJarName in assembly := "full.jar",
-    herokuAppName in Compile := "snowy-3d",
-    herokuFatJar in Compile := Some((assemblyOutputPath in assembly).value),
     name := "server",
     javaOptions := Seq(
       "-Xmx500m",
@@ -109,5 +105,9 @@ lazy val sharedJvm = shared.jvm
 lazy val sharedJs  = shared.js
 
 // loads the server project at sbt startup
-onLoad in Global := (Command
-  .process("project server", _: State)) compose (onLoad in Global).value
+onLoad in Global := {
+  val initCommands = { state: State =>
+    "dependencyUpdates" :: "project server" :: state
+  }
+  initCommands compose (onLoad in Global).value
+}

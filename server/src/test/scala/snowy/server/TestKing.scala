@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import org.scalatest.PropSpec
 import snowy.GameConstants.Points
 import snowy.GameServerProtocol.{Shooting, Start}
-import snowy.server.GameFixture.{InsertedSled, withActorSystem, withGameControl}
+import snowy.server.GameFixture.{withActorSystem, withGameControl, InsertedSled}
 
 class TestKing extends PropSpec with StrictLogging {
 

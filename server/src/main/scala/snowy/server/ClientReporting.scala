@@ -245,7 +245,7 @@ class ClientReporting(messageIO: MessageIO,
 
     AchievementMessage(
       SpeedBonus,
-      amountString + " Icing",
+      amountString,
       "Descriptions are boring"
     )
   }

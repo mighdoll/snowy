@@ -1,10 +1,10 @@
 package snowy.server
 
 trait Clock {
-  def currentMillis:Long
+  def currentMillis: Long
 }
 
-object StandardClock extends Clock{
+object StandardClock extends Clock {
   def currentMillis = System.currentTimeMillis()
 }
 

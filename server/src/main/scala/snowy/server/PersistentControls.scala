@@ -1,6 +1,15 @@
 package snowy.server
 
-import snowy.GameServerProtocol.{Coasting, DriveControl, Left, PersistentControl, Right, Shooting, Slowing, StartStopControl}
+import snowy.GameServerProtocol.{
+  Coasting,
+  DriveControl,
+  Left,
+  PersistentControl,
+  Right,
+  Shooting,
+  Slowing,
+  StartStopControl
+}
 import snowy.playfield.GameMotion.{LeftTurn, RightTurn}
 import snowy.playfield._
 import socketserve.ClientId

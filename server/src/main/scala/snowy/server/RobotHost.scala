@@ -8,7 +8,6 @@ import snowy.robot.{Robot, RobotApi, RobotGameState}
 import snowy.util.ActorTypes.ParentSpan
 import socketserve.{ClientId, RobotId}
 
-
 /** Manages autonomous sleds on the playfield */
 class RobotHost(gameControl: GameControl) {
   private val robots     = mutable.Map[RobotId, Robot]()
@@ -23,7 +22,7 @@ class RobotHost(gameControl: GameControl) {
   }
 
   /** let all the robots update state and send commands */
-  def robotsTurn[_:ParentSpan](): Unit = time("robotsTurn") {
+  def robotsTurn[_: ParentSpan](): Unit = time("robotsTurn") {
     for {
       (connectionId, robot) <- robots
       sledId                <- robotSleds.get(connectionId)

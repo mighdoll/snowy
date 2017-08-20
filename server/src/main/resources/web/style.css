@@ -39,44 +39,45 @@ html, body {
 .score-element { height: 20px; }
 .score-name { float: left; }
 .score-value { float: right; }
-#notifications {
-  position: absolute;
-  left: 50vw;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-}
 .message {
   position: absolute;
-  top: -100px;
+  left: 50vw;
   min-width: 100px;
-  -webkit-animation: slideIn 0.5s ease-in-out 0s forwards, fadeOut 2s ease-in-out 2s forwards;
-  animation: slideIn 0.5s ease-in-out 0s forwards, fadeOut 2s ease-in-out 2s forwards;
   background: rgba(231, 241, 253, 0.7);
   border-radius: 10px;
   padding: 10px;
   color: #59b224;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
   text-shadow: 0 1px 0.5px #19330a;
   letter-spacing: 1px;
+  transform: translate(-50%, -50%);
+}
+.message-bottom {
+  animation: slideInBottom 0.5s ease-in-out 0s forwards,
+             fadeOut 2s ease-in-out 2s forwards;
+}
+.message-top {
+  animation: slideIn 0.5s ease-in-out 0s forwards,
+             fadeOut 2s ease-in-out 2s forwards;
 }
 .kill {
   font-size: 40px;
-   text-shadow: 0 1px 0 #2e5d13, 0 2px 1px #59b224;
-  -webkit-animation: wobble 0.5s infinite;
+  text-shadow: 0 1px 0 #2e5d13, 0 2px 1px #59b224;
   animation: wobble 0.5s infinite;
 }
 @keyframes slideIn {
   0% { top: -100px; }
   100% { top: 12vh; }
 }
+@keyframes slideInBottom {
+  0% { bottom: -100px; }
+  100% { bottom: 12vh; }
+}
 @keyframes fadeOut {
   0% { opacity: 1; }
   100% { opacity: 0; }
-}
-@-webkit-keyframes wobble {
-  0%, 100% { transform: rotate(5deg); }
-  50% { transform: rotate(-5deg); }
 }
 @keyframes wobble {
   0%, 100% { transform: rotate(5deg); }
@@ -178,9 +179,6 @@ ul {
   padding-left: 110px;
   text-align: left;
   list-style: none;
-  -webkit-animation-name: change;
-  -webkit-animation-duration: 3s;
-  -webkit-animation-iteration-count: infinite;
   animation-name: change;
   animation-duration: 3s;
   animation-iteration-count: infinite;

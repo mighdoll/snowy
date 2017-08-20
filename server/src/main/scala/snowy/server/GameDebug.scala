@@ -7,11 +7,12 @@ import socketserve.ClientId
 import vector.Vec2d
 
 /** Support development only - debugging commands for the game */
-class GameDebug(gameState:GameState, robots:RobotHost) extends StrictLogging {
+class GameDebug(gameState: GameState, robots: RobotHost) extends StrictLogging {
   import gameState._
   import gameState.gameStateImplicits._
 
-  private lazy val clientDebugEnabled = GlobalConfig.snowy.getBoolean("client-debug-messages")
+  private lazy val clientDebugEnabled =
+    GlobalConfig.snowy.getBoolean("client-debug-messages")
 
   /** process a debug command sent by the client */
   def debugCommand(id: ClientId, key: Char): Unit = {
@@ -44,6 +45,5 @@ class GameDebug(gameState:GameState, robots:RobotHost) extends StrictLogging {
       robots.createRobot(DeadRobot.apply)
     }
   }
-
 
 }
