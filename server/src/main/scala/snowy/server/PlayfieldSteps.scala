@@ -47,7 +47,6 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
         state.motion.moveSnowballs(state.snowballs.items, deltaSeconds)
       }
 
-      turnSleds(state.sleds.items, deltaSeconds)
       time("moveSleds") {
         state.motion.moveSleds(state.sleds.items, deltaSeconds, gameTime)
       }
@@ -97,16 +96,6 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     newCandidates.lastOption.map { newKing =>
       currentKing = Some(newKing)
       Kinged(newKing, oldKing)
-    }
-  }
-
-  private def turnSleds(sleds: Traversable[Sled], deltaSeconds: Double): Unit = {
-    for (sled <- sleds) {
-      val tau             = math.Pi * 2
-      val distanceBetween = (sled.turretRotation - sled.rotation) % tau
-      val wrapping        = (distanceBetween % tau + (math.Pi * 3)) % tau - math.Pi
-      val dir             = math.round(wrapping * 10).signum // precision of when to stop
-      sled.rotation += deltaSeconds * dir * sled.rotationSpeed
     }
   }
 

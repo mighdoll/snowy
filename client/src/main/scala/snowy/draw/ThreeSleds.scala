@@ -27,7 +27,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     val threeSledHealth = threeSled.children(2)
 
     threeSledSkis.rotation.y = playfieldSled.rotation - math.Pi / 2
-    threeSledBody.rotation.y = playfieldSled.turretRotation - math.Pi / 2
+    threeSledBody.rotation.y = playfieldSled.rotation - math.Pi / 2
 
     threeSledSkis.scale.set(
       playfieldSled.radius,

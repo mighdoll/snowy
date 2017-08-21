@@ -117,7 +117,6 @@ object Picklers {
                           skiColor: SkiColor,
                           newRotation: Double,
                           newHealth: Double,
-                          newTurretRotation: Double,
                           newLastShotTime: Long,
                           newLastBoostTime: Long,
                           maxSpeed: Int,
@@ -126,7 +125,6 @@ object Picklers {
     def setFields[A <: Sled](sled: A): A = {
       sled.rotation = newRotation
       sled.health = newHealth
-      sled.turretRotation = newTurretRotation
       sled.lastShotTime = newLastShotTime
       sled.lastBoostTime = newLastBoostTime
       sled.speed = newSpeed
@@ -181,7 +179,6 @@ object Picklers {
                                         SkiColor,
                                         Double,
                                         Double,
-                                        Double,
                                         Long,
                                         Long,
                                         Int,
@@ -201,7 +198,6 @@ object Picklers {
       sled.skiColor,
       sled.rotation,
       sled.health,
-      sled.turretRotation,
       sled.lastShotTime,
       sled.lastBoostTime,
       sled.maxSpeed,

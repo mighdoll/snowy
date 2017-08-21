@@ -3,7 +3,6 @@ package snowy.playfield
 import snowy.GameConstants.turnTime
 import snowy.playfield.Friction.friction
 import snowy.playfield.GameMotion._
-import snowy.playfield.Gravity.gravity
 import snowy.playfield.Skid.skid
 
 object GameMotion {
@@ -56,12 +55,12 @@ class GameMotion(playfield: Playfield) {
     val turnDelta = direction.rotationSign * (math.Pi / turnTime) * deltaSeconds
     val max       = math.Pi * 2
     val min       = -math.Pi * 2
-    val rotation  = sled.turretRotation + turnDelta
+    val rotation  = sled.rotation + turnDelta
     val wrappedRotation =
       if (rotation > max) rotation - max
       else if (rotation < min) rotation - min
       else rotation
-    sled.turretRotation = wrappedRotation
+    sled.rotation = wrappedRotation
   }
 
   /** apply any pending but not yet cancelled commands from user drive,
@@ -79,12 +78,10 @@ class GameMotion(playfield: Playfield) {
                                     deltaSeconds: Double,
                                     gameTime: Long): Unit = {
     sleds.foreach { sled =>
-      import sled.{mass, rotation, gravity => grav}
-      val maxSpeed = sled.currentMaxSpeed(gameTime)
+      import sled.{mass, rotation}
       val newSpeed = {
-        val afterGravity =
-          gravity(sled.speed, rotation, maxSpeed, grav, deltaSeconds)
-        val afterSkid = skid(afterGravity, rotation, maxSpeed, mass, deltaSeconds)
+        val maxSpeed = sled.currentMaxSpeed(gameTime)
+        val afterSkid = skid(sled.speed, rotation, maxSpeed, mass, deltaSeconds)
         friction(afterSkid, rotation, deltaSeconds, mass)
       }
 

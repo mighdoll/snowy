@@ -32,7 +32,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     assert(a.rotation === b.rotation)
     assert(a.health === b.health)
     assert(a.radius === b.radius)
-    assert(a.turretRotation === b.turretRotation)
+    assert(a.rotation === b.rotation)
     assert(a.lastShotTime === b.lastShotTime)
     assert(a.lastBoostTime === b.lastBoostTime)
     assert(a.mass === b.mass)

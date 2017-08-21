@@ -180,7 +180,9 @@ class GameControl(api: AppHostApi,
     }
   }
 
-  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
+  private def newRandomSled(userName: String,
+                            sledType: SledType,
+                            color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
@@ -254,7 +256,7 @@ class GameControl(api: AppHostApi,
   /** Point the sled in this direction */
   private def targetDirection(id: ClientId, angle: Double): Unit = {
     for (sled <- id.sled) {
-      sled.turretRotation = -angle
+      sled.rotation = -angle
     }
   }
 

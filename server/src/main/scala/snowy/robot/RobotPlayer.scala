@@ -52,24 +52,6 @@ class RobotPlayer(api: RobotApi, name: String) extends Robot {
   def aimAtNearest(mySled: Sled,
                    sleds: Traversable[Sled],
                    snowballs: Traversable[Snowball]): Double = {
-
-    var closestBall = mySled.bulletLaunchPosition.length
-    var ballAngle   = 0.0
-    val closeSnowballs = snowballs
-      .filterNot(ball => ball.ownerId == mySled.id)
-      .filter(
-        ball => (mySled.position - ball.position).length < closestBall
-      )
-    if (closeSnowballs.nonEmpty) {
-      snowballs.foreach { ball =>
-        val distance = ball.position - mySled.position
-        if (distance.length <= closestBall) {
-          closestBall = distance.length
-          ballAngle = distance.angle(Vec2d.unitUp)
-        }
-      }
-      -ballAngle
-    } else {
       var closest = 1500.0
       var angle   = 0.0
       sleds.filterNot(sled => sled == mySled).foreach { sled =>
@@ -80,7 +62,6 @@ class RobotPlayer(api: RobotApi, name: String) extends Robot {
         }
       }
       -angle
-    }
   }
 
   def killed(): Unit = {
