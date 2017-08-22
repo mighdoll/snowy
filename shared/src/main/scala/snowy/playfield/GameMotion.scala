@@ -4,6 +4,7 @@ import snowy.GameConstants.turnTime
 import snowy.playfield.Friction.friction
 import snowy.playfield.GameMotion._
 import snowy.playfield.Skid.skid
+import vector.Vec2d
 
 object GameMotion {
   sealed trait Turning
@@ -70,6 +71,12 @@ class GameMotion(playfield: Playfield) {
                          gameTime: Long): Unit = {
     for (sled <- sleds) {
       sled.driveMode.driveSled(sled, deltaSeconds, gameTime)
+    }
+    for (sled <- sleds) {
+      if(gameTime-sled.lastBoostTime<sled.boostDuration*1000){
+        sled.speed+=(Vec2d.fromRotation(sled.rotation) )*(0.75-(gameTime-sled.lastBoostTime)/sled.boostDuration/1000)/sled.boostDuration*deltaSeconds*20.0*sled.driveAcceleration;
+      }
+
     }
   }
 

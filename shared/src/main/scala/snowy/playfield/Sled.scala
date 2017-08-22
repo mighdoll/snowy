@@ -43,7 +43,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   val driveMode = new SledDrive()
 
   /** max speed of sled in pixels per second */
-  var maxSpeed: Int = 250
+  var maxSpeed: Int = 500
   val maxSpeedBoost = new DecayingBoost()
   def currentMaxSpeed(gameTime: Long): Int = {
     maxSpeed + maxSpeedBoost.current(gameTime)
@@ -107,7 +107,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def boostRecoveryTime: Double = 1
 
   /** maximum time for a boost, in seconds */
-  def boostDuration: Double = 1
+  def boostDuration: Double = 0.5
 
   /** friction from the slowdown button. in pixels / second / second */
   def brakeAcceleration: Double = 450

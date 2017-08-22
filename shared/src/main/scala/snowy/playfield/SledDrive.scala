@@ -14,10 +14,10 @@ object SledDrive {
       if (boostTime < sled.boostDuration * 1000) sled.boostAcceleration
       else 1
     }
-    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * (acceleration * sledBoost))
+    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * (acceleration * 1.0))
     val maxSpeed = sled.currentMaxSpeed(gameTime)
     if (newSpeed.length <= maxSpeed) sled.speed = newSpeed.clipLength(maxSpeed)
-    else sled.speed = newSpeed * 0.99
+    sled.speed = newSpeed * 0.97
   }
 
   /** brake counter the current direction of travel */
