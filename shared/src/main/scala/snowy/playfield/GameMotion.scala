@@ -80,7 +80,7 @@ class GameMotion(playfield: Playfield) {
     sleds.foreach { sled =>
       import sled.{mass, rotation}
       val newSpeed = {
-        val maxSpeed = sled.currentMaxSpeed(gameTime)
+        val maxSpeed  = sled.currentMaxSpeed(gameTime)
         val afterSkid = skid(sled.speed, rotation, maxSpeed, mass, deltaSeconds)
         friction(afterSkid, rotation, deltaSeconds, mass)
       }

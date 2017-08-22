@@ -3,19 +3,16 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Dependencies {
   object V {
-    val scala      = "2.12.3"
-    val akka       = "2.5.4"
-    val akkaHttp   = "10.0.9"
-    val jackson    = "2.9.0"
-    val log4j      = "2.8.2"
-    val scalacheck = "1.13.5"
-    val scalactic  = "3.0.3"
-    val scalatest  = "3.0.3"
+    val scala    = "2.12.3"
+    val akka     = "2.5.4"
+    val akkaHttp = "10.0.9"
+    val jackson  = "2.9.0"
+    val log4j    = "2.8.2"
   }
 
-  val scalaCheck = "org.scalacheck" %% "scalacheck" % V.scalacheck
-  val scalactic  = "org.scalactic"  %% "scalactic"  % V.scalactic
-  val scalaTest  = "org.scalatest"  %% "scalatest"  % V.scalatest
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
+  val scalactic  = "org.scalactic"  %% "scalactic"  % "3.0.4"
+  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.4"
 
   val loggingProvider = Seq(
     "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,

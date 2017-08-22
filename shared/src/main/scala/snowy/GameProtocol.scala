@@ -37,8 +37,6 @@ object GameServerProtocol {
 
   case object Slowing extends DriveControl
 
-  case object Coasting extends DriveControl
-
   case object Shooting extends PersistentControl
 
   case object Pong extends GameServerMessage

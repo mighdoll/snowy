@@ -23,7 +23,7 @@ object Friction {
         val rotationFactor = {
           val rotationVector   = Vec2d.fromRotation(rotation)
           val angleSkiToTravel = direction.angle(rotationVector)
-          abs(sin(angleSkiToTravel))
+          pow(abs(sin(angleSkiToTravel)), brakeSteepness)
         }
 
         // -speed in direction of travel

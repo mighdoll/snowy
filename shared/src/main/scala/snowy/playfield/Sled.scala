@@ -37,8 +37,8 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   var rotation: Double = downhillRotation
   var health: Double   = 1
 
-  var lastShotTime: Long     = 0
-  var lastBoostTime: Long    = 0
+  var lastShotTime: Long  = 0
+  var lastBoostTime: Long = 0
 
   val driveMode = new SledDrive()
 
@@ -50,7 +50,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   }
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime: Int = 300
+  def minRechargeTime: Int = 350
 
   /** factor increasing or decreasing damage from being hit with a snowball
     * beyond the mass and speed of the ball */
@@ -100,14 +100,14 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   /** speedup from drive mode. in pixels / second / second */
   var driveAcceleration: Double = 150
 
-  /** speedup from the boost button. in pixels / second / second */
-  def boostAcceleration: Double = 400
+  /** Multiply sledDrive by this when boosting. */
+  def boostAcceleration: Double = 4.0
 
   /** minimum time between boosts, in seconds */
   def boostRecoveryTime: Double = 1
 
   /** maximum time for a boost, in seconds */
-  def boostMaxDuration: Double = 1
+  def boostDuration: Double = 1
 
   /** friction from the slowdown button. in pixels / second / second */
   def brakeAcceleration: Double = 450
@@ -129,10 +129,12 @@ class SpeedySled(override val userName: String,
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
 
-  override val boostAcceleration  = 1000
+  //override val boostAcceleration  = 1.5
   override val brakeAcceleration  = 112.5
   override val healthRecoveryTime = 10.0
   override val mass               = .1
+  override val minRechargeTime    = 450
+  override val bulletImpact       = 1.2
 
   driveAcceleration *= 2.5
 }
@@ -141,7 +143,7 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[TankSled]
 
-  override val boostAcceleration = 200
+  //override val boostAcceleration = 200
   override val maxImpactDamage   = 0.5
   override val minRechargeTime   = 1000
   override val bulletHealth      = 0.5

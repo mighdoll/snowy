@@ -157,7 +157,7 @@ class GameControl(api: AppHostApi,
   private def boostSled(sled: Sled, clientTime: Long): Unit = {
     if (gameTime - sled.lastBoostTime >= sled.boostRecoveryTime * 1000) {
       sled.lastBoostTime = gameTime
-      SledDrive.accelerate(sled, sled.boostAcceleration, gameTime)
+      //SledDrive.accelerate(sled, sled.boostAcceleration, gameTime)
     }
   }
 
@@ -180,9 +180,7 @@ class GameControl(api: AppHostApi,
     }
   }
 
-  private def newRandomSled(userName: String,
-                            sledType: SledType,
-                            color: SkiColor): Sled = {
+  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,

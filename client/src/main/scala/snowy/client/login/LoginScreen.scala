@@ -33,7 +33,7 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
 
   ClientMain.connectedToServer.foreach { _ =>
     playButton.disabled = false
-    playButton.innerHTML = "Join Game"
+    playButton.innerHTML = "Join"
   }
 
   def clearConnection(): Unit = { sledSelected = false }

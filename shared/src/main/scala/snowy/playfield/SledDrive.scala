@@ -4,15 +4,20 @@ import vector.Vec2d
 
 object SledDrive {
   sealed trait Drive
-  case object Driving  extends Drive
-  case object Coasting extends Drive
-  case object Braking  extends Drive
+  case object Driving extends Drive
+  case object Braking extends Drive
 
   /** accelerate the sled along its current ski orientation */
   def accelerate(sled: Sled, acceleration: Double, gameTime: Long): Unit = {
-    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * acceleration)
+    val sledBoost = {
+      val boostTime = gameTime - sled.lastBoostTime
+      if (boostTime < sled.boostDuration * 1000) sled.boostAcceleration
+      else 1
+    }
+    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * (acceleration * sledBoost))
     val maxSpeed = sled.currentMaxSpeed(gameTime)
-    sled.speed = newSpeed.clipLength(maxSpeed)
+    if (newSpeed.length <= maxSpeed) sled.speed = newSpeed.clipLength(maxSpeed)
+    else sled.speed = newSpeed * 0.99
   }
 
   /** brake counter the current direction of travel */
@@ -36,7 +41,6 @@ class SledDrive {
   /** accelerate or decelerate the sled based on the driving mode */
   def driveSled(sled: Sled, deltaSeconds: Double, gameTime: Long): Unit = {
     drive match {
-      case Coasting => // nothing to do
       case Driving =>
         accelerate(sled, sled.driveAcceleration * deltaSeconds, gameTime)
       case Braking =>

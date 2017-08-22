@@ -1,7 +1,6 @@
 package snowy.server
 
 import snowy.GameServerProtocol.{
-  Coasting,
   DriveControl,
   Left,
   PersistentControl,
@@ -28,8 +27,7 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
       case driveControl: DriveControl =>
         for (sled <- id.sled) {
           driveControl match {
-            case Coasting => sled.driveMode.driveMode(SledDrive.Coasting)
-            case Slowing  => sled.driveMode.driveMode(SledDrive.Braking)
+            case Slowing => sled.driveMode.driveMode(SledDrive.Braking)
           }
         }
     }
@@ -69,8 +67,10 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
   ): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
       val launchDistance = sled.bulletLaunchPosition.length + sled.radius
-      val launchPos      = sled.bulletLaunchPosition.rotate(sled.rotation).unit * launchDistance
-      val direction      = Vec2d.fromRotation(sled.rotation)
+      val launchPos = sled.bulletLaunchPosition
+        .rotate(sled.rotation)
+        .unit * launchDistance
+      val direction = Vec2d.fromRotation(sled.rotation)
       val ball = Snowball(
         ownerId = sled.id,
         speed = sled.speed + (direction * sled.bulletSpeed),
