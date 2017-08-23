@@ -9,12 +9,7 @@ object SledDrive {
 
   /** accelerate the sled along its current ski orientation */
   def accelerate(sled: Sled, acceleration: Double, gameTime: Long): Unit = {
-    val sledBoost = {
-      val boostTime = gameTime - sled.lastBoostTime
-      if (boostTime < sled.boostDuration * 1000) sled.boostAcceleration
-      else 1
-    }
-    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * (acceleration * 1.0))
+    val newSpeed = sled.speed + (Vec2d.fromRotation(sled.rotation) * acceleration)
     val maxSpeed = sled.currentMaxSpeed(gameTime)
     if (newSpeed.length <= maxSpeed) sled.speed = newSpeed.clipLength(maxSpeed)
     sled.speed = newSpeed * 0.97

@@ -100,14 +100,14 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   /** speedup from drive mode. in pixels / second / second */
   var driveAcceleration: Double = 150
 
-  /** Multiply sledDrive by this when boosting. */
-  def boostAcceleration: Double = 4.0
-
   /** minimum time between boosts, in seconds */
   def boostRecoveryTime: Double = 1
 
-  /** maximum time for a boost, in seconds */
-  def boostDuration: Double = 0.5
+  /** maximum time for a boost, in milliseconds */
+  def boostDuration: Double = 500
+
+  /** Multiply sledDrive by this when boosting. */
+  def boostAcceleration: Double = 150*20.0
 
   /** friction from the slowdown button. in pixels / second / second */
   def brakeAcceleration: Double = 450
