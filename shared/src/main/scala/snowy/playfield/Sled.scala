@@ -98,10 +98,10 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def radius: Double = Sled.basicRadius
 
   /** speedup from drive mode. in pixels / second / second */
-  var driveAcceleration: Double = 150
+  var driveAcceleration: Double = 1000
 
   /** The slowdown when a sled is above max speed */
-  def drag: Double = 0.99
+  def drag: Double = 0.95
 
   /** minimum time between boosts, in seconds */
   def boostRecoveryTime: Double = 1
@@ -139,7 +139,7 @@ class SpeedySled(override val userName: String,
   override val minRechargeTime    = 450
   override val bulletImpact       = 1.2
 
-  driveAcceleration *= 2.5
+  driveAcceleration *= 1.5
 }
 
 class TankSled(override val userName: String, override val skiColor: SkiColor = BasicSkis)
@@ -159,5 +159,5 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
   override val mass            = 3.0
 
   maxHealth = 3.0
-  driveAcceleration = 50
+  driveAcceleration *= 0.25
 }
