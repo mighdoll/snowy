@@ -84,7 +84,7 @@ class GameMotion(playfield: Playfield) {
       if boostDelta < sled.boostDuration
     } {
       val interpolation = 0.75 - boostDelta / sled.boostDuration
-      val acceleration = sled.boostAcceleration * deltaSeconds
+      val acceleration  = sled.boostAcceleration * deltaSeconds
       sled.speed += Vec2d.fromRotation(sled.rotation) * interpolation * acceleration
     }
   }
