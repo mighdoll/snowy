@@ -10,8 +10,6 @@ import scala.scalajs.js.|
 // TODO: The docs and src conflict for a lot of things, check and update based on src
 // TODO: If params are defined as properties in docs, make them mutable and set them to js.native
 
-// TODO: Should this be @ScalaJSDefined
-@ScalaJSDefined
 trait UpdateRangeParameters extends js.Object {
   val offset: Int
   val count: Int
@@ -57,13 +55,11 @@ class BufferAttribute(var array: ArrayBuffer,
     js.native
 }
 
-@ScalaJSDefined
 trait DrawRangeParameters extends js.Object {
   val start: Int
   val count: Int
 }
 
-@ScalaJSDefined
 trait GroupsParameters extends js.Object {
   val start: Int
   val count: Int
@@ -209,13 +205,11 @@ class Face3(var a: Int,
   def copy(face3: Face3): Face3        = js.native
 }
 
-@ScalaJSDefined
 trait MorphTargetParameters extends js.Object {
   val name: String
   val vertices: js.Array[Vector3]
 }
 
-@ScalaJSDefined
 trait MorphNormalParameters extends js.Object {
   val name: String
   val normals: js.Array[Vector3]
@@ -424,7 +418,6 @@ class Object3D extends EventDispatcher {
 }
 
 // TODO: Are (js.Object)s the same as (Dynamic.literal)s
-@ScalaJSDefined
 trait RaycasterParameters extends js.Object {
   val Mesh: js.Object
   val Line: js.Object
@@ -433,7 +426,6 @@ trait RaycasterParameters extends js.Object {
   val Sprite: js.Object
 }
 
-@ScalaJSDefined
 trait Intersection extends js.Object {
   val distance: Double
   val distanceToRay: Double

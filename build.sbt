@@ -61,6 +61,7 @@ lazy val client = (project in file("client"))
   .settings(
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= scalaJSDomSetting.value,
     jsDependencies ++= jsLibraries
   )

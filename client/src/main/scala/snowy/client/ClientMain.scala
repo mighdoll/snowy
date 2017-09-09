@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js.{Dynamic, JSApp}
 
-object ClientMain extends JSApp {
+object ClientMain {
   val loadedGeometry            = new GeometryLoader()
   var gameScreenActive: Boolean = false
 
@@ -46,7 +46,7 @@ object ClientMain extends JSApp {
     renderer
   }
 
-  def main(): Unit = {}
+  def main(args: Array[String]): Unit = {}
 
   // Wait until geometries and threeSleds are loaded, then initialize the game variables
   def initializeGame(geometries: LoadedGeometries): Unit = {

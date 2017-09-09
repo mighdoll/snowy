@@ -5,9 +5,9 @@ object Dependencies {
   object V {
     val scala    = "2.12.3"
     val akka     = "2.5.4"
-    val akkaHttp = "10.0.9"
-    val jackson  = "2.9.0"
-    val log4j    = "2.8.2"
+    val akkaHttp = "10.0.10"
+    val jackson  = "2.9.1"
+    val log4j    = "2.9.0"
   }
 
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
@@ -31,7 +31,7 @@ object Dependencies {
   )
 
   val scopt = Seq(
-    "com.github.scopt" %% "scopt" % "3.6.0"
+    "com.github.scopt" %% "scopt" % "3.7.0"
   )
 
   val squants = Seq(
@@ -71,7 +71,7 @@ object Dependencies {
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha23"
+    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha24"
   )
 
   val orientdb = Seq(
