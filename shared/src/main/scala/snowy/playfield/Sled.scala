@@ -43,7 +43,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   val driveMode = new SledDrive()
 
   /** max speed of sled in pixels per second */
-  var maxSpeed: Int = 500
+  var maxSpeed: Int = 300
   val maxSpeedBoost = new DecayingBoost()
   def currentMaxSpeed(gameTime: Long): Int = {
     maxSpeed + maxSpeedBoost.current(gameTime)
@@ -100,17 +100,14 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   /** speedup from drive mode. in pixels / second / second */
   var driveAcceleration: Double = 1000
 
-  /** The slowdown when a sled is above max speed */
-  def drag: Double = 0.95
-
   /** minimum time between boosts, in seconds */
   def boostRecoveryTime: Double = 1
 
-  /** maximum time for a boost, in milliseconds */
-  def boostDuration: Double = 1000
+  /** maximum time for a boost, in seconds */
+  def boostDuration: Double = 0.6
 
   /** Boost acceleration in pixels / second / second */
-  def boostAcceleration: Double = 150 * 20.0
+  def boostAcceleration: Int = 6000
 
   /** friction from the slowdown button. in pixels / second / second */
   def brakeAcceleration: Double = 450
@@ -132,7 +129,6 @@ class SpeedySled(override val userName: String,
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
 
-  //override val boostAcceleration  = 1.5
   override val brakeAcceleration  = 112.5
   override val healthRecoveryTime = 10.0
   override val mass               = .1
@@ -146,7 +142,6 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[TankSled]
 
-  //override val boostAcceleration = 200
   override val maxImpactDamage = 0.5
   override val minRechargeTime = 1000
   override val bulletHealth    = 0.5

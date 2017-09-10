@@ -29,7 +29,6 @@ class GameMotion(playfield: Playfield) {
   ): Unit = {
 
     driveSleds(sleds, deltaSeconds, gameTime)
-    boostSleds(sleds, deltaSeconds, gameTime)
     updateSledSpeedVector(sleds, deltaSeconds, gameTime)
     repositionSleds(sleds, deltaSeconds)
   }
@@ -72,20 +71,6 @@ class GameMotion(playfield: Playfield) {
                          gameTime: Long): Unit = {
     for (sled <- sleds) {
       sled.driveMode.driveSled(sled, deltaSeconds, gameTime)
-    }
-  }
-
-  private def boostSleds(sleds: Traversable[Sled],
-                         deltaSeconds: Double,
-                         gameTime: Long): Unit = {
-    for {
-      sled <- sleds
-      boostDelta = gameTime - sled.lastBoostTime
-      if boostDelta < sled.boostDuration
-    } {
-      val interpolation = 1 - boostDelta / sled.boostDuration
-      val acceleration  = sled.boostAcceleration * deltaSeconds
-      sled.speed += Vec2d.fromRotation(sled.rotation) * interpolation * acceleration
     }
   }
 

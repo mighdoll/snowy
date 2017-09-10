@@ -32,10 +32,10 @@ object GameConstants {
   val iceAwardEvery = 2
 
   /** extra max speed in pixels/sec from collecting a speed power up */
-  val speedPowerUp = 100
+  val speedPowerUp = 800
 
   /** length of time that a speed power up lasts, in seconds */
-  val speedPowerUpDuration = 10
+  val speedPowerUpDuration = 1
 
   object Bullet {
     val averageRadius = 5
