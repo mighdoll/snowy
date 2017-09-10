@@ -156,7 +156,11 @@ class GameControl(api: AppHostApi,
   /** apply a push to a sled */
   private def boostSled(sled: Sled, clientTime: Long): Unit = {
     if (gameTime - sled.lastBoostTime >= sled.boostRecoveryTime * 1000) {
-      sled.maxSpeedBoost.start(sled.boostAcceleration, sled.boostDuration.seconds, clientTime)
+      sled.maxSpeedBoost.start(
+        sled.boostAcceleration,
+        sled.boostDuration.seconds,
+        clientTime
+      )
       sled.lastBoostTime = gameTime
     }
   }
