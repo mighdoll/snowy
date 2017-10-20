@@ -27,7 +27,7 @@ class TestRewards extends PropSpec {
     val rewards     = serverSled.rewards
     rewards.add(achievement)
     assert(serverSled.user.score === 110)     // initial 10 + 100
-    assert(serverSled.sled.maxHealth === 2.5) // initial 1 + 1.5
+    assert(serverSled.sled.maxHealth === 1.5) // initial 1 + .5
   }
 
 }
