@@ -3,11 +3,11 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Dependencies {
   object V {
-    val scala    = "2.12.3"
-    val akka     = "2.5.4"
+    val scala    = "2.12.4"
+    val akka     = "2.5.6"
     val akkaHttp = "10.0.10"
-    val jackson  = "2.9.1"
-    val log4j    = "2.9.0"
+    val jackson  = "2.9.2"
+    val log4j    = "2.9.1"
   }
 
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
@@ -64,18 +64,18 @@ object Dependencies {
   )
 
   val jsLibraries = Seq(
-    "org.webjars.bower" % "three.js"                   % "0.86.0" / "0.86.0/three.min.js",
+    "org.webjars.bower" % "three.js"                   % "0.87.0" / "0.87.0/three.min.js",
     "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
   )
 
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha24"
+    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha25"
   )
 
   val orientdb = Seq(
-    "com.orientechnologies" % "orientdb-graphdb" % "2.2.23"
+    "com.orientechnologies" % "orientdb-graphdb" % "2.2.29"
   )
 
   val macroParadise = "org.scalamacros" % "paradise" % "2.1.1"

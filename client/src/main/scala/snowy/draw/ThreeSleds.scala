@@ -40,7 +40,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
       playfieldSled.radius
     )
 
-    threeSledHealth.scale.x = playfieldSled.health / playfieldSled.maxHealth
+    threeSledHealth.scale.x = playfieldSled.health
   }
 
   def updateThreeSleds(sleds: Set[Sled], mySled: Sled): Unit = {

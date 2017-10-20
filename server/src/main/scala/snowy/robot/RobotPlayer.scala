@@ -21,8 +21,8 @@ object RobotPlayer {
 class RobotPlayer(api: RobotApi, name: String) extends Robot {
   val mySkis =
     AllLists.allSkis(ThreadLocalRandom.current.nextInt(AllLists.allSkis.length))
-  val myType =
-    AllLists.allSleds(ThreadLocalRandom.current.nextInt(AllLists.allSleds.length))
+  val myType = BasicSledType
+  //AllLists.allSleds(ThreadLocalRandom.current.nextInt(AllLists.allSleds.length))
 
   api.sendToServer(Join(name, myType, mySkis))
 

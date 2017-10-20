@@ -77,7 +77,7 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
         radius = sled.bulletRadius,
         mass = sled.bulletMass,
         spawned = gameTime,
-        impactDamage = sled.bulletImpactFactor,
+        impactDamage = sled.bulletImpact,
         health = sled.bulletHealth,
         lifetime = sled.bulletLifetime
       )

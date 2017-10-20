@@ -35,12 +35,10 @@ object GameConstants {
   val speedPowerUp = 800
 
   /** length of time that a speed power up lasts, in seconds */
-  val speedPowerUpDuration = 1
+  val speedPowerUpDuration = 1.25
 
   object Bullet {
-    val averageRadius = 5
-
-    val baseImpactFactor = 4
+    val averageRadius = 7
   }
 
   object Points {
@@ -53,9 +51,6 @@ object GameConstants {
 
     /** % of points lost if the sled is killed */
     val sledLoss = .5
-
-    /** points earned for becoming king */
-    val kingBonus = 100
 
     /** points earned for icing iceAwardEvery other sleds in a game */
     val iceAward = 25
@@ -88,8 +83,4 @@ object GameConstants {
     /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
     val safeSpeed = 50
   }
-
-  /** temporary health bonus while king */
-  val kingHealthBonus = 3
-
 }

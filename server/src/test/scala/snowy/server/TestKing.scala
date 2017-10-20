@@ -29,8 +29,7 @@ class TestKing extends PropSpec with StrictLogging {
             game.aimAtSled(sled1, sled0, id1)
           }
           assert(gameControl.playfieldSteps.currentKing === Some(sled1))
-          val expectedScore = Points.minPoints + Points.kingBonus +
-            (kingScore * Points.sledKill)
+          val expectedScore = Points.minPoints + (kingScore * Points.sledKill)
           assert(gameControl.playfieldSteps.currentKing.get.user.score === expectedScore)
       }
     }

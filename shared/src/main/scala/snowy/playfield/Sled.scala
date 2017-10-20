@@ -50,17 +50,13 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   }
 
   /** minimum time between shots, in milliseconds */
-  def minRechargeTime: Int = 350
-
-  /** factor increasing or decreasing damage from being hit with a snowball
-    * beyond the mass and speed of the ball */
-  def bulletImpactFactor: Double = GameConstants.Bullet.baseImpactFactor * bulletImpact
+  def minRechargeTime: Int = 700
 
   /** factor increasing or decreasing damage from being hit with a snowball */
-  protected def bulletImpact: Double = 1.0
+  def bulletImpact: Double = 5.0
 
   /** speed of bullet in pixels/sec */
-  def bulletSpeed: Int = 360
+  def bulletSpeed: Int = 500
 
   /** radius in pixels */
   def bulletRadius: Int = GameConstants.Bullet.averageRadius
@@ -89,7 +85,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def healthRecoveryTime: Double = 50.0
 
   /** deliver this amount of damage on collision with another sled at full speed */
-  def maxImpactDamage: Double = .5
+  override def impactDamage: Double = .01
 
   /** sleds heavier than 1.0 accelerate and decelerate more slowly */
   def mass: Double = 1.0
@@ -142,7 +138,7 @@ class TankSled(override val userName: String, override val skiColor: SkiColor = 
     extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[TankSled]
 
-  override val maxImpactDamage = 0.5
+  override val impactDamage    = 0.5
   override val minRechargeTime = 1000
   override val bulletHealth    = 0.5
   override val bulletImpact    = 0.1

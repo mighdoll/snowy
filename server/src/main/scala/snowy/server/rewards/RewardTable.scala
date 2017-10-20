@@ -3,7 +3,7 @@ package snowy.server.rewards
 import scala.concurrent.duration.FiniteDuration
 import com.typesafe.scalalogging.StrictLogging
 import snowy.GameConstants.Points.minPoints
-import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed, kingHealthBonus}
+import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed}
 import snowy.server.{ServerSled, User}
 import snowy.util.ClosestTable
 
@@ -67,18 +67,5 @@ case class MaxHealthBonus(amount: Double) extends Reward {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val current = serverSled.sled.maxHealth
     serverSled.sled.maxHealth = math.min(current + amount, absoluteMaxHealth)
-  }
-}
-
-case object OnFire extends Reward {
-  override def applyToSled(serverSled: ServerSled): Unit = {
-    serverSled.sled.maxHealth += kingHealthBonus
-    serverSled.sled.health = serverSled.sled.maxHealth
-  }
-}
-
-case object NoMoreFire extends Reward {
-  override def applyToSled(serverSled: ServerSled): Unit = {
-    serverSled.sled.maxHealth -= kingHealthBonus
   }
 }

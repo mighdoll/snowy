@@ -24,8 +24,7 @@ class Rewards extends StrictLogging {
           Seq(serverSled -> MultiplyScore(serverSled.user, -Points.sledLoss))
         case iced: SledIced =>
           IceRewards.rewards(iced)
-        case kinged: Kinged =>
-          KingRewards.rewards(kinged)
+        case kinged: Kinged => Seq()
         case IceTotal(serverSled, count) =>
           Seq(serverSled -> Score(Points.iceAward))
         case PowerUpCollected(serverSled, reward) =>
