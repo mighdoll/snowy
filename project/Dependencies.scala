@@ -4,10 +4,10 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 object Dependencies {
   object V {
     val scala    = "2.12.4"
-    val akka     = "2.5.6"
-    val akkaHttp = "10.0.10"
+    val akka     = "2.5.7"
+    val akkaHttp = "10.0.11"
     val jackson  = "2.9.2"
-    val log4j    = "2.9.1"
+    val log4j    = "2.10.0"
   }
 
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
@@ -56,7 +56,7 @@ object Dependencies {
   )
 
   val scalaJSDomSetting = Def.setting(
-    Seq("org.scala-js" %%% "scalajs-dom" % "0.9.3")
+    Seq("org.scala-js" %%% "scalajs-dom" % "0.9.4")
   )
 
   val booPickleSetting = Def.setting(
@@ -71,11 +71,11 @@ object Dependencies {
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha25"
+    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha26"
   )
 
   val orientdb = Seq(
-    "com.orientechnologies" % "orientdb-graphdb" % "2.2.29"
+    "com.orientechnologies" % "orientdb-graphdb" % "2.2.30"
   )
 
   val macroParadise = "org.scalamacros" % "paradise" % "2.1.1"
