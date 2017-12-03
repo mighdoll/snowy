@@ -29,7 +29,8 @@ class MessageIO(api: AppHostApi) extends StrictLogging {
     api.sendBinary(byteString, id)
   }
 
-  private def logInterestingMessages(message: GameClientMessage, id: ConnectionId): Unit = {
+  private def logInterestingMessages(message: GameClientMessage,
+                                     id: ConnectionId): Unit = {
 //    logger.trace(s"sending message: $message  to: $id")
     message match {
       case Ping          =>

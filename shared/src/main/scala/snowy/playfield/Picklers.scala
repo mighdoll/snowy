@@ -209,7 +209,8 @@ object Picklers {
     (powerUp.id, powerUp.position)
   }
 
-  private def tupleToHealthPowerUp(newId: PowerUpId, newPosition: Vec2d): HealthPowerUp = {
+  private def tupleToHealthPowerUp(newId: PowerUpId,
+                                   newPosition: Vec2d): HealthPowerUp = {
     new HealthPowerUp() {
       override val id: PowerUpId = newId
       position = newPosition

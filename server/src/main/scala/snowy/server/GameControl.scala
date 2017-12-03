@@ -184,7 +184,9 @@ class GameControl(api: AppHostApi,
     }
   }
 
-  private def newRandomSled(userName: String, sledType: SledType, color: SkiColor): Sled = {
+  private def newRandomSled(userName: String,
+                            sledType: SledType,
+                            color: SkiColor): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,

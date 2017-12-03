@@ -107,7 +107,9 @@ class ClientReporting(messageIO: MessageIO,
     for (msg <- reports) sendToAllClients(msg)
   }
 
-  private def individualReports(achievementsCollection: Traversable[Achievement]): Unit = {
+  private def individualReports(
+        achievementsCollection: Traversable[Achievement]
+  ): Unit = {
     val reports =
       achievementsCollection.collect {
         case IcingStreak(sled, nth) =>
