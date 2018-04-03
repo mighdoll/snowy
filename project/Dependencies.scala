@@ -4,15 +4,15 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 object Dependencies {
   object V {
     val scala    = "2.12.4"
-    val akka     = "2.5.7"
-    val akkaHttp = "10.0.11"
-    val jackson  = "2.9.2"
-    val log4j    = "2.10.0"
+    val akka     = "2.5.11"
+    val akkaHttp = "10.1.1"
+    val jackson  = "2.9.5"
+    val log4j    = "2.11.0"
   }
 
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.13.5"
-  val scalactic  = "org.scalactic"  %% "scalactic"  % "3.0.4"
-  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.4"
+  val scalactic  = "org.scalactic"  %% "scalactic"  % "3.0.5"
+  val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.5"
 
   val loggingProvider = Seq(
     "org.apache.logging.log4j"         % "log4j-core"              % V.log4j,
@@ -22,7 +22,7 @@ object Dependencies {
   )
 
   val scalaLogging = Seq(
-    "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0"
   )
 
   val akkaStreams = Seq(
@@ -51,31 +51,30 @@ object Dependencies {
   )
 
   val cats = Seq(
-    "org.typelevel" %% "cats"           % "0.9.0",
-    "org.typelevel" %% "alleycats-core" % "0.2.0"
+    "org.typelevel" %% "cats-core" % "1.1.0"
   )
 
   val scalaJSDomSetting = Def.setting(
-    Seq("org.scala-js" %%% "scalajs-dom" % "0.9.4")
+    Seq("org.scala-js" %%% "scalajs-dom" % "0.9.5")
   )
 
   val booPickleSetting = Def.setting(
-    Seq("io.suzaku" %%% "boopickle" % "1.2.6")
+    Seq("io.suzaku" %%% "boopickle" % "1.3.0")
   )
 
   val jsLibraries = Seq(
-    "org.webjars.bower" % "three.js"                   % "0.87.0" / "0.87.0/three.min.js",
-    "org.webjars.bower" % "github-com-mrdoob-stats-js" % "r17" / "r17/build/stats.min.js"
+    "org.webjars.npm" % "three"    % "0.91.0" / "0.91.0/build/three.min.js",
+    "org.webjars.npm" % "stats.js" % "0.17.0" / "0.17.0/build/stats.min.js"
   )
 
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.1.0-alpha26"
+    "org.asynchttpclient" % "async-http-client"    % "2.4.4"
   )
 
   val orientdb = Seq(
-    "com.orientechnologies" % "orientdb-graphdb" % "2.2.30"
+    "com.orientechnologies" % "orientdb-graphdb" % "2.2.33"
   )
 
   val macroParadise = "org.scalamacros" % "paradise" % "2.1.1"

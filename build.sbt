@@ -13,7 +13,8 @@ lazy val commonSettings = Seq(
     "-deprecation",
     "-feature",
     "-Xfatal-warnings",
-    "-language:postfixOps"
+    "-language:postfixOps",
+    "-Ypartial-unification"
   ),
   libraryDependencies ++= Seq(
     scalaCheck % "test",
