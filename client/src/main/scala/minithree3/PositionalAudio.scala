@@ -1,5 +1,7 @@
 package minithree3
 
+import org.scalajs.dom.PannerNode
+
 import scala.scalajs.js
 
 @js.native

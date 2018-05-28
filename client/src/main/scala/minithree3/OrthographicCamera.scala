@@ -46,5 +46,5 @@ class OrthographicCamera protected () extends Camera {
   def updateProjectionMatrix(): Unit = js.native
   def setViewOffset(fullWidth: Double, fullHeight: Double, offsetX: Double, offsetY: Double, width: Double, height: Double): Unit = js.native
   def clearViewOffset(): Unit = js.native
-  def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
+  //def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
 }

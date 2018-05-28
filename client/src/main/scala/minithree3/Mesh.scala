@@ -16,5 +16,5 @@ class Mesh protected () extends Object3D {
   def setDrawMode(drawMode: TrianglesDrawModes): Unit = js.native
   def updateMorphTargets(): Unit = js.native
   def getMorphTargetIndexByName(name: String): Double = js.native
-  def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
+  //def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
 }

@@ -1,5 +1,6 @@
 package minithree3.ImageUtils
 
+import minithree3._
 import scala.scalajs.js
 @js.native
 @js.annotation.JSGlobal("ImageUtils")

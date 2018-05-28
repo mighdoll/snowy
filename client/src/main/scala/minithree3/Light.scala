@@ -9,7 +9,7 @@ class Light protected () extends Object3D {
   def this(hex: Double | String = js.native, intensity: Double = js.native) = this()
   var color: Color = js.native
   var intensity: Double = js.native
-  var receiveShadow: Boolean = js.native
+  //var receiveShadow: Boolean = js.native
   var shadow: LightShadow = js.native
   /**
      * @deprecated Use shadow.camera.fov instead.

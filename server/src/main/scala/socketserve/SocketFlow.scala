@@ -5,7 +5,8 @@ import akka.http.scaladsl.model.ws.{BinaryMessage, Message, TextMessage}
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.{Done, NotUsed}
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.AppHost.Protocol._
 import snowy.util.FlowImplicits._
@@ -14,7 +15,7 @@ import snowy.measures.{Gauged, Span}
 import snowy.measures.Span
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Span)
-    extends StrictLogging {
+    extends Logging {
   val outputBufferSize              = 1000
   val inputBufferSize               = 100
   val internalMessagesSize          = 100

@@ -5,10 +5,10 @@ import scala.scalajs.js
 @js.native
 @js.annotation.JSGlobal("Face3")
 class Face3 protected () extends js.Object {
-  def this(a: Double, b: Double, c: Double, normal: Vector3 = js.native, color: Color = js.native, materialIndex: Double = js.native) = this()
-  def this(a: Double, b: Double, c: Double, normal: Vector3 = js.native, vertexColors: js.Array[Color] = js.native, materialIndex: Double = js.native) = this()
-  def this(a: Double, b: Double, c: Double, vertexNormals: js.Array[Vector3] = js.native, color: Color = js.native, materialIndex: Double = js.native) = this()
-  def this(a: Double, b: Double, c: Double, vertexNormals: js.Array[Vector3] = js.native, vertexColors: js.Array[Color] = js.native, materialIndex: Double = js.native) = this()
+  def this(a: Double, b: Double, c: Double, normal: Vector3, color: Color, materialIndex: Double) = this()
+  def this(a: Double, b: Double, c: Double, normal: Vector3, vertexColors: js.Array[Color], materialIndex: Double) = this()
+  def this(a: Double, b: Double, c: Double, vertexNormals: js.Array[Vector3], color: Color, materialIndex: Double) = this()
+  def this(a: Double, b: Double, c: Double, vertexNormals: js.Array[Vector3], vertexColors: js.Array[Color], materialIndex: Double) = this()
   /**
      * @param a Vertex A index.
      * @param b Vertex B index.

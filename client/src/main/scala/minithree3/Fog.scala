@@ -6,11 +6,11 @@ import scala.scalajs.js
 @js.annotation.JSGlobal("Fog")
 class Fog protected () extends IFog {
   def this(hex: Double, near: Double = js.native, far: Double = js.native) = this()
-  var name: String = js.native
+  //var name: String = js.native
   /**
      * Fog color.
      */
-  var color: Color = js.native
+ //var color: Color = js.native
   /**
      * The minimum distance to start applying fog. Objects that are less than 'near' units from the active camera won't be affected by fog.
      */
@@ -20,5 +20,5 @@ class Fog protected () extends IFog {
      * Default is 1000.
      */
   var far: Double = js.native
-  def toJSON(): js.Dynamic = js.native
+  //def toJSON(): js.Dynamic = js.native
 }

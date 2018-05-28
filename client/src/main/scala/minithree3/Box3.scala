@@ -9,7 +9,7 @@ class Box3 protected () extends js.Object {
   var max: Vector3 = js.native
   var min: Vector3 = js.native
   def set(min: Vector3, max: Vector3): Box3 = js.native
-  def setFromArray(array: ArrayLike[Double]): Box3 = js.native
+  def setFromArray(array: js.Array[Double]): Box3 = js.native
   def setFromPoints(points: js.Array[Vector3]): Box3 = js.native
   def setFromCenterAndSize(center: Vector3, size: Vector3): Box3 = js.native
   def setFromObject(`object`: Object3D): Box3 = js.native

@@ -11,7 +11,7 @@ trait ShaderMaterialParameters extends MaterialParameters {
   var lineWidth: Double = js.native
   var wireframe: Boolean = js.native
   var wireframeLinewidth: Double = js.native
-  var lights: Boolean = js.native
+  //var lights: Boolean = js.native
   var clipping: Boolean = js.native
   var skinning: Boolean = js.native
   var morphTargets: Boolean = js.native

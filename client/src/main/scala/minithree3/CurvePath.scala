@@ -11,11 +11,11 @@ class CurvePath[T <: Vector] extends Curve[T] {
   def checkConnection(): Boolean = js.native
   def closePath(): Unit = js.native
   def getPoint(t: Double): T = js.native
-  def getLength(): Double = js.native
-  def updateArcLengths(): Unit = js.native
+  //def getLength(): Double = js.native
+  //def updateArcLengths(): Unit = js.native
   def getCurveLengths(): js.Array[Double] = js.native
-  def getSpacedPoints(divisions: Double = js.native): js.Array[T] = js.native
-  def getPoints(divisions: Double = js.native): js.Array[T] = js.native
+  //def getSpacedPoints(divisions: Double = js.native): js.Array[T] = js.native
+  //def getPoints(divisions: Double = js.native): js.Array[T] = js.native
   /**
      * @deprecated Use { Geometry#setFromPoints new THREE.Geometry().setFromPoints( points )} instead.
      */

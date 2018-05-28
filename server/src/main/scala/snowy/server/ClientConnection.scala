@@ -5,7 +5,8 @@ import akka.stream.scaladsl._
 import akka.stream.{ClosedShape, OverflowStrategy}
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol.{GameClientMessage, Ping}
 import snowy.playfield.Picklers._
 import snowy.util.ActorUtil.materializerWithLogging
@@ -25,7 +26,7 @@ import snowy.server.ClientConnection._
 /** track network delay to a client connection */
 class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
       implicit system: ActorSystem
-) extends StrictLogging {
+) extends Logging {
   private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 

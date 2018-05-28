@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 
 @js.native
 @js.annotation.JSGlobal("Vector3")
@@ -30,8 +30,8 @@ class Vector3 protected () extends Vector {
      * Sets z value of this vector.
      */
   def setZ(z: Double): Vector3 = js.native
-  def setComponent(index: Double, value: Double): Unit = js.native
-  def getComponent(index: Double): Double = js.native
+  //def setComponent(index: Double, value: Double): Unit = js.native
+  //def getComponent(index: Double): Double = js.native
   /**
      * Clones this vector.
      */
@@ -62,7 +62,7 @@ class Vector3 protected () extends Vector {
   /**
      * Multiplies this vector by scalar s.
      */
-  def multiplyScalar(s: Double): Vector3 = js.native
+  //def multiplyScalar(s: Double): Vector3 = js.native
   def multiplyVectors(a: Vector3, b: Vector3): Vector3 = js.native
   def applyEuler(euler: Euler): Vector3 = js.native
   def applyAxisAngle(axis: Vector3, angle: Double): Vector3 = js.native
@@ -77,7 +77,7 @@ class Vector3 protected () extends Vector {
      * Divides this vector by scalar s.
      * Set vector to ( 0, 0, 0 ) if s == 0.
      */
-  def divideScalar(s: Double): Vector3 = js.native
+  //def divideScalar(s: Double): Vector3 = js.native
   def min(v: Vector3): Vector3 = js.native
   def max(v: Vector3): Vector3 = js.native
   def clamp(min: Vector3, max: Vector3): Vector3 = js.native
@@ -90,7 +90,7 @@ class Vector3 protected () extends Vector {
   /**
      * Inverts this vector.
      */
-  def negate(): Vector3 = js.native
+  //def negate(): Vector3 = js.native
   /**
      * Computes dot product of this vector and v.
      */
@@ -98,11 +98,11 @@ class Vector3 protected () extends Vector {
   /**
      * Computes squared length of this vector.
      */
-  def lengthSq(): Double = js.native
+  //def lengthSq(): Double = js.native
   /**
      * Computes length of this vector.
      */
-  def length(): Double = js.native
+  //def length(): Double = js.native
   /**
      * Computes Manhattan length of this vector.
      * http://en.wikipedia.org/wiki/Taxicab_geometry
@@ -131,11 +131,11 @@ class Vector3 protected () extends Vector {
   /**
      * Normalizes this vector.
      */
-  def normalize(): Vector3 = js.native
+  //def normalize(): Vector3 = js.native
   /**
      * Normalizes this vector and multiplies it by l.
      */
-  def setLength(l: Double): Vector3 = js.native
+  //def setLength(l: Double): Vector3 = js.native
   def lerp(v: Vector3, alpha: Double): Vector3 = js.native
   def lerpVectors(v1: Vector3, v2: Vector3, alpha: Double): Vector3 = js.native
   /**

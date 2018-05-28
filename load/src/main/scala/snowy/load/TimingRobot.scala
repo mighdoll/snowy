@@ -1,7 +1,8 @@
 package snowy.load
 
 import akka.actor.ActorSystem
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
 import snowy.GameServerProtocol.ClientPing
 import snowy.util.ActorTypes._
@@ -10,7 +11,7 @@ import snowy.measures.Span
 
 /** A game client that sends ClientPing messages to the server
   * and measures how long it takes for the server to respond */
-class TimingRobot[_: Actors: Measurement](url: String) extends StrictLogging {
+class TimingRobot[_: Actors: Measurement](url: String) extends Logging {
   implicit val dispatcher = implicitly[ActorSystem].dispatcher
   val period              = 1.second
   val gameSocket          = new GameSocket(url, messageReceived)

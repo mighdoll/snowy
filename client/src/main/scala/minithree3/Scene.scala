@@ -15,5 +15,5 @@ class Scene extends Object3D {
   var overrideMaterial: Material = js.native
   var autoUpdate: Boolean = js.native
   var background: js.Any = js.native
-  def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
+  //def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
 }

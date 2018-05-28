@@ -4,7 +4,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.stream.BindFailedException
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.server.GlobalConfig
 import snowy.util.FutureAwaiting._
 import snowy.util.ActorUtil.materializerWithLogging
@@ -17,7 +18,7 @@ import snowy.measures.{MeasurementRecorder, Span}
   */
 class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
                                                parentSpan: Span)
-    extends StrictLogging {
+    extends Logging {
   private implicit val materializer     = materializerWithLogging(logger)
   private implicit val executionContext = system.dispatcher
 
@@ -27,6 +28,8 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
   val scalaJsFile =
     (""".*?-fastopt\.js$""" +
       """|.*?-fastopt\.js.map$""" +
+      """|.*?-bundle\.js$""" +
+      """|.*?-bundle\.js.map$""" +
       """|.*?-jsdeps\.js$""" +
       """|.*?-opt\.js$""" +
       """|.*?-launcher\.js$""").r

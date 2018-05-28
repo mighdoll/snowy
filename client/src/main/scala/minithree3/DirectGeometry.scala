@@ -33,8 +33,8 @@ class DirectGeometry extends EventDispatcher {
   def fromGeometry(geometry: Geometry): DirectGeometry = js.native
   def dispose(): Unit = js.native
   // EventDispatcher mixins
-  def addEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def hasEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def removeEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def dispatchEvent(event: js.Any): Unit = js.native
+  //def addEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def hasEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def removeEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def dispatchEvent(event: js.Any): Unit = js.native
 }

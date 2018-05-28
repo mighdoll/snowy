@@ -2,7 +2,7 @@ package minithree3
 
 import scala.scalajs.js
 import org.scalajs.dom.raw._
-import com.definitelyscala.node.Buffer
+
 import scala.scalajs.js.|
 
 @js.native
@@ -167,8 +167,8 @@ class Geometry extends EventDispatcher {
   var animation: AnimationClip = js.native
   var animations: js.Array[AnimationClip] = js.native
   // EventDispatcher mixins
-  def addEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def hasEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def removeEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
-  def dispatchEvent(event: js.Any): Unit = js.native
+  //def addEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def hasEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def removeEventListener(`type`: String, listener: js.Function1[Event, Unit]): Unit = js.native
+  //def dispatchEvent(event: js.Any): Unit = js.native
 }

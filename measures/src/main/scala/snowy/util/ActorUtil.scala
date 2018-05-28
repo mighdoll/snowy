@@ -2,7 +2,8 @@ package snowy.util
 
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
-import com.typesafe.scalalogging.Logger
+//import com.typesafe.scalalogging.Logger
+import scribe.Logger
 
 /** Utility functions for working with akka */
 object ActorUtil {

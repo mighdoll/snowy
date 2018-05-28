@@ -11,5 +11,5 @@ class AmbientLight protected () extends Light {
      * This creates a Ambientlight with a color.
      * @param color Numeric value of the RGB component of the color or a Color instance.
      */
-  var castShadow: Boolean = js.native
+  //var castShadow: Boolean = js.native
 }

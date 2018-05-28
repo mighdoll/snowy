@@ -6,13 +6,14 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import org.scalatest.PropSpec
 import snowy.util.ResourceUtil
 import snowy.util.FutureAwaiting._
 import snowy.util.ActorUtil.materializerWithLogging
 
-class TestIngestTsv extends PropSpec with StrictLogging {
+class TestIngestTsv extends PropSpec with Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
   ODatabaseRecordThreadLocal.INSTANCE
 

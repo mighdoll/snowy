@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 import scala.scalajs.js.typedarray._
 
   /**
@@ -16,9 +16,9 @@ class Matrix3 extends Matrix {
   /**
      * Float32Array with matrix values.
      */
-  var elements: Float32Array = js.native
+  //var elements: Float32Array = js.native
   def set(n11: Double, n12: Double, n13: Double, n21: Double, n22: Double, n23: Double, n31: Double, n32: Double, n33: Double): Matrix3 = js.native
-  def identity(): Matrix3 = js.native
+  //def identity(): Matrix3 = js.native
   def copy(m: Matrix3): js.Dynamic = js.native
   def setFromMatrix4(m: Matrix4): Matrix3 = js.native
   /**
@@ -26,13 +26,13 @@ class Matrix3 extends Matrix {
      */
   def applyToBuffer(buffer: BufferAttribute, offset: Double = js.native, length: Double = js.native): BufferAttribute = js.native
   def applyToBufferAttribute(attribute: BufferAttribute): BufferAttribute = js.native
-  def multiplyScalar(s: Double): Matrix3 = js.native
-  def determinant(): Double = js.native
+  //def multiplyScalar(s: Double): Matrix3 = js.native
+  //def determinant(): Double = js.native
   def getInverse(matrix: Matrix3, throwOnDegenerate: Boolean): Matrix3 = js.native
   /**
      * Transposes this matrix in place.
      */
-  def transpose(): Matrix3 = js.native
+  //def transpose(): Matrix3 = js.native
   def getNormalMatrix(matrix4: Matrix4): Matrix3 = js.native
   /**
      * Transposes this matrix into the supplied array r, and returns itself.

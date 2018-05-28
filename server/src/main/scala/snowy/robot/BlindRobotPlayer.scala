@@ -3,14 +3,15 @@ package snowy.robot
 import java.util.concurrent.ThreadLocalRandom
 
 import akka.actor.ActorSystem
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameServerProtocol._
 import snowy.util.ActorTypes.Actors
 
 import scala.concurrent.duration._
 
 class BlindRobotPlayer[_: Actors](api: RobotApi, userName: String)
-    extends Robot with StrictLogging {
+    extends Robot with Logging {
 
   private val twoPi         = math.Pi * 2
   private var currentAngle  = 0d

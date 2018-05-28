@@ -82,7 +82,7 @@ class PerspectiveCamera protected () extends Camera {
      * Updates the camera projection matrix. Must be called after change of parameters.
      */
   def updateProjectionMatrix(): Unit = js.native
-  def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
+  //def toJSON(meta: js.Any = js.native): js.Dynamic = js.native
   /**
      * @deprecated Use { PerspectiveCamera#setFocalLength .setFocalLength()} and { PerspectiveCamera#filmGauge .filmGauge} instead.
      */

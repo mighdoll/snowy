@@ -19,5 +19,5 @@ class Points protected () extends Object3D {
      * An instance of Material, defining the object's appearance. Default is a PointsMaterial with randomised colour.
      */
   var material: Material = js.native
-  def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
+  //def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
 }

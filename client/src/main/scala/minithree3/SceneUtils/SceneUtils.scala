@@ -1,6 +1,9 @@
 package minithree3.SceneUtils
 
+import minithree3._
+
 import scala.scalajs.js
+
 @js.native
 @js.annotation.JSGlobal("SceneUtils")
 object SceneUtils extends js.Object {

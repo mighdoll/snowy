@@ -14,7 +14,7 @@ class WebGLRenderer protected () extends Renderer {
      * A Canvas where the renderer draws its output.
      * This is automatically created by the renderer in the constructor (if not provided already); you just need to add it to your page.
      */
-  var domElement: HTMLCanvasElement = js.native
+  //var domElement: HTMLCanvasElement = js.native
   /**
      * The HTML5 Canvas's 'webgl' context obtained from the canvas where the renderer will draw.
      */
@@ -98,7 +98,7 @@ class WebGLRenderer protected () extends Renderer {
   /**
      * Resizes the output canvas to (width, height), and also sets the viewport to fit that size, starting in (0, 0).
      */
-  def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit = js.native
+  //def setSize(width: Double, height: Double, updateStyle: Boolean = js.native): Unit = js.native
   /**
      * Sets the viewport to render from (x, y) to (x + width, y + height).
      */

@@ -11,5 +11,5 @@ class Line protected () extends Object3D {
   var material: Material = js.native
   // LineDashedMaterial or LineBasicMaterial or ShaderMaterial
   def computeLineDistances(): js.Dynamic = js.native
-  def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
+  //def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
 }

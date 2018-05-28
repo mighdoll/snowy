@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 
 @js.native
 @js.annotation.JSGlobal("EdgesGeometry")

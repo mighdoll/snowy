@@ -13,7 +13,7 @@ class ShaderMaterial protected () extends Material {
   var linewidth: Double = js.native
   var wireframe: Boolean = js.native
   var wireframeLinewidth: Double = js.native
-  var lights: Boolean = js.native
+  //var lights: Boolean = js.native
   var clipping: Boolean = js.native
   var skinning: Boolean = js.native
   var morphTargets: Boolean = js.native
@@ -26,5 +26,5 @@ class ShaderMaterial protected () extends Material {
   var defaultAttributeValues: js.Any = js.native
   var index0AttributeName: String = js.native
   def setValues(parameters: ShaderMaterialParameters): Unit = js.native
-  def toJSON(meta: js.Any): js.Dynamic = js.native
+  //def toJSON(meta: js.Any): js.Dynamic = js.native
 }

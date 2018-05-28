@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 
   /**
      * clone():T;
@@ -33,11 +33,11 @@ class Vector2 protected () extends Vector {
   /**
      * Sets a component of this vector.
      */
-  def setComponent(index: Double, value: Double): Unit = js.native
+  //def setComponent(index: Double, value: Double): Unit = js.native
   /**
      * Gets a component of this vector.
      */
-  def getComponent(index: Double): Double = js.native
+  //def getComponent(index: Double): Double = js.native
   /**
      * Clones this vector.
      */
@@ -80,7 +80,7 @@ class Vector2 protected () extends Vector {
   /**
      * Multiplies this vector by scalar s.
      */
-  def multiplyScalar(scalar: Double): Vector2 = js.native
+  //def multiplyScalar(scalar: Double): Vector2 = js.native
   /**
      * Divides this vector by v.
      */
@@ -89,7 +89,7 @@ class Vector2 protected () extends Vector {
      * Divides this vector by scalar s.
      * Set vector to ( 0, 0 ) if s == 0.
      */
-  def divideScalar(s: Double): Vector2 = js.native
+  //def divideScalar(s: Double): Vector2 = js.native
   /**
      * Multiplies this vector (with an implicit 1 as the 3rd component) by m.
      */
@@ -142,7 +142,7 @@ class Vector2 protected () extends Vector {
   /**
      * Inverts this vector.
      */
-  def negate(): Vector2 = js.native
+  //def negate(): Vector2 = js.native
   /**
      * Computes dot product of this vector and v.
      */
@@ -150,11 +150,11 @@ class Vector2 protected () extends Vector {
   /**
      * Computes squared length of this vector.
      */
-  def lengthSq(): Double = js.native
+  //def lengthSq(): Double = js.native
   /**
      * Computes length of this vector.
      */
-  def length(): Double = js.native
+  //def length(): Double = js.native
   /**
      * @deprecated Use { Vector2#manhattanLength .manhattanLength()} instead.
      */
@@ -162,7 +162,7 @@ class Vector2 protected () extends Vector {
   /**
      * Normalizes this vector.
      */
-  def normalize(): Vector2 = js.native
+  //def normalize(): Vector2 = js.native
   /**
      * computes the angle in radians with respect to the positive x-axis
      */
@@ -182,7 +182,7 @@ class Vector2 protected () extends Vector {
   /**
      * Normalizes this vector and multiplies it by l.
      */
-  def setLength(length: Double): Vector2 = js.native
+  //def setLength(length: Double): Vector2 = js.native
   /**
      * Linearly interpolates between this vector and v, where alpha is the distance along the line - alpha = 0 will be this vector, and alpha = 1 will be v.
      * @param v vector to interpolate towards.

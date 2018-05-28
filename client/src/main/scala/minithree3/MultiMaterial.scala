@@ -8,5 +8,5 @@ class MultiMaterial protected () extends Material {
   def this(materials: js.Array[Material] = js.native) = this()
   var isMultiMaterial: Boolean = js.native
   var materials: js.Array[Material] = js.native
-  def toJSON(meta: js.Any): js.Dynamic = js.native
+  //def toJSON(meta: js.Any): js.Dynamic = js.native
 }

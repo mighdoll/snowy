@@ -1,19 +1,16 @@
 package snowy.server
 
-import com.typesafe.scalalogging.LazyLogging
+//import com.typesafe.scalalogging.LazyLogging
+import scribe.Logging
 import snowy.measures.MeasurementRecorder
 import snowy.server.CommandLine.BasicArgs
 import socketserve.WebServer.socketApplication
 
-object ServerMain extends LazyLogging {
+object ServerMain extends Logging {
 
   val cmdLineParser = CommandLine.parser("snowy")
 
   def main(args: Array[String]): Unit = {
-    System.setProperty(
-      "java.util.logging.manager",
-      "org.apache.logging.log4j.jul.LogManager"
-    )
     cmdLineParser.parse(args, BasicArgs()).foreach { config =>
       run(config)
     }

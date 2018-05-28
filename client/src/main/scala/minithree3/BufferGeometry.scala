@@ -2,7 +2,6 @@ package minithree3
 
 import scala.scalajs.js
 import org.scalajs.dom.raw._
-import com.definitelyscala.node.Buffer
 import scala.scalajs.js.|
 
 @js.native

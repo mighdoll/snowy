@@ -1,6 +1,7 @@
 package snowy.server
 
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol._
 import snowy.collision.SledTree
 import snowy.playfield.PlayId.SledId
@@ -11,7 +12,7 @@ import vector.Vec2d
 import scala.collection.mutable
 
 /** Records the current state of sleds, trees, snowballs etc. */
-trait GameState extends StrictLogging { self: GameControl =>
+trait GameState extends Logging { self: GameControl =>
 
   val playfield = {
     val playfieldConfig = GlobalConfig.snowy.getConfig("playfield")

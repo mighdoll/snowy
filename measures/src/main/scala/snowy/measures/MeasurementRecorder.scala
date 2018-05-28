@@ -7,7 +7,8 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
 import akka.util.ByteString
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.util.PartialMatch._
 import snowy.util.FlowImplicits._
 import snowy.util.ActorUtil._
@@ -37,7 +38,7 @@ object NullMeasurementRecorder extends MeasurementRecorder {
 /** a measurement system that sends measurements to a file */
 class MeasurementToTsvFile(directoryName: String, baseName: String)(
       implicit system: ActorSystem
-) extends MeasurementRecorder with StrictLogging {
+) extends MeasurementRecorder with Logging {
   implicit val materializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
   val records = startTsvFile(

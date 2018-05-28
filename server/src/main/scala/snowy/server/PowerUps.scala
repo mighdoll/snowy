@@ -2,7 +2,8 @@ package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
 
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.playfield.{HealthPowerUp, Playfield, PowerUp, SpeedPowerUp}
 
 import scala.collection.mutable
@@ -26,7 +27,7 @@ import snowy.server.PowerUps._
 
 /** A managed collection of PowerUps on the playfield */
 class PowerUps(protected val playfield: Playfield)
-    extends GridItems[PowerUp] with StrictLogging {
+    extends GridItems[PowerUp] with Logging {
   private val areaPerPowerUp = 600 * 600
   private val area           = playfield.size.x.toInt * playfield.size.y.toInt
   private val targetCount    = area / areaPerPowerUp

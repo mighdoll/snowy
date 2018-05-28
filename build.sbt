@@ -1,4 +1,5 @@
 import Dependencies._
+import sbtcrossproject.{crossProject, CrossType}
 
 lazy val root =
   (project in file("."))
@@ -32,7 +33,7 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
 )
 
 lazy val server = (project in file("server"))
-  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(SbtWeb, JavaAppPackaging)
   .settings(commonSettings: _*)
   .settings(
     name := "server",
@@ -45,9 +46,15 @@ lazy val server = (project in file("server"))
       "-XX:MaxGCPauseMillis=10"
     ),
     javaOptions in reStart := javaOptions.value,
-    libraryDependencies ++= squants ++ log4j ++ akkaHttp ++ akka ++ cats ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams,
+    libraryDependencies ++= squants ++ akka ++ cats ++ scopt ++ scalaLogging ++ akkaStreams,
+    scalaJSProjects := Seq(client),
+    pipelineStages in Assets := Seq(scalaJSPipeline),
+    compile in Compile := ((compile in Compile) dependsOn scalaJSPipeline).value,
+    WebKeys.packagePrefix in Assets := "public/",
+    managedClasspath in Runtime += (packageBin in Assets).value,
+
     (resourceGenerators in Compile) += Def.task {
-      val f1          = (fastOptJS in Compile in client).value.data
+      val f1          = (webpack in fastOptJS in Compile in client).value.head.data
       val f1SourceMap = f1.getParentFile / (f1.getName + ".map")
       val f2          = (packageJSDependencies in Compile in client).value
       Seq(f1, f1SourceMap, f2)
@@ -57,14 +64,17 @@ lazy val server = (project in file("server"))
   .dependsOn(sharedJvm, measures)
 
 lazy val client = (project in file("client"))
-  .enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb)
   .settings(commonSettings: _*)
   .settings(
     name := "Sock Client",
     scalaJSUseMainModuleInitializer := true,
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
     libraryDependencies ++= scalaJSDomSetting.value,
-    jsDependencies ++= jsLibraries
+    jsDependencies ++= jsLibraries,
+    npmDependencies in Compile ++= Seq(
+      "three" -> "0.92.0"
+    )
   )
   .dependsOn(shared.js)
 
@@ -82,7 +92,7 @@ lazy val measuresListener = (project in file("measures-listener"))
       "-Xmx3G",
       "-Xms3G"
     ),
-    libraryDependencies ++= orientdb ++ scopt ++ scalaLogging ++ loggingProvider ++ akkaStreams
+    libraryDependencies ++= orientdb ++ scopt ++ scalaLogging ++ akkaStreams
   )
   .dependsOn(measures)
 
@@ -96,11 +106,10 @@ lazy val load = (project in file("load"))
   )
   .dependsOn(server, sharedJvm, measures)
 
-lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
+lazy val shared = (crossProject(JSPlatform, JVMPlatform).crossType(CrossType.Pure) in file("shared"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies ++= booPickleSetting.value,
-    addCompilerPlugin(macroParadise cross CrossVersion.full)
+    libraryDependencies ++= booPickleSetting.value
   )
 
 lazy val sharedJvm = shared.jvm

@@ -9,7 +9,7 @@ trait MeshPhongMaterialParameters extends MaterialParameters {
   var color: Color | String | Double = js.native
   var specular: Color | String | Double = js.native
   var shininess: Double = js.native
-  var opacity: Double = js.native
+  //var opacity: Double = js.native
   var map: Texture = js.native
   var lightMap: Texture = js.native
   var lightMapIntensity: Double = js.native

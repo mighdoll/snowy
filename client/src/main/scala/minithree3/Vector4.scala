@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 
 @js.native
 @js.annotation.JSGlobal("Vector4")
@@ -35,8 +35,8 @@ class Vector4 protected () extends Vector {
      * Sets w component of this vector.
      */
   def setW(w: Double): Vector4 = js.native
-  def setComponent(index: Double, value: Double): Unit = js.native
-  def getComponent(index: Double): Double = js.native
+  //def setComponent(index: Double, value: Double): Unit = js.native
+  //def getComponent(index: Double): Double = js.native
   /**
      * Clones this vector.
      */
@@ -66,13 +66,13 @@ class Vector4 protected () extends Vector {
   /**
      * Multiplies this vector by scalar s.
      */
-  def multiplyScalar(s: Double): Vector4 = js.native
+  //def multiplyScalar(s: Double): Vector4 = js.native
   def applyMatrix4(m: Matrix4): Vector4 = js.native
   /**
      * Divides this vector by scalar s.
      * Set vector to ( 0, 0, 0 ) if s == 0.
      */
-  def divideScalar(s: Double): Vector4 = js.native
+  //def divideScalar(s: Double): Vector4 = js.native
   /**
      * http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
      * @param q is assumed to be normalized
@@ -94,7 +94,7 @@ class Vector4 protected () extends Vector {
   /**
      * Inverts this vector.
      */
-  def negate(): Vector4 = js.native
+  //def negate(): Vector4 = js.native
   /**
      * Computes dot product of this vector and v.
      */
@@ -102,11 +102,11 @@ class Vector4 protected () extends Vector {
   /**
      * Computes squared length of this vector.
      */
-  def lengthSq(): Double = js.native
+  //def lengthSq(): Double = js.native
   /**
      * Computes length of this vector.
      */
-  def length(): Double = js.native
+  //def length(): Double = js.native
   /**
      * @deprecated Use { Vector4#manhattanLength .manhattanLength()} instead.
      */
@@ -122,11 +122,11 @@ class Vector4 protected () extends Vector {
   /**
      * Normalizes this vector.
      */
-  def normalize(): Vector4 = js.native
+  //def normalize(): Vector4 = js.native
   /**
      * Normalizes this vector and multiplies it by l.
      */
-  def setLength(length: Double): Vector4 = js.native
+  //def setLength(length: Double): Vector4 = js.native
   /**
      * Linearly interpolate between this vector and v with alpha factor.
      */

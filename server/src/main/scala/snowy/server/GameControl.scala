@@ -6,7 +6,8 @@ import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.config.Config
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol._
 import snowy.measures.Span
@@ -27,7 +28,7 @@ class GameControl(api: AppHostApi,
                   parentSpan: Span,
                   val snowyConfig: Config = GlobalConfig.snowy,
                   clock: Clock = StandardClock)
-    extends AppController with GameState with StrictLogging {
+    extends AppController with GameState with Logging {
   implicit val theSystem    = system
   implicit val theSpan      = parentSpan
   override val turnPeriod   = 20 milliseconds

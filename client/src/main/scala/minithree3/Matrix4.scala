@@ -1,7 +1,7 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
+
 import scala.scalajs.js.typedarray._
 
 @js.native
@@ -10,7 +10,7 @@ class Matrix4 extends Matrix {
   /**
      * Float32Array with matrix values.
      */
-  var elements: Float32Array = js.native
+  //var elements: Float32Array = js.native
   /**
      * Sets all fields of this matrix.
      */
@@ -18,7 +18,7 @@ class Matrix4 extends Matrix {
   /**
      * Resets this matrix to identity.
      */
-  def identity(): Matrix4 = js.native
+  //def identity(): Matrix4 = js.native
   def copy(m: Matrix4): js.Dynamic = js.native
   def copyPosition(m: Matrix4): Matrix4 = js.native
   def extractBasis(xAxis: Vector3, yAxis: Vector3, zAxis: Vector3): Matrix4 = js.native
@@ -52,7 +52,7 @@ class Matrix4 extends Matrix {
   /**
      * Multiplies this matrix by s.
      */
-  def multiplyScalar(s: Double): Matrix4 = js.native
+  //def multiplyScalar(s: Double): Matrix4 = js.native
   /**
      * @deprecated Use { Matrix4#applyToBufferAttribute matrix4.applyToBufferAttribute( attribute )} instead.
      */
@@ -62,11 +62,11 @@ class Matrix4 extends Matrix {
      * Computes determinant of this matrix.
      * Based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
      */
-  def determinant(): Double = js.native
+  //def determinant(): Double = js.native
   /**
      * Transposes this matrix.
      */
-  def transpose(): Matrix4 = js.native
+  //def transpose(): Matrix4 = js.native
   /**
      * Sets the position component for this matrix from vector v.
      */
@@ -75,7 +75,7 @@ class Matrix4 extends Matrix {
      * Sets this matrix to the inverse of matrix m.
      * Based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm.
      */
-  def getInverse(m: Matrix4, throwOnDegeneratee: Boolean = js.native): Matrix4 = js.native
+  def getInverse(m: Matrix4, throwOnDegeneratee: Boolean): Matrix4 = js.native
   /**
      * Multiplies the columns of this matrix by vector v.
      */

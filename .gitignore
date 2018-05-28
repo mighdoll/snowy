@@ -9,3 +9,4 @@ native/
 .vscode/
 logs/
 *.hprof
+.bloop-config/

@@ -1,13 +1,14 @@
 package snowy.server
 
 import scala.concurrent.duration._
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import org.scalatest.PropSpec
 import snowy.GameConstants.Points
 import snowy.GameServerProtocol.{Shooting, Start}
 import snowy.server.GameFixture.{withActorSystem, withGameControl, InsertedSled}
 
-class TestKing extends PropSpec with StrictLogging {
+class TestKing extends PropSpec with Logging {
 
   property("become king") {
     withActorSystem { implicit system =>

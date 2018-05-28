@@ -12,14 +12,15 @@ import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
 import com.orientechnologies.orient.core.intent.OIntentMassiveInsert
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient._
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.measures.StreamToMeasurement.rowToMeasurement
 import snowy.util.ActorTypes._
 import snowy.util.FlowImplicits._
 import scala.collection.JavaConverters._
 import scala.collection.immutable
 
-object IngestTsvFile extends StrictLogging {
+object IngestTsvFile extends Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
   ODatabaseRecordThreadLocal.INSTANCE
 

@@ -3,12 +3,13 @@ package snowy.server
 import java.util.concurrent.ThreadLocalRandom
 import scala.annotation.tailrec
 import scala.collection.mutable
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.playfield.{Playfield, Tree}
 import vector.Vec2d
 
 /** Utilities for putting game objects in random places on the field */
-class TreeSeeding(playfield: Playfield) extends StrictLogging {
+class TreeSeeding(playfield: Playfield) extends Logging {
 
   /** Initialize a set of playfield obstacles */
   def randomTrees(): Set[Tree] = {

@@ -1,13 +1,14 @@
 package snowy.server
 
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.playfield.Rect
 import snowy.robot.DeadRobot
 import socketserve.ClientId
 import vector.Vec2d
 
 /** Support development only - debugging commands for the game */
-class GameDebug(gameState: GameState, robots: RobotHost) extends StrictLogging {
+class GameDebug(gameState: GameState, robots: RobotHost) extends Logging {
   import gameState._
   import gameState.gameStateImplicits._
 

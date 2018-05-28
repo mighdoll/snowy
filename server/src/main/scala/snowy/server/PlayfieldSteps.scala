@@ -1,7 +1,8 @@
 package snowy.server
 
 import scala.concurrent.duration._
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameConstants._
 import snowy.collision._
 import snowy.measures.Span.{time, timeSpan}
@@ -16,7 +17,7 @@ import snowy.util.RemoveList.RemoveListOps
 
 /** Support for moving the playfield objects to the next game state */
 class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
-    extends StrictLogging {
+    extends Logging {
   var gameTime           = clock.currentMillis
   var lastGameTime       = gameTime - tickDelta.toMillis
   val gameHealth         = new GameHealth(state)

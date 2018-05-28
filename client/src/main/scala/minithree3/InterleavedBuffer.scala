@@ -6,8 +6,8 @@ import scala.scalajs.js.typedarray._
 @js.native
 @js.annotation.JSGlobal("InterleavedBuffer")
 class InterleavedBuffer protected () extends js.Object {
-  def this(array: ArrayLike[Double], stride: Double) = this()
-  var array: ArrayLike[Double] = js.native
+  def this(array: js.Array[Double], stride: Double) = this()
+  var array: js.Array[Double] = js.native
   var stride: Double = js.native
   var dynamic: Boolean = js.native
   var updateRange: js.Any = js.native
@@ -19,5 +19,5 @@ class InterleavedBuffer protected () extends js.Object {
   def setDynamic(dynamic: Boolean): InterleavedBuffer = js.native
   def copy(source: InterleavedBuffer): InterleavedBuffer = js.native
   def copyAt(index1: Double, attribute: InterleavedBufferAttribute, index2: Double): InterleavedBuffer = js.native
-  def set(value: ArrayLike[Double], index: Double): InterleavedBuffer = js.native
+  def set(value: js.Array[Double], index: Double): InterleavedBuffer = js.native
 }

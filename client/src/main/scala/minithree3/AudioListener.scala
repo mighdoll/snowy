@@ -1,11 +1,13 @@
 package minithree3
 
+import org.scalajs.dom.{AudioContext, GainNode}
+
 import scala.scalajs.js
 
 @js.native
 @js.annotation.JSGlobal("AudioListener")
 class AudioListener extends Object3D {
-  var `type`: String = js.native
+  //var `type`: String = js.native
   var context: AudioContext = js.native
   var gain: GainNode = js.native
   def getInput(): GainNode = js.native

@@ -5,9 +5,9 @@ import scala.scalajs.js
 @js.native
 @js.annotation.JSGlobal("Color")
 class Color protected () extends js.Object {
-  def this(color: Color = js.native) = this()
-  def this(color: String = js.native) = this()
-  def this(color: Double = js.native) = this()
+  def this(color: Color) = this()
+  def this(color: String) = this()
+  def this(color: Double) = this()
   def this(r: Double, g: Double, b: Double) = this()
   /**
      * Red channel value between 0 and 1. Default is 1.

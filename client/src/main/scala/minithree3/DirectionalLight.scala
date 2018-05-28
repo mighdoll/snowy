@@ -15,6 +15,6 @@ class DirectionalLight protected () extends Light {
      * Light's intensity.
      * Default — 1.0.
      */
-  var intensity: Double = js.native
-  var shadow: DirectionalLightShadow = js.native
+  //var intensity: Double = js.native
+  //var shadow: DirectionalLightShadow = js.native
 }

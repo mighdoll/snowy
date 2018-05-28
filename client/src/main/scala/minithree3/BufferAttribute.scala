@@ -1,17 +1,16 @@
 package minithree3
 
 import scala.scalajs.js
-import com.definitelyscala.node.Buffer
 import scala.scalajs.js.|
 import scala.scalajs.js.typedarray._
 
 @js.native
 @js.annotation.JSGlobal("BufferAttribute")
 class BufferAttribute protected () extends js.Object {
-  def this(array: ArrayLike[Double], itemSize: Double, normalized: Boolean = js.native) = this()
+  def this(array: js.Array[Double], itemSize: Double, normalized: Boolean = js.native) = this()
   // array parameter should be TypedArray.
   var uuid: String = js.native
-  var array: ArrayLike[Double] = js.native
+  var array: js.Array[Double] = js.native
   var itemSize: Double = js.native
   var dynamic: Boolean = js.native
   var updateRange: js.Any = js.native
@@ -24,12 +23,12 @@ class BufferAttribute protected () extends js.Object {
   def setDynamic(dynamic: Boolean): BufferAttribute = js.native
   def copy(source: BufferAttribute): BufferAttribute = js.native
   def copyAt(index1: Double, attribute: BufferAttribute, index2: Double): BufferAttribute = js.native
-  def copyArray(array: ArrayLike[Double]): BufferAttribute = js.native
+  def copyArray(array: js.Array[Double]): BufferAttribute = js.native
   def copyColorsArray(colors: js.Array[js.Any]): BufferAttribute = js.native
   def copyVector2sArray(vectors: js.Array[js.Any]): BufferAttribute = js.native
   def copyVector3sArray(vectors: js.Array[js.Any]): BufferAttribute = js.native
   def copyVector4sArray(vectors: js.Array[js.Any]): BufferAttribute = js.native
-  def set(value: ArrayLike[Double] | ArrayBufferView, offset: Double = js.native): BufferAttribute = js.native
+  def set(value: js.Array[Double] | ArrayBufferView, offset: Double = js.native): BufferAttribute = js.native
   def getX(index: Double): Double = js.native
   def setX(index: Double, x: Double): BufferAttribute = js.native
   def getY(index: Double): Double = js.native

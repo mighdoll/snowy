@@ -1,14 +1,15 @@
 package snowy.server.rewards
 
 import scala.collection.mutable
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameConstants.Points
 import snowy.server.ServerSled
 import snowy.server.rewards.Achievements._
 import snowy.server.rewards.IcingStreakRewards.rewardsForStreak
 
 /** Track achievements by a sled, and apply appropriate rewards to the sled/user */
-class Rewards extends StrictLogging {
+class Rewards extends Logging {
   private val achievementHistory = mutable.Map[Achievement, Int]()
 
   /** Record a new achievement by a sled, and apply appropriate rewards */

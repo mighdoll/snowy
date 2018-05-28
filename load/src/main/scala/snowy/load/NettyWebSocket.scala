@@ -1,7 +1,8 @@
 package snowy.load
 
 import akka.util.ByteString
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
 import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}
@@ -11,7 +12,7 @@ import scala.concurrent.Promise
 import scala.util.Success
 //import org.asynchttpclient.AsyncHttpClientConfig
 
-object NettyWebSocket extends StrictLogging {
+object NettyWebSocket extends Logging {
 
   trait SocketControl {
     def close(): Unit

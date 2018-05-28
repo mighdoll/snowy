@@ -1,7 +1,8 @@
 package snowy.load
 
 import akka.actor.ActorSystem
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol._
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
 import snowy.robot.{Robot, RobotApi, RobotGameState}
@@ -14,7 +15,7 @@ import vector.Vec2d
 class LoadTestRobot[_: Actors: Measurement](
       url: String
 )(createRobot: (RobotApi => Robot))
-    extends StrictLogging {
+    extends Logging {
 
   private implicit val dispatcher = implicitly[ActorSystem].dispatcher
   private var hostedState         = RobotGameState.emptyGameState
@@ -52,7 +53,7 @@ class LoadTestRobot[_: Actors: Measurement](
   }
 }
 
-class HostedRobotApi(connection: GameSocket) extends RobotApi with StrictLogging {
+class HostedRobotApi(connection: GameSocket) extends RobotApi with Logging {
   override def sendToServer(message: GameServerMessage): Unit = {
     logger.trace(s"HostedRobot sending message: $message")
     connection.sendMessage(message)

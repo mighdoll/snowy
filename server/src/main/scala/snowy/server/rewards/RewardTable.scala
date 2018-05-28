@@ -1,7 +1,8 @@
 package snowy.server.rewards
 
 import scala.concurrent.duration.FiniteDuration
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameConstants.Points.minPoints
 import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed}
 import snowy.server.{ServerSled, User}
@@ -33,7 +34,7 @@ case class Score(amount: Int) extends Reward {
 }
 
 case class MultiplyScore(fromUser: User, multiple: Double)
-    extends Reward with StrictLogging {
+    extends Reward with Logging {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val proposedScore = serverSled.user.score + fromUser.score * multiple
     serverSled.user.score = math.max(minPoints, proposedScore)

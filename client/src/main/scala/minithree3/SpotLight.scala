@@ -16,7 +16,7 @@ class SpotLight protected () extends Light {
      * Light's intensity.
      * Default — 1.0.
      */
-  var intensity: Double = js.native
+  //var intensity: Double = js.native
   /**
      * If non-zero, light will attenuate linearly from maximum intensity at light position down to zero at distance.
      * Default — 0.0.
@@ -33,7 +33,7 @@ class SpotLight protected () extends Light {
      */
   var exponent: Double = js.native
   var decay: Double = js.native
-  var shadow: SpotLightShadow = js.native
+  //var shadow: SpotLightShadow = js.native
   var power: Double = js.native
   var penumbra: Double = js.native
 }

@@ -1,5 +1,7 @@
 package minithree3
 
+import org.scalajs.dom.{ErrorEvent, ProgressEvent}
+
 import scala.scalajs.js
 
 @js.native

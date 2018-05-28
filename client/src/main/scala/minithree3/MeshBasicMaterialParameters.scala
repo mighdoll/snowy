@@ -6,7 +6,7 @@ import scala.scalajs.js.|
 @js.native
 trait MeshBasicMaterialParameters extends MaterialParameters {
   var color: Color | String | Double = js.native
-  var opacity: Double = js.native
+  //var opacity: Double = js.native
   var map: Texture = js.native
   var aoMap: Texture = js.native
   var aoMapIntensity: Double = js.native

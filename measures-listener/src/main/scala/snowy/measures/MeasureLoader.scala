@@ -4,7 +4,8 @@ import java.io.File
 import java.nio.file.{Files, Path, Paths}
 import scala.concurrent.{Await, Future}
 import akka.actor.ActorSystem
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import scopt.OptionParser
 import snowy.util.ActorUtil.materializerWithLogging
 import snowy.measures.IngestTsvFile.ingestTsv
@@ -12,7 +13,7 @@ import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 import snowy.util.FutureAwaiting._
 
-object MeasureLoader extends StrictLogging {
+object MeasureLoader extends Logging {
   def main(args: Array[String]): Unit = {
     implicit val system       = ActorSystem()
     implicit val materializer = materializerWithLogging(logger)

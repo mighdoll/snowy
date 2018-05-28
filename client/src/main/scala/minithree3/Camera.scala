@@ -16,5 +16,5 @@ class Camera extends Object3D {
      * This is the matrix which contains the projection.
      */
   var projectionMatrix: Matrix4 = js.native
-  def getWorldDirection(target: Vector3): Vector3 = js.native
+  //def getWorldDirection(target: Vector3): Vector3 = js.native
 }

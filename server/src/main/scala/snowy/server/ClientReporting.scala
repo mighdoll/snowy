@@ -1,7 +1,8 @@
 package snowy.server
 
 import scala.collection.mutable
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 import snowy.GameClientProtocol._
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.PowerUp
@@ -18,7 +19,7 @@ class ClientReporting(messageIO: MessageIO,
                       gameStateImplicits: GameStateImplicits,
                       connections: Traversable[ConnectionId],
                       robots: RobotHost)
-    extends StrictLogging {
+    extends Logging {
   import gameStateImplicits._
   import messageIO.{sendBinaryMessage, sendMessage}
 
@@ -165,7 +166,7 @@ class ClientReporting(messageIO: MessageIO,
 
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
-        if (logger.underlying.isInfoEnabled) {
+        //if (logger.underlying.isInfoEnabled) {
           val connectIdStr =
             sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
           logger.info(
@@ -173,7 +174,7 @@ class ClientReporting(messageIO: MessageIO,
               + s"sled id:${sledId.id} user:${sledId.user.getOrElse("")}"
               + s"killed $connectIdStr"
           )
-        }
+        //}
       }
     }
   }

@@ -6,7 +6,8 @@ import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield._
 import vector.Vec2d
 import scala.collection.mutable.ListBuffer
-import com.typesafe.scalalogging.StrictLogging
+//import com.typesafe.scalalogging.StrictLogging
+import scribe.Logging
 
 object CollideThings {
 
@@ -131,7 +132,7 @@ object CollideThings {
 /** Pending changes to an objects health,speed, etc. after a collision */
 case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A],
                                                         damage: Double)
-    extends StrictLogging {
+    extends Logging {
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage

@@ -1,5 +1,7 @@
 package minithree3
 
+import org.scalajs.dom.{AudioBufferSourceNode, AudioContext, GainNode}
+
 import scala.scalajs.js
 
 //noinspection SyntaxError
@@ -7,7 +9,7 @@ import scala.scalajs.js
 @js.annotation.JSGlobal("Audio")
 class Audio protected () extends Object3D {
   def this(listener: AudioListener) = this()
-  var `type`: String = js.native
+  //var `type`: String = js.native
   var context: AudioContext = js.native
   var source: AudioBufferSourceNode = js.native
   var gain: GainNode = js.native
