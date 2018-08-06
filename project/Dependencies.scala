@@ -5,8 +5,8 @@ import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
 object Dependencies {
   object V {
     val scala    = "2.12.6"
-    val akka     = "2.5.12"
-    val akkaHttp = "10.1.1"
+    val akka     = "2.5.14"
+    val akkaHttp = "10.1.3"
   }
 
   val scalaCheck = "org.scalacheck" %% "scalacheck" % "1.14.0"
@@ -14,7 +14,7 @@ object Dependencies {
   val scalaTest  = "org.scalatest"  %% "scalatest"  % "3.0.5"
 
   val scalaLogging = Seq(
-    "com.outr" %% "scribe" % "2.4.0"
+    "com.outr" %% "scribe" % "2.5.3"
   )
 
   val akkaStreams = Seq(
@@ -35,7 +35,7 @@ object Dependencies {
   )
 
   val cats = Seq(
-    "org.typelevel" %% "cats-core" % "1.1.0"
+    "org.typelevel" %% "cats-core" % "1.2.0"
   )
 
   val scalaJSDomSetting = Def.setting(
@@ -47,17 +47,17 @@ object Dependencies {
   )
 
   val jsLibraries = Seq(
-    "org.webjars.npm" % "three"    % "0.92.0" / "0.92.0/build/three.min.js",
+    "org.webjars.npm" % "three"    % "0.95.0" / "0.95.0/build/three.min.js",
     "org.webjars.npm" % "stats.js" % "0.17.0" / "0.17.0/build/stats.min.js"
   )
 
   val akkaLoad = Seq(
     "com.typesafe.akka"   %% "akka-testkit"        % V.akka,
     "com.typesafe.akka"   %% "akka-stream-testkit" % V.akka,
-    "org.asynchttpclient" % "async-http-client"    % "2.4.7"
+    "org.asynchttpclient" % "async-http-client"    % "2.5.2"
   )
 
   val orientdb = Seq(
-    "com.orientechnologies" % "orientdb-graphdb" % "3.0.1"
+    "com.orientechnologies" % "orientdb-graphdb" % "3.0.5"
   )
 }
