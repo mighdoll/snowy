@@ -22,7 +22,6 @@ import scala.collection.immutable
 
 object IngestTsvFile extends Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
-  ODatabaseRecordThreadLocal.INSTANCE
 
   case class IngestResults(spans: Int, gauges: Int, edges: Int)
 

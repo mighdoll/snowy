@@ -10,3 +10,6 @@ native/
 logs/
 *.hprof
 .bloop-config/
+.bloop/
+out/
+.idea_modules/

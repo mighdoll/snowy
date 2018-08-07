@@ -26,13 +26,8 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
   val socketFlow = new SocketFlow(appHost)
 
   val scalaJsFile =
-    (""".*?-fastopt\.js$""" +
-      """|.*?-fastopt\.js.map$""" +
-      """|.*?-bundle\.js$""" +
-      """|.*?-bundle\.js.map$""" +
-      """|.*?-jsdeps\.js$""" +
-      """|.*?-opt\.js$""" +
-      """|.*?-launcher\.js$""").r
+    ("""out\.js$""" +
+      """|out\.js\.map""").r
 
   val route =
     pathEndOrSingleSlash {
