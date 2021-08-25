@@ -33,8 +33,10 @@ object NettyWebSocket extends Logging {
     new DefaultAsyncHttpClient(config)
   }
 
-  def connect[_: Execution](wsUrl: String,
-                            receivedFn: ByteString => Unit): SocketControl = {
+  def connect[_: Execution](
+        wsUrl: String,
+        receivedFn: ByteString => Unit
+  ): SocketControl = {
 
     val promisedSocket = Promise[WebSocket]()
     val futureSocket   = promisedSocket.future
@@ -55,9 +57,11 @@ object NettyWebSocket extends Logging {
         promisedSocket.complete(Success(websocket))
       }
 
-      override def onBinaryFrame(payload: Array[Byte],
-                                 finalFragment: Boolean,
-                                 rsv: Int): Unit = {
+      override def onBinaryFrame(
+            payload: Array[Byte],
+            finalFragment: Boolean,
+            rsv: Int
+      ): Unit = {
 
         incomingBytes = incomingBytes ++ payload
         if (finalFragment) {

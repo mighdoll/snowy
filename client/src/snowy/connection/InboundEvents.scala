@@ -14,9 +14,11 @@ import vector.Vec2d
 
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}
 
-class InboundEvents(gameState: GameState,
-                    socket: NetworkSocket,
-                    sendMessage: (GameServerMessage) => Unit) {
+class InboundEvents(
+      gameState: GameState,
+      socket: NetworkSocket,
+      sendMessage: (GameServerMessage) => Unit
+) {
 
   val deathMessage       = new DeathMessage()
   val achievementMessage = new AchievementMessage()

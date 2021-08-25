@@ -19,8 +19,11 @@ class AchievementMessage {
       case HealthBonus => createHtml(title, desc, "yellow")
       case ScoreBonus  => createHtml(title, desc, "")
     }
-    timeout = window.setTimeout(() => {
-      achievements.innerHTML = ""
-    }, 4500)
+    timeout = window.setTimeout(
+      () => {
+        achievements.innerHTML = ""
+      },
+      4500
+    )
   }
 }

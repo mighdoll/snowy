@@ -35,7 +35,8 @@ class DecayingBoost() {
 
   /** Steady then steeply decaying interpolation function.
     * input from 0 to 1
-    * @return eased function */
+    * @return eased function
+    */
   private def easeOutExpo(x: Double): Double = {
     assert(x >= 0)
     assert(x <= 1)

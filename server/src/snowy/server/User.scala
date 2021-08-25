@@ -14,11 +14,14 @@ import snowy.server.User._
 /** A current game player.
   *
   * Note that the user might not currently have a sled in the game
-  * if they have been killed and not yet rejoined.  */
-class User(val name: String,
-           val sledType: SledType,
-           val skiColor: SkiColor,
-           val createTime: Long) {
+  * if they have been killed and not yet rejoined.
+  */
+class User(
+      val name: String,
+      val sledType: SledType,
+      val skiColor: SkiColor,
+      val createTime: Long
+) {
 
   /** points earned in the game */
   var score: Double               = 10
@@ -31,12 +34,13 @@ class User(val name: String,
 
   /** Scores are sent to users once per second (see scoreFrequency).
     * Users receive scores at jittered times, to spread the network load.
-    * @return true if this user is overdue for a score update */
+    * @return true if this user is overdue for a score update
+    */
   def timeToSendScore(gameTime: Long): Boolean = {
     gameTime > nextScoreSend
   }
 
-  /** record that the score was already sent*/
+  /** record that the score was already sent */
   def scoreSent(gameTime: Long): Unit = {
     val jitter = ThreadLocalRandom.current.nextDouble() * scoreFrequency
     nextScoreSend = gameTime + jitter.toInt

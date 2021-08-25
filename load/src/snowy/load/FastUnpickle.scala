@@ -18,7 +18,8 @@ object FastUnpickle {
     * for messages return None.
     *
     * This reduces unpickling time dramatically, for load test
-    * clients that don't need State, etc. */
+    * clients that don't need State, etc.
+    */
   def partialUnpickleClientMessage(bytes: ByteString): Option[GameClientMessage] = {
     bytes pmatch {
       case `diedBytes`       => Died

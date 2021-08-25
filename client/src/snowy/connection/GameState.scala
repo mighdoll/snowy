@@ -11,14 +11,17 @@ import vector.Vec2d
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class PlayfieldState(mySled: Sled,
-                          sleds: Set[Sled],
-                          snowballs: Set[Snowball],
-                          trees: Set[Tree],
-                          playfield: Vec2d)
+case class PlayfieldState(
+      mySled: Sled,
+      sleds: Set[Sled],
+      snowballs: Set[Snowball],
+      trees: Set[Tree],
+      playfield: Vec2d
+)
 
 class GameState(drawPlayfield: DrawPlayfield) {
-  var gPlayField               = Vec2d(0, 0) // A playfield dummy until the game receives a different one
+  var gPlayField =
+    Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard               = Scoreboard(0, Seq())
   var mySledId: Option[SledId] = None
   import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
@@ -60,12 +63,13 @@ class GameState(drawPlayfield: DrawPlayfield) {
   }
 
   None
-  private var turning: Turning      = NoTurn
-  var serverGameClock
-    : Option[ServerGameClock] = None // HACK! TODO make GameState an instance
+  private var turning: Turning = NoTurn
+  var serverGameClock: Option[ServerGameClock] =
+    None // HACK! TODO make GameState an instance
 
   /** set the client state to the state from the server
-    * @param state the state sent from the server */
+    * @param state the state sent from the server
+    */
   def receivedState(state: State): Unit = {
     serverSnowballs = mutable.HashSet(state.snowballs: _*)
     serverSleds = mutable.HashSet(state.sleds: _*)
@@ -105,7 +109,8 @@ class GameState(drawPlayfield: DrawPlayfield) {
 
   /** Advance to the next game simulation frame.
     *
-    * @return the time in seconds since the last frame */
+    * @return the time in seconds since the last frame
+    */
   def nextTimeSlice(): Double = {
     val newTurn =
       serverGameClock.map(_.serverGameTime).getOrElse(System.currentTimeMillis())
@@ -133,8 +138,8 @@ class GameState(drawPlayfield: DrawPlayfield) {
   }
 
   def addPlayfieldItems(items: Seq[SharedItem]): Unit = {
-    val newUps       = items.collect { case powerUp: PowerUp   => powerUp }
-    val newSleds     = items.collect { case sled: Sled         => sled }
+    val newUps       = items.collect { case powerUp: PowerUp => powerUp }
+    val newSleds     = items.collect { case sled: Sled => sled }
     val newSnowballs = items.collect { case snowball: Snowball => snowball }
 
     serverPowerUps ++= newUps
@@ -152,8 +157,10 @@ class GameState(drawPlayfield: DrawPlayfield) {
     serverSleds.find(_.id == sledId).map(_.userName)
 
   /** remove a collection of sled or snowballs from from the store */
-  private def removeById[A <: PlayfieldItem[A]](ids: Traversable[PlayId[A]],
-                                                set: mutable.HashSet[A]): Unit = {
+  private def removeById[A <: PlayfieldItem[A]](
+        ids: Traversable[PlayId[A]],
+        set: mutable.HashSet[A]
+  ): Unit = {
     val removedItems =
       for {
         itemId <- ids

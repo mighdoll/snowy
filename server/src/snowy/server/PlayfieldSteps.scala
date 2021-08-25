@@ -38,7 +38,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     * Moving objects move and collide with with each other. Sleds collect
     * powerups and other achievements.
     *
-    * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc. */
+    * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc.
+    */
   def step(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
     timeSpan("Playfield.step") { implicit turnSpan =>
       gameHealth.recoverHealth(deltaSeconds)
@@ -53,8 +54,9 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
       val (usedPowerUpIds, powerUpAchievements) =
         collidePowerUps(state.sleds, state.powerUps)
-      val collided     = checkCollisions()
-      val achievements = trackIcings(collided.icings) ++ trackKing() ++ powerUpAchievements
+      val collided = checkCollisions()
+      val achievements =
+        trackIcings(collided.icings) ++ trackKing() ++ powerUpAchievements
 
       val died = gameHealth.collectDead()
       applyAchievements(achievements ++ collided.icings ++ died)
@@ -99,8 +101,10 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     }
   }
 
-  case class CollisionResult(icings: Traversable[SledIced],
-                             killedSnowballs: Traversable[BallId])
+  case class CollisionResult(
+        icings: Traversable[SledIced],
+        killedSnowballs: Traversable[BallId]
+  )
 
   /** For any sleds that hit a power up,
     * @return the power up and an achievement for the sled.
@@ -133,9 +137,11 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     }
 
   /** Check for collisions between the sled and trees or snowballs */
-  private def checkCollisions()(implicit snowballTracker: PlayfieldTracker[Snowball],
-                                sledTracker: PlayfieldTracker[Sled],
-                                parentSpan: Span): CollisionResult =
+  private def checkCollisions()(implicit
+        snowballTracker: PlayfieldTracker[Snowball],
+        sledTracker: PlayfieldTracker[Sled],
+        parentSpan: Span
+  ): CollisionResult =
     time("checkCollisions") {
       import snowy.collision.GameCollide.snowballTrees
       // collide snowballs with sleds
@@ -242,7 +248,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   /** track streaks of icing other sleds within a time period.
-    * @return achievements when 2 or more sleds are iced within a period */
+    * @return achievements when 2 or more sleds are iced within a period
+    */
   private def trackIceStreaks(
         icings: Traversable[SledIced]
   ): Traversable[IcingStreak] = {
@@ -257,7 +264,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** after an icing, update records to check for a spree of icings within a
     * limited time period.
-    * @return true if the icing is in a spree */
+    * @return true if the icing is in a spree
+    */
   private def updateIceStreak(icingRecords: IcingRecords): Boolean = {
     icingRecords.total += 1
     icingRecords.streak += 1
@@ -272,7 +280,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   /** Track history of icings, to identify revenge
-    * @return revenge achievements */
+    * @return revenge achievements
+    */
   private def trackRevenge(
         icings: Traversable[SledIced]
   ): Traversable[RevengeIcing] = {
@@ -313,10 +322,12 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 }
 
 object PlayfieldSteps {
-  case class TurnResults(deadSleds: Traversable[SledOut],
-                         deadSnowBalls: Traversable[BallId],
-                         usedPowerUps: Traversable[PowerUpId],
-                         newPowerUps: Traversable[PowerUp],
-                         icings: Traversable[SledIced],
-                         sledAchievements: Traversable[Achievement])
+  case class TurnResults(
+        deadSleds: Traversable[SledOut],
+        deadSnowBalls: Traversable[BallId],
+        usedPowerUps: Traversable[PowerUpId],
+        newPowerUps: Traversable[PowerUp],
+        icings: Traversable[SledIced],
+        sledAchievements: Traversable[Achievement]
+  )
 }

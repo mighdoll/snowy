@@ -14,8 +14,11 @@ object CollideThings {
   /** Collide two sets of circular objects with each other
     * The objects speeds, positions, and health are modified based on the collision.
     *
-    * @return a list of any killed objects */
-  def collideWithGrid[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
+    * @return a list of any killed objects
+    */
+  def collideWithGrid[A <: MovableCircularItem[
+    A
+  ]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
         aCollection: Traversable[A],
@@ -48,7 +51,8 @@ object CollideThings {
   /** Collide all elements in a collection of circular objects with each other
     * The objects speeds, positions, and health are modified based on the collision.
     *
-    * @return a list of any killed objects */
+    * @return a list of any killed objects
+    */
   def collideCollection[A <: MovableCircularItem[A]: PlayfieldTracker](
         collection: Traversable[A],
         grid: Grid[A]
@@ -84,8 +88,11 @@ object CollideThings {
   }
 
   /** Modify two objects with the effects of a collision.
-    * (the effects are deferred until all collisions are calculated) */
-  private def applyTwoEffects[A <: MovableCircularItem[A]: PlayfieldTracker, B <: MovableCircularItem[
+    * (the effects are deferred until all collisions are calculated)
+    */
+  private def applyTwoEffects[A <: MovableCircularItem[
+    A
+  ]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
         effectA: CollisionEffect[A],
@@ -110,11 +117,10 @@ object CollideThings {
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
-    collideCircles(objA, objB) map {
-      case (aCollision, bCollision) =>
-        val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
-        val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
-        (aDamage, bDamage)
+    collideCircles(objA, objB) map { case (aCollision, bCollision) =>
+      val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
+      val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
+      (aDamage, bDamage)
     }
   }
 
@@ -130,9 +136,10 @@ object CollideThings {
 }
 
 /** Pending changes to an objects health,speed, etc. after a collision */
-case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A],
-                                                        damage: Double)
-    extends Logging {
+case class CollisionEffect[A <: MovableCircularItem[A]](
+      collided: Collided[A],
+      damage: Double
+) extends Logging {
   def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
@@ -160,8 +167,10 @@ case class CollisionEffect[A <: MovableCircularItem[A]](collided: Collided[A],
 }
 
 /** A report that one of the objects in a collision has run out of health */
-case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](killed: A,
-                                                                           killer: B)
+case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
+      killed: A,
+      killer: B
+)
 
 /** a report of one or more objects that have been killed */
 case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
@@ -171,7 +180,7 @@ case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
 
 object DeathList {
   implicit def deathListMonoid[A <: MovableCircularItem[A], B <: MovableCircularItem[B]]
-    : Monoid[DeathList[A, B]] = {
+        : Monoid[DeathList[A, B]] = {
     new Monoid[DeathList[A, B]] {
       def empty = DeathList[A, B](Nil, Nil)
 

@@ -36,8 +36,8 @@ object NullMeasurementRecorder extends MeasurementRecorder {
 }
 
 /** a measurement system that sends measurements to a file */
-class MeasurementToTsvFile(directoryName: String, baseName: String)(
-      implicit system: ActorSystem
+class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
+      system: ActorSystem
 ) extends MeasurementRecorder with Logging {
   implicit val materializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
@@ -77,8 +77,10 @@ class MeasurementToTsvFile(directoryName: String, baseName: String)(
     }
   }
 
-  private def startTsvFile(path: Path,
-                           header: String): SourceQueueWithComplete[String] = {
+  private def startTsvFile(
+        path: Path,
+        header: String
+  ): SourceQueueWithComplete[String] = {
     createDirectoriesTo(path)
     val fileStream = {
       val source = Source

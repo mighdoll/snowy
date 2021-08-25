@@ -49,9 +49,11 @@ class RobotPlayer(api: RobotApi, name: String) extends Robot {
     }
   }
 
-  def aimAtNearest(mySled: Sled,
-                   sleds: Traversable[Sled],
-                   snowballs: Traversable[Snowball]): Double = {
+  def aimAtNearest(
+        mySled: Sled,
+        sleds: Traversable[Sled],
+        snowballs: Traversable[Snowball]
+  ): Double = {
     var closest = 1500.0
     var angle   = 0.0
     sleds.filterNot(sled => sled == mySled).foreach { sled =>

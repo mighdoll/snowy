@@ -14,8 +14,11 @@ class DeathMessage {
   def killedSled(killed: String): Unit = {
     window.clearInterval(timeout)
     notifications.innerHTML = createHtml(killed)
-    timeout = window.setTimeout(() => {
-      notifications.innerHTML = ""
-    }, 4500)
+    timeout = window.setTimeout(
+      () => {
+        notifications.innerHTML = ""
+      },
+      4500
+    )
   }
 }

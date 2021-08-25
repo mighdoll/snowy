@@ -75,7 +75,8 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
 
   window.addEventListener("mousemove", loginGeometries.selectorHover)
   window.addEventListener(
-    "mousedown", { _: Event =>
+    "mousedown",
+    { _: Event =>
       sledType = loginGeometries.updateSledSelector(sledType)
       loginGeometries.updateColors(skiColor).foreach(skiColor = _)
       loginGeometries.updateSelector(sledType, skiColor)

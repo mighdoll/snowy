@@ -7,7 +7,8 @@ object RemoveList {
   implicit class RemoveListOps[A](private val list: ArrayBuffer[A]) extends AnyVal {
 
     /** remove an element if present in the list
-      * @return true if element was removed */
+      * @return true if element was removed
+      */
     def removeElement[A](elem: A): Boolean = {
       val origLength = list.length
       val newList    = list.filter(_ != elem)

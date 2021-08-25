@@ -11,7 +11,8 @@ import vector.Vec2d
 
 /** Host for a single robot in a client, e.g. for a load test via a WebSocket.
   * Provides the RobotApi to the robot logic. Internally sends and
-  * receives messages from the game server. */
+  * receives messages from the game server.
+  */
 class LoadTestRobot[_: Actors: Measurement](
       url: String
 )(createRobot: (RobotApi => Robot))

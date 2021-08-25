@@ -49,7 +49,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     sleds.foreach { sled1 =>
       sledGroup.map.get(sled1.id) match {
         case Some(sled: Object3D) => updateSled(sled1, sled, myPos)
-        case None       => addSled(sled1, sled1.id == mySled.id)
+        case None                 => addSled(sled1, sled1.id == mySled.id)
       }
     }
   }
@@ -68,9 +68,9 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     )
 
     val bodyColor = sled match {
-      case _: BasicSled  => 0x00FFFF
-      case _: SpeedySled => 0x00FF00
-      case _: TankSled   => 0xFF0000
+      case _: BasicSled  => 0x00ffff
+      case _: SpeedySled => 0x00ff00
+      case _: TankSled   => 0xff0000
     }
     val bodyMat = new THREE.MeshLambertMaterial(
       Dynamic
@@ -84,7 +84,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     val health =
       new THREE.Mesh(
         new THREE.PlaneGeometry(64, 16),
-        if (friendly) createHealthMaterial(0x59B224) else createHealthMaterial(0xF43131)
+        if (friendly) createHealthMaterial(0x59b224) else createHealthMaterial(0xf43131)
       )
 
     health.position.z = -50

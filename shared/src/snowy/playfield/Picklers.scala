@@ -83,16 +83,18 @@ object Picklers {
       snowball.impactDamage
     )
   }
-  private def tupleToSnowball(newId: BallId,
-                              ownerId: SledId,
-                              newPosition: Vec2d,
-                              speed: Vec2d,
-                              radius: Double,
-                              mass: Double,
-                              spawned: Long,
-                              health: Double,
-                              lifetime: Double,
-                              impactDamage: Double): Snowball = {
+  private def tupleToSnowball(
+        newId: BallId,
+        ownerId: SledId,
+        newPosition: Vec2d,
+        speed: Vec2d,
+        radius: Double,
+        mass: Double,
+        spawned: Long,
+        health: Double,
+        lifetime: Double,
+        impactDamage: Double
+  ): Snowball = {
     new Snowball(
       ownerId = ownerId,
       speed = speed,
@@ -109,18 +111,20 @@ object Picklers {
     }
   }
 
-  private def tupleToSled(sledType: SledType,
-                          newId: SledId,
-                          userName: String,
-                          newPosition: Vec2d,
-                          newSpeed: Vec2d,
-                          skiColor: SkiColor,
-                          newRotation: Double,
-                          newHealth: Double,
-                          newLastShotTime: Long,
-                          newLastBoostTime: Long,
-                          maxSpeed: Int,
-                          maxHealth: Double): Sled = {
+  private def tupleToSled(
+        sledType: SledType,
+        newId: SledId,
+        userName: String,
+        newPosition: Vec2d,
+        newSpeed: Vec2d,
+        skiColor: SkiColor,
+        newRotation: Double,
+        newHealth: Double,
+        newLastShotTime: Long,
+        newLastBoostTime: Long,
+        maxSpeed: Int,
+        maxHealth: Double
+  ): Sled = {
 
     def setFields[A <: Sled](sled: A): A = {
       sled.rotation = newRotation
@@ -171,18 +175,20 @@ object Picklers {
     }
   }
 
-  private def sledToTuple(sled: Sled): (SledType,
-                                        SledId,
-                                        String,
-                                        Vec2d,
-                                        Vec2d,
-                                        SkiColor,
-                                        Double,
-                                        Double,
-                                        Long,
-                                        Long,
-                                        Int,
-                                        Double) = {
+  private def sledToTuple(sled: Sled): (
+        SledType,
+        SledId,
+        String,
+        Vec2d,
+        Vec2d,
+        SkiColor,
+        Double,
+        Double,
+        Long,
+        Long,
+        Int,
+        Double
+  ) = {
     val sledType: SledType = sled match {
       case _: BasicSled  => BasicSledType
       case _: SpeedySled => SpeedySledType
@@ -209,8 +215,10 @@ object Picklers {
     (powerUp.id, powerUp.position)
   }
 
-  private def tupleToHealthPowerUp(newId: PowerUpId,
-                                   newPosition: Vec2d): HealthPowerUp = {
+  private def tupleToHealthPowerUp(
+        newId: PowerUpId,
+        newPosition: Vec2d
+  ): HealthPowerUp = {
     new HealthPowerUp() {
       override val id: PowerUpId = newId
       position = newPosition

@@ -14,10 +14,11 @@ object GameServerProtocol {
 
   sealed trait PersistentControl extends StartStopControl
 
-  case class Join(userName: String,
-                  sledType: SledType = BasicSledType,
-                  skiColor: SkiColor = BasicSkis)
-      extends GameServerMessage
+  case class Join(
+        userName: String,
+        sledType: SledType = BasicSledType,
+        skiColor: SkiColor = BasicSkis
+  ) extends GameServerMessage
 
   case object ReJoin extends GameServerMessage
 
@@ -84,10 +85,11 @@ object GameClientProtocol {
   case object HealthBonus extends AchievementBonus
   case object ScoreBonus  extends AchievementBonus
 
-  case class AchievementMessage(bonus: AchievementBonus,
-                                title: String,
-                                description: String)
-      extends GameClientMessage
+  case class AchievementMessage(
+        bonus: AchievementBonus,
+        title: String,
+        description: String
+  ) extends GameClientMessage
 
   case object Ping extends GameClientMessage
 

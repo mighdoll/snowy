@@ -16,9 +16,10 @@ import snowy.measures.{MeasurementRecorder, Span}
   * scala js output files from the root resource directory,
   * and a WebSocket for -connect json messages.
   */
-class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
-                                               parentSpan: Span)
-    extends Logging {
+class WebServer(forcePort: Option[Int] = None)(implicit
+      system: ActorSystem,
+      parentSpan: Span
+) extends Logging {
   private implicit val materializer     = materializerWithLogging(logger)
   private implicit val executionContext = system.dispatcher
 
@@ -71,8 +72,10 @@ class WebServer(forcePort: Option[Int] = None)(implicit system: ActorSystem,
 object WebServer {
 
   /** create a web server hosting the given WebSocket app controller */
-  def socketApplication(makeController: (AppHostApi, ActorSystem, Span) => AppController,
-                        forcePort: Option[Int] = None): WebServer = {
+  def socketApplication(
+        makeController: (AppHostApi, ActorSystem, Span) => AppController,
+        forcePort: Option[Int] = None
+  ): WebServer = {
     implicit val system              = ActorSystem()
     implicit val measurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
     implicit val rootSpan            = Span.root("SocketApplication").finishNow()

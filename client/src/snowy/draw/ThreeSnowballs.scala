@@ -19,9 +19,11 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
 
   val snowballGroup = new UpdateGroup[Snowball](new THREE.Object3D())
 
-  def updateSnowball(playfieldSnowball: Snowball,
-                     threeSnowball: Object3D,
-                     myPos: Vector3): Unit = {
+  def updateSnowball(
+        playfieldSnowball: Snowball,
+        threeSnowball: Object3D,
+        myPos: Vector3
+  ): Unit = {
     DrawPlayfield.playfieldWrap(threeSnowball, playfieldSnowball.position, myPos)
 
     threeSnowball.rotation.y = playfieldSnowball.speed.unit.angle(Vec2d.unitUp)
@@ -31,7 +33,7 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
     snowballs.foreach { snowball1 =>
       snowballGroup.map.get(snowball1.id) match {
         case Some(snowball: Object3D) => updateSnowball(snowball1, snowball, myPos)
-        case None           => addSnowball(snowball1)
+        case None                     => addSnowball(snowball1)
       }
     }
   }

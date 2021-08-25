@@ -14,9 +14,10 @@ object ResourceUtil {
   /** return a list of the resources within a resource folder
     * (works whether the resource is mapped to the file system or to .jar file
     */
-  def byDirectory(resourcePath: String,
-                  classLoader: ClassLoader =
-                    Thread.currentThread().getContextClassLoader()): Iterable[String] = {
+  def byDirectory(
+        resourcePath: String,
+        classLoader: ClassLoader = Thread.currentThread().getContextClassLoader()
+  ): Iterable[String] = {
     val url = Option(classLoader.getResource(resourcePath)).getOrElse {
       throw new ResourceNotFound(resourcePath)
     }
@@ -28,7 +29,8 @@ object ResourceUtil {
   }
 
   /** (for testing) return a fileystem path to a given resource. Only works
-    *  on resources in the filesystem (jar resources will throw an exception) */
+    *  on resources in the filesystem (jar resources will throw an exception)
+    */
   def filePath(resourcePath: String): Path = {
     val possibleResource =
       Thread.currentThread.getContextClassLoader.getResource(resourcePath)
@@ -49,8 +51,10 @@ object ResourceUtil {
     * files, we need to scan the jar table of contents to extract the child relationships for the
     * path.
     */
-  protected[util] def childrenFromJar(jarUrl: URL,
-                                      resourcePath: String): Iterable[String] = {
+  protected[util] def childrenFromJar(
+        jarUrl: URL,
+        resourcePath: String
+  ): Iterable[String] = {
     object Child {
       val TakeToSlash = """([^/]*)""".r
 
@@ -75,8 +79,8 @@ object ResourceUtil {
     val pathToJar   = jarUrl.getPath.stripPrefix("file:").stripSuffix(s"!/$resourcePath")
     val decodedPath = URLDecoder.decode(pathToJar, "UTF-8")
     val jar         = new JarFile(decodedPath)
-    val children = jar.entries().asScala.map(_.getName).collect {
-      case Child(child) => child
+    val children = jar.entries().asScala.map(_.getName).collect { case Child(child) =>
+      child
     }
     children.toSet
   }

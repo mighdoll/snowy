@@ -16,14 +16,15 @@ import snowy.measures.Span
 
 class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Span)
     extends Logging {
-  val outputBufferSize              = 1000
-  val inputBufferSize               = 100
-  val internalMessagesSize          = 100
+  val outputBufferSize     = 1000
+  val inputBufferSize      = 100
+  val internalMessagesSize = 100
   materializerWithLogging(logger)
   import system.dispatcher
 
   /** A flow for each connection received over the /game WebSocket
-    * The flow is materialized by the WebServer */
+    * The flow is materialized by the WebServer
+    */
   def messages(): Flow[Message, Message, NotUsed] = {
     val connectionId = new ConnectionId // user for this connection
 
@@ -82,10 +83,9 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     // convert web socket messages into client controller messages
     val inputConverted: Flow[Message, AppMessage, NotUsed] =
       inputBuffered
-        .collect {
-          case BinaryMessage.Strict(data) =>
-            logger.trace(s"received data on $connectionId. data: $data")
-            ClientMessage(connectionId, data)
+        .collect { case BinaryMessage.Strict(data) =>
+          logger.trace(s"received data on $connectionId. data: $data")
+          ClientMessage(connectionId, data)
         }
         .named("inputConverted")
 
@@ -104,9 +104,11 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
   }
 
   /** send a message the controller when the output actor is ready */
-  private def reportOnOpen(connectionId: ConnectionId,
-                           messagesRefFuture: Future[ActorRef],
-                           outRefFuture: Future[ActorRef]): Unit = {
+  private def reportOnOpen(
+        connectionId: ConnectionId,
+        messagesRefFuture: Future[ActorRef],
+        outRefFuture: Future[ActorRef]
+  ): Unit = {
 
     /*
     We need an external-to-the-stream way to send messages to the client, so
@@ -127,9 +129,11 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     }
   }
 
-  private def reportOnClose(connectionId: ConnectionId,
-                            terminationFutureMat: Future[Future[Done]],
-                            internalRefFuture: Future[ActorRef]): Unit = {
+  private def reportOnClose(
+        connectionId: ConnectionId,
+        terminationFutureMat: Future[Future[Done]],
+        internalRefFuture: Future[ActorRef]
+  ): Unit = {
 
     // report closing of the input stream
     for {

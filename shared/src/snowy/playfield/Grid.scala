@@ -35,7 +35,9 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     for (cell <- coveredCells(item.boundingBox)) {
       val added = cell.add(item)
       if (!added) {
-        println(s"adding item $item already in the grid") // TODO log that works on client too
+        println(
+          s"adding item $item already in the grid"
+        ) // TODO log that works on client too
       }
     }
   }
@@ -49,7 +51,9 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
       val found =
         cell.remove(item)
       if (!found) {
-        println(s"removing item $item not in the grid") // TODO log that works on client too
+        println(
+          s"removing item $item not in the grid"
+        ) // TODO log that works on client too
         items.find(_ == item) match {
           case Some(_) => println(s"$item in another cell in the grid")
           case None    => println(s"$item not in any other cell in the grid")

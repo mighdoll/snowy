@@ -48,10 +48,12 @@ object FlowImplicits {
       * @param oldFn called on each old message to decide whether to filter it
       * @param overflowFn called (e.g. for logging) if the internal buffer overflows
       */
-    def filterOld(window: FiniteDuration, // note untested
-                  bufferSize: Int,
-                  oldFn: (Out) => Boolean,
-                  overflowFn: () => Unit): Flow[In, Out, Mat] = {
+    def filterOld(
+          window: FiniteDuration, // note untested
+          bufferSize: Int,
+          oldFn: (Out) => Boolean,
+          overflowFn: () => Unit
+    ): Flow[In, Out, Mat] = {
 
       case class Dated[T](item: T, time: Nanoseconds = Nanoseconds.current()) {
         def expired: Boolean = {

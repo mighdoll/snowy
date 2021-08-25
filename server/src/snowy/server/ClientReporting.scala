@@ -15,11 +15,12 @@ import socketserve.{ClientId, ConnectionId, RobotId}
 import snowy.measures.Span.time
 
 /** Support for sending protocol messages about revised game state to the clients */
-class ClientReporting(messageIO: MessageIO,
-                      gameStateImplicits: GameStateImplicits,
-                      connections: Traversable[ConnectionId],
-                      robots: RobotHost)
-    extends Logging {
+class ClientReporting(
+      messageIO: MessageIO,
+      gameStateImplicits: GameStateImplicits,
+      connections: Traversable[ConnectionId],
+      robots: RobotHost
+) extends Logging {
   import gameStateImplicits._
   import messageIO.{sendBinaryMessage, sendMessage}
 
@@ -101,8 +102,8 @@ class ClientReporting(messageIO: MessageIO,
 
   private def broadcastReports(achievements: Traversable[Achievement]): Unit = {
     val reports =
-      achievements.collect {
-        case Kinged(sled, _) => NewKing(sled.id)
+      achievements.collect { case Kinged(sled, _) =>
+        NewKing(sled.id)
       }
 
     for (msg <- reports) sendToAllClients(msg)
@@ -156,8 +157,8 @@ class ClientReporting(messageIO: MessageIO,
   /** Notify clients about sleds that have been killed, remove sleds from the game */
   private def reportDeadSleds(dead: Traversable[SledOut]): Unit = {
     val deadSleds =
-      dead.map {
-        case SledOut(serverSled) => serverSled.id
+      dead.map { case SledOut(serverSled) =>
+        serverSled.id
       }.toSeq
 
     if (deadSleds.nonEmpty) {
@@ -167,13 +168,13 @@ class ClientReporting(messageIO: MessageIO,
       for { sledId <- deadSleds; sled <- sledId.sled } {
         sendDied(sledId)
         //if (logger.underlying.isInfoEnabled) {
-          val connectIdStr =
-            sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
-          logger.info(
-            "reportDeadSleds: "
-              + s"sled id:${sledId.id} user:${sledId.user.getOrElse("")}"
-              + s"killed $connectIdStr"
-          )
+        val connectIdStr =
+          sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
+        logger.info(
+          "reportDeadSleds: "
+            + s"sled id:${sledId.id} user:${sledId.user.getOrElse("")}"
+            + s"killed $connectIdStr"
+        )
         //}
       }
     }

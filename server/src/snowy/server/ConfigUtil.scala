@@ -20,8 +20,10 @@ object ConfigUtil {
     * Third priority goes to standard typesafe.Config loaded files:
     * (the application.conf and reference.conf files.)
     */
-  def configFromFilesAndResources(files: Traversable[File],
-                                  resources: Traversable[String] = Nil): Config = {
+  def configFromFilesAndResources(
+        files: Traversable[File],
+        resources: Traversable[String] = Nil
+  ): Config = {
     val baseConfig = ConfigFactory.load()
     val fileConfigs = files.map { configFile =>
       ConfigFactory.parseFile(configFile)

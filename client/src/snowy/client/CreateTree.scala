@@ -10,7 +10,7 @@ object CreateTree {
 
   val trunkMat = new THREE.MeshLambertMaterial(
     Dynamic
-      .literal(color = 0x502A2A)
+      .literal(color = 0x502a2a)
       .asInstanceOf[MeshLambertMaterialParameters]
   )
   val leafMat = new THREE.MeshLambertMaterial(
@@ -20,12 +20,12 @@ object CreateTree {
   )
   val leaf2Mat = new THREE.MeshLambertMaterial(
     Dynamic
-      .literal(color = 0x81A442)
+      .literal(color = 0x81a442)
       .asInstanceOf[MeshLambertMaterialParameters]
   )
   val snowMat = new THREE.MeshLambertMaterial(
     Dynamic
-      .literal(color = 0xEEEEEE)
+      .literal(color = 0xeeeeee)
       .asInstanceOf[MeshLambertMaterialParameters]
   )
 

@@ -19,9 +19,13 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
 
   socket.binaryType = "arraybuffer"
 
-  socket.addEventListener("open", { _: Event =>
-    networkPromise.complete(Success(socket))
-  }, false)
+  socket.addEventListener(
+    "open",
+    { _: Event =>
+      networkPromise.complete(Success(socket))
+    },
+    false
+  )
 
   def onOpen(fn: Event => Unit): Unit = {
     socket.addEventListener("open", fn, false)
@@ -51,11 +55,15 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
     if (inDelay.length == 0) {
       socket.addEventListener("message", fn, false)
     } else {
-      socket.addEventListener("message", { message: MessageEvent =>
-        delay(inDelay) {
-          fn(message)
-        }
-      }, false)
+      socket.addEventListener(
+        "message",
+        { message: MessageEvent =>
+          delay(inDelay) {
+            fn(message)
+          }
+        },
+        false
+      )
     }
   }
 

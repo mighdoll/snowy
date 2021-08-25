@@ -6,13 +6,16 @@ import snowy.draw.{ThreePowerups, ThreeSleds, ThreeSnowballs}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class LoadedGeometries(threeSleds: ThreeSleds,
-                            threeSnowballs: ThreeSnowballs,
-                            threePowerups: ThreePowerups)
+case class LoadedGeometries(
+      threeSleds: ThreeSleds,
+      threeSnowballs: ThreeSnowballs,
+      threePowerups: ThreePowerups
+)
 
 /** Load model geometry files from the server for WebGL rendering
   *
-  * The geometries are loaded asynchronously and available via Future objects. */
+  * The geometries are loaded asynchronously and available via Future objects.
+  */
 class GeometryLoader {
   private val loader = new ThreeLoader()
   private val geometryFutures: Seq[Future[Geometry]] =

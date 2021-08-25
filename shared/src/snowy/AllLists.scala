@@ -7,7 +7,7 @@ object AllLists {
     Seq(
       BasicSledType,
       SpeedySledType,
-      TankSledType,
+      TankSledType
     )
   val allSkis = Seq(BasicSkis, RedSkis, OrangeSkis, YellowSkis, GreenSkis, BlueSkis)
 

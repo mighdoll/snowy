@@ -11,11 +11,13 @@ object Skid {
     * Quickly moving sleds continue in the same direction (as if they had momentum),
     * slower sleds change direction more swiftly.
     */
-  def skid(current: Vec2d,
-           rotation: Double,
-           maxSpeed: Double,
-           mass: Double,
-           deltaSeconds: Double): Vec2d = {
+  def skid(
+        current: Vec2d,
+        rotation: Double,
+        maxSpeed: Double,
+        mass: Double,
+        deltaSeconds: Double
+  ): Vec2d = {
     val skidTime = deltaSeconds * maxSkidTime
 
     current.transform {
@@ -38,7 +40,8 @@ object Skid {
           math.min(1.0, rawSkidFactor)
         }
         val newVector = {
-          val newAngle = currentDirection + ((targetDirection - currentDirection) * skidFactor)
+          val newAngle =
+            currentDirection + ((targetDirection - currentDirection) * skidFactor)
           Vec2d.fromRotation(newAngle) * speed
         }
 

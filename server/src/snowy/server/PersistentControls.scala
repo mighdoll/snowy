@@ -46,11 +46,14 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
   }
 
   /** apply any pending but not yet cancelled commands from user actions,
-    * e.g. turning or slowing */
-  def applyCommands(motion: GameMotion,
-                    snowballs: Snowballs,
-                    gameTime: Long,
-                    deltaSeconds: Double): Unit = {
+    * e.g. turning or slowing
+    */
+  def applyCommands(
+        motion: GameMotion,
+        snowballs: Snowballs,
+        gameTime: Long,
+        deltaSeconds: Double
+  ): Unit = {
     pendingControls.foreachCommand { (id, command, time) =>
       id.sled.foreach { sled =>
         command match {
@@ -62,8 +65,8 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
     }
   }
 
-  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(
-        implicit snowballTracker: PlayfieldTracker[Snowball]
+  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(implicit
+        snowballTracker: PlayfieldTracker[Snowball]
   ): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {
       val launchDistance = sled.bulletLaunchPosition.length + sled.radius

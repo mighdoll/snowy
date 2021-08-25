@@ -80,7 +80,7 @@ object GameConstants {
     /** minimum health after a tree collision */
     val treeMinHealth = .1
 
-    /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree.  */
+    /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree. */
     val safeSpeed = 50
   }
 }

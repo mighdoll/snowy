@@ -22,13 +22,15 @@ import vector.Vec2d
 import scala.language.postfixOps
 
 /** Central controller for the game. Delegates protocol messages from clients,
-  * and from the game framework. */
-class GameControl(api: AppHostApi,
-                  system: ActorSystem,
-                  parentSpan: Span,
-                  val snowyConfig: Config = GlobalConfig.snowy,
-                  clock: Clock = StandardClock)
-    extends AppController with GameState with Logging {
+  * and from the game framework.
+  */
+class GameControl(
+      api: AppHostApi,
+      system: ActorSystem,
+      parentSpan: Span,
+      val snowyConfig: Config = GlobalConfig.snowy,
+      clock: Clock = StandardClock
+) extends AppController with GameState with Logging {
   implicit val theSystem    = system
   implicit val theSpan      = parentSpan
   override val turnPeriod   = 20 milliseconds
@@ -185,9 +187,11 @@ class GameControl(api: AppHostApi,
     }
   }
 
-  private def newRandomSled(userName: String,
-                            sledType: SledType,
-                            color: SkiColor): Sled = {
+  private def newRandomSled(
+        userName: String,
+        sledType: SledType,
+        color: SkiColor
+  ): Sled = {
     // TODO what if sled is initialized atop a tree?
     Sled(
       userName = userName,
@@ -198,10 +202,12 @@ class GameControl(api: AppHostApi,
   }
 
   /** Called when a user sends her name and starts in the game */
-  private def userJoin(id: ClientId,
-                       userName: String,
-                       sledType: SledType,
-                       skiColor: SkiColor): Unit = {
+  private def userJoin(
+        id: ClientId,
+        userName: String,
+        sledType: SledType,
+        skiColor: SkiColor
+  ): Unit = {
     val user = addUser(id, userName, sledType, skiColor)
     val sled = createSled(id, user, sledType)
     clientReport.joinedSled(id, sled.id)
@@ -217,10 +223,12 @@ class GameControl(api: AppHostApi,
     addSled(sled, id, user)
   }
 
-  private def addUser(clientId: ClientId,
-                      name: String,
-                      sledType: SledType = BasicSledType,
-                      skiColor: SkiColor = BlueSkis): User = {
+  private def addUser(
+        clientId: ClientId,
+        name: String,
+        sledType: SledType = BasicSledType,
+        skiColor: SkiColor = BlueSkis
+  ): User = {
     val user =
       new User(name, createTime = gameTime, sledType = sledType, skiColor = skiColor)
     users(clientId) = user

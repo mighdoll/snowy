@@ -10,7 +10,8 @@ object GameCollide {
 
   /** Intersect a snowball with all potentially overlapping trees on the playfield.
     *
-    * @return true if the tree collides */
+    * @return true if the tree collides
+    */
   def snowballTrees(snowball: Snowball, trees: Traversable[Tree]): Boolean = {
     val ball = Circle(snowball.position, snowball.radius)
     trees.find(treeCollide(_, ball)).isDefined

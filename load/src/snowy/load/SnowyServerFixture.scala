@@ -23,8 +23,10 @@ object SnowyServerFixture {
   var testPort = 9100 // incremented with each test, so each test gets its own unique port
 
   /** API available for server integration tests */
-  case class ServerTestApi(sendQueue: SourceQueueWithComplete[GameServerMessage],
-                           probe: Probe[GameClientMessage]) {
+  case class ServerTestApi(
+        sendQueue: SourceQueueWithComplete[GameServerMessage],
+        probe: Probe[GameClientMessage]
+  ) {
 
     /** send a message to the server */
     def send(message: GameServerMessage): Unit = {
@@ -37,8 +39,10 @@ object SnowyServerFixture {
       * @param pFn partial function to match messages
       * @return result of partial function
       */
-    def skipToMessage[A](pFn: PartialFunction[GameClientMessage, A],
-                         timeout: FiniteDuration = 500 milliseconds): A = {
+    def skipToMessage[A](
+          pFn: PartialFunction[GameClientMessage, A],
+          timeout: FiniteDuration = 500 milliseconds
+    ): A = {
       val messages = Iterator.continually(probe.requestNext(timeout))
       messages.collectFirst(pFn).get
     }
@@ -50,8 +54,10 @@ object SnowyServerFixture {
     *           the function should return a future that completes
     *           when the test is done
     */
-  def withServer(fn: ServerTestApi => Future[Unit],
-                 timeout: FiniteDuration = 3 seconds): Unit = {
+  def withServer(
+        fn: ServerTestApi => Future[Unit],
+        timeout: FiniteDuration = 3 seconds
+  ): Unit = {
     testPort = testPort + 1
     val recorder = NullMeasurementRecorder
     val server =

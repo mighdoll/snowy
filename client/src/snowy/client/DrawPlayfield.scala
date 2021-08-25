@@ -31,7 +31,8 @@ class UpdateGroup[A](val group: Object3D) {
 object DrawPlayfield {
 
   /** if the object's position is closer to the wrapped side
-    * returns the position with */
+    * returns the position with
+    */
   def playfieldWrap(obj: Object3D, pos: Vec2d, mySled: Vector3): Unit = {
 
     /** Return coord or wrapped coord depending on which is closer to center */
@@ -54,16 +55,18 @@ object DrawPlayfield {
   }
 }
 
-class DrawPlayfield(renderer: WebGLRenderer,
-                    val threeSleds: ThreeSleds,
-                    val threeSnowballs: ThreeSnowballs,
-                    val threePowerups: ThreePowerups) {
+class DrawPlayfield(
+      renderer: WebGLRenderer,
+      val threeSleds: ThreeSleds,
+      val threeSnowballs: ThreeSnowballs,
+      val threePowerups: ThreePowerups
+) {
   val scene = new THREE.Scene()
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
 
-  val amb   = new THREE.AmbientLight(0xFFFFFF, 0.5)
-  val light = new THREE.DirectionalLight(0xFFFFFF, 0.5)
+  val amb   = new THREE.AmbientLight(0xffffff, 0.5)
+  val light = new THREE.DirectionalLight(0xffffff, 0.5)
 
   val stats = new Stats()
 
@@ -87,11 +90,13 @@ class DrawPlayfield(renderer: WebGLRenderer,
   setup()
 
   /** Update the positions of all the three playfield items, then draw to screen */
-  def drawPlayfield(snowballs: Set[Snowball],
-                    sleds: Set[Sled],
-                    mySled: Sled,
-                    trees: Set[Tree],
-                    border: Vec2d): Unit = {
+  def drawPlayfield(
+        snowballs: Set[Snowball],
+        sleds: Set[Sled],
+        mySled: Sled,
+        trees: Set[Tree],
+        border: Vec2d
+  ): Unit = {
     stats.begin()
     val myPos = new Vector3(mySled.position.x, 2.9 * mySled.radius, mySled.position.y)
     ThreeTrees.updateThreeTrees(trees, myPos)
@@ -111,7 +116,8 @@ class DrawPlayfield(renderer: WebGLRenderer,
   }
 
   window.addEventListener(
-    "resize", { _: Event =>
+    "resize",
+    { _: Event =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 

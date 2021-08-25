@@ -15,7 +15,8 @@ trait Robot {
 
   /** Called when the game state has been updated. The robot should respond
     * with commands
-    * TODO: return a Seq[GameServerMessage] */
+    * TODO: return a Seq[GameServerMessage]
+    */
   def refresh(state: RobotGameState): Unit
 
   /** called when the robot sled is killed in the game */
@@ -26,7 +27,8 @@ trait Robot {
 trait RobotGameStateInfo {
 
   /** Id of this robots sled.
-    * The id may change if the robot is killed and rejoins.  */
+    * The id may change if the robot is killed and rejoins.
+    */
   def mySledId: SledId
 
   /** collection of all sleds in the game, including the robot's sled */
@@ -44,11 +46,13 @@ trait RobotGameStateInfo {
 }
 
 /** game state information packaged conveniently for the robot */
-case class RobotGameState(mySledId: SledId,
-                          allSleds: Traversable[Sled],
-                          snowballs: Traversable[Snowball],
-                          trees: Traversable[Tree],
-                          playfield: Vec2d) {
+case class RobotGameState(
+      mySledId: SledId,
+      allSleds: Traversable[Sled],
+      snowballs: Traversable[Snowball],
+      trees: Traversable[Tree],
+      playfield: Vec2d
+) {
   lazy val (mySled: Option[Sled], otherSleds: Traversable[Sled]) = {
     val (mine, otherSleds) = allSleds.partition(_.id == mySledId)
     (mine.headOption, otherSleds)

@@ -16,9 +16,8 @@ import scala.concurrent.Future
 
 object SnowyClientSocket {
   private val unpickleMessage: Flow[Message, GameClientMessage, _] = {
-    Flow[Message].collect {
-      case BinaryMessage.Strict(msg) =>
-        Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
+    Flow[Message].collect { case BinaryMessage.Strict(msg) =>
+      Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
     }
   }
 

@@ -3,8 +3,7 @@ package snowy.playfield
 import vector.Vec2d
 
 trait MovableCircularItem[A <: PlayfieldItem[A]]
-    extends CircularItem[A] with MovableItem[A] { self: A =>
-}
+    extends CircularItem[A] with MovableItem[A] { self: A => }
 
 trait CircularItem[A <: PlayfieldItem[A]] extends PlayfieldItem[A] { self: A =>
 

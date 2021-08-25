@@ -14,15 +14,16 @@ object PendingControl {
 }
 
 /** a collection of pending commands indexed by ConnectionId.
-  * At most one per StartStopCommand is retained per ConnectionId. */
+  * At most one per StartStopCommand is retained per ConnectionId.
+  */
 class PendingControls {
 
   import scala.collection.mutable.{HashMap, MultiMap}
 
   val commands = new HashMap[ClientId, mutable.Set[PendingControl]]
-  with MultiMap[ClientId, PendingControl]
+    with MultiMap[ClientId, PendingControl]
 
-  /** record a pending command, replacing any previous matching command for this id.  */
+  /** record a pending command, replacing any previous matching command for this id. */
   def startCommand(id: ClientId, command: PersistentControl, time: Long): Unit = {
     removeCommand(id, command)
     commands.addBinding(id, PendingControl(command))

@@ -8,10 +8,12 @@ import scala.math._
 object Friction {
 
   /** @return speed after slowdown applied against the direction of travel */
-  def friction(current: Vec2d,
-               rotation: Double,
-               deltaSeconds: Double,
-               mass: Double): Vec2d = {
+  def friction(
+        current: Vec2d,
+        rotation: Double,
+        deltaSeconds: Double,
+        mass: Double
+  ): Vec2d = {
     val frictionMin = minFriction * deltaSeconds
     val frictionMax = maxFriction * deltaSeconds
 

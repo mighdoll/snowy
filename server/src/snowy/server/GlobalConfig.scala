@@ -17,7 +17,8 @@ object GlobalConfig {
   private val files = ListBuffer[File]()
 
   /** add .conf file that will be accessible to the program
-    * Note: must be called at program start, before config is accessed */
+    * Note: must be called at program start, before config is accessed
+    */
   def addConfigFiles(file: File*): Unit = {
     assert(!initialized)
     files.append(file: _*)

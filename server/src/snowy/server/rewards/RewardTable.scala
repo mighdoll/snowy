@@ -33,8 +33,7 @@ case class Score(amount: Int) extends Reward {
   }
 }
 
-case class MultiplyScore(fromUser: User, multiple: Double)
-    extends Reward with Logging {
+case class MultiplyScore(fromUser: User, multiple: Double) extends Reward with Logging {
   override def applyToSled(serverSled: ServerSled): Unit = {
     val proposedScore = serverSled.user.score + fromUser.score * multiple
     serverSled.user.score = math.max(minPoints, proposedScore)

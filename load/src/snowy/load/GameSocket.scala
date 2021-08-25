@@ -10,8 +10,8 @@ import snowy.playfield.Picklers._
 
 import scala.concurrent.ExecutionContext
 
-class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
-      implicit execution: ExecutionContext
+class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(implicit
+      execution: ExecutionContext
 ) {
   val socket = NettyWebSocket.connect(wsUrl, receive)
 

@@ -10,9 +10,12 @@ class ThreeLoader() {
   def loadGeometries(urls: String*): Seq[Future[THREE.Geometry]] = {
     urls.map { url =>
       val promise = Promise[THREE.Geometry]()
-      loader.load(url, (geometry) => {
-        promise.complete(Success(geometry))
-      })
+      loader.load(
+        url,
+        (geometry) => {
+          promise.complete(Success(geometry))
+        }
+      )
       promise.future
     }
   }

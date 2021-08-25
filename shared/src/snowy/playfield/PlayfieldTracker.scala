@@ -10,7 +10,7 @@ trait PlayfieldTracker[A <: PlayfieldItem[A]] {
 object PlayfieldTracker {
 
   def nullTracker[A <: PlayfieldItem[A]] = new PlayfieldTracker[A] {
-    override def add(item: A)    = {}
+    override def add(item: A) = {}
     override def remove(item: A) = {}
   }
 

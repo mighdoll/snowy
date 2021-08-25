@@ -10,11 +10,13 @@ object Sled {
     Sled("dummy", Vec2d(-1, -1))(nullSledTracker)
   }
 
-  def apply(userName: String,
-            initialPosition: Vec2d = Vec2d.zero,
-            sledType: SledType = BasicSledType,
-            color: SkiColor = BasicSkis)(
-        implicit tracker: PlayfieldTracker[Sled]
+  def apply(
+        userName: String,
+        initialPosition: Vec2d = Vec2d.zero,
+        sledType: SledType = BasicSledType,
+        color: SkiColor = BasicSkis
+  )(implicit
+        tracker: PlayfieldTracker[Sled]
   ): Sled = {
     val sled =
       sledType match {
@@ -33,7 +35,7 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   val skiColor: SkiColor = BasicSkis
   var speed: Vec2d       = Vec2d.zero
 
-  /** angle of sled clockwise from screen coordinates of (0, 1) (down on screen)*/
+  /** angle of sled clockwise from screen coordinates of (0, 1) (down on screen) */
   var rotation: Double = downhillRotation
   var health: Double   = 1
 
@@ -69,7 +71,8 @@ sealed trait Sled extends MovableCircularItem[Sled] with SharedItem {
   def bulletRecoil: Int = 0 //30
 
   /** bullet begins its flight this pixel offset from the sled radius
-    * if the sled is shooting straight up */
+    * if the sled is shooting straight up
+    */
   def bulletLaunchPosition = Vec2d(0, 10)
 
   /** Initial health of a bullet. Bullets with enough health survive collisions and rebound */
@@ -114,15 +117,17 @@ case object BasicSledType  extends SledType
 case object SpeedySledType extends SledType
 case object TankSledType   extends SledType
 
-class BasicSled(override val userName: String,
-                override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
+class BasicSled(
+      override val userName: String,
+      override val skiColor: SkiColor = BasicSkis
+) extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[BasicSled]
 }
 
-class SpeedySled(override val userName: String,
-                 override val skiColor: SkiColor = BasicSkis)
-    extends Sled {
+class SpeedySled(
+      override val userName: String,
+      override val skiColor: SkiColor = BasicSkis
+) extends Sled {
   override def canEqual(a: Any): Boolean = a.isInstanceOf[SpeedySled]
 
   override val brakeAcceleration  = 112.5

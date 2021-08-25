@@ -25,8 +25,8 @@ object ClientConnection {
 import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
-class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
-      implicit system: ActorSystem
+class ClientConnection(id: ConnectionId, messageIO: MessageIO)(implicit
+      system: ActorSystem
 ) extends Logging {
   private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
@@ -43,7 +43,8 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(
   sendPing()
 
   /** The framework message handler should call this to report when
-    * a Pong message is received on the server */
+    * a Pong message is received on the server
+    */
   def pongReceived(): Unit = {
     val now      = System.currentTimeMillis()
     val pingTime = now - lastPingSent

@@ -305,9 +305,11 @@ class Camera extends Object3D {
 class CubeCamera extends Object3D {
   var renderTarget: WebGLRenderTargetCube = js.native
 
-  def this(near: Double = js.native,
-           far: Double = js.native,
-           cubeResolution: Double = js.native) = this()
+  def this(
+        near: Double = js.native,
+        far: Double = js.native,
+        cubeResolution: Double = js.native
+  ) = this()
 
   def updateCubeMap(renderer: Renderer, scene: Scene): Unit = js.native
 }
@@ -327,12 +329,14 @@ class OrthographicCamera extends Camera {
   def this(left: Double, right: Double, top: Double, bottom: Double, near: Double) =
     this()
 
-  def this(left: Double,
-           right: Double,
-           top: Double,
-           bottom: Double,
-           near: Double,
-           far: Double) = this()
+  def this(
+        left: Double,
+        right: Double,
+        top: Double,
+        bottom: Double,
+        near: Double,
+        far: Double
+  ) = this()
 
   def updateProjectionMatrix(): Unit       = js.native
   override def clone(): OrthographicCamera = js.native
@@ -346,18 +350,22 @@ class PerspectiveCamera extends Camera {
   var near: Double   = js.native
   var far: Double    = js.native
 
-  def this(fov: Double = js.native,
-           aspect: Double = js.native,
-           near: Double = js.native,
-           far: Double = js.native) = this()
+  def this(
+        fov: Double = js.native,
+        aspect: Double = js.native,
+        near: Double = js.native,
+        far: Double = js.native
+  ) = this()
 
   def setLens(focalLength: Double, frameHeight: Double = js.native): Unit = js.native
-  def setViewOffset(fullWidth: Double,
-                    fullHeight: Double,
-                    x: Double,
-                    y: Double,
-                    width: Double,
-                    height: Double): Unit = js.native
+  def setViewOffset(
+        fullWidth: Double,
+        fullHeight: Double,
+        x: Double,
+        y: Double,
+        width: Double,
+        height: Double
+  ): Unit                                 = js.native
   def updateProjectionMatrix(): Unit      = js.native
   override def clone(): PerspectiveCamera = js.native
 }
@@ -377,11 +385,13 @@ class BufferAttribute extends js.Object {
   def setZ(index: Double, z: Double): BufferAttribute                         = js.native
   def setXY(index: Double, x: Double, y: Double): BufferAttribute             = js.native
   def setXYZ(index: Double, x: Double, y: Double, z: Double): BufferAttribute = js.native
-  def setXYZW(index: Double,
-              x: Double,
-              y: Double,
-              z: Double,
-              w: Double): BufferAttribute = js.native
+  def setXYZW(
+        index: Double,
+        x: Double,
+        y: Double,
+        z: Double,
+        w: Double
+  ): BufferAttribute = js.native
 }
 
 @js.native
@@ -454,10 +464,12 @@ class BufferGeometry extends Geometry {
   def computeOffsets(indexBufferSize: Double): Unit = js.native
   def merge(): Unit                                 = js.native
   def normalizeNormals(): Unit                      = js.native
-  def reorderBuffers(indexBuffer: Double,
-                     indexMap: js.Array[Double],
-                     vertexCount: Double): Unit = js.native
-  override def clone(): BufferGeometry          = js.native
+  def reorderBuffers(
+        indexBuffer: Double,
+        indexMap: js.Array[Double],
+        vertexCount: Double
+  ): Unit                              = js.native
+  override def clone(): BufferGeometry = js.native
 }
 
 @js.native
@@ -508,39 +520,49 @@ class Face3 extends js.Object {
 
   def this(a: Double, b: Double, c: Double, normal: Vector3, color: Color) = this()
 
-  def this(a: Double,
-           b: Double,
-           c: Double,
-           normal: Vector3,
-           color: Color,
-           materialIndex: Double) = this()
+  def this(
+        a: Double,
+        b: Double,
+        c: Double,
+        normal: Vector3,
+        color: Color,
+        materialIndex: Double
+  ) = this()
 
-  def this(a: Double,
-           b: Double,
-           c: Double,
-           normal: Vector3,
-           vertexColors: js.Array[Color]) = this()
+  def this(
+        a: Double,
+        b: Double,
+        c: Double,
+        normal: Vector3,
+        vertexColors: js.Array[Color]
+  ) = this()
 
-  def this(a: Double,
-           b: Double,
-           c: Double,
-           normal: Vector3,
-           vertexColors: js.Array[Color],
-           materialIndex: Double) = this()
+  def this(
+        a: Double,
+        b: Double,
+        c: Double,
+        normal: Vector3,
+        vertexColors: js.Array[Color],
+        materialIndex: Double
+  ) = this()
 
-  def this(a: Double,
-           b: Double,
-           c: Double,
-           vertexNormals: js.Array[Vector3],
-           color: Color,
-           materialIndex: Double) = this()
+  def this(
+        a: Double,
+        b: Double,
+        c: Double,
+        vertexNormals: js.Array[Vector3],
+        color: Color,
+        materialIndex: Double
+  ) = this()
 
-  def this(a: Double,
-           b: Double,
-           c: Double,
-           vertexNormals: js.Array[Vector3],
-           vertexColors: js.Array[Color],
-           materialIndex: Double) = this()
+  def this(
+        a: Double,
+        b: Double,
+        c: Double,
+        vertexNormals: js.Array[Vector3],
+        vertexColors: js.Array[Color],
+        materialIndex: Double
+  ) = this()
 
   override def clone(): Face3 = js.native
 }
@@ -721,18 +743,24 @@ class Raycaster extends js.Object {
   var precision: Double           = js.native
   var linePrecision: Double       = js.native
 
-  def this(origin: Vector3 = js.native,
-           direction: Vector3 = js.native,
-           near: Double = js.native,
-           far: Double = js.native) = this()
+  def this(
+        origin: Vector3 = js.native,
+        direction: Vector3 = js.native,
+        near: Double = js.native,
+        far: Double = js.native
+  ) = this()
 
   def set(origin: Vector3, direction: Vector3): Unit       = js.native
   def setFromCamera(origin: Vector2, camera: Camera): Unit = js.native
   def setFromCamera(origin: Vector3, camera: Camera): Unit = js.native
-  def intersectObject(`object`: Object3D,
-                      recursive: Boolean = js.native): js.Array[Intersection] = js.native
-  def intersectObjects(objects: js.Array[Object3D],
-                       recursive: Boolean = js.native): js.Array[Intersection] =
+  def intersectObject(
+        `object`: Object3D,
+        recursive: Boolean = js.native
+  ): js.Array[Intersection] = js.native
+  def intersectObjects(
+        objects: js.Array[Object3D],
+        recursive: Boolean = js.native
+  ): js.Array[Intersection] =
     js.native
 }
 
@@ -808,9 +836,11 @@ class HemisphereLight extends Light {
   var groundColor: Color = js.native
   var intensity: Double  = js.native
 
-  def this(skyColorHex: Double = js.native,
-           groundColorHex: Double = js.native,
-           intensity: Double = js.native) = this()
+  def this(
+        skyColorHex: Double = js.native,
+        groundColorHex: Double = js.native,
+        intensity: Double = js.native
+  ) = this()
 
   override def clone(): HemisphereLight = js.native
 }
@@ -821,9 +851,11 @@ class PointLight extends Light {
   var intensity: Double = js.native
   var distance: Double  = js.native
 
-  def this(hex: Double = js.native,
-           intensity: Double = js.native,
-           distance: Double = js.native) = this()
+  def this(
+        hex: Double = js.native,
+        intensity: Double = js.native,
+        distance: Double = js.native
+  ) = this()
 
   override def clone(): PointLight = js.native
 }
@@ -850,11 +882,13 @@ class SpotLight extends Light {
   var shadowCamera: Camera         = js.native
   var shadowMatrix: Matrix4        = js.native
 
-  def this(hex: Double = js.native,
-           intensity: Double = js.native,
-           distance: Double = js.native,
-           angle: Double = js.native,
-           exponent: Double = js.native) = this()
+  def this(
+        hex: Double = js.native,
+        intensity: Double = js.native,
+        distance: Double = js.native,
+        angle: Double = js.native,
+        exponent: Double = js.native
+  ) = this()
 
   override def clone(): SpotLight = js.native
 }
@@ -901,12 +935,14 @@ trait LoaderHandler extends js.Object {
 @JSGlobal("THREE.BufferGeometryLoader")
 class BufferGeometryLoader extends js.Object {
   def this(manager: LoadingManager = js.native) = this()
-  def load(url: String,
-           onLoad: js.Function1[BufferGeometry, Unit],
-           onProgress: js.Function1[js.Any, Unit] = js.native,
-           onError: js.Function1[js.Any, Unit] = js.native): Unit = js.native
-  def setCrossOrigin(crossOrigin: String): Unit                   = js.native
-  def parse(json: js.Any): BufferGeometry                         = js.native
+  def load(
+        url: String,
+        onLoad: js.Function1[BufferGeometry, Unit],
+        onProgress: js.Function1[js.Any, Unit] = js.native,
+        onError: js.Function1[js.Any, Unit] = js.native
+  ): Unit                                       = js.native
+  def setCrossOrigin(crossOrigin: String): Unit = js.native
+  def parse(json: js.Any): BufferGeometry       = js.native
 }
 
 @js.native
@@ -926,11 +962,13 @@ class ImageLoader extends js.Object {
 
   def this(manager: LoadingManager = js.native) = this()
 
-  def load(url: String,
-           onLoad: js.Function1[HTMLImageElement, Unit] = js.native,
-           onProgress: js.Function1[js.Any, Unit] = js.native,
-           onError: js.Function1[js.Any, Unit] = js.native): HTMLImageElement = js.native
-  def setCrossOrigin(crossOrigin: String): Unit                               = js.native
+  def load(
+        url: String,
+        onLoad: js.Function1[HTMLImageElement, Unit] = js.native,
+        onProgress: js.Function1[js.Any, Unit] = js.native,
+        onError: js.Function1[js.Any, Unit] = js.native
+  ): HTMLImageElement                           = js.native
+  def setCrossOrigin(crossOrigin: String): Unit = js.native
 }
 
 @js.native
@@ -940,14 +978,18 @@ class JSONLoader extends Loader {
 
   def this(showStatus: Boolean = js.native) = this()
 
-  def load(url: String,
-           callback: js.Function2[Geometry, js.Array[Material], Unit],
-           texturePath: String = js.native): Unit = js.native
-  def loadAjaxJSON(context: JSONLoader,
-                   url: String,
-                   callback: js.Function2[Geometry, js.Array[Material], Unit],
-                   texturePath: String = js.native,
-                   callbackProgress: js.Function1[Progress, Unit] = js.native): Unit =
+  def load(
+        url: String,
+        callback: js.Function2[Geometry, js.Array[Material], Unit],
+        texturePath: String = js.native
+  ): Unit = js.native
+  def loadAjaxJSON(
+        context: JSONLoader,
+        url: String,
+        callback: js.Function2[Geometry, js.Array[Material], Unit],
+        texturePath: String = js.native,
+        callbackProgress: js.Function1[Progress, Unit] = js.native
+  ): Unit =
     js.native
   def parse(json: String, texturePath: String): js.Dynamic = js.native
 }
@@ -964,9 +1006,11 @@ class LoadingManager extends js.Object {
   var onProgress: js.Function3[js.Any, Double, Double, Unit] = js.native
   var onError: js.Function0[Unit]                            = js.native
 
-  def this(onLoad: js.Function0[Unit] = js.native,
-           onProgress: js.Function3[String, Double, Double, Unit] = js.native,
-           onError: js.Function0[Unit] = js.native) = this()
+  def this(
+        onLoad: js.Function0[Unit] = js.native,
+        onProgress: js.Function3[String, Double, Double, Unit] = js.native,
+        onError: js.Function0[Unit] = js.native
+  ) = this()
 
   def itemStart(url: String): Unit = js.native
   def itemEnd(url: String): Unit   = js.native
@@ -990,9 +1034,11 @@ class ObjectLoader extends js.Object {
   def parse[T <: Object3D](json: js.Any): T                         = js.native
   def parseGeometries(json: js.Any): js.Array[js.Any]               = js.native
   def parseMaterials(json: js.Any): js.Array[Material]              = js.native
-  def parseObject[T <: Object3D](data: js.Any,
-                                 geometries: js.Array[js.Any],
-                                 materials: js.Array[Material]): T = js.native
+  def parseObject[T <: Object3D](
+        data: js.Any,
+        geometries: js.Array[js.Any],
+        materials: js.Array[Material]
+  ): T = js.native
 }
 
 @js.native
@@ -1014,12 +1060,14 @@ class XHRLoader extends js.Object {
 
   def this(manager: LoadingManager = js.native) = this()
 
-  def load(url: String,
-           onLoad: js.Function1[String, Unit] = js.native,
-           onProgress: js.Function1[js.Any, Unit] = js.native,
-           onError: js.Function1[js.Any, Unit] = js.native): Unit = js.native
-  def setResponseType(responseType: String): Unit                 = js.native
-  def setCrossOrigin(crossOrigin: String): Unit                   = js.native
+  def load(
+        url: String,
+        onLoad: js.Function1[String, Unit] = js.native,
+        onProgress: js.Function1[js.Any, Unit] = js.native,
+        onError: js.Function1[js.Any, Unit] = js.native
+  ): Unit                                         = js.native
+  def setResponseType(responseType: String): Unit = js.native
+  def setCrossOrigin(crossOrigin: String): Unit   = js.native
 }
 
 @js.native
@@ -1757,10 +1805,12 @@ class Euler extends js.Object {
   var order: String                = js.native
   var onChange: js.Function0[Unit] = js.native
 
-  def this(x: Double = js.native,
-           y: Double = js.native,
-           z: Double = js.native,
-           order: String = js.native) = this()
+  def this(
+        x: Double = js.native,
+        y: Double = js.native,
+        z: Double = js.native,
+        order: String = js.native
+  ) = this()
 
   def set(x: Double, y: Double, z: Double, order: String = js.native): Euler = js.native
 
@@ -1768,9 +1818,11 @@ class Euler extends js.Object {
 
   def setFromRotationMatrix(m: Matrix4, order: String = js.native): Euler = js.native
 
-  def setFromQuaternion(q: Quaternion,
-                        order: String = js.native,
-                        update: Boolean = js.native): Euler = js.native
+  def setFromQuaternion(
+        q: Quaternion,
+        order: String = js.native,
+        update: Boolean = js.native
+  ): Euler = js.native
 
   def reorder(newOrder: String): Euler = js.native
 
@@ -1788,19 +1840,23 @@ class Euler extends js.Object {
 class Frustum extends js.Object {
   var planes: js.Array[Plane] = js.native
 
-  def this(p0: Plane = js.native,
-           p1: Plane = js.native,
-           p2: Plane = js.native,
-           p3: Plane = js.native,
-           p4: Plane = js.native,
-           p5: Plane = js.native) = this()
+  def this(
+        p0: Plane = js.native,
+        p1: Plane = js.native,
+        p2: Plane = js.native,
+        p3: Plane = js.native,
+        p4: Plane = js.native,
+        p5: Plane = js.native
+  ) = this()
 
-  def set(p0: Double = js.native,
-          p1: Double = js.native,
-          p2: Double = js.native,
-          p3: Double = js.native,
-          p4: Double = js.native,
-          p5: Double = js.native): Frustum          = js.native
+  def set(
+        p0: Double = js.native,
+        p1: Double = js.native,
+        p2: Double = js.native,
+        p3: Double = js.native,
+        p4: Double = js.native,
+        p5: Double = js.native
+  ): Frustum                                        = js.native
   def copy(frustum: Frustum): Frustum               = js.native
   def setFromMatrix(m: Matrix4): Frustum            = js.native
   def intersectsObject(`object`: Object3D): Boolean = js.native
@@ -1825,14 +1881,18 @@ class Line3 extends js.Object {
   def distanceSq(): Double                                             = js.native
   def distance(): Double                                               = js.native
   def at(t: Double, optionalTarget: Vector3 = js.native): Vector3      = js.native
-  def closestPointToPointParameter(point: Vector3,
-                                   clampToLine: Boolean = js.native): Double = js.native
-  def closestPointToPoint(point: Vector3,
-                          clampToLine: Boolean = js.native,
-                          optionalTarget: Vector3 = js.native): Vector3 = js.native
-  def applyMatrix4(matrix: Matrix4): Line3                              = js.native
-  def equals(line: Line3): Boolean                                      = js.native
-  override def clone(): Line3                                           = js.native
+  def closestPointToPointParameter(
+        point: Vector3,
+        clampToLine: Boolean = js.native
+  ): Double = js.native
+  def closestPointToPoint(
+        point: Vector3,
+        clampToLine: Boolean = js.native,
+        optionalTarget: Vector3 = js.native
+  ): Vector3                               = js.native
+  def applyMatrix4(matrix: Matrix4): Line3 = js.native
+  def equals(line: Line3): Boolean         = js.native
+  override def clone(): Line3              = js.native
 }
 
 @js.native
@@ -1869,35 +1929,41 @@ trait Matrix extends js.Object {
 @js.native
 @JSGlobal("THREE.Matrix3")
 class Matrix3 extends Matrix {
-  def this(n11: Double,
-           n12: Double,
-           n13: Double,
-           n21: Double,
-           n22: Double,
-           n23: Double,
-           n31: Double,
-           n32: Double,
-           n33: Double) = this()
+  def this(
+        n11: Double,
+        n12: Double,
+        n13: Double,
+        n21: Double,
+        n22: Double,
+        n23: Double,
+        n31: Double,
+        n32: Double,
+        n33: Double
+  ) = this()
 
-  def set(n11: Double,
-          n12: Double,
-          n13: Double,
-          n21: Double,
-          n22: Double,
-          n23: Double,
-          n31: Double,
-          n32: Double,
-          n33: Double): Matrix3    = js.native
+  def set(
+        n11: Double,
+        n12: Double,
+        n13: Double,
+        n21: Double,
+        n22: Double,
+        n23: Double,
+        n31: Double,
+        n32: Double,
+        n33: Double
+  ): Matrix3                       = js.native
   override def identity(): Matrix3 = js.native
   def copy(m: Matrix3): Matrix3    = js.native
-  def applyToVector3Array(array: js.Array[Double],
-                          offset: Double = js.native,
-                          length: Double = js.native): js.Array[Double] = js.native
-  override def multiplyScalar(s: Double): Matrix3                       = js.native
-  override def determinant(): Double                                    = js.native
-  def getInverse(matrix: Matrix3): Matrix3                              = js.native
-  def getInverse(matrix: Matrix3, throwOnInvertible: Boolean): Matrix3  = js.native
-  override def transpose(): Matrix3                                     = js.native
+  def applyToVector3Array(
+        array: js.Array[Double],
+        offset: Double = js.native,
+        length: Double = js.native
+  ): js.Array[Double]                                                  = js.native
+  override def multiplyScalar(s: Double): Matrix3                      = js.native
+  override def determinant(): Double                                   = js.native
+  def getInverse(matrix: Matrix3): Matrix3                             = js.native
+  def getInverse(matrix: Matrix3, throwOnInvertible: Boolean): Matrix3 = js.native
+  override def transpose(): Matrix3                                    = js.native
   def flattenToArrayOffset(array: js.Array[Double], offset: Double): js.Array[Double] =
     js.native
   def getNormalMatrix(m: Matrix4): Matrix3                      = js.native
@@ -1910,39 +1976,43 @@ class Matrix3 extends Matrix {
 @js.native
 @JSGlobal("THREE.Matrix4")
 class Matrix4 extends Matrix {
-  def this(n11: Double = js.native,
-           n12: Double = js.native,
-           n13: Double = js.native,
-           n14: Double = js.native,
-           n21: Double = js.native,
-           n22: Double = js.native,
-           n23: Double = js.native,
-           n24: Double = js.native,
-           n31: Double = js.native,
-           n32: Double = js.native,
-           n33: Double = js.native,
-           n34: Double = js.native,
-           n41: Double = js.native,
-           n42: Double = js.native,
-           n43: Double = js.native,
-           n44: Double = js.native) = this()
+  def this(
+        n11: Double = js.native,
+        n12: Double = js.native,
+        n13: Double = js.native,
+        n14: Double = js.native,
+        n21: Double = js.native,
+        n22: Double = js.native,
+        n23: Double = js.native,
+        n24: Double = js.native,
+        n31: Double = js.native,
+        n32: Double = js.native,
+        n33: Double = js.native,
+        n34: Double = js.native,
+        n41: Double = js.native,
+        n42: Double = js.native,
+        n43: Double = js.native,
+        n44: Double = js.native
+  ) = this()
 
-  def set(n11: Double,
-          n12: Double,
-          n13: Double,
-          n14: Double,
-          n21: Double,
-          n22: Double,
-          n23: Double,
-          n24: Double,
-          n31: Double,
-          n32: Double,
-          n33: Double,
-          n34: Double,
-          n41: Double,
-          n42: Double,
-          n43: Double,
-          n44: Double): Matrix4                                             = js.native
+  def set(
+        n11: Double,
+        n12: Double,
+        n13: Double,
+        n14: Double,
+        n21: Double,
+        n22: Double,
+        n23: Double,
+        n24: Double,
+        n31: Double,
+        n32: Double,
+        n33: Double,
+        n34: Double,
+        n41: Double,
+        n42: Double,
+        n43: Double,
+        n44: Double
+  ): Matrix4                                                                = js.native
   override def identity(): Matrix4                                          = js.native
   def copy(m: Matrix4): Matrix4                                             = js.native
   def copyPosition(m: Matrix4): Matrix4                                     = js.native
@@ -1954,11 +2024,13 @@ class Matrix4 extends Matrix {
   def multiplyMatrices(a: Matrix4, b: Matrix4): Matrix4                     = js.native
   def multiplyToArray(a: Matrix4, b: Matrix4, r: js.Array[Double]): Matrix4 = js.native
   override def multiplyScalar(s: Double): Matrix4                           = js.native
-  def applyToVector3Array(array: js.Array[Double],
-                          offset: Double = js.native,
-                          length: Double = js.native): js.Array[Double] = js.native
-  override def determinant(): Double                                    = js.native
-  override def transpose(): Matrix4                                     = js.native
+  def applyToVector3Array(
+        array: js.Array[Double],
+        offset: Double = js.native,
+        length: Double = js.native
+  ): js.Array[Double]                = js.native
+  override def determinant(): Double = js.native
+  override def transpose(): Matrix4  = js.native
   def flattenToArrayOffset(array: js.Array[Double], offset: Double): js.Array[Double] =
     js.native
   def setPosition(v: Vector3): Vector3                            = js.native
@@ -1974,23 +2046,29 @@ class Matrix4 extends Matrix {
   def makeScale(x: Double, y: Double, z: Double): Matrix4         = js.native
   def compose(translation: Vector3, rotation: Quaternion, scale: Vector3): Matrix4 =
     js.native
-  def decompose(translation: Vector3 = js.native,
-                rotation: Quaternion = js.native,
-                scale: Vector3 = js.native): js.Array[Object] = js.native
-  def makeFrustum(left: Double,
-                  right: Double,
-                  bottom: Double,
-                  top: Double,
-                  near: Double,
-                  far: Double): Matrix4 = js.native
+  def decompose(
+        translation: Vector3 = js.native,
+        rotation: Quaternion = js.native,
+        scale: Vector3 = js.native
+  ): js.Array[Object] = js.native
+  def makeFrustum(
+        left: Double,
+        right: Double,
+        bottom: Double,
+        top: Double,
+        near: Double,
+        far: Double
+  ): Matrix4 = js.native
   def makePerspective(fov: Double, aspect: Double, near: Double, far: Double): Matrix4 =
     js.native
-  def makeOrthographic(left: Double,
-                       right: Double,
-                       top: Double,
-                       bottom: Double,
-                       near: Double,
-                       far: Double): Matrix4      = js.native
+  def makeOrthographic(
+        left: Double,
+        right: Double,
+        top: Double,
+        bottom: Double,
+        near: Double,
+        far: Double
+  ): Matrix4                                      = js.native
   def fromArray(array: js.Array[Double]): Matrix4 = js.native
   def toArray(): js.Array[Double]                 = js.native
   override def clone(): Matrix4                   = js.native
@@ -2037,10 +2115,12 @@ class Quaternion extends js.Object {
   var w: Double                    = js.native
   var onChange: js.Function0[Unit] = js.native
 
-  def this(x: Double = js.native,
-           y: Double = js.native,
-           z: Double = js.native,
-           w: Double = js.native) = this()
+  def this(
+        x: Double = js.native,
+        y: Double = js.native,
+        z: Double = js.native,
+        w: Double = js.native
+  ) = this()
 
   def set(x: Double, y: Double, z: Double, w: Double): Quaternion = js.native
 
@@ -2105,10 +2185,12 @@ class Ray extends js.Object {
   def closestPointToPoint(point: Vector3, optionalTarget: Vector3 = js.native): Vector3 =
     js.native
   def distanceToPoint(point: Vector3): Double = js.native
-  def distanceSqToSegment(v0: Vector3,
-                          v1: Vector3,
-                          optionalPointOnRay: Vector3 = js.native,
-                          optionalPointOnSegment: Vector3 = js.native): Double =
+  def distanceSqToSegment(
+        v0: Vector3,
+        v1: Vector3,
+        optionalPointOnRay: Vector3 = js.native,
+        optionalPointOnSegment: Vector3 = js.native
+  ): Double =
     js.native
   def isIntersectionSphere(sphere: Sphere): Boolean = js.native
   def intersectSphere(sphere: Sphere, optionalTarget: Vector3 = js.native): Vector3 =
@@ -2119,14 +2201,16 @@ class Ray extends js.Object {
     js.native
   def isIntersectionBox(box: Box3): Boolean                                 = js.native
   def intersectBox(box: Box3, optionalTarget: Vector3 = js.native): Vector3 = js.native
-  def intersectTriangle(a: Vector3,
-                        b: Vector3,
-                        c: Vector3,
-                        backfaceCulling: Boolean,
-                        optionalTarget: Vector3 = js.native): Vector3 = js.native
-  def applyMatrix4(matrix4: Matrix4): Ray                             = js.native
-  def equals(ray: Ray): Boolean                                       = js.native
-  override def clone(): Ray                                           = js.native
+  def intersectTriangle(
+        a: Vector3,
+        b: Vector3,
+        c: Vector3,
+        backfaceCulling: Boolean,
+        optionalTarget: Vector3 = js.native
+  ): Vector3                              = js.native
+  def applyMatrix4(matrix4: Matrix4): Ray = js.native
+  def equals(ray: Ray): Boolean           = js.native
+  override def clone(): Ray               = js.native
 }
 
 @js.native
@@ -2138,13 +2222,15 @@ class Sphere extends js.Object {
   def this(center: Vector3 = js.native, radius: Double = js.native) = this()
 
   def set(center: Vector3, radius: Double): Sphere = js.native
-  def setFromPoints(points: js.Array[Vector3],
-                    optionalCenter: Vector3 = js.native): Sphere = js.native
-  def copy(sphere: Sphere): Sphere                               = js.native
-  def empty(): Boolean                                           = js.native
-  def containsPoint(point: Vector3): Boolean                     = js.native
-  def distanceToPoint(point: Vector3): Double                    = js.native
-  def intersectsSphere(sphere: Sphere): Boolean                  = js.native
+  def setFromPoints(
+        points: js.Array[Vector3],
+        optionalCenter: Vector3 = js.native
+  ): Sphere                                     = js.native
+  def copy(sphere: Sphere): Sphere              = js.native
+  def empty(): Boolean                          = js.native
+  def containsPoint(point: Vector3): Boolean    = js.native
+  def distanceToPoint(point: Vector3): Double   = js.native
+  def intersectsSphere(sphere: Sphere): Boolean = js.native
   def clampPoint(point: Vector3, optionalTarget: Vector3 = js.native): Vector3 =
     js.native
   def getBoundingBox(optionalTarget: Box3 = js.native): Box3 = js.native
@@ -2186,10 +2272,12 @@ class Triangle extends js.Object {
     this()
 
   def set(a: Vector3, b: Vector3, c: Vector3): Triangle = js.native
-  def setFromPointsAndIndices(points: js.Array[Vector3],
-                              i0: Double,
-                              i1: Double,
-                              i2: Double): Triangle          = js.native
+  def setFromPointsAndIndices(
+        points: js.Array[Vector3],
+        i0: Double,
+        i1: Double,
+        i2: Double
+  ): Triangle                                                = js.native
   def copy(triangle: Triangle): Triangle                     = js.native
   def area(): Double                                         = js.native
   def midpoint(optionalTarget: Vector3 = js.native): Vector3 = js.native
@@ -2205,15 +2293,19 @@ class Triangle extends js.Object {
 @js.native
 @JSGlobal("THREE.Triangle")
 object Triangle extends js.Object {
-  def normal(a: Vector3,
-             b: Vector3,
-             c: Vector3,
-             optionalTarget: Vector3 = js.native): Vector3 = js.native
-  def barycoordFromPoint(point: Vector3,
-                         a: Vector3,
-                         b: Vector3,
-                         c: Vector3,
-                         optionalTarget: Vector3): Vector3 = js.native
+  def normal(
+        a: Vector3,
+        b: Vector3,
+        c: Vector3,
+        optionalTarget: Vector3 = js.native
+  ): Vector3 = js.native
+  def barycoordFromPoint(
+        point: Vector3,
+        a: Vector3,
+        b: Vector3,
+        c: Vector3,
+        optionalTarget: Vector3
+  ): Vector3 = js.native
   def containsPoint(point: Vector3, a: Vector3, b: Vector3, c: Vector3): Boolean =
     js.native
 }
@@ -2368,10 +2460,12 @@ class Vector4 extends Vector {
   var z: Double = js.native
   var w: Double = js.native
 
-  def this(x: Double = js.native,
-           y: Double = js.native,
-           z: Double = js.native,
-           w: Double = js.native) = this()
+  def this(
+        x: Double = js.native,
+        y: Double = js.native,
+        z: Double = js.native,
+        w: Double = js.native
+  ) = this()
 
   def set(x: Double, y: Double, z: Double, w: Double): Vector4  = js.native
   def setX(x: Double): Vector4                                  = js.native
@@ -2433,9 +2527,11 @@ class Line extends Object3D {
   var material: LineMaterial = js.native
   var `type`: LineType       = js.native
 
-  def this(geometry: Geometry = js.native,
-           material: LineMaterial = js.native,
-           `type`: Double = js.native) = this()
+  def this(
+        geometry: Geometry = js.native,
+        material: LineMaterial = js.native,
+        `type`: Double = js.native
+  ) = this()
 
   override def raycast(raycaster: Raycaster, intersects: js.Any): Unit = js.native
   def clone(`object`: Line): Line                                      = js.native
@@ -2532,9 +2628,11 @@ class Skeleton extends js.Object {
   var boneTexture: DataTexture        = js.native
   var boneInverses: js.Array[Matrix4] = js.native
 
-  def this(bones: js.Array[Bone],
-           boneInverses: js.Array[Matrix4] = js.native,
-           useVertexTexture: Boolean = js.native) = this()
+  def this(
+        bones: js.Array[Bone],
+        boneInverses: js.Array[Matrix4] = js.native,
+        useVertexTexture: Boolean = js.native
+  ) = this()
 
   def calculateInverses(bone: Bone): Unit = js.native
   def pose(): Unit                        = js.native
@@ -2549,9 +2647,11 @@ class SkinnedMesh extends Mesh {
   var bindMatrixInverse: Matrix4 = js.native
   var skeleton: Skeleton         = js.native
 
-  def this(geometry: Geometry = js.native,
-           material: MeshBasicMaterial = js.native,
-           useVertexTexture: Boolean = js.native) = this()
+  def this(
+        geometry: Geometry = js.native,
+        material: MeshBasicMaterial = js.native,
+        useVertexTexture: Boolean = js.native
+  ) = this()
 
   def bind(skeleton: Skeleton): Unit = js.native
 
@@ -2610,9 +2710,11 @@ class CanvasRenderer extends Renderer {
 
   def supportsVertexTextures(): Unit = js.native
   def setFaceCulling(): Unit         = js.native
-  override def setSize(width: Double,
-                       height: Double,
-                       updateStyle: Boolean = js.native): Unit               = js.native
+  override def setSize(
+        width: Double,
+        height: Double,
+        updateStyle: Boolean = js.native
+  ): Unit                                                                    = js.native
   def setViewport(x: Double, y: Double, width: Double, height: Double): Unit = js.native
   def setScissor(): Unit                                                     = js.native
   def setScissorTest(enable: Boolean): Unit                                  = js.native
@@ -2631,10 +2733,12 @@ class CanvasRenderer extends Renderer {
 @js.native
 trait RendererPlugin extends js.Object {
   def init(renderer: WebGLRenderer): Unit = js.native
-  def render(scene: Scene,
-             camera: Camera,
-             currentWidth: Double,
-             currentHeight: Double): Unit = js.native
+  def render(
+        scene: Scene,
+        camera: Camera,
+        currentWidth: Double,
+        currentHeight: Double
+  ): Unit = js.native
 }
 
 @js.native
@@ -2689,65 +2793,87 @@ class WebGLRenderer extends Renderer {
   def supportsCompressedTextureS3TC(): Boolean = js.native
   def getMaxAnisotropy(): Double               = js.native
   def getPrecision(): String                   = js.native
-  override def setSize(width: Double,
-                       height: Double,
-                       updateStyle: Boolean = js.native): Unit = js.native
-  def setViewport(x: Double = js.native,
-                  y: Double = js.native,
-                  width: Double = js.native,
-                  height: Double = js.native): Unit                         = js.native
+  override def setSize(
+        width: Double,
+        height: Double,
+        updateStyle: Boolean = js.native
+  ): Unit = js.native
+  def setViewport(
+        x: Double = js.native,
+        y: Double = js.native,
+        width: Double = js.native,
+        height: Double = js.native
+  ): Unit                                                                   = js.native
   def setScissor(x: Double, y: Double, width: Double, height: Double): Unit = js.native
   def setScissorTest(enable: Boolean): Unit                                 = js.native
   def setClearColor(color: Color, alpha: Double = js.native): Unit          = js.native
   def setClearColorHex(hex: Double, alpha: Double): Unit                    = js.native
   def getClearColor(): Color                                                = js.native
   def getClearAlpha(): Double                                               = js.native
-  def clear(color: Boolean = js.native,
-            depth: Boolean = js.native,
-            stencil: Boolean = js.native): Unit = js.native
-  def clearColor(): Unit                        = js.native
-  def clearDepth(): Unit                        = js.native
-  def clearStencil(): Unit                      = js.native
-  def clearTarget(renderTarget: WebGLRenderTarget,
-                  color: Boolean,
-                  depth: Boolean,
-                  stencil: Boolean): Unit                 = js.native
+  def clear(
+        color: Boolean = js.native,
+        depth: Boolean = js.native,
+        stencil: Boolean = js.native
+  ): Unit                  = js.native
+  def clearColor(): Unit   = js.native
+  def clearDepth(): Unit   = js.native
+  def clearStencil(): Unit = js.native
+  def clearTarget(
+        renderTarget: WebGLRenderTarget,
+        color: Boolean,
+        depth: Boolean,
+        stencil: Boolean
+  ): Unit                                                 = js.native
   def addPostPlugin(plugin: RendererPlugin): Unit         = js.native
   def addPrePlugin(plugin: RendererPlugin): Unit          = js.native
   def updateShadowMap(scene: Scene, camera: Camera): Unit = js.native
-  def renderBufferImmediate(`object`: Object3D,
-                            program: Object,
-                            material: Material): Unit = js.native
-  def renderBufferDirect(camera: Camera,
-                         lights: js.Array[Light],
-                         fog: Fog,
-                         material: Material,
-                         geometryGroup: js.Any,
-                         `object`: Object3D): Unit = js.native
-  def renderBuffer(camera: Camera,
-                   lights: js.Array[Light],
-                   fog: Fog,
-                   material: Material,
-                   geometryGroup: js.Any,
-                   `object`: Object3D): Unit = js.native
-  def render(scene: Scene,
-             camera: Camera,
-             renderTarget: RenderTarget = js.native,
-             forceClear: Boolean = js.native): Unit = js.native
-  def renderImmediateObject(camera: Camera,
-                            lights: js.Array[Light],
-                            fog: Fog,
-                            material: Material,
-                            `object`: Object3D): Unit = js.native
-  def setFaceCulling(cullFace: CullFace = js.native,
-                     frontFace: FrontFaceDirection = js.native): Unit = js.native
-  def setMaterialFaces(material: Material): Unit                      = js.native
-  def setDepthTest(depthTest: Boolean): Unit                          = js.native
-  def setDepthWrite(depthWrite: Boolean): Unit                        = js.native
-  def setBlending(blending: Blending,
-                  blendEquation: BlendingEquation,
-                  blendSrc: BlendingSrcFactor,
-                  blendDst: BlendingDstFactor): Unit    = js.native
+  def renderBufferImmediate(
+        `object`: Object3D,
+        program: Object,
+        material: Material
+  ): Unit = js.native
+  def renderBufferDirect(
+        camera: Camera,
+        lights: js.Array[Light],
+        fog: Fog,
+        material: Material,
+        geometryGroup: js.Any,
+        `object`: Object3D
+  ): Unit = js.native
+  def renderBuffer(
+        camera: Camera,
+        lights: js.Array[Light],
+        fog: Fog,
+        material: Material,
+        geometryGroup: js.Any,
+        `object`: Object3D
+  ): Unit = js.native
+  def render(
+        scene: Scene,
+        camera: Camera,
+        renderTarget: RenderTarget = js.native,
+        forceClear: Boolean = js.native
+  ): Unit = js.native
+  def renderImmediateObject(
+        camera: Camera,
+        lights: js.Array[Light],
+        fog: Fog,
+        material: Material,
+        `object`: Object3D
+  ): Unit = js.native
+  def setFaceCulling(
+        cullFace: CullFace = js.native,
+        frontFace: FrontFaceDirection = js.native
+  ): Unit                                        = js.native
+  def setMaterialFaces(material: Material): Unit = js.native
+  def setDepthTest(depthTest: Boolean): Unit     = js.native
+  def setDepthWrite(depthWrite: Boolean): Unit   = js.native
+  def setBlending(
+        blending: Blending,
+        blendEquation: BlendingEquation,
+        blendSrc: BlendingSrcFactor,
+        blendDst: BlendingDstFactor
+  ): Unit                                               = js.native
   def setTexture(texture: Texture, slot: Double): Unit  = js.native
   def setRenderTarget(renderTarget: RenderTarget): Unit = js.native
 }
@@ -2979,10 +3105,12 @@ object UniformsUtils extends js.Object {
 @js.native
 @JSGlobal("THREE.WebGLProgram")
 class WebGLProgram extends js.Object {
-  def this(renderer: WebGLRenderer,
-           code: String,
-           material: ShaderMaterial,
-           parameters: WebGLRendererParameters) = this()
+  def this(
+        renderer: WebGLRenderer,
+        code: String,
+        material: ShaderMaterial,
+        parameters: WebGLRendererParameters
+  ) = this()
 }
 
 @js.native
@@ -3031,17 +3159,19 @@ class Scene extends Object3D {
 @js.native
 @JSGlobal("THREE.CompressedTexture")
 class CompressedTexture extends Texture {
-  def this(mipmaps: js.Array[ImageData],
-           width: Double,
-           height: Double,
-           format: PixelFormat = js.native,
-           `type`: TextureDataType = js.native,
-           mapping: Mapping = js.native,
-           wrapS: Wrapping = js.native,
-           wrapT: Wrapping = js.native,
-           magFilter: TextureFilter = js.native,
-           minFilter: TextureFilter = js.native,
-           anisotropy: Double = js.native) = this()
+  def this(
+        mipmaps: js.Array[ImageData],
+        width: Double,
+        height: Double,
+        format: PixelFormat = js.native,
+        `type`: TextureDataType = js.native,
+        mapping: Mapping = js.native,
+        wrapS: Wrapping = js.native,
+        wrapT: Wrapping = js.native,
+        magFilter: TextureFilter = js.native,
+        minFilter: TextureFilter = js.native,
+        anisotropy: Double = js.native
+  ) = this()
 
   override def clone(): CompressedTexture = js.native
 }
@@ -3051,15 +3181,17 @@ class CompressedTexture extends Texture {
 class CubeTexture extends Texture {
   var images: js.Array[js.Any] = js.native
 
-  def this(images: js.Array[js.Any],
-           mapping: Mapping = js.native,
-           wrapS: Wrapping = js.native,
-           wrapT: Wrapping = js.native,
-           magFilter: TextureFilter = js.native,
-           minFilter: TextureFilter = js.native,
-           format: PixelFormat = js.native,
-           `type`: TextureDataType = js.native,
-           anisotropy: Double = js.native) = this()
+  def this(
+        images: js.Array[js.Any],
+        mapping: Mapping = js.native,
+        wrapS: Wrapping = js.native,
+        wrapT: Wrapping = js.native,
+        magFilter: TextureFilter = js.native,
+        minFilter: TextureFilter = js.native,
+        format: PixelFormat = js.native,
+        `type`: TextureDataType = js.native,
+        anisotropy: Double = js.native
+  ) = this()
 
   def clone(texture: CubeTexture): CubeTexture = js.native
 }
@@ -3067,17 +3199,19 @@ class CubeTexture extends Texture {
 @js.native
 @JSGlobal("THREE.DataTexture")
 class DataTexture extends Texture {
-  def this(data: ImageData,
-           width: Double,
-           height: Double,
-           format: PixelFormat,
-           `type`: TextureDataType,
-           mapping: Mapping,
-           wrapS: Wrapping,
-           wrapT: Wrapping,
-           magFilter: TextureFilter,
-           minFilter: TextureFilter,
-           anisotropy: Double = js.native) = this()
+  def this(
+        data: ImageData,
+        width: Double,
+        height: Double,
+        format: PixelFormat,
+        `type`: TextureDataType,
+        mapping: Mapping,
+        wrapS: Wrapping,
+        wrapT: Wrapping,
+        magFilter: TextureFilter,
+        minFilter: TextureFilter,
+        anisotropy: Double = js.native
+  ) = this()
 
   override def clone(): DataTexture = js.native
 }
@@ -3107,15 +3241,17 @@ class Texture extends js.Object {
   var needsUpdate: Boolean         = js.native
   var onUpdate: js.Function0[Unit] = js.native
 
-  def this(image: js.Any,
-           mapping: Mapping = js.native,
-           wrapS: Wrapping = js.native,
-           wrapT: Wrapping = js.native,
-           magFilter: TextureFilter = js.native,
-           minFilter: TextureFilter = js.native,
-           format: PixelFormat = js.native,
-           `type`: TextureDataType = js.native,
-           anisotropy: Double = js.native) = this()
+  def this(
+        image: js.Any,
+        mapping: Mapping = js.native,
+        wrapS: Wrapping = js.native,
+        wrapT: Wrapping = js.native,
+        magFilter: TextureFilter = js.native,
+        minFilter: TextureFilter = js.native,
+        format: PixelFormat = js.native,
+        `type`: TextureDataType = js.native,
+        anisotropy: Double = js.native
+  ) = this()
 
   override def clone(): Texture = js.native
   def update(): Unit            = js.native
@@ -3145,27 +3281,35 @@ trait TypefaceData extends js.Object {
 @js.native
 @JSGlobal("THREE.GeometryUtils")
 object GeometryUtils extends js.Object {
-  def merge(geometry1: Geometry,
-            object2: Mesh,
-            materialIndexOffset: Double = js.native): Unit = js.native
-  def center(geometry: Geometry): Vector3                  = js.native
+  def merge(
+        geometry1: Geometry,
+        object2: Mesh,
+        materialIndexOffset: Double = js.native
+  ): Unit                                 = js.native
+  def center(geometry: Geometry): Vector3 = js.native
 }
 
 @js.native
 @JSGlobal("THREE.ImageUtils")
 object ImageUtils extends js.Object {
   var crossOrigin: String = js.native
-  def loadTexture(url: String,
-                  mapping: Mapping = js.native,
-                  onLoad: js.Function1[Texture, Unit] = js.native,
-                  onError: js.Function1[String, Unit] = js.native): Texture = js.native
-  def loadTextureCube(array: js.Array[String],
-                      mapping: Mapping = js.native,
-                      onLoad: js.Function1[Texture, Unit] = js.native,
-                      onError: js.Function1[String, Unit] = js.native): Texture =
+  def loadTexture(
+        url: String,
+        mapping: Mapping = js.native,
+        onLoad: js.Function1[Texture, Unit] = js.native,
+        onError: js.Function1[String, Unit] = js.native
+  ): Texture = js.native
+  def loadTextureCube(
+        array: js.Array[String],
+        mapping: Mapping = js.native,
+        onLoad: js.Function1[Texture, Unit] = js.native,
+        onError: js.Function1[String, Unit] = js.native
+  ): Texture =
     js.native
-  def getNormalMap(image: HTMLImageElement,
-                   depth: Double = js.native): HTMLCanvasElement = js.native
+  def getNormalMap(
+        image: HTMLImageElement,
+        depth: Double = js.native
+  ): HTMLCanvasElement = js.native
   def generateDataTexture(width: Double, height: Double, color: Color): DataTexture =
     js.native
 }
@@ -3173,10 +3317,12 @@ object ImageUtils extends js.Object {
 @js.native
 @JSGlobal("THREE.SceneUtils")
 object SceneUtils extends js.Object {
-  def createMultiMaterialObject(geometry: Geometry,
-                                materials: js.Array[Material]): Object3D = js.native
-  def detach(child: Object3D, parent: Object3D, scene: Scene): Unit      = js.native
-  def attach(child: Object3D, scene: Scene, parent: Object3D): Unit      = js.native
+  def createMultiMaterialObject(
+        geometry: Geometry,
+        materials: js.Array[Material]
+  ): Object3D                                                       = js.native
+  def detach(child: Object3D, parent: Object3D, scene: Scene): Unit = js.native
+  def attach(child: Object3D, scene: Scene, parent: Object3D): Unit = js.native
 }
 
 @js.native
@@ -3329,8 +3475,10 @@ class CurvePath extends Curve {
   def addWrapPath(bendpath: Path): Unit                       = js.native
   def getTransformedPoints(segments: Double, bends: Path = js.native): js.Array[Vector2] =
     js.native
-  def getTransformedSpacedPoints(segments: Double,
-                                 bends: js.Array[Path] = js.native): js.Array[Vector2] =
+  def getTransformedSpacedPoints(
+        segments: Double,
+        bends: js.Array[Path] = js.native
+  ): js.Array[Vector2] =
     js.native
   def getWrapPoints(oldPts: js.Array[Vector2], path: Path): js.Array[Vector2] = js.native
 }
@@ -3382,40 +3530,50 @@ class Path extends CurvePath {
   def lineTo(x: Double, y: Double): Unit           = js.native
   def quadraticCurveTo(aCPx: Double, aCPy: Double, aX: Double, aY: Double): Unit =
     js.native
-  def bezierCurveTo(aCP1x: Double,
-                    aCP1y: Double,
-                    aCP2x: Double,
-                    aCP2y: Double,
-                    aX: Double,
-                    aY: Double): Unit          = js.native
+  def bezierCurveTo(
+        aCP1x: Double,
+        aCP1y: Double,
+        aCP2x: Double,
+        aCP2y: Double,
+        aX: Double,
+        aY: Double
+  ): Unit                                      = js.native
   def splineThru(pts: js.Array[Vector2]): Unit = js.native
-  def arc(aX: Double,
-          aY: Double,
-          aRadius: Double,
-          aStartAngle: Double,
-          aEndAngle: Double,
-          aClockwise: Boolean): Unit = js.native
-  def absarc(aX: Double,
-             aY: Double,
-             aRadius: Double,
-             aStartAngle: Double,
-             aEndAngle: Double,
-             aClockwise: Boolean): Unit = js.native
-  def ellipse(aX: Double,
-              aY: Double,
-              xRadius: Double,
-              yRadius: Double,
-              aStartAngle: Double,
-              aEndAngle: Double,
-              aClockwise: Boolean): Unit = js.native
-  def absellipse(aX: Double,
-                 aY: Double,
-                 xRadius: Double,
-                 yRadius: Double,
-                 aStartAngle: Double,
-                 aEndAngle: Double,
-                 aClockwise: Boolean): Unit = js.native
-  def getSpacedPoints(): js.Array[Vector]   = js.native
+  def arc(
+        aX: Double,
+        aY: Double,
+        aRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ): Unit = js.native
+  def absarc(
+        aX: Double,
+        aY: Double,
+        aRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ): Unit = js.native
+  def ellipse(
+        aX: Double,
+        aY: Double,
+        xRadius: Double,
+        yRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ): Unit = js.native
+  def absellipse(
+        aX: Double,
+        aY: Double,
+        xRadius: Double,
+        yRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ): Unit                                 = js.native
+  def getSpacedPoints(): js.Array[Vector] = js.native
   def getSpacedPoints(divisions: Double, closedPath: Boolean): js.Array[Vector] =
     js.native
   def getPoints(): js.Array[Vector]                                       = js.native
@@ -3445,12 +3603,14 @@ class Shape extends Path {
 @js.native
 @JSGlobal("THREE.ArcCurve")
 class ArcCurve extends EllipseCurve {
-  def this(aX: Double,
-           aY: Double,
-           aRadius: Double,
-           aStartAngle: Double,
-           aEndAngle: Double,
-           aClockwise: Boolean) = this()
+  def this(
+        aX: Double,
+        aY: Double,
+        aRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ) = this()
 }
 
 @js.native
@@ -3491,13 +3651,15 @@ class EllipseCurve extends Curve {
   var aEndAngle: Double   = js.native
   var aClockwise: Boolean = js.native
 
-  def this(aX: Double,
-           aY: Double,
-           xRadius: Double,
-           yRadius: Double,
-           aStartAngle: Double,
-           aEndAngle: Double,
-           aClockwise: Boolean) = this()
+  def this(
+        aX: Double,
+        aY: Double,
+        xRadius: Double,
+        yRadius: Double,
+        aStartAngle: Double,
+        aEndAngle: Double,
+        aClockwise: Boolean
+  ) = this()
 
   override def getPoint(t: Double): Vector2 = js.native
 }
@@ -3579,12 +3741,14 @@ class BoxGeometry extends Geometry {
   var heightSegments: Double = js.native
   var depthSegments: Double  = js.native
 
-  def this(width: Double,
-           height: Double,
-           depth: Double,
-           widthSegments: Double = js.native,
-           heightSegments: Double = js.native,
-           depthSegments: Double = js.native) = this()
+  def this(
+        width: Double,
+        height: Double,
+        depth: Double,
+        widthSegments: Double = js.native,
+        heightSegments: Double = js.native,
+        depthSegments: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3596,10 +3760,12 @@ class CircleGeometry extends Geometry {
   var thetaStart: Double  = js.native
   var thetaLength: Double = js.native
 
-  def this(radius: Double = js.native,
-           segments: Double = js.native,
-           thetaStart: Double = js.native,
-           thetaLength: Double = js.native) = this()
+  def this(
+        radius: Double = js.native,
+        segments: Double = js.native,
+        thetaStart: Double = js.native,
+        thetaLength: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3617,12 +3783,14 @@ class CylinderGeometry extends Geometry {
   var heightSegments: Double = js.native
   var openEnded: Boolean     = js.native
 
-  def this(radiusTop: Double = js.native,
-           radiusBottom: Double = js.native,
-           height: Double = js.native,
-           radiusSegments: Double = js.native,
-           heightSegments: Double = js.native,
-           openEnded: Boolean = js.native) = this()
+  def this(
+        radiusTop: Double = js.native,
+        radiusBottom: Double = js.native,
+        height: Double = js.native,
+        radiusSegments: Double = js.native,
+        heightSegments: Double = js.native,
+        openEnded: Boolean = js.native
+  ) = this()
 }
 
 @js.native
@@ -3651,10 +3819,12 @@ class IcosahedronGeometry extends PolyhedronGeometry {
 @js.native
 @JSGlobal("THREE.LatheGeometry")
 class LatheGeometry extends Geometry {
-  def this(points: js.Array[Vector3],
-           segments: Double = js.native,
-           phiStart: Double = js.native,
-           phiLength: Double = js.native) = this()
+  def this(
+        points: js.Array[Vector3],
+        segments: Double = js.native,
+        phiStart: Double = js.native,
+        phiLength: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3670,10 +3840,12 @@ class OctahedronGeometry extends PolyhedronGeometry {
 @js.native
 @JSGlobal("THREE.ParametricGeometry")
 class ParametricGeometry extends Geometry {
-  def this(func: js.Function2[Double, Double, Vector3],
-           slices: Double,
-           stacks: Double,
-           useTris: Boolean = js.native) = this()
+  def this(
+        func: js.Function2[Double, Double, Vector3],
+        slices: Double,
+        stacks: Double,
+        useTris: Boolean = js.native
+  ) = this()
 }
 
 @js.native
@@ -3685,30 +3857,36 @@ class PlaneGeometry extends Geometry {
   var widthSegments: Double  = js.native
   var heightSegments: Double = js.native
 
-  def this(width: Double,
-           height: Double,
-           widthSegments: Double = js.native,
-           heightSegments: Double = js.native) = this()
+  def this(
+        width: Double,
+        height: Double,
+        widthSegments: Double = js.native,
+        heightSegments: Double = js.native
+  ) = this()
 }
 
 @js.native
 @JSGlobal("THREE.PolyhedronGeometry")
 class PolyhedronGeometry extends Geometry {
-  def this(vertices: js.Array[Vector3],
-           faces: js.Array[Face3],
-           radius: Double = js.native,
-           detail: Double = js.native) = this()
+  def this(
+        vertices: js.Array[Vector3],
+        faces: js.Array[Face3],
+        radius: Double = js.native,
+        detail: Double = js.native
+  ) = this()
 }
 
 @js.native
 @JSGlobal("THREE.RingGeometry")
 class RingGeometry extends Geometry {
-  def this(innerRadius: Double = js.native,
-           outerRadius: Double = js.native,
-           thetaSegments: Double = js.native,
-           phiSegments: Double = js.native,
-           thetaStart: Double = js.native,
-           thetaLength: Double = js.native) = this()
+  def this(
+        innerRadius: Double = js.native,
+        outerRadius: Double = js.native,
+        thetaSegments: Double = js.native,
+        phiSegments: Double = js.native,
+        thetaStart: Double = js.native,
+        thetaLength: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3726,14 +3904,15 @@ class ShapeGeometry extends Geometry {
 
 @js.native
 @JSGlobal("THREE.ConeGeometry")
-class ConeGeometry(radius: Double = js.native,
-                   height: Double = js.native,
-                   radialSegments: Int = js.native,
-                   heightSegments: Int = js.native,
-                   openEnded: Boolean = js.native,
-                   thetaStart: Double = js.native,
-                   thetaLength: Double = js.native)
-    extends Geometry {
+class ConeGeometry(
+      radius: Double = js.native,
+      height: Double = js.native,
+      radialSegments: Int = js.native,
+      heightSegments: Int = js.native,
+      openEnded: Boolean = js.native,
+      thetaStart: Double = js.native,
+      thetaLength: Double = js.native
+) extends Geometry {
   var parameters: js.Any = js.native
 }
 
@@ -3749,13 +3928,15 @@ class SphereGeometry extends Geometry {
   var thetaStart: Double     = js.native
   var thetaLength: Double    = js.native
 
-  def this(radius: Double,
-           widthSegments: Double = js.native,
-           heightSegments: Double = js.native,
-           phiStart: Double = js.native,
-           phiLength: Double = js.native,
-           thetaStart: Double = js.native,
-           thetaLength: Double = js.native) = this()
+  def this(
+        radius: Double,
+        widthSegments: Double = js.native,
+        heightSegments: Double = js.native,
+        phiStart: Double = js.native,
+        phiLength: Double = js.native,
+        thetaStart: Double = js.native,
+        thetaLength: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3787,11 +3968,13 @@ class TorusGeometry extends Geometry {
   var tubularSegments: Double = js.native
   var arc: Double             = js.native
 
-  def this(radius: Double = js.native,
-           tube: Double = js.native,
-           radialSegments: Double = js.native,
-           tubularSegments: Double = js.native,
-           arc: Double = js.native) = this()
+  def this(
+        radius: Double = js.native,
+        tube: Double = js.native,
+        radialSegments: Double = js.native,
+        tubularSegments: Double = js.native,
+        arc: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3806,13 +3989,15 @@ class TorusKnotGeometry extends Geometry {
   var q: Double               = js.native
   var heightScale: Double     = js.native
 
-  def this(radius: Double = js.native,
-           tube: Double = js.native,
-           radialSegments: Double = js.native,
-           tubularSegments: Double = js.native,
-           p: Double = js.native,
-           q: Double = js.native,
-           heightScale: Double = js.native) = this()
+  def this(
+        radius: Double = js.native,
+        tube: Double = js.native,
+        radialSegments: Double = js.native,
+        tubularSegments: Double = js.native,
+        p: Double = js.native,
+        q: Double = js.native,
+        heightScale: Double = js.native
+  ) = this()
 }
 
 @js.native
@@ -3828,11 +4013,13 @@ class TubeGeometry extends Geometry {
   var normals: js.Array[Vector3]   = js.native
   var binormals: js.Array[Vector3] = js.native
 
-  def this(path: Path,
-           segments: Double = js.native,
-           radius: Double = js.native,
-           radiusSegments: Double = js.native,
-           closed: Boolean = js.native) = this()
+  def this(
+        path: Path,
+        segments: Double = js.native,
+        radius: Double = js.native,
+        radiusSegments: Double = js.native,
+        closed: Boolean = js.native
+  ) = this()
 
   def FrenetFrames(path: Path, segments: Double, closed: Boolean): Unit = js.native
 }
@@ -3843,12 +4030,14 @@ class ArrowHelper extends Object3D {
   var line: Line = js.native
   var cone: Mesh = js.native
 
-  def this(dir: Vector3,
-           origin: Vector3 = js.native,
-           length: Double = js.native,
-           hex: Double = js.native,
-           headLength: Double = js.native,
-           headWidth: Double = js.native) = this()
+  def this(
+        dir: Vector3,
+        origin: Vector3 = js.native,
+        length: Double = js.native,
+        hex: Double = js.native,
+        headLength: Double = js.native,
+        headWidth: Double = js.native
+  ) = this()
 
   def setDirection(dir: Vector3): Unit                                       = js.native
   def setLength(length: Double): Unit                                        = js.native
@@ -3918,10 +4107,12 @@ class FaceNormalsHelper extends Line {
   var size: Double          = js.native
   var normalMatrix: Matrix3 = js.native
 
-  def this(`object`: Object3D,
-           size: Double = js.native,
-           hex: Double = js.native,
-           linewidth: Double = js.native) = this()
+  def this(
+        `object`: Object3D,
+        size: Double = js.native,
+        hex: Double = js.native,
+        linewidth: Double = js.native
+  ) = this()
 
   def update(`object`: Object3D = js.native): Unit = js.native
 }
@@ -4005,10 +4196,12 @@ class VertexTangentsHelper extends Line {
   var `object`: Object3D = js.native
   var size: Double       = js.native
 
-  def this(`object`: Object3D,
-           size: Double = js.native,
-           hex: Double = js.native,
-           linewidth: Double = js.native) = this()
+  def this(
+        `object`: Object3D,
+        size: Double = js.native,
+        hex: Double = js.native,
+        linewidth: Double = js.native
+  ) = this()
 
   def update(`object`: Object3D = js.native): Unit = js.native
 }
@@ -4047,19 +4240,23 @@ class LensFlare extends Object3D {
   var positionScreen: Vector3                             = js.native
   var customUpdateCallback: js.Function1[LensFlare, Unit] = js.native
 
-  def this(texture: Texture = js.native,
-           size: Double = js.native,
-           distance: Double = js.native,
-           blending: Blending = js.native,
-           color: Color = js.native) = this()
+  def this(
+        texture: Texture = js.native,
+        size: Double = js.native,
+        distance: Double = js.native,
+        blending: Blending = js.native,
+        color: Color = js.native
+  ) = this()
 
-  def add(texture: Texture,
-          size: Double = js.native,
-          distance: Double = js.native,
-          blending: Blending = js.native,
-          color: Color = js.native): Unit = js.native
-  override def add(obj: Object3D): Unit   = js.native
-  def updateLensFlares(): Unit            = js.native
+  def add(
+        texture: Texture,
+        size: Double = js.native,
+        distance: Double = js.native,
+        blending: Blending = js.native,
+        color: Color = js.native
+  ): Unit                               = js.native
+  override def add(obj: Object3D): Unit = js.native
+  def updateLensFlares(): Unit          = js.native
 }
 
 @js.native
@@ -4117,10 +4314,12 @@ class DepthPassPlugin extends RendererPlugin {
 @JSGlobal("THREE.LensFlarePlugin")
 class LensFlarePlugin extends RendererPlugin {
   def init(renderer: Renderer): Unit = js.native
-  override def render(scene: Scene,
-                      camera: Camera,
-                      viewportWidth: Double,
-                      viewportHeight: Double): Unit = js.native
+  override def render(
+        scene: Scene,
+        camera: Camera,
+        viewportWidth: Double,
+        viewportHeight: Double
+  ): Unit = js.native
 }
 
 @js.native
@@ -4135,10 +4334,12 @@ class ShadowMapPlugin extends RendererPlugin {
 @JSGlobal("THREE.SpritePlugin")
 class SpritePlugin extends RendererPlugin {
   def init(renderer: Renderer): Unit = js.native
-  override def render(scene: Scene,
-                      camera: Camera,
-                      viewportWidth: Double,
-                      viewportHeight: Double): Unit = js.native
+  override def render(
+        scene: Scene,
+        camera: Camera,
+        viewportWidth: Double,
+        viewportHeight: Double
+  ): Unit = js.native
 }
 
 @js.native

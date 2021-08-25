@@ -23,8 +23,8 @@ object GameMotion {
 class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(
-        implicit tracker: PlayfieldTracker[Sled]
+  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(implicit
+        tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
     driveSleds(sleds, deltaSeconds, gameTime)
@@ -33,8 +33,8 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(
-        implicit tracker: PlayfieldTracker[Snowball]
+  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(implicit
+        tracker: PlayfieldTracker[Snowball]
   ): Unit = {
     snowballs.foreach { snowball =>
       val wrappedPos = {
@@ -64,19 +64,24 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** apply any pending but not yet cancelled commands from user drive,
-    * e.g. braking or driving */
-  private def driveSleds(sleds: Iterable[Sled],
-                         deltaSeconds: Double,
-                         gameTime: Long): Unit = {
+    * e.g. braking or driving
+    */
+  private def driveSleds(
+        sleds: Iterable[Sled],
+        deltaSeconds: Double,
+        gameTime: Long
+  ): Unit = {
     for (sled <- sleds) {
       sled.driveMode.driveSled(sled, deltaSeconds, gameTime)
     }
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
-  private def updateSledSpeedVector(sleds: Iterable[Sled],
-                                    deltaSeconds: Double,
-                                    gameTime: Long): Unit = {
+  private def updateSledSpeedVector(
+        sleds: Iterable[Sled],
+        deltaSeconds: Double,
+        gameTime: Long
+  ): Unit = {
     sleds.foreach { sled =>
       import sled.{mass, rotation}
       val newSpeed = {
@@ -90,8 +95,8 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(
-        implicit tracker: PlayfieldTracker[Sled]
+  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(implicit
+        tracker: PlayfieldTracker[Sled]
   ): Unit = {
     for {
       sled <- sleds

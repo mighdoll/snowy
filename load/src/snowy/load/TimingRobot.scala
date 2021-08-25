@@ -10,7 +10,8 @@ import scala.concurrent.duration._
 import snowy.measures.Span
 
 /** A game client that sends ClientPing messages to the server
-  * and measures how long it takes for the server to respond */
+  * and measures how long it takes for the server to respond
+  */
 class TimingRobot[_: Actors: Measurement](url: String) extends Logging {
   implicit val dispatcher = implicitly[ActorSystem].dispatcher
   val period              = 1.second

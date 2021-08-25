@@ -17,15 +17,17 @@ import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.Dynamic
 
-class LoginGeometries(renderer: WebGLRenderer,
-                      clearConnection: => Unit,
-                      loginScreenActive: => Boolean,
-                      threeSledsFuture: Future[ThreeSleds]) {
+class LoginGeometries(
+      renderer: WebGLRenderer,
+      clearConnection: => Unit,
+      loginScreenActive: => Boolean,
+      threeSledsFuture: Future[ThreeSleds]
+) {
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
-  private val amb                  = new THREE.AmbientLight(0xFFFFFF, 0.7)
-  private val light                = new THREE.DirectionalLight(0xFFFFFF, 0.3)
+  private val amb                  = new THREE.AmbientLight(0xffffff, 0.7)
+  private val light                = new THREE.DirectionalLight(0xffffff, 0.3)
   private val raycaster            = new THREE.Raycaster()
   private val mouse                = new THREE.Vector2()
   private var threeSled            = new THREE.Object3D()
@@ -128,7 +130,9 @@ class LoginGeometries(renderer: WebGLRenderer,
       val mat2 = Mats.leave2.clone()
       mat.emissive.setHex(0x222222)
       mat2.emissive.setHex(0x222222)
-      if (intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2) {
+      if (
+        intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2
+      ) {
         Meshes.leave1.material = mat
         Meshes.leave2.material = mat2
         hoverSled = Left
@@ -217,19 +221,18 @@ class LoginGeometries(renderer: WebGLRenderer,
   }
 
   def addGroups(): Unit = {
-    AllLists.allSkis.zipWithIndex.foreach {
-      case (skiColor, index) =>
-        val colMat = new THREE.MeshLambertMaterial(
-          Dynamic
-            .literal(color = skiColor.color.to0x())
-            .asInstanceOf[MeshLambertMaterialParameters]
-        )
-        val colGeo = new THREE.BoxGeometry(2, 2, 2)
-        val mesh   = new THREE.Mesh(colGeo, colMat)
-        mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
-        mesh.name = index.toString
+    AllLists.allSkis.zipWithIndex.foreach { case (skiColor, index) =>
+      val colMat = new THREE.MeshLambertMaterial(
+        Dynamic
+          .literal(color = skiColor.color.to0x())
+          .asInstanceOf[MeshLambertMaterialParameters]
+      )
+      val colGeo = new THREE.BoxGeometry(2, 2, 2)
+      val mesh   = new THREE.Mesh(colGeo, colMat)
+      mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
+      mesh.name = index.toString
 
-        Groups.colorSelector.add(mesh)
+      Groups.colorSelector.add(mesh)
     }
 
     Groups.tree.add(Meshes.trunk)
@@ -283,7 +286,7 @@ class LoginGeometries(renderer: WebGLRenderer,
   object Mats {
     val trunk = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x502A2A)
+        .literal(color = 0x502a2a)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
     val leave1 = new THREE.MeshLambertMaterial(
@@ -293,7 +296,7 @@ class LoginGeometries(renderer: WebGLRenderer,
     )
     val leave2 = new THREE.MeshLambertMaterial(
       Dynamic
-        .literal(color = 0x81A442)
+        .literal(color = 0x81a442)
         .asInstanceOf[MeshLambertMaterialParameters]
     )
     val card = new THREE.MeshLambertMaterial(
@@ -416,7 +419,8 @@ class LoginGeometries(renderer: WebGLRenderer,
   }
 
   window.addEventListener(
-    "resize", { _: Event =>
+    "resize",
+    { _: Event =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 
