@@ -13,7 +13,7 @@ import scala.util.Success
   * @param outDelay: delay message to the server by this amount of time
   */
 class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
-  private val networkPromise    = Promise[WebSocket]
+  private val networkPromise    = Promise[WebSocket]()
   val socket: WebSocket         = new WebSocket(url)
   val future: Future[WebSocket] = networkPromise.future
 
@@ -60,7 +60,7 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
   }
 
   private def delay(time: FiniteDuration)(fn: => Unit): Unit = {
-    window.setTimeout(() => fn, time.toMillis)
+    window.setTimeout(() => fn, time.toMillis.toDouble)
   }
 
 }

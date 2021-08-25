@@ -19,13 +19,13 @@ object CreateGrid {
   private val heightMap: Seq[Double] = {
     val randomHeights = mutable.Seq(
       (for (_ <- 0 until gridColumns1 * gridRows1)
-        yield -(math.round(math.random) * 20).toDouble): _*
+        yield -(math.round(math.random()) * 20).toDouble): _*
     )
 
     // align heights at top and bottom so the seam isn't obvious when we wrap
-    val lastRow = randomHeights.view(gridColumns1 * gridRows, randomHeights.size)
+//    val lastRow = randomHeights.view(gridColumns1 * gridRows, randomHeights.size)
     for (i <- 0 until gridColumns1) {
-      randomHeights(i) = lastRow(i)
+      randomHeights(i) = randomHeights(gridColumns1 * gridRows + i)
     }
 
     // align heights on left and right so the seam isn't obvious when we wrap
@@ -33,7 +33,7 @@ object CreateGrid {
       randomHeights(i) = randomHeights(i + gridColumns)
     }
 
-    randomHeights
+    randomHeights.toSeq
   }
 
   /** a larger heightMap with nine copies of the base map */
@@ -41,7 +41,7 @@ object CreateGrid {
 
     /** @return one row, three times wider than the original row */
     def wideRow(index: Int): Seq[Double] = {
-      val row        = heightMap.view(index, index + gridColumns)
+      val row        = heightMap.view(index, index + gridColumns).toSeq
       val endElement = heightMap(index + gridColumns)
       (row ++ row ++ row) :+ endElement
     }

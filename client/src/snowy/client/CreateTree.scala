@@ -66,7 +66,7 @@ object CreateTree {
       val size        = randBetween(leafSizeMax, leafSizeMin)
       val leaveHeight = randBetween(leafHeightMax, leafHeightMin)
 
-      val offsetDirection  = math.round(math.random) * 2 - 1 // Either 1 or -1
+      val offsetDirection  = math.round(math.random()) * 2 - 1 // Either 1 or -1
       val offsetFromTrunk  = offsetDirection * (leafHeightMax - leaveHeight) / 2
       val offsetFromBranch = randBetween(size / 2, -size / 2)
 

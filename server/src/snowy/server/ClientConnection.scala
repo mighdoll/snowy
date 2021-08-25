@@ -13,6 +13,7 @@ import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.ConnectionId
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 object ClientConnection {
   val pingMessage = {

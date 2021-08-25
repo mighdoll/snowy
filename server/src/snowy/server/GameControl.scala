@@ -20,6 +20,7 @@ import snowy.server.rewards.Achievements._
 import snowy.util.ActorTypes.ParentSpan
 import socketserve._
 import vector.Vec2d
+import scala.language.postfixOps
 
 /** Central controller for the game. Delegates protocol messages from clients,
   * and from the game framework. */

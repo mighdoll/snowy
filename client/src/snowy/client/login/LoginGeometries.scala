@@ -23,7 +23,7 @@ class LoginGeometries(renderer: WebGLRenderer,
                       threeSledsFuture: Future[ThreeSleds]) {
   private val scene = new THREE.Scene()
   private val camera =
-    new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
+    new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
   private val amb                  = new THREE.AmbientLight(0xFFFFFF, 0.7)
   private val light                = new THREE.DirectionalLight(0xFFFFFF, 0.3)
   private val raycaster            = new THREE.Raycaster()
@@ -87,8 +87,8 @@ class LoginGeometries(renderer: WebGLRenderer,
   }
 
   def selectorHover(e: MouseEvent): Unit = {
-    mouse.x = (e.clientX / getWidth) * 2 - 1
-    mouse.y = (e.clientY / getHeight) * -2 + 1
+    mouse.x = (e.clientX / getWidth()) * 2 - 1
+    mouse.y = (e.clientY / getHeight()) * -2 + 1
 
     raycaster.setFromCamera(mouse, camera)
 
@@ -417,7 +417,7 @@ class LoginGeometries(renderer: WebGLRenderer,
 
   window.addEventListener(
     "resize", { _: Event =>
-      camera.aspect = math.min(getWidth / getHeight, 3)
+      camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 
       if (loginScreenActive) ClientMain.resize()

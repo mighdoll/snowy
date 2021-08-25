@@ -1,10 +1,10 @@
 package snowy.util
 
-import scala.collection.mutable.MutableList
+import scala.collection.mutable.ArrayBuffer
 
 /** Extend a mutable list with a removeElement method */
 object RemoveList {
-  implicit class RemoveListOps[A](val list: MutableList[A]) extends AnyVal {
+  implicit class RemoveListOps[A](val list: ArrayBuffer[A]) extends AnyVal {
 
     /** remove an element if present in the list
       * @return true if element was removed */

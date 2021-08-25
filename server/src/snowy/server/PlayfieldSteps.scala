@@ -8,7 +8,7 @@ import snowy.collision._
 import snowy.measures.Span.{time, timeSpan}
 import snowy.measures.{Gauged, Span}
 import snowy.playfield.PlayId.{BallId, PowerUpId}
-import snowy.playfield.{Sled, _}
+import snowy.playfield.{Sled, PlayfieldTracker, _}
 import snowy.server.PlayfieldSteps._
 import snowy.server.rewards.Achievements._
 import snowy.server.rewards.PowerUpRewards
@@ -284,7 +284,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
       _           = losingUser.icedBy.enqueue(winningUser)
       if winningUser.icedBy.contains(losingUser)
     } yield {
-      winningUser.icedBy.removeElement(losingUser)
+      winningUser.icedBy.dequeueFirst(_ == losingUser)
       val loserName = losingUser.name
       logger.info(
         s"trackIcedBy: sled ${winningSled.id} (${winningUser.name}) revenge on $loserName"

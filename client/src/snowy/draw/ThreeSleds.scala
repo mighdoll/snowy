@@ -48,7 +48,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
 
     sleds.foreach { sled1 =>
       sledGroup.map.get(sled1.id) match {
-        case Some(sled) => updateSled(sled1, sled, myPos)
+        case Some(sled: Object3D) => updateSled(sled1, sled, myPos)
         case None       => addSled(sled1, sled1.id == mySled.id)
       }
     }
@@ -124,7 +124,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
   def removeSleds(deaths: Seq[SledId]): Unit = removeDeaths[Sled](sledGroup, deaths)
 
   def nearestPow2(num: Double): Int =
-    math.pow(2, math.round(math.log(num) / math.log(2))).toInt
+    math.pow(2, math.round(math.log(num) / math.log(2)).toDouble).toInt
 
   def getFixedCanvas(canvas: html.Canvas): html.Canvas = {
     val newCanvas = document.createElement("canvas").asInstanceOf[html.Canvas]

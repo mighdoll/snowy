@@ -13,8 +13,8 @@ import vector.Vec2d
 import scala.collection.mutable
 
 class UpdateGroup[A](val group: Object3D) {
-  val map = {
-    val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item)
+  val map: mutable.HashMap[PlayId[A], Object3D] = {
+    val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item).toSeq
     mutable.HashMap(items: _*)
   }
 
@@ -60,7 +60,7 @@ class DrawPlayfield(renderer: WebGLRenderer,
                     val threePowerups: ThreePowerups) {
   val scene = new THREE.Scene()
   val camera =
-    new THREE.PerspectiveCamera(45, math.min(getWidth / getHeight, 3), 1, 5000)
+    new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
 
   val amb   = new THREE.AmbientLight(0xFFFFFF, 0.5)
   val light = new THREE.DirectionalLight(0xFFFFFF, 0.5)
@@ -112,7 +112,7 @@ class DrawPlayfield(renderer: WebGLRenderer,
 
   window.addEventListener(
     "resize", { _: Event =>
-      camera.aspect = math.min(getWidth / getHeight, 3)
+      camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 
       if (ClientMain.gameScreenActive) ClientMain.resize()

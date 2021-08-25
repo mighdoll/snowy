@@ -26,7 +26,7 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
   private val loginGeometries =
     new LoginGeometries(
       renderer,
-      clearConnection,
+      clearConnection(),
       !ClientMain.gameScreenActive,
       threeSledsFuture
     )
@@ -52,7 +52,7 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
     gameHud.classList.remove("hide")
   }
 
-  def rejoinPanel() {
+  def rejoinPanel(): Unit = {
     swapScreen(false)
 
     ClientMain.stopGame()
@@ -63,7 +63,7 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
   }
 
   /** Swap the login screen and game panel */
-  def swapScreen(game: Boolean) {
+  def swapScreen(game: Boolean): Unit = {
     if (game) {
       gameDiv.classList.remove("back")
       loginDiv.classList.add("hide")

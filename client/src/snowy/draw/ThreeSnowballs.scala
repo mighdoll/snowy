@@ -30,7 +30,7 @@ class ThreeSnowballs(snowballGeo: THREE.Geometry) {
   def updateThreeSnowballs(snowballs: Set[Snowball], myPos: Vector3): Unit = {
     snowballs.foreach { snowball1 =>
       snowballGroup.map.get(snowball1.id) match {
-        case Some(snowball) => updateSnowball(snowball1, snowball, myPos)
+        case Some(snowball: Object3D) => updateSnowball(snowball1, snowball, myPos)
         case None           => addSnowball(snowball1)
       }
     }

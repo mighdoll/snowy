@@ -102,7 +102,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
 
   window.addEventListener(
     "mousemove", { e: MouseEvent =>
-      val angle = -math.atan2(e.clientX - getWidth / 2, e.clientY - getHeight / 2)
+      val angle = -math.atan2(e.clientX - getWidth() / 2, e.clientY - getHeight() / 2)
 
       if (math.abs(mouseDir - angle) > .05) {
         sendMessage(TargetAngle(angle))
@@ -110,8 +110,8 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
       }
       // TODO replace magic numbers e.g. '20'
       // TODO make a function for this, e.g. 'mouseNearCenter'
-      if (math.pow(e.clientX - getWidth / 2, 2) + math
-            .pow(e.clientY - getHeight / 2, 2) < math.pow(40, 2)) {
+      if (math.pow(e.clientX - getWidth() / 2, 2) + math
+            .pow(e.clientY - getHeight() / 2, 2) < math.pow(40, 2)) {
         sendMessage(Start(Slowing, gameTime))
       } else {
         sendMessage(Stop(Slowing, gameTime))

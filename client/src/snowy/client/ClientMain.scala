@@ -11,7 +11,7 @@ import snowy.playfield.{SkiColor, SledType}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
-import scala.scalajs.js.{Dynamic, JSApp}
+import scala.scalajs.js.Dynamic
 
 object ClientMain {
   val loadedGeometry            = new GeometryLoader()

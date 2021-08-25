@@ -71,7 +71,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     found.toSet
   }
 
-  def items: Traversable[A] = {
+  def items: Iterable[A] = {
     val list =
       for {
         cell <- cells

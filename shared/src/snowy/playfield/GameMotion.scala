@@ -24,7 +24,7 @@ object GameMotion {
 class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Traversable[Sled], deltaSeconds: Double, gameTime: Long)(
+  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(
         implicit tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
@@ -66,7 +66,7 @@ class GameMotion(playfield: Playfield) {
 
   /** apply any pending but not yet cancelled commands from user drive,
     * e.g. braking or driving */
-  private def driveSleds(sleds: Traversable[Sled],
+  private def driveSleds(sleds: Iterable[Sled],
                          deltaSeconds: Double,
                          gameTime: Long): Unit = {
     for (sled <- sleds) {
@@ -75,7 +75,7 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** Update the direction and velocity of all sleds based on gravity and friction */
-  private def updateSledSpeedVector(sleds: Traversable[Sled],
+  private def updateSledSpeedVector(sleds: Iterable[Sled],
                                     deltaSeconds: Double,
                                     gameTime: Long): Unit = {
     sleds.foreach { sled =>
@@ -91,7 +91,7 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Traversable[Sled], deltaSeconds: Double)(
+  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(
         implicit tracker: PlayfieldTracker[Sled]
   ): Unit = {
     for {

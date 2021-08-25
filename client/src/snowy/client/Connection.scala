@@ -11,6 +11,7 @@ import snowy.playfield.{SkiColor, SledType}
 import scala.concurrent.duration._
 import scala.scalajs.js.typedarray.{ArrayBuffer, Int8Array}
 import scala.scalajs.js.typedarray.TypedArrayBufferOps._
+import scala.language.postfixOps
 
 class Connection(gameState: GameState) {
   val socket: NetworkSocket = {
