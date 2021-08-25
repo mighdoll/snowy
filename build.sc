@@ -15,7 +15,7 @@ object client extends ScalaJSModule with ScalafixModule {
     ivy"org.scalatest::scalatest::3.2.9",
     ivy"org.scala-js::scalajs-dom::1.1.0",
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
 object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
@@ -27,7 +27,7 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
     ivy"org.scalatest::scalatest::3.2.9",
     ivy"io.suzaku::boopickle::1.4.0",
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
 object server extends ScalaModule with ScalafixModule {
@@ -50,7 +50,7 @@ object server extends ScalaModule with ScalafixModule {
     millSourcePath / "resources",
     client.fastOpt().path / RelPath.up,
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
 object load extends ScalaModule with ScalafixModule {
@@ -61,7 +61,7 @@ object load extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-stream-testkit::2.6.10",
     ivy"org.asynchttpclient:async-http-client:2.12.3"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 object measures extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared)
@@ -74,7 +74,7 @@ object measures extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-actor::2.6.10",
     ivy"com.typesafe.akka::akka-stream::2.6.10"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
 object `measures-listener` extends ScalaModule with ScalafixModule {
@@ -90,5 +90,5 @@ object `measures-listener` extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-actor::2.6.10",
     ivy"com.typesafe.akka::akka-stream::2.6.10"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
