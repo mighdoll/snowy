@@ -1,8 +1,7 @@
 package snowy.measures
 
 import java.io.File
-import java.nio.file.{Files, Path, Paths}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import akka.actor.ActorSystem
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
@@ -10,7 +9,7 @@ import scopt.OptionParser
 import snowy.util.ActorUtil.materializerWithLogging
 import snowy.measures.IngestTsvFile.ingestTsv
 import scala.concurrent.duration._
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 import snowy.util.FutureAwaiting._
 
 object MeasureLoader extends Logging {
@@ -39,7 +38,7 @@ object MeasureLoader extends Logging {
             future.await(1.minute)
           }.map(_ => 0).getOrElse(-1)
         case None =>
-          parser.showUsageAsError()
+          parser.displayToErr(parser.usage)
           -1
       }
     system.terminate()

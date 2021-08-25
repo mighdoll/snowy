@@ -4,7 +4,6 @@ import snowy.GameConstants.turnTime
 import snowy.playfield.Friction.friction
 import snowy.playfield.GameMotion._
 import snowy.playfield.Skid.skid
-import vector.Vec2d
 
 object GameMotion {
   sealed trait Turning

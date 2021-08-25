@@ -35,7 +35,7 @@ object ConfigUtil {
   }
 
   /** write the composite .conf file */
-  def writeConfig(config: Config) {
+  def writeConfig(config: Config): Unit = {
     val writeList = config.getStringList("snowy.dump-config").asScala
     writeList.headOption.foreach { fileName =>
       import java.nio.file.StandardOpenOption._

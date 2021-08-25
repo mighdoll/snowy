@@ -1,7 +1,7 @@
 package snowy.playfield
 
 object Intersect {
-  implicit class RectOps(val rect: Rect) extends AnyVal {
+  implicit class RectOps(private val rect: Rect) extends AnyVal {
 
     /** check if two axis-aligned rectangles intersect. Assumes larger y values go down.
       * @return true if the two rectangles intersect

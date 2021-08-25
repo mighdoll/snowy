@@ -5,7 +5,6 @@ import snowy.GameServerProtocol._
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.client.{KeyCombos, Keys}
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}
-import scala.collection.mutable
 
 class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => Unit) {
   sealed trait FiringState

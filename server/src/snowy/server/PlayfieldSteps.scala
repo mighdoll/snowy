@@ -13,7 +13,6 @@ import snowy.server.PlayfieldSteps._
 import snowy.server.rewards.Achievements._
 import snowy.server.rewards.PowerUpRewards
 import snowy.util.ActorTypes.ParentSpan
-import snowy.util.RemoveList.RemoveListOps
 
 /** Support for moving the playfield objects to the next game state */
 class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)

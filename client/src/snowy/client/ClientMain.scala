@@ -21,7 +21,7 @@ object ClientMain {
   private val renderer           = createRenderer()
   private val loginScreen =
     new LoginScreen(renderer, loadedGeometry.threeGroupsFuture.map(_.threeSleds))
-  private var drawPlayfieldOpt: Option[DrawPlayfield]       = None
+  None
   private var gameStateOpt: Option[GameState]               = None
   private var updateScoreboardOpt: Option[UpdateScoreboard] = None
 
@@ -59,7 +59,6 @@ object ClientMain {
     val gameState        = new GameState(drawPlayfield)
     val updateScoreboard = new UpdateScoreboard(gameState)
 
-    drawPlayfieldOpt = Some(drawPlayfield)
     gameStateOpt = Some(gameState)
     updateScoreboardOpt = Some(updateScoreboard)
 

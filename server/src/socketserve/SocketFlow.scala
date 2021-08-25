@@ -19,7 +19,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
   val outputBufferSize              = 1000
   val inputBufferSize               = 100
   val internalMessagesSize          = 100
-  private implicit val materializer = materializerWithLogging(logger)
+  materializerWithLogging(logger)
   import system.dispatcher
 
   /** A flow for each connection received over the /game WebSocket

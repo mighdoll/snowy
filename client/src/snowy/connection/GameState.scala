@@ -59,7 +59,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
     } yield sled
   }
 
-  private var gameLoop: Option[Int] = None
+  None
   private var turning: Turning      = NoTurn
   var serverGameClock
     : Option[ServerGameClock] = None // HACK! TODO make GameState an instance

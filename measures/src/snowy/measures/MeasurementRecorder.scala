@@ -27,7 +27,7 @@ object MeasurementRecorder {
 
 /** a measurement recording system, allows publishing duration Span measurements to various backends */
 trait MeasurementRecorder {
-  def publish(measurement: CompletedMeasurement[_])
+  def publish(measurement: CompletedMeasurement[_]): Unit
   def close(): Unit = {}
 }
 

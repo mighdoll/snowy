@@ -2,7 +2,7 @@ package snowy.util
 
 import java.io.File
 import java.net.{URL, URLDecoder}
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Path, Paths}
 import java.util.jar.JarFile
 import scala.collection.JavaConverters._
 

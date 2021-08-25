@@ -24,7 +24,7 @@ case class SpeedTable(amounts: Int*) extends TableToReward with RewardTableEntry
 }
 
 sealed trait Reward extends RewardTableEntry {
-  def applyToSled(serverSled: ServerSled)
+  def applyToSled(serverSled: ServerSled): Unit
 }
 
 case class Score(amount: Int) extends Reward {

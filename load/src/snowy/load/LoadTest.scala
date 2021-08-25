@@ -15,7 +15,7 @@ object LoadTest {
     }
   }
 
-  def run(basicArgs: BasicArgs) {
+  def run(basicArgs: BasicArgs): Unit = {
     basicArgs.conf.foreach(GlobalConfig.addConfigFiles(_))
 
     implicit val actorSystem = ActorSystem()

@@ -4,7 +4,6 @@ package snowy.server
 import scribe.Logging
 import snowy.GameClientProtocol._
 import snowy.collision.SledTree
-import snowy.playfield.PlayId.SledId
 import snowy.playfield._
 import socketserve.ClientId
 import vector.Vec2d

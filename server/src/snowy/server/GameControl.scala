@@ -17,7 +17,6 @@ import snowy.playfield.{Sled, _}
 import snowy.robot.RobotPlayer
 import snowy.server.ClientReporting.optNetId
 import snowy.server.rewards.Achievements._
-import snowy.util.ActorTypes.ParentSpan
 import socketserve._
 import vector.Vec2d
 import scala.language.postfixOps
