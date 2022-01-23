@@ -1,11 +1,8 @@
-import $ivy.`com.goyeau::mill-scalafix:0.2.5`
 import $ivy.`com.lihaoyi::mill-contrib-bloop:0.9.9`
-import com.goyeau.mill.scalafix.ScalafixModule
 import mill._, scalalib._
 import mill.scalajslib._
-import ammonite.ops._
 
-object client extends ScalaJSModule with ScalafixModule {
+object client extends ScalaJSModule {
   def scalaVersion = "2.12.14"
   def scalaJSVersion = "1.6.0"
   def moduleDeps = Seq(shared)
@@ -18,7 +15,7 @@ object client extends ScalaJSModule with ScalafixModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
+object shared extends ScalaModule with ScalaJSModule {
   def scalaVersion = "2.12.14"
   def scalaJSVersion = "1.6.0"
   def ivyDeps = Agg(
@@ -30,7 +27,7 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object server extends ScalaModule with ScalafixModule {
+object server extends ScalaModule {
   def moduleDeps = Seq(shared, measures)
   def scalaVersion = "2.12.14"
   def ivyDeps = Agg(
@@ -48,12 +45,12 @@ object server extends ScalaModule with ScalafixModule {
   )
   def resources = T.sources (
     millSourcePath / "resources",
-    client.fastOpt().path / RelPath.up,
+    client.fastOpt().path / os.up,
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object load extends ScalaModule with ScalafixModule {
+object load extends ScalaModule {
   def moduleDeps = Seq(server, shared, measures)
   def scalaVersion = "2.12.14"
   def ivyDeps = Agg(
@@ -63,7 +60,7 @@ object load extends ScalaModule with ScalafixModule {
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
-object measures extends ScalaModule with ScalafixModule {
+object measures extends ScalaModule {
   def moduleDeps = Seq(shared)
   def scalaVersion = "2.12.14"
   def ivyDeps = Agg(
@@ -77,7 +74,7 @@ object measures extends ScalaModule with ScalafixModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object `measures-listener` extends ScalaModule with ScalafixModule {
+object `measures-listener` extends ScalaModule {
   def moduleDeps = Seq(measures)
   def scalaVersion = "2.12.14"
   def ivyDeps = Agg(
