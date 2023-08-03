@@ -138,8 +138,8 @@ class GameState(drawPlayfield: DrawPlayfield) {
   }
 
   def addPlayfieldItems(items: Seq[SharedItem]): Unit = {
-    val newUps       = items.collect { case powerUp: PowerUp => powerUp }
-    val newSleds     = items.collect { case sled: Sled => sled }
+    val newUps       = items.collect { case powerUp: PowerUp   => powerUp }
+    val newSleds     = items.collect { case sled: Sled         => sled }
     val newSnowballs = items.collect { case snowball: Snowball => snowball }
 
     serverPowerUps ++= newUps

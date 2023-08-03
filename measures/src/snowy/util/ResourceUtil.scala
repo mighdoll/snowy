@@ -79,8 +79,9 @@ object ResourceUtil {
     val pathToJar   = jarUrl.getPath.stripPrefix("file:").stripSuffix(s"!/$resourcePath")
     val decodedPath = URLDecoder.decode(pathToJar, "UTF-8")
     val jar         = new JarFile(decodedPath)
-    val children = jar.entries().asScala.map(_.getName).collect { case Child(child) =>
-      child
+    val children = jar.entries().asScala.map(_.getName).collect {
+      case Child(child) =>
+        child
     }
     children.toSet
   }

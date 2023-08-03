@@ -102,8 +102,9 @@ class ClientReporting(
 
   private def broadcastReports(achievements: Traversable[Achievement]): Unit = {
     val reports =
-      achievements.collect { case Kinged(sled, _) =>
-        NewKing(sled.id)
+      achievements.collect {
+        case Kinged(sled, _) =>
+          NewKing(sled.id)
       }
 
     for (msg <- reports) sendToAllClients(msg)
@@ -157,8 +158,9 @@ class ClientReporting(
   /** Notify clients about sleds that have been killed, remove sleds from the game */
   private def reportDeadSleds(dead: Traversable[SledOut]): Unit = {
     val deadSleds =
-      dead.map { case SledOut(serverSled) =>
-        serverSled.id
+      dead.map {
+        case SledOut(serverSled) =>
+          serverSled.id
       }.toSeq
 
     if (deadSleds.nonEmpty) {

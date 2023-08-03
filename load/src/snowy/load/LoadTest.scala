@@ -5,6 +5,7 @@ import snowy.server.CommandLine.BasicArgs
 import snowy.server.{CommandLine, GlobalConfig}
 import scala.concurrent.duration._
 import snowy.measures.MeasurementRecorder
+import scala.language.postfixOps
 
 object LoadTest {
 

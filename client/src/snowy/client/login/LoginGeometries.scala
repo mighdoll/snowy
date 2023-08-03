@@ -130,9 +130,7 @@ class LoginGeometries(
       val mat2 = Mats.leave2.clone()
       mat.emissive.setHex(0x222222)
       mat2.emissive.setHex(0x222222)
-      if (
-        intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2
-      ) {
+      if (intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2) {
         Meshes.leave1.material = mat
         Meshes.leave2.material = mat2
         hoverSled = Left
@@ -221,18 +219,19 @@ class LoginGeometries(
   }
 
   def addGroups(): Unit = {
-    AllLists.allSkis.zipWithIndex.foreach { case (skiColor, index) =>
-      val colMat = new THREE.MeshLambertMaterial(
-        Dynamic
-          .literal(color = skiColor.color.to0x())
-          .asInstanceOf[MeshLambertMaterialParameters]
-      )
-      val colGeo = new THREE.BoxGeometry(2, 2, 2)
-      val mesh   = new THREE.Mesh(colGeo, colMat)
-      mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
-      mesh.name = index.toString
+    AllLists.allSkis.zipWithIndex.foreach {
+      case (skiColor, index) =>
+        val colMat = new THREE.MeshLambertMaterial(
+          Dynamic
+            .literal(color = skiColor.color.to0x())
+            .asInstanceOf[MeshLambertMaterialParameters]
+        )
+        val colGeo = new THREE.BoxGeometry(2, 2, 2)
+        val mesh   = new THREE.Mesh(colGeo, colMat)
+        mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
+        mesh.name = index.toString
 
-      Groups.colorSelector.add(mesh)
+        Groups.colorSelector.add(mesh)
     }
 
     Groups.tree.add(Meshes.trunk)
@@ -419,8 +418,7 @@ class LoginGeometries(
   }
 
   window.addEventListener(
-    "resize",
-    { _: Event =>
+    "resize", { _: Event =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 

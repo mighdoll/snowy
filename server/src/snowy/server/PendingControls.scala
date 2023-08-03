@@ -21,7 +21,7 @@ class PendingControls {
   import scala.collection.mutable.{HashMap, MultiMap}
 
   val commands = new HashMap[ClientId, mutable.Set[PendingControl]]
-    with MultiMap[ClientId, PendingControl]
+  with MultiMap[ClientId, PendingControl]
 
   /** record a pending command, replacing any previous matching command for this id. */
   def startCommand(id: ClientId, command: PersistentControl, time: Long): Unit = {

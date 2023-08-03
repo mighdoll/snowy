@@ -25,8 +25,8 @@ class Rewards extends Logging {
           Seq(serverSled -> MultiplyScore(serverSled.user, -Points.sledLoss))
         case iced: SledIced =>
           IceRewards.rewards(iced)
-        case kinged: Kinged => Seq()
-        case IceTotal(serverSled, count) =>
+        case _: Kinged => Seq()
+        case IceTotal(serverSled, _) =>
           Seq(serverSled -> Score(Points.iceAward))
         case PowerUpCollected(serverSled, reward) =>
           Seq(serverSled -> reward)

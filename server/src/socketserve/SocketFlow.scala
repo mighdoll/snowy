@@ -83,9 +83,10 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     // convert web socket messages into client controller messages
     val inputConverted: Flow[Message, AppMessage, NotUsed] =
       inputBuffered
-        .collect { case BinaryMessage.Strict(data) =>
-          logger.trace(s"received data on $connectionId. data: $data")
-          ClientMessage(connectionId, data)
+        .collect {
+          case BinaryMessage.Strict(data) =>
+            logger.trace(s"received data on $connectionId. data: $data")
+            ClientMessage(connectionId, data)
         }
         .named("inputConverted")
 

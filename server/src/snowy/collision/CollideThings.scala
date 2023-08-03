@@ -117,10 +117,11 @@ object CollideThings {
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
-    collideCircles(objA, objB) map { case (aCollision, bCollision) =>
-      val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
-      val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
-      (aDamage, bDamage)
+    collideCircles(objA, objB) map {
+      case (aCollision, bCollision) =>
+        val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
+        val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
+        (aDamage, bDamage)
     }
   }
 
@@ -180,7 +181,7 @@ case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
 
 object DeathList {
   implicit def deathListMonoid[A <: MovableCircularItem[A], B <: MovableCircularItem[B]]
-        : Monoid[DeathList[A, B]] = {
+    : Monoid[DeathList[A, B]] = {
     new Monoid[DeathList[A, B]] {
       def empty = DeathList[A, B](Nil, Nil)
 

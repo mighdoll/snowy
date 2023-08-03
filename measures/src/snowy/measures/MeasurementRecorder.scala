@@ -37,8 +37,8 @@ object NullMeasurementRecorder extends MeasurementRecorder {
 
 /** a measurement system that sends measurements to a file */
 class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
-      system: ActorSystem
-) extends MeasurementRecorder with Logging {
+                                                                    system: ActorSystem)
+    extends MeasurementRecorder with Logging {
   implicit val materializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
   val records = startTsvFile(
@@ -69,7 +69,7 @@ class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
         measurement: CompletedMeasurement[_]
   ): Option[(RecordType, String)] = {
     measurement pmatch {
-      case span: CompletedSpan         => DurationRecord -> measurement.value.toString
+      case _: CompletedSpan            => DurationRecord -> measurement.value.toString
       case Gauged(_, value: Int, _)    => LongRecord     -> value.toString
       case Gauged(_, value: Long, _)   => LongRecord     -> value.toString
       case Gauged(_, value: String, _) => StringRecord   -> value.toString

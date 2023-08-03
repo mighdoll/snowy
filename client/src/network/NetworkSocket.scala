@@ -20,8 +20,7 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
   socket.binaryType = "arraybuffer"
 
   socket.addEventListener(
-    "open",
-    { _: Event =>
+    "open", { _: Event =>
       networkPromise.complete(Success(socket))
     },
     false
@@ -56,8 +55,7 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
       socket.addEventListener("message", fn, false)
     } else {
       socket.addEventListener(
-        "message",
-        { message: MessageEvent =>
+        "message", { message: MessageEvent =>
           delay(inDelay) {
             fn(message)
           }

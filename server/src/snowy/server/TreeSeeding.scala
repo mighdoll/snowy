@@ -20,14 +20,13 @@ class TreeSeeding(playfield: Playfield) extends Logging {
     val width       = playfield.size.x.toInt
     val height      = playfield.size.y.toInt
     val numClumps   = width * height / clumpAmount
-    val inClump     = .75   // chance a tree is in an existing clump
-    val clumpSize   = 200   // in the range pixels away
+    val inClump     = .75 // chance a tree is in an existing clump
+    val clumpSize   = 200 // in the range pixels away
 
     val treeAmount = 200000
     val numTrees   = width * height / treeAmount
 
-    val forest   = mutable.Buffer[mutable.Buffer[Tree]]()
-    def treeSize = 20
+    val forest = mutable.Buffer[mutable.Buffer[Tree]]()
 
     def nearbyTree(pos: Vec2d): Tree = {
       val x      = pos.x + random.nextInt(-clumpSize / 2, clumpSize / 2)

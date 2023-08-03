@@ -16,8 +16,7 @@ object Sled {
         sledType: SledType = BasicSledType,
         color: SkiColor = BasicSkis
   )(implicit
-        tracker: PlayfieldTracker[Sled]
-  ): Sled = {
+    tracker: PlayfieldTracker[Sled]): Sled = {
     val sled =
       sledType match {
         case BasicSledType  => new BasicSled(userName, color)

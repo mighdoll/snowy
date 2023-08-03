@@ -23,7 +23,8 @@ object GameMotion {
 class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(implicit
+  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(
+        implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
@@ -33,7 +34,8 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(implicit
+  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(
+        implicit
         tracker: PlayfieldTracker[Snowball]
   ): Unit = {
     snowballs.foreach { snowball =>
@@ -95,7 +97,8 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(implicit
+  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(
+        implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
     for {

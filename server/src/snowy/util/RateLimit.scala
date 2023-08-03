@@ -13,13 +13,14 @@ object RateLimit {
     var started  = false
     var lastTime = 0L
 
-    () => {
-      val current = System.nanoTime()
-      if (!started || current - lastTime > finiteDuration.toNanos) {
-        started = true
-        lastTime = current
-        fn
+    () =>
+      {
+        val current = System.nanoTime()
+        if (!started || current - lastTime > finiteDuration.toNanos) {
+          started = true
+          lastTime = current
+          fn
+        }
       }
-    }
   }
 }

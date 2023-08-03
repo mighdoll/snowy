@@ -14,6 +14,7 @@ import socketserve.WebServer.socketApplication
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import snowy.measures.NullMeasurementRecorder
+import scala.language.postfixOps
 
 object SnowyServerFixture {
   implicit val system = ActorSystem()
@@ -59,7 +60,7 @@ object SnowyServerFixture {
         timeout: FiniteDuration = 3 seconds
   ): Unit = {
     testPort = testPort + 1
-    val recorder = NullMeasurementRecorder
+    NullMeasurementRecorder
     val server =
       socketApplication(
         (api, system, parentSpan) =>

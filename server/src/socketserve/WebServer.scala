@@ -17,10 +17,10 @@ import snowy.measures.{MeasurementRecorder, Span}
   * and a WebSocket for -connect json messages.
   */
 class WebServer(forcePort: Option[Int] = None)(implicit
-      system: ActorSystem,
-      parentSpan: Span
-) extends Logging {
-  private implicit val materializer     = materializerWithLogging(logger)
+                                               system: ActorSystem,
+                                               parentSpan: Span)
+    extends Logging {
+  materializerWithLogging(logger)
   private implicit val executionContext = system.dispatcher
 
   val appHost    = new AppHost
@@ -50,7 +50,7 @@ class WebServer(forcePort: Option[Int] = None)(implicit
       .getOrElse(GlobalConfig.config.getInt("snowy.server.port"))
   }
 
-  val bindingFuture = Http().bindAndHandle(route, "0.0.0.0", port)
+  val bindingFuture = Http().newServerAt("0.0.0.0", port).bindFlow(route)
   bindingFuture.failed.foreach { failure =>
     logger.error(s"Server unable to start at http://localhost:$port/  $failure")
     failure match {

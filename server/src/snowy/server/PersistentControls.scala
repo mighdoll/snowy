@@ -54,7 +54,7 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
         gameTime: Long,
         deltaSeconds: Double
   ): Unit = {
-    pendingControls.foreachCommand { (id, command, time) =>
+    pendingControls.foreachCommand { (id, command, _) =>
       id.sled.foreach { sled =>
         command match {
           case Left     => motion.turnSled(sled, LeftTurn, deltaSeconds)
@@ -65,7 +65,8 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
     }
   }
 
-  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(implicit
+  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(
+        implicit
         snowballTracker: PlayfieldTracker[Snowball]
   ): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {

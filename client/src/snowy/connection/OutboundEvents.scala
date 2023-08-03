@@ -29,8 +29,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   import gameState.gameTime
 
   window.addEventListener(
-    "keydown",
-    { event: KeyboardEvent =>
+    "keydown", { event: KeyboardEvent =>
       event.keyCode match {
         case Keys.Right() if !turning.contains(GoRight) =>
           gameState.startTurn(RightTurn)
@@ -62,8 +61,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   )
 
   window.addEventListener(
-    "keyup",
-    { event: KeyboardEvent =>
+    "keyup", { event: KeyboardEvent =>
       (event.keyCode, turning) match {
         case (Keys.Right(), Some(GoRight)) =>
           gameState.startTurn(NoTurn)
@@ -102,8 +100,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   )
 
   window.addEventListener(
-    "mousemove",
-    { e: MouseEvent =>
+    "mousemove", { e: MouseEvent =>
       val angle = -math.atan2(e.clientX - getWidth() / 2, e.clientY - getHeight() / 2)
 
       if (math.abs(mouseDir - angle) > .05) {
@@ -112,10 +109,8 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
       }
       // TODO replace magic numbers e.g. '20'
       // TODO make a function for this, e.g. 'mouseNearCenter'
-      if (
-        math.pow(e.clientX - getWidth() / 2, 2) + math
-          .pow(e.clientY - getHeight() / 2, 2) < math.pow(40, 2)
-      ) {
+      if (math.pow(e.clientX - getWidth() / 2, 2) + math
+            .pow(e.clientY - getHeight() / 2, 2) < math.pow(40, 2)) {
         sendMessage(Start(Slowing, gameTime))
       } else {
         sendMessage(Stop(Slowing, gameTime))
@@ -138,8 +133,7 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   }
 
   window.addEventListener(
-    "mousedown",
-    { e: MouseEvent =>
+    "mousedown", { e: MouseEvent =>
       e.button match {
         case 0 => shootPressed()
         case 2 => sendMessage(Boost(gameTime))
@@ -148,15 +142,13 @@ class OutboundEvents(gameState: GameState, sendMessage: (GameServerMessage) => U
   )
 
   window.addEventListener(
-    "mouseup",
-    { e: MouseEvent =>
+    "mouseup", { _: MouseEvent =>
       shootReleased()
     }
   )
 
   window.addEventListener(
-    "contextmenu",
-    { e: Event =>
+    "contextmenu", { e: Event =>
       e.preventDefault()
     }
   )

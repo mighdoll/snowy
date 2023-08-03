@@ -116,8 +116,7 @@ class DrawPlayfield(
   }
 
   window.addEventListener(
-    "resize",
-    { _: Event =>
+    "resize", { _: Event =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 

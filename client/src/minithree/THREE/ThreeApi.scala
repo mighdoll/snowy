@@ -378,7 +378,7 @@ class BufferAttribute extends js.Object {
   var length: Double          = js.native
   var count: Int              = js.native
 
-  var needsUpdate: Boolean    = js.native
+  var needsUpdate: Boolean = js.native
 
   def this(array: js.Any, itemSize: Double) = this()
 

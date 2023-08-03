@@ -31,16 +31,15 @@ object MeasureLoader extends Logging {
       }
     }
 
-    val returnCode =
-      results match {
-        case Some(future) =>
-          Try {
-            future.await(1.minute)
-          }.map(_ => 0).getOrElse(-1)
-        case None =>
-          parser.displayToErr(parser.usage)
-          -1
-      }
+    results match {
+      case Some(future) =>
+        Try {
+          future.await(1.minute)
+        }.map(_ => 0).getOrElse(-1)
+      case None =>
+        parser.displayToErr(parser.usage)
+        -1
+    }
     system.terminate()
 //    sys.exit(returnCode)  // breaks sbt..
   }

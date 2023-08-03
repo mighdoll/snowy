@@ -29,11 +29,12 @@ object IngestTsvFile extends Logging {
 
     val measureStream = readTsv(path)
     val span          = Span.root("storeMeasures")(NullMeasurementRecorder)
-    storeMeasures(db, measureStream).andThen { case _ =>
-      val timeSpan       = span.finishNow()
-      val elapsedSeconds = timeSpan.value / (1000.0 * 1000)
-      println(s"elapsed time: $elapsedSeconds seconds")
-      db.shutdown()
+    storeMeasures(db, measureStream).andThen {
+      case _ =>
+        val timeSpan       = span.finishNow()
+        val elapsedSeconds = timeSpan.value / (1000.0 * 1000)
+        println(s"elapsed time: $elapsedSeconds seconds")
+        db.shutdown()
     }
   }
 
@@ -129,12 +130,6 @@ object IngestTsvFile extends Logging {
         IngestResults(spanCount, gaugeCount, edgeCount)
       }
 
-  }
-
-  private def setMeasurementFields(measurement: ReadMeasurement, vertex: Vertex): Unit = {
-
-    vertex.setProperty("start", measurement.start.value)
-    vertex.setProperty("measureId", measurement.id.value)
   }
 
   def readTsv(path: Path): Source[ReadMeasurement, Future[IOResult]] = {

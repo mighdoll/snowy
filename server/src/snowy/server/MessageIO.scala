@@ -41,7 +41,7 @@ class MessageIO(api: AppHostApi) extends Logging {
       case _: GameTime   =>
       case _: State      =>
       case _: Scoreboard =>
-      case m             => logger.trace(s"sending message: $message  to: $id")
+      case _             => logger.trace(s"sending message: $message  to: $id")
     }
 
   }

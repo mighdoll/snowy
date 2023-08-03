@@ -12,7 +12,8 @@ class SledTree(playfield: Playfield) {
     *
     * @return a damaged sled if it overlaps with a tree
     */
-  def collide(sled: Sled, trees: Iterable[Tree])(implicit
+  def collide(sled: Sled, trees: Iterable[Tree])(
+        implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
     val sledBody = Circle(sled.position, sled.radius)
@@ -24,7 +25,8 @@ class SledTree(playfield: Playfield) {
   }
 
   /** modify a sled after impacting with a tree */
-  private def applyDamage(sled: Sled, sledBody: Circle, tree: Tree)(implicit
+  private def applyDamage(sled: Sled, sledBody: Circle, tree: Tree)(
+        implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
     // take damage proportional to speed

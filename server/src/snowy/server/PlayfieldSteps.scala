@@ -138,10 +138,9 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit
-        snowballTracker: PlayfieldTracker[Snowball],
-        sledTracker: PlayfieldTracker[Sled],
-        parentSpan: Span
-  ): CollisionResult =
+                                snowballTracker: PlayfieldTracker[Snowball],
+                                sledTracker: PlayfieldTracker[Sled],
+                                parentSpan: Span): CollisionResult =
     time("checkCollisions") {
       import snowy.collision.GameCollide.snowballTrees
       // collide snowballs with sleds
@@ -206,7 +205,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
       val deadSnowballs = {
         val bySled =
-          for (Death(killed: Snowball, killer: Sled) <- sledSnowballDeaths.b)
+          for (Death(killed: Snowball, _: Sled) <- sledSnowballDeaths.b)
             yield killed.id
 
         snowballDeaths.map(_.id) ++ bySled ++ snowballTreeDeaths.map(_.id)

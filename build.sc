@@ -1,9 +1,11 @@
 import $ivy.`com.lihaoyi::mill-contrib-bloop:0.11.1`
+import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import com.goyeau.mill.scalafix.ScalafixModule
 import mill._, scalalib._
 import mill.scalajslib._
 import mill.scalajslib.api._
 
-object client extends ScalaJSModule {
+object client extends ScalaJSModule with ScalafixModule {
   def scalaVersion = "2.12.18"
   def scalaJSVersion = "1.13.2"
   def moduleDeps = Seq(shared)
@@ -18,7 +20,7 @@ object client extends ScalaJSModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object shared extends ScalaModule with ScalaJSModule {
+object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
   def scalaVersion = "2.12.18"
   def scalaJSVersion = "1.13.2"
   def ivyDeps = Agg(
@@ -30,7 +32,7 @@ object shared extends ScalaModule with ScalaJSModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object server extends ScalaModule {
+object server extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared, measures)
   def scalaVersion = "2.12.18"
   def ivyDeps = Agg(
@@ -59,7 +61,7 @@ object server extends ScalaModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object load extends ScalaModule {
+object load extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(server, shared, measures)
   def scalaVersion = "2.12.18"
   def ivyDeps = Agg(
@@ -69,7 +71,7 @@ object load extends ScalaModule {
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
-object measures extends ScalaModule {
+object measures extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared)
   def scalaVersion = "2.12.18"
   def ivyDeps = Agg(
@@ -83,7 +85,7 @@ object measures extends ScalaModule {
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
 }
 
-object `measures-listener` extends ScalaModule {
+object `measures-listener` extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(measures)
   def scalaVersion = "2.12.18"
   def ivyDeps = Agg(

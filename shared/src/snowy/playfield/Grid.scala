@@ -98,9 +98,6 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
 
   }
 
-  private def cellIndex(playfieldItem: A): Int =
-    coordinatesToCellIndex(playfieldItem.position.x, playfieldItem.position.y)
-
   private def coordinatesToCellIndex(x: Double, y: Double): Int = {
     val column = cellColumn(x)
     val row    = cellRow(y)

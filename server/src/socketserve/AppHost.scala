@@ -14,6 +14,7 @@ import snowy.util.FlowImplicits._
 
 import scala.collection.mutable
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
   private implicit val materializer      = materializerWithLogging(logger)

@@ -26,8 +26,8 @@ import snowy.server.ClientConnection._
 
 /** track network delay to a client connection */
 class ClientConnection(id: ConnectionId, messageIO: MessageIO)(implicit
-      system: ActorSystem
-) extends Logging {
+                                                               system: ActorSystem)
+    extends Logging {
   private implicit val materializer = materializerWithLogging(logger)
   import system.dispatcher
 
