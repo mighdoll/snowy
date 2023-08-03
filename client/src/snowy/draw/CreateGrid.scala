@@ -69,11 +69,12 @@ object CreateGrid {
       gridRows * 3
     )
 
-    for (i <- grid.vertices.indices) {
-      grid.vertices(i).z = heightMap3x3(i)
+    val position = grid.getAttribute("position")
+    println(position.count)
+    for (i <- 0 until (position.count)) {
+      position.setZ(i, heightMap3x3(i))
     }
-
-    grid.computeFaceNormals()
+    position.needsUpdate = true
     grid.computeVertexNormals()
 
     val mesh = new THREE.Mesh(grid, material)
