@@ -17,7 +17,7 @@ object client extends ScalaJSModule with ScalafixModule {
   )
   def moduleKind = T(ModuleKind.ESModule)
 
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 
 object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
@@ -29,7 +29,7 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
     ivy"org.scalatest::scalatest::3.2.16",
     ivy"io.suzaku::boopickle::1.4.0",
   )
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 
 object server extends ScalaModule with ScalafixModule {
@@ -58,7 +58,7 @@ object server extends ScalaModule with ScalafixModule {
 
     super.resources() ++ Seq(PathRef(T.dest))
   }
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 
 object load extends ScalaModule with ScalafixModule {
@@ -69,7 +69,7 @@ object load extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-stream-testkit::2.8.3",
     ivy"org.asynchttpclient:async-http-client:2.12.3"
   )
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 object measures extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared)
@@ -82,7 +82,7 @@ object measures extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-actor::2.8.3",
     ivy"com.typesafe.akka::akka-stream::2.8.3"
   )
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 
 object `measures-listener` extends ScalaModule with ScalafixModule {
@@ -98,5 +98,5 @@ object `measures-listener` extends ScalaModule with ScalafixModule {
     ivy"com.typesafe.akka::akka-actor::2.8.3",
     ivy"com.typesafe.akka::akka-stream::2.8.3"
   )
-  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
