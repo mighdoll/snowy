@@ -44,7 +44,7 @@ object GameFixture {
   }
 
   // NYI - a test game control that serves the playfield to a web client
-  def withGameServer(fn: GameFixture => Unit) {
+  def withGameServer(fn: GameFixture => Unit): Unit = {
     WebServer.socketApplication { (api, system, appSpan) =>
       implicit val _system = system
       withGameControl { gameFixture =>

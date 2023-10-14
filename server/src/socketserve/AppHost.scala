@@ -17,7 +17,7 @@ import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
-  private implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
+  private implicit val materializer: Materializer = materializerWithLogging(logger)
   private var app: Option[AppController]               = None
   private val connections                              = mutable.Map[ClientId, ActorRef]()
   private val tickTime: FiniteDuration =
