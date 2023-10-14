@@ -24,7 +24,7 @@ object PowerUps {
   }
 }
 
-import snowy.server.PowerUps._
+import snowy.server.PowerUps.*
 
 /** A managed collection of PowerUps on the playfield */
 class PowerUps(protected val playfield: Playfield)
@@ -52,7 +52,8 @@ class PowerUps(protected val playfield: Playfield)
   case class IllegalCallException() extends RuntimeException
 
   /** don't call this directly, call removePowerUp instead */
-  override def remove(item: PowerUp)(implicit ct: ClassTag[PowerUp]): Unit = throw IllegalCallException()
+  override def remove(item: PowerUp)(implicit ct: ClassTag[PowerUp]): Unit =
+    throw IllegalCallException()
 
   def removePowerUp(item: PowerUp, gameTime: Long): Unit = {
     logger.info(s"removing PowerUp: $item")

@@ -1,6 +1,6 @@
 package snowy.client.hud
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 import snowy.GameClientProtocol.{AchievementBonus, HealthBonus, ScoreBonus, SpeedBonus}
 
 class AchievementMessage {

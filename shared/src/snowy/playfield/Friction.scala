@@ -1,9 +1,9 @@
 package snowy.playfield
 
-import snowy.GameConstants.Friction._
+import snowy.GameConstants.Friction.*
 import vector.Vec2d
 
-import scala.math._
+import scala.math.*
 
 object Friction {
 

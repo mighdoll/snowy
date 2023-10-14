@@ -1,6 +1,7 @@
 package snowy.client
+import org.scalajs.dom.*
+
 import scala.collection.mutable
-import org.scalajs.dom._
 
 /** Enable listening for pairs of keys simultaneously pressed,
   * e.g. for pressing debug key and a second key

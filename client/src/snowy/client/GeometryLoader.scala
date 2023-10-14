@@ -1,6 +1,6 @@
 package snowy.client
 
-import minithree.THREE._
+import minithree.THREE.*
 import snowy.draw.{ThreePowerups, ThreeSleds, ThreeSnowballs}
 
 import scala.concurrent.ExecutionContext.Implicits.global

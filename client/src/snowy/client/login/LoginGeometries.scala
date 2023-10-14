@@ -1,15 +1,15 @@
 package snowy.client.login
 
 import minithree.THREE
-import minithree.THREE._
+import minithree.THREE.*
 import org.scalajs.dom.raw.Event
-import org.scalajs.dom.{window, MouseEvent}
+import org.scalajs.dom.{MouseEvent, window}
 import snowy.AllLists
 import snowy.client.ClientMain
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.draw.ThreeSleds
+import snowy.playfield.*
 import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
-import snowy.playfield._
 import vector.Vec2d
 
 import scala.concurrent.ExecutionContext.Implicits.global

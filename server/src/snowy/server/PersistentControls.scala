@@ -1,22 +1,14 @@
 package snowy.server
 
-import snowy.GameServerProtocol.{
-  DriveControl,
-  Left,
-  PersistentControl,
-  Right,
-  Shooting,
-  Slowing,
-  StartStopControl
-}
+import snowy.GameServerProtocol.*
+import snowy.playfield.*
 import snowy.playfield.GameMotion.{LeftTurn, RightTurn}
-import snowy.playfield._
 import socketserve.ClientId
 import vector.Vec2d
 
 /** Support sled controls that have an ongoing. e.g. autofire, turning, etc. */
 class PersistentControls(gameStateImplicits: GameStateImplicits) {
-  import gameStateImplicits._
+  import gameStateImplicits.*
   val pendingControls = new PendingControls
 
   /** client has started to operate a sled control. e.g. shooting, braking */

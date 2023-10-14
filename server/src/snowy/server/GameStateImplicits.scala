@@ -1,7 +1,7 @@
 package snowy.server
 
+import snowy.playfield.*
 import snowy.playfield.PlayId.SledId
-import snowy.playfield._
 import socketserve.ClientId
 
 /** Convenient ways to look up objects and users in the game state collections */

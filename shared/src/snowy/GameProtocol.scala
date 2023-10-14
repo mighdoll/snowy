@@ -1,7 +1,7 @@
 package snowy
 
+import snowy.playfield.*
 import snowy.playfield.PlayId.SledId
-import snowy.playfield._
 
 /** messages sent to the server */
 object GameServerProtocol {

@@ -1,12 +1,11 @@
 package snowy.robot
 
-import java.util.concurrent.ThreadLocalRandom
-
 import snowy.AllLists
-import snowy.GameServerProtocol._
-import snowy.playfield._
+import snowy.GameServerProtocol.*
+import snowy.playfield.*
 import vector.Vec2d
 
+import java.util.concurrent.ThreadLocalRandom
 import scala.util.Random
 
 object RobotPlayer {

@@ -1,8 +1,9 @@
 package snowy.util
 
-import scala.concurrent.ExecutionContext
 import akka.actor.ActorSystem
 import snowy.measures.{MeasurementRecorder, Span}
+
+import scala.concurrent.ExecutionContext
 
 /** some convenient syntax for passing common implicit parameters */
 object ActorTypes {

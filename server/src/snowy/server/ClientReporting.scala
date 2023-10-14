@@ -5,16 +5,15 @@ import snowy.measures.Span
 import scala.collection.mutable
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameClientProtocol._
+import snowy.GameClientProtocol.*
+import snowy.measures.Span.time
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.PowerUp
 import snowy.server.ClientReporting.optNetId
 import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.server.PlayfieldSteps.TurnResults
-import snowy.server.rewards.Achievements._
-import snowy.util.ActorTypes.ParentSpan
+import snowy.server.rewards.Achievements.*
 import socketserve.{ClientId, ConnectionId, RobotId}
-import snowy.measures.Span.time
 
 /** Support for sending protocol messages about revised game state to the clients */
 class ClientReporting(
@@ -23,7 +22,7 @@ class ClientReporting(
       connections: Traversable[ConnectionId],
       robots: RobotHost
 ) extends Logging {
-  import gameStateImplicits._
+  import gameStateImplicits.*
   import messageIO.{sendBinaryMessage, sendMessage}
 
   def sendToAllClients(message: GameClientMessage): Unit = {
@@ -35,15 +34,16 @@ class ClientReporting(
   }
 
   def reportTurnResults(using parentSpan: Span)(turnResults: TurnResults): Unit =
+  {
     time("reportTurnResults") {
-      import turnResults._
-      reportSledIcings(icings)
-      reportDeadSleds(deadSleds)
-      reportAchievements(sledAchievements)
-      reportDeadSnowballs(deadSnowBalls)
-      reportUsedPowerUps(usedPowerUps)
-      reportNewPowerUps(newPowerUps)
+      reportSledIcings(turnResults.icings)
+      reportDeadSleds(turnResults.deadSleds)
+      reportAchievements(turnResults.sledAchievements)
+      reportDeadSnowballs(turnResults.deadSnowBalls)
+      reportUsedPowerUps(turnResults.usedPowerUps)
+      reportNewPowerUps(turnResults.newPowerUps)
     }
+  }
 
   def joinedSled(connectionId: ClientId, sledId: SledId): Unit = {
     connectionId match {

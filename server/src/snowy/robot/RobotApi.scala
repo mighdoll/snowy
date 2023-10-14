@@ -1,8 +1,8 @@
 package snowy.robot
 
 import snowy.GameServerProtocol.GameServerMessage
+import snowy.playfield.*
 import snowy.playfield.PlayId.SledId
-import snowy.playfield._
 import vector.Vec2d
 
 /** API that the Robot can use */

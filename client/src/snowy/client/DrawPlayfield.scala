@@ -1,13 +1,13 @@
 package snowy.client
 
 import minithree.THREE
-import minithree.THREE._
+import minithree.THREE.*
 import org.scalajs.dom.raw.Event
 import org.scalajs.dom.{document, window}
 import snowy.GameConstants.oldPlayfieldSize
 import snowy.client.ClientMain.{getHeight, getWidth}
-import snowy.draw._
-import snowy.playfield._
+import snowy.draw.*
+import snowy.playfield.*
 import vector.Vec2d
 
 import scala.collection.mutable

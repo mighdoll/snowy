@@ -1,18 +1,17 @@
 package snowy.server
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameConstants._
-import snowy.collision._
+import snowy.GameConstants.*
+import snowy.collision.*
 import snowy.measures.Span.{time, timeSpan}
 import snowy.measures.{Gauged, Span}
 import snowy.playfield.PlayId.{BallId, PowerUpId}
-import snowy.playfield.{Sled, PlayfieldTracker, _}
-import snowy.server.PlayfieldSteps._
-import snowy.server.rewards.Achievements._
+import snowy.playfield.*
+import snowy.server.PlayfieldSteps.*
+import snowy.server.rewards.Achievements.*
 import snowy.server.rewards.PowerUpRewards
-import snowy.util.ActorTypes.ParentSpan
 
 /** Support for moving the playfield objects to the next game state */
 class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
@@ -22,7 +21,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   val gameHealth         = new GameHealth(state)
   val gameStateImplicits = new GameStateImplicits(state)
   var currentKing        = state.serverSleds.headOption
-  import gameStateImplicits._
+  import gameStateImplicits.*
 
   /** advance to the next game time
     * @return seconds since the last turn

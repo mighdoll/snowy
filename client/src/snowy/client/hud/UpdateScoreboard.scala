@@ -1,6 +1,6 @@
 package snowy.client.hud
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 import snowy.GameClientProtocol.Scoreboard
 import snowy.connection.GameState
 import snowy.playfield.Sled

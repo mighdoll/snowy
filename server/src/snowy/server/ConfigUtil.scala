@@ -1,12 +1,11 @@
 package snowy.server
 
+import com.typesafe.config.{Config, ConfigFactory}
+
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
-
-import com.typesafe.config.{Config, ConfigFactory}
-
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 object ConfigUtil {
 
@@ -40,7 +39,7 @@ object ConfigUtil {
   def writeConfig(config: Config): Unit = {
     val writeList = config.getStringList("snowy.dump-config").asScala
     writeList.headOption.foreach { fileName =>
-      import java.nio.file.StandardOpenOption._
+      import java.nio.file.StandardOpenOption.*
       val configString = config.root.render()
       val charSet      = Charset.forName("UTF-8")
       val writer =

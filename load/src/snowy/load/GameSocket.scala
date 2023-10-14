@@ -6,7 +6,7 @@ import io.netty.buffer.Unpooled
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.FastUnpickle.partialUnpickleClientMessage
-import snowy.playfield.Picklers._
+import snowy.playfield.Picklers.*
 
 import scala.concurrent.ExecutionContext
 

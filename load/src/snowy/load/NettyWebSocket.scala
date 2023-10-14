@@ -2,10 +2,10 @@ package snowy.load
 
 import akka.util.ByteString
 //import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
 import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}
+import scribe.Logging
 import snowy.util.ActorTypes.Execution
 
 import scala.concurrent.Promise

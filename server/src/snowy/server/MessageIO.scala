@@ -5,8 +5,8 @@ import boopickle.DefaultBasic.{Pickle, PickleState}
 import boopickle.{BufferPool, EncoderSize}
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameClientProtocol._
-import snowy.playfield.Picklers._
+import snowy.GameClientProtocol.*
+import snowy.playfield.Picklers.*
 import socketserve.{AppHostApi, ConnectionId}
 
 /** A GameClientMessage wrapper over the send/receive api */

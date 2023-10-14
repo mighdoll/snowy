@@ -1,6 +1,6 @@
 package snowy.playfield
 
-import snowy.playfield.PlayId._
+import snowy.playfield.PlayId.*
 import vector.Vec2d
 
 case class Snowball(

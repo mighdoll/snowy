@@ -1,11 +1,11 @@
 package snowy.connection
 
-import snowy.GameClientProtocol._
+import snowy.GameClientProtocol.*
 import snowy.GameConstants
 import snowy.client.{Animation, ClientMain, DrawPlayfield}
-import snowy.playfield.GameMotion._
+import snowy.playfield.*
+import snowy.playfield.GameMotion.*
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
-import snowy.playfield._
 import vector.Vec2d
 
 import scala.collection.mutable
@@ -24,7 +24,7 @@ class GameState(drawPlayfield: DrawPlayfield) {
     Vec2d(0, 0) // A playfield dummy until the game receives a different one
   var scoreboard               = Scoreboard(0, Seq())
   var mySledId: Option[SledId] = None
-  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
+  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.*
 
   val playfieldAnimation = new Animation(animate)
   val playfield          = new Playfield(GameConstants.oldPlayfieldSize)

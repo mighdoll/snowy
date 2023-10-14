@@ -2,7 +2,7 @@ package snowy.playfield
 
 import snowy.GameConstants.turnTime
 import snowy.playfield.Friction.friction
-import snowy.playfield.GameMotion._
+import snowy.playfield.GameMotion.*
 import snowy.playfield.Skid.skid
 
 object GameMotion {

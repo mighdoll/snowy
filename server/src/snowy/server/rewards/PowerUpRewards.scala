@@ -1,8 +1,9 @@
 package snowy.server.rewards
 
-import snowy.playfield.{HealthPowerUp, PowerUp, SpeedPowerUp}
-import scala.concurrent.duration._
 import snowy.GameConstants.{speedPowerUp, speedPowerUpDuration}
+import snowy.playfield.{HealthPowerUp, PowerUp, SpeedPowerUp}
+
+import scala.concurrent.duration.*
 
 object PowerUpRewards {
   def reward(powerUp: PowerUp): Reward = {

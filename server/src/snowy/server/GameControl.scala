@@ -1,24 +1,26 @@
 package snowy.server
 
-import scala.collection.mutable
-import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import com.typesafe.config.Config
+
+import scala.collection.mutable
+import scala.concurrent.duration.*
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameClientProtocol._
-import snowy.GameServerProtocol._
+import snowy.GameClientProtocol.*
+import snowy.GameServerProtocol.*
 import snowy.measures.Span
 import snowy.measures.Span.time
-import snowy.playfield.Picklers._
-import snowy.playfield.{Sled, _}
+import snowy.playfield.Picklers.*
+import snowy.playfield.*
 import snowy.robot.RobotPlayer
 import snowy.server.ClientReporting.optNetId
-import snowy.server.rewards.Achievements._
-import socketserve._
+import snowy.server.rewards.Achievements.*
+import socketserve.*
 import vector.Vec2d
+
 import scala.language.postfixOps
 
 /** Central controller for the game. Delegates protocol messages from clients,
@@ -32,15 +34,15 @@ class GameControl(
       clock: Clock = StandardClock
 ) extends AppController with GameState with Logging {
   implicit val theSystem: ActorSystem = system
-  implicit val theSpan: Span = parentSpan
-  override val turnPeriod   = 20 milliseconds
-  val playfieldSteps        = new PlayfieldSteps(this, turnPeriod, clock)
-  private val messageIO     = new MessageIO(api)
-  private val connections   = mutable.Map[ConnectionId, ClientConnection]()
-  private val robots        = new RobotHost(this)
-  private val commands      = new PersistentControls(gameStateImplicits)
-  private val gameDebug     = new GameDebug(this, robots)
-  private def connectionIds = connections.keys
+  implicit val theSpan: Span          = parentSpan
+  override val turnPeriod             = 20 milliseconds
+  val playfieldSteps                  = new PlayfieldSteps(this, turnPeriod, clock)
+  private val messageIO               = new MessageIO(api)
+  private val connections             = mutable.Map[ConnectionId, ClientConnection]()
+  private val robots                  = new RobotHost(this)
+  private val commands                = new PersistentControls(gameStateImplicits)
+  private val gameDebug               = new GameDebug(this, robots)
+  private def connectionIds           = connections.keys
   private val clientReport =
     new ClientReporting(messageIO, gameStateImplicits, connectionIds, robots)
   private lazy val pickledTrees = {
@@ -49,9 +51,9 @@ class GameControl(
     ByteString(bytes)
   }
 
-  import gameStateImplicits._
-  import playfieldSteps.gameTime
+  import gameStateImplicits.*
   import messageIO.{sendBinaryMessage, sendMessage}
+  import playfieldSteps.gameTime
 
   robotSleds()
 

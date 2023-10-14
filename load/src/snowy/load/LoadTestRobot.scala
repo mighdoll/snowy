@@ -5,10 +5,9 @@ import akka.actor.ActorSystem
 import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameClientProtocol._
+import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
 import snowy.robot.{Robot, RobotApi, RobotGameState}
-import snowy.util.ActorTypes._
 import vector.Vec2d
 
 /** Host for a single robot in a client, e.g. for a load test via a WebSocket.

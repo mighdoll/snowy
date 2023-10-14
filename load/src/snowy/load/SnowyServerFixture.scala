@@ -2,18 +2,19 @@ package snowy.load
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.stream.scaladsl._
+import akka.stream.scaladsl.*
 import akka.stream.testkit.TestSubscriber.Probe
 import akka.stream.testkit.scaladsl.TestSink
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.SnowyClientSocket.connectSinkToServer
-import snowy.server.{GameControl, GlobalConfig}
-import snowy.util.FutureAwaiting._
-import socketserve.WebServer.socketApplication
-import scala.concurrent.Future
-import scala.concurrent.duration._
 import snowy.measures.NullMeasurementRecorder
+import snowy.server.{GameControl, GlobalConfig}
+import snowy.util.FutureAwaiting.*
+import socketserve.WebServer.socketApplication
+
+import scala.concurrent.Future
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 object SnowyServerFixture {

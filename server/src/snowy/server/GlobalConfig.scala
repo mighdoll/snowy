@@ -1,7 +1,6 @@
 package snowy.server
 
 import java.io.File
-
 import scala.collection.mutable.ListBuffer
 
 /** .conf-file configuration for the entire app */

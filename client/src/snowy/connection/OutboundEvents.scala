@@ -1,7 +1,7 @@
 package snowy.connection
 
-import org.scalajs.dom._
-import snowy.GameServerProtocol._
+import org.scalajs.dom.*
+import snowy.GameServerProtocol.*
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.client.{KeyCombos, Keys}
 import snowy.playfield.GameMotion.{LeftTurn, NoTurn, RightTurn}

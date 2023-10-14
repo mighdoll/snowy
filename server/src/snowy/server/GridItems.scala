@@ -10,7 +10,7 @@ trait GridItems[A <: PlayfieldItem[A]] {
   private val gridSpacing = 100.0
 
   implicit val grid: Grid[A] = new Grid[A](playfield.size, gridSpacing)
-  val items         = mutable.HashSet[A]()
+  val items                  = mutable.HashSet[A]()
 
   def remove(item: A)(implicit ct: ClassTag[A]): Unit = {
     grid.remove(item)

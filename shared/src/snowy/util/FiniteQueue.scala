@@ -11,4 +11,3 @@ class FiniteQueue[A](maxSize: Int) extends mutable.Queue[A] {
     super.addOne(elem)
   }
 }
-

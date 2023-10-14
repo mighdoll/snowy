@@ -3,9 +3,7 @@ package snowy.load
 import java.util.concurrent.atomic.AtomicInteger
 
 //import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
-import snowy.robot._
-import snowy.util.ActorTypes._
+import snowy.robot.*
 
 object SingleLoadTestClient {
   val nextUserId = new AtomicInteger()

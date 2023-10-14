@@ -1,6 +1,6 @@
 package snowy.collision
 
-import snowy.playfield._
+import snowy.playfield.*
 import vector.Vec2d
 
 object Collisions {

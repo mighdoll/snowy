@@ -4,7 +4,7 @@ import java.io.File
 import java.net.{URL, URLDecoder}
 import java.nio.file.{Path, Paths}
 import java.util.jar.JarFile
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.*
 
 case class ResourceNotFound(msg: String) extends RuntimeException(msg)
 

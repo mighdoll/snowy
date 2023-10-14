@@ -1,11 +1,11 @@
 package minithree.THREE
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 import org.scalajs.dom.raw.{HTMLCanvasElement, HTMLElement, HTMLImageElement}
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation._
-import scala.scalajs.js.typedarray._
+import scala.scalajs.js.annotation.*
+import scala.scalajs.js.typedarray.*
 
 @js.native
 @JSImport("stats.js", JSImport.Default)

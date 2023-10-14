@@ -1,11 +1,12 @@
 package snowy.util
 
-import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.{Future, Promise}
-import scala.util.Success
 import akka.snowy.util.FixedBuffer
 import akka.stream.scaladsl.{Flow, Source}
 import snowy.measures.Nanoseconds
+
+import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.{Future, Promise}
+import scala.util.Success
 
 object FlowImplicits {
 

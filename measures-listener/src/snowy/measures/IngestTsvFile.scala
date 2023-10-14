@@ -1,20 +1,21 @@
 package snowy.measures
 
-import java.nio.file.Path
-import scala.collection.mutable
-import scala.concurrent.Future
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Framing, Keep, Sink, Source}
 import akka.util.ByteString
 import com.orientechnologies.orient.core.intent.OIntentMassiveInsert
 import com.tinkerpop.blueprints.Vertex
-import com.tinkerpop.blueprints.impls.orient._
+import com.tinkerpop.blueprints.impls.orient.*
+
+import java.nio.file.Path
+import scala.collection.mutable
+import scala.concurrent.Future
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.measures.StreamToMeasurement.rowToMeasurement
-import snowy.util.ActorTypes._
-import snowy.util.FlowImplicits._
-import scala.collection.JavaConverters._
+import snowy.util.ActorTypes.*
+
+import scala.collection.JavaConverters.*
 
 object IngestTsvFile extends Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal

@@ -2,9 +2,9 @@ package snowy.server
 
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.GameClientProtocol._
+import snowy.GameClientProtocol.*
 import snowy.collision.SledTree
-import snowy.playfield._
+import snowy.playfield.*
 import socketserve.ClientId
 import vector.Vec2d
 

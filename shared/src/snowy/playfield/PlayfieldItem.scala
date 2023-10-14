@@ -18,7 +18,8 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
 
   def position: Vec2d = internalPosition
 
-  def position_=(pos: Vec2d)(implicit ct: ClassTag[A], tracker: PlayfieldTracker[A]): Unit = {
+  def position_=(pos: Vec2d)(implicit ct: ClassTag[A],
+                             tracker: PlayfieldTracker[A]): Unit = {
     tracker.remove(this)
     internalPosition = pos
     tracker.add(this)

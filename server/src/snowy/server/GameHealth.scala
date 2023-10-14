@@ -2,11 +2,12 @@ package snowy.server
 
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.Snowball
-import scala.math.min
 import snowy.server.rewards.Achievements.SledOut
 
+import scala.math.min
+
 class GameHealth(state: GameState) {
-  import state.gameStateImplicits._
+  import state.gameStateImplicits.*
 
   /** slowly recover some health points */
   def recoverHealth(deltaSeconds: Double): Unit = {

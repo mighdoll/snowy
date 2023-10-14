@@ -1,17 +1,16 @@
 package snowy.robot
 
-import java.util.concurrent.ThreadLocalRandom
-
 import akka.actor.ActorSystem
+
+import java.util.concurrent.ThreadLocalRandom
 //import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
-import snowy.GameServerProtocol._
-import snowy.util.ActorTypes.Actors
+import snowy.GameServerProtocol.*
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
+import scribe.Logging
 
-class BlindRobotPlayer(using actors: ActorSystem)(api: RobotApi, userName: String)
+class BlindRobotPlayer(using ActorSystem)(api: RobotApi, userName: String)
     extends Robot with Logging {
 
   private val twoPi         = math.Pi * 2

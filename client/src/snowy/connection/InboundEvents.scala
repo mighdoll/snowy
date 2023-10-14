@@ -2,12 +2,12 @@ package snowy.connection
 
 import boopickle.DefaultBasic.Unpickle
 import network.NetworkSocket
-import org.scalajs.dom._
-import snowy.GameClientProtocol._
-import snowy.GameServerProtocol._
+import org.scalajs.dom.*
+import snowy.GameClientProtocol.*
+import snowy.GameServerProtocol.*
 import snowy.client.ClientMain
 import snowy.client.hud.{AchievementMessage, DeathMessage}
-import snowy.playfield.Picklers._
+import snowy.playfield.Picklers.*
 import snowy.playfield.PlayId
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import vector.Vec2d

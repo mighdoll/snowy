@@ -1,6 +1,6 @@
 package snowy.client.hud
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 
 class DeathMessage {
   private val notifications =

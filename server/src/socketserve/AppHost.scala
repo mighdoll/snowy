@@ -3,23 +3,23 @@ package socketserve
 import akka.NotUsed
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
-import akka.stream._
-import akka.stream.scaladsl._
+import akka.stream.*
+import akka.stream.scaladsl.*
 import akka.util.ByteString
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.util.ActorUtil.materializerWithLogging
-import socketserve.AppHost.Protocol._
-import snowy.util.FlowImplicits._
+import snowy.util.FlowImplicits.*
+import socketserve.AppHost.Protocol.*
 
 import scala.collection.mutable
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
   private implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
-  private var app: Option[AppController] = None
-  private val connections                = mutable.Map[ClientId, ActorRef]()
+  private var app: Option[AppController]               = None
+  private val connections                              = mutable.Map[ClientId, ActorRef]()
   private val tickTime: FiniteDuration =
     20 milliseconds // LATER get this from GameControl
   private val internalMessagesQueue = 10

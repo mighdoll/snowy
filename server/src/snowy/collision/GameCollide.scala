@@ -1,7 +1,7 @@
 package snowy.collision
 
 import snowy.GameConstants.treeSize
-import snowy.collision.Collisions._
+import snowy.collision.Collisions.*
 import snowy.playfield.{Circle, Rect, Snowball, Tree}
 import vector.Vec2d
 

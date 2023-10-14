@@ -1,10 +1,11 @@
 package snowy.load
 
 import akka.actor.ActorSystem
+import snowy.measures.MeasurementRecorder
 import snowy.server.CommandLine.BasicArgs
 import snowy.server.{CommandLine, GlobalConfig}
-import scala.concurrent.duration._
-import snowy.measures.MeasurementRecorder
+
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 object LoadTest {
@@ -23,11 +24,11 @@ object LoadTest {
 
     val testDuration = 1 hour
 
-    val config                       = GlobalConfig.config
+    val config                                            = GlobalConfig.config
     implicit val measurementRecorder: MeasurementRecorder = MeasurementRecorder(config)
-    val port                         = config.getInt("snowy.server.port")
-    val wsUrl                        = s"ws://localhost:${port}/game"
-    val numClients                   = config.getInt("snowy.load.clients")
+    val port                                              = config.getInt("snowy.server.port")
+    val wsUrl                                             = s"ws://localhost:${port}/game"
+    val numClients                                        = config.getInt("snowy.load.clients")
     (1 to numClients).foreach { _ =>
       new SingleLoadTestClient(wsUrl)
     }

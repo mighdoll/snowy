@@ -1,11 +1,11 @@
 package snowy.client.login
 
 import minithree.THREE.WebGLRenderer
-import org.scalajs.dom._
+import org.scalajs.dom.*
 import org.scalajs.dom.raw.Event
 import snowy.client.ClientMain
 import snowy.draw.ThreeSleds
-import snowy.playfield._
+import snowy.playfield.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

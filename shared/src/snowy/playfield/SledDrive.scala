@@ -1,5 +1,5 @@
 package snowy.playfield
-import snowy.util.DoubleUtil._
+import snowy.util.DoubleUtil.*
 import vector.Vec2d
 
 object SledDrive {
@@ -25,7 +25,7 @@ object SledDrive {
   }
 }
 
-import snowy.playfield.SledDrive._
+import snowy.playfield.SledDrive.*
 
 /** driving mode of the sled: coasting, driving, or braking */
 class SledDrive {

@@ -1,6 +1,6 @@
 package network
 
-import org.scalajs.dom._
+import org.scalajs.dom.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.FiniteDuration

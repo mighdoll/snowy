@@ -9,11 +9,12 @@ import snowy.measures.CompletedSpan
 import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.server.GlobalConfig
-import snowy.util.FutureAwaiting._
-import snowy.util.ActorUtil.materializerWithLogging
-import scala.util.Properties
 import snowy.measures.{MeasurementRecorder, Span}
+import snowy.server.GlobalConfig
+import snowy.util.ActorUtil.materializerWithLogging
+import snowy.util.FutureAwaiting.*
+
+import scala.util.Properties
 
 /** A web server that hosts static files from the web/ resource directory,
   * scala js output files from the root resource directory,
@@ -80,11 +81,12 @@ object WebServer {
         forcePort: Option[Int] = None
   ): WebServer = {
     implicit val system: ActorSystem = ActorSystem()
-    implicit val measurementRecorder: MeasurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
+    implicit val measurementRecorder: MeasurementRecorder =
+      MeasurementRecorder(GlobalConfig.config)(system)
     implicit val rootSpan: CompletedSpan = Span.root("SocketApplication").finishNow()
-    val server                       = new WebServer(forcePort)
-    val appHost                      = server.appHost
-    val controller                   = makeController(appHost, system, rootSpan)
+    val server                           = new WebServer(forcePort)
+    val appHost                          = server.appHost
+    val controller                       = makeController(appHost, system, rootSpan)
     appHost.registerApp(controller)
     server
   }

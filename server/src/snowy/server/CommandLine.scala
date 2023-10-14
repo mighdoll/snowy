@@ -1,7 +1,7 @@
 package snowy.server
-import java.io.File
-
 import scopt.OptionParser
+
+import java.io.File
 
 object CommandLine {
 

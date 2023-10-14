@@ -5,7 +5,7 @@ import scala.collection.mutable
 import scribe.Logging
 import snowy.GameConstants.Points
 import snowy.server.ServerSled
-import snowy.server.rewards.Achievements._
+import snowy.server.rewards.Achievements.*
 import snowy.server.rewards.IcingStreakRewards.rewardsForStreak
 
 /** Track achievements by a sled, and apply appropriate rewards to the sled/user */

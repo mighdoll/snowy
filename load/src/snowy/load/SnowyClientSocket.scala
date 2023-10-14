@@ -66,8 +66,8 @@ object SnowyClientSocket {
         sink: Sink[GameClientMessage, M]
   ): Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
     implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
-    implicit val _          = ActorMaterializer()
-    val outputBufferSize    = 100
+    implicit val _                                    = ActorMaterializer()
+    val outputBufferSize                              = 100
 
     val conversionSink = messageConvert.toMat(sink)(Keep.right)
 

@@ -1,6 +1,6 @@
 package snowy.playfield
 
-import snowy.GameConstants._
+import snowy.GameConstants.*
 import vector.Vec2d
 
 import scala.math.Pi

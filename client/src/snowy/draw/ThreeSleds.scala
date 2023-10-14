@@ -1,17 +1,12 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{
-  MeshBasicMaterialParameters,
-  MeshLambertMaterialParameters,
-  Object3D,
-  Vector3
-}
-import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
-import snowy.client.DrawPlayfield._
+import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Vector3}
+import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
+import snowy.client.DrawPlayfield.*
 import snowy.client.{DrawPlayfield, UpdateGroup}
+import snowy.playfield.*
 import snowy.playfield.PlayId.SledId
-import snowy.playfield._
 
 import scala.scalajs.js.Dynamic
 

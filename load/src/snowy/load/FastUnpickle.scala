@@ -3,8 +3,8 @@ package snowy.load
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
-import snowy.playfield.Picklers._
-import snowy.util.PartialMatch._
+import snowy.playfield.Picklers.*
+import snowy.util.PartialMatch.*
 
 object FastUnpickle {
   private def pickleToByteString(m: GameClientMessage): ByteString =

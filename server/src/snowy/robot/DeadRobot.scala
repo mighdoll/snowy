@@ -1,10 +1,9 @@
 package snowy.robot
 
-import java.util.concurrent.ThreadLocalRandom
-
 import snowy.AllLists
-import snowy.GameServerProtocol._
+import snowy.GameServerProtocol.*
 
+import java.util.concurrent.ThreadLocalRandom
 import scala.util.Random
 
 object DeadRobot {

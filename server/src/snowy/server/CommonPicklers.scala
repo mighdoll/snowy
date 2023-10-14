@@ -4,7 +4,7 @@ import akka.util.ByteString
 import boopickle.Default.{Pickle, PickleState}
 import boopickle.{BufferPool, EncoderSize}
 import snowy.GameClientProtocol.GameClientMessage
-import snowy.playfield.Picklers._
+import snowy.playfield.Picklers.*
 
 object CommonPicklers {
 

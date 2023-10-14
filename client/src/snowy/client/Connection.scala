@@ -1,17 +1,18 @@
 package snowy.client
 
-import java.nio.ByteBuffer
 import boopickle.DefaultBasic.Pickle
 import network.NetworkSocket
-import org.scalajs.dom._
-import snowy.GameServerProtocol._
+import org.scalajs.dom.*
+import snowy.GameServerProtocol.*
 import snowy.connection.{GameState, InboundEvents}
-import snowy.playfield.Picklers._
+import snowy.playfield.Picklers.*
 import snowy.playfield.{SkiColor, SledType}
-import scala.concurrent.duration._
-import scala.scalajs.js.typedarray.{ArrayBuffer, Int8Array}
-import scala.scalajs.js.typedarray.TypedArrayBufferOps._
+
+import java.nio.ByteBuffer
+import scala.concurrent.duration.*
 import scala.language.postfixOps
+import scala.scalajs.js.typedarray.TypedArrayBufferOps.*
+import scala.scalajs.js.typedarray.{ArrayBuffer, Int8Array}
 
 class Connection(gameState: GameState) {
   val socket: NetworkSocket = {

@@ -4,12 +4,11 @@ import akka.actor.ActorSystem
 
 import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
 import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
 import snowy.GameServerProtocol.ClientPing
-import snowy.util.ActorTypes._
-import scala.concurrent.duration._
 import snowy.measures.Span
+
+import scala.concurrent.duration.*
 
 /** A game client that sends ClientPing messages to the server
   * and measures how long it takes for the server to respond

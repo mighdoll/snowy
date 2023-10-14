@@ -1,13 +1,13 @@
 package snowy.server
 
-import scala.collection.mutable
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.measures.Span
 import snowy.measures.Span.time
 import snowy.playfield.PlayId.SledId
 import snowy.robot.{Robot, RobotApi, RobotGameState}
-import snowy.util.ActorTypes.ParentSpan
 import socketserve.{ClientId, RobotId}
+
+import scala.collection.mutable
 
 /** Manages autonomous sleds on the playfield */
 class RobotHost(gameControl: GameControl) {

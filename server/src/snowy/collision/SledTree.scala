@@ -1,9 +1,9 @@
 package snowy.collision
 
-import snowy.GameConstants.Collision._
+import snowy.GameConstants.Collision.*
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.GameCollide._
-import snowy.playfield._
+import snowy.collision.GameCollide.*
+import snowy.playfield.*
 import vector.Vec2d
 
 class SledTree(playfield: Playfield) {

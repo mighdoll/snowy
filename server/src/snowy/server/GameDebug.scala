@@ -9,8 +9,8 @@ import vector.Vec2d
 
 /** Support development only - debugging commands for the game */
 class GameDebug(gameState: GameState, robots: RobotHost) extends Logging {
-  import gameState._
-  import gameState.gameStateImplicits._
+  import gameState.*
+  import gameState.gameStateImplicits.*
 
   private lazy val clientDebugEnabled =
     GlobalConfig.snowy.getBoolean("client-debug-messages")

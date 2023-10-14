@@ -1,17 +1,18 @@
 package snowy.measures
 
-import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
-import java.nio.file.{Files, Path, Paths}
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
+import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.util.ByteString
 import com.typesafe.config.Config
+
+import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
+import java.nio.file.{Files, Path, Paths}
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.util.PartialMatch._
-import snowy.util.FlowImplicits._
-import snowy.util.ActorUtil._
+import snowy.util.ActorUtil.*
+import snowy.util.FlowImplicits.*
+import snowy.util.PartialMatch.*
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {
@@ -40,7 +41,7 @@ class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
                                                                     system: ActorSystem)
     extends MeasurementRecorder with Logging {
   implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
-  val path                  = Paths.get(directoryName)
+  val path                                     = Paths.get(directoryName)
   val records = startTsvFile(
     path.resolve(s"$baseName.tsv"),
     "recordType\tname\tspanId\tparentId\tstartEpochMicros\tvalue\n"

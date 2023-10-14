@@ -1,6 +1,6 @@
 package snowy
 
-import snowy.playfield._
+import snowy.playfield.*
 
 object AllLists {
   val allSleds =

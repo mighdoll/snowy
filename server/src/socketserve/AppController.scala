@@ -2,7 +2,7 @@ package socketserve
 
 import akka.util.ByteString
 
-import scala.concurrent.duration.{FiniteDuration, _}
+import scala.concurrent.duration.{FiniteDuration, *}
 import scala.language.postfixOps
 
 /** An API for simple synchronous server apps that support multiple users over WebSockets.

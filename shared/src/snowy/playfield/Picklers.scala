@@ -1,22 +1,21 @@
 package snowy.playfield
 import boopickle.CompositePickler
-import boopickle.Default._
+import boopickle.Default.*
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
 
 object Picklers {
-  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
 
   implicit val vec2dPickler: Pickler[Vec2d] =
     generatePickler[Vec2d]
 
-  implicit val sledIdPickler: Pickler[PlayId[Sled]] = playIdPickler[Sled]
-  implicit val ballIdPickler: Pickler[PlayId[Snowball]] = playIdPickler[Snowball]
-  implicit val TreeIdPickler: Pickler[PlayId[Tree]] = playIdPickler[Tree]
+  implicit val sledIdPickler: Pickler[PlayId[Sled]]       = playIdPickler[Sled]
+  implicit val ballIdPickler: Pickler[PlayId[Snowball]]   = playIdPickler[Snowball]
+  implicit val TreeIdPickler: Pickler[PlayId[Tree]]       = playIdPickler[Tree]
   implicit val powerUpIdPickler: Pickler[PlayId[PowerUp]] = playIdPickler[PowerUp]
-  implicit val anyPlayIdPickler: Pickler[PlayId[Any]] = playIdPickler[Any]
+  implicit val anyPlayIdPickler: Pickler[PlayId[Any]]     = playIdPickler[Any]
 
   implicit val sledTypePickler: Pickler[SledType] =
     generatePickler[SledType]

@@ -1,20 +1,18 @@
 package snowy.server
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.stream.scaladsl.*
-import akka.stream.{ActorMaterializer, ClosedShape, OverflowStrategy}
+import akka.stream.ActorMaterializer
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.{GameClientMessage, Ping}
-import snowy.playfield.Picklers._
+import snowy.playfield.Picklers.*
 import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.ConnectionId
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.language.postfixOps
-
 
 object ClientConnection {
   val pingMessage = {
@@ -23,14 +21,13 @@ object ClientConnection {
   }
 }
 
-import snowy.server.ClientConnection._
+import snowy.server.ClientConnection.*
 
 /** track network delay to a client connection */
 class ClientConnection(id: ConnectionId, messageIO: MessageIO)(implicit
                                                                system: ActorSystem)
     extends Logging {
   private implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
-  import system.dispatcher
 
   private val pingFrequency  = 10 seconds
   private var lastPingSent   = 0L
