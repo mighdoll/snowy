@@ -6,7 +6,7 @@ import mill.scalajslib._
 import mill.scalajslib.api._
 
 object client extends ScalaJSModule with ScalafixModule {
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def scalaJSVersion = "1.13.2"
   def moduleDeps = Seq(shared)
   def ivyDeps = Agg(
@@ -21,7 +21,7 @@ object client extends ScalaJSModule with ScalafixModule {
 }
 
 object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def scalaJSVersion = "1.13.2"
   def ivyDeps = Agg(
     ivy"org.scalacheck::scalacheck::1.17.0",
@@ -34,7 +34,7 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
 
 object server extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared, measures)
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def ivyDeps = Agg(
     ivy"org.scalacheck::scalacheck::1.17.0",
     ivy"org.scalactic::scalactic::3.2.16",
@@ -45,8 +45,8 @@ object server extends ScalaModule with ScalafixModule {
     ivy"org.typelevel::cats-core::2.9.0",
     ivy"com.github.scopt::scopt::4.1.0",
     ivy"com.outr::scribe::3.11.8",
-    ivy"com.typesafe.akka::akka-actor::2.8.3",
-    ivy"com.typesafe.akka::akka-stream::2.8.3"
+    ivy"com.typesafe.akka::akka-actor::2.8.5",
+    ivy"com.typesafe.akka::akka-stream::2.8.5"
   )
   def resources = T {
     os.makeDir(T.dest / "web")
@@ -63,31 +63,31 @@ object server extends ScalaModule with ScalafixModule {
 
 object load extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(server, shared, measures)
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def ivyDeps = Agg(
-    ivy"com.typesafe.akka::akka-testkit::2.8.3",
-    ivy"com.typesafe.akka::akka-stream-testkit::2.8.3",
+    ivy"com.typesafe.akka::akka-testkit::2.8.5",
+    ivy"com.typesafe.akka::akka-stream-testkit::2.8.5",
     ivy"org.asynchttpclient:async-http-client:2.12.3"
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 object measures extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared)
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def ivyDeps = Agg(
     ivy"org.scalacheck::scalacheck::1.17.0",
     ivy"org.scalactic::scalactic::3.2.16",
     ivy"org.scalatest::scalatest::3.2.16",
     ivy"com.outr::scribe::3.11.8",
-    ivy"com.typesafe.akka::akka-actor::2.8.3",
-    ivy"com.typesafe.akka::akka-stream::2.8.3"
+    ivy"com.typesafe.akka::akka-actor::2.8.5",
+    ivy"com.typesafe.akka::akka-stream::2.8.5"
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }
 
 object `measures-listener` extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(measures)
-  def scalaVersion = "2.12.18"
+  def scalaVersion = "3.3.1"
   def ivyDeps = Agg(
     ivy"org.scalacheck::scalacheck::1.17.0",
     ivy"org.scalactic::scalactic::3.2.16",
@@ -95,8 +95,8 @@ object `measures-listener` extends ScalaModule with ScalafixModule {
     ivy"com.orientechnologies:orientdb-graphdb:3.2.21",
     ivy"com.github.scopt::scopt::4.1.0",
     ivy"com.outr::scribe::3.11.8",
-    ivy"com.typesafe.akka::akka-actor::2.8.3",
-    ivy"com.typesafe.akka::akka-stream::2.8.3"
+    ivy"com.typesafe.akka::akka-actor::2.8.5",
+    ivy"com.typesafe.akka::akka-stream::2.8.5"
   )
   def scalacOptions = Seq("-feature", "-deprecation", "-Ywarn-unused", "-Xsource:3")
 }

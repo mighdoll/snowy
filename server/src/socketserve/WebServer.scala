@@ -2,8 +2,11 @@ package socketserve
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.*
 import akka.stream.BindFailedException
+import snowy.measures.CompletedSpan
+
+import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.server.GlobalConfig
@@ -21,7 +24,7 @@ class WebServer(forcePort: Option[Int] = None)(implicit
                                                parentSpan: Span)
     extends Logging {
   materializerWithLogging(logger)
-  private implicit val executionContext = system.dispatcher
+  private implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   val appHost    = new AppHost
   val socketFlow = new SocketFlow(appHost)
@@ -76,9 +79,9 @@ object WebServer {
         makeController: (AppHostApi, ActorSystem, Span) => AppController,
         forcePort: Option[Int] = None
   ): WebServer = {
-    implicit val system              = ActorSystem()
-    implicit val measurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
-    implicit val rootSpan            = Span.root("SocketApplication").finishNow()
+    implicit val system: ActorSystem = ActorSystem()
+    implicit val measurementRecorder: MeasurementRecorder = MeasurementRecorder(GlobalConfig.config)(system)
+    implicit val rootSpan: CompletedSpan = Span.root("SocketApplication").finishNow()
     val server                       = new WebServer(forcePort)
     val appHost                      = server.appHost
     val controller                   = makeController(appHost, system, rootSpan)

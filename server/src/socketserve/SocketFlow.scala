@@ -37,7 +37,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     val (out, outRefFuture) =
       Source
         .actorRef[Message](3, OverflowStrategy.dropBuffer)
-        .fixedBuffer(outputBufferSize, warnOverflow)
+        .fixedBuffer(outputBufferSize, warnOverflow())
         .foreach {
           case BinaryMessage.Strict(data) => gaugeOutputSize(data.size)
           case TextMessage.Strict(data)   => gaugeOutputSize(data.size)
@@ -76,7 +76,7 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
           case TextMessage.Strict(data)   => gaugeInputSize(data.size)
           case x                          => logger.warn(s"can't Gauge input size of $x")
         }
-        .fixedBuffer(inputBufferSize, warnInputOverflow)
+        .fixedBuffer(inputBufferSize, warnInputOverflow())
         .mapMaterializedValue(_ => NotUsed)
         .named("inputBuffered")
 

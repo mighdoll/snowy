@@ -1,6 +1,8 @@
 package snowy.load
 
 import akka.actor.ActorSystem
+
+import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.{ClientPong, GameClientMessage}
@@ -12,8 +14,8 @@ import snowy.measures.Span
 /** A game client that sends ClientPing messages to the server
   * and measures how long it takes for the server to respond
   */
-class TimingRobot[_: Actors: Measurement](url: String) extends Logging {
-  implicit val dispatcher = implicitly[ActorSystem].dispatcher
+class TimingRobot(using Actors[_], Measurement[_])(url: String) extends Logging {
+  implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
   val period              = 1.second
   val gameSocket          = new GameSocket(url, messageReceived)
   var span                = Span.root("loadTest.ClientPing")

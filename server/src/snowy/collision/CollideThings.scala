@@ -1,11 +1,13 @@
 package snowy.collision
 
-import cats._
+import cats.*
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.Collisions.{collideCircles, Collided}
-import snowy.playfield._
+import snowy.collision.Collisions.{Collided, collideCircles}
+import snowy.playfield.*
 import vector.Vec2d
+
 import scala.collection.mutable.ListBuffer
+import scala.reflect.ClassTag
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 
@@ -23,7 +25,7 @@ object CollideThings {
   ]: PlayfieldTracker](
         aCollection: Traversable[A],
         bGrid: Grid[B]
-  ): DeathList[A, B] = {
+  )(implicit cta: ClassTag[A], ctb: ClassTag[B]): DeathList[A, B] = {
 
     val itemPairs: Traversable[(A, B)] =
       for {
@@ -56,7 +58,7 @@ object CollideThings {
   def collideCollection[A <: MovableCircularItem[A]: PlayfieldTracker](
         collection: Traversable[A],
         grid: Grid[A]
-  ): Traversable[Death[A, A]] = {
+  )(implicit ct: ClassTag[A]): Traversable[Death[A, A]] = {
     val pairs = for {
       item     <- collection
       neighbor <- grid.inside(item.boundingBox)
@@ -97,7 +99,7 @@ object CollideThings {
   ]: PlayfieldTracker](
         effectA: CollisionEffect[A],
         effectB: CollisionEffect[B]
-  ): DeathList[A, B] = {
+  )(implicit cta: ClassTag[A], ctb: ClassTag[B]): DeathList[A, B] = {
     effectA.applyEffects()
     effectB.applyEffects()
     val a       = effectA.collided.item
@@ -141,7 +143,7 @@ case class CollisionEffect[A <: MovableCircularItem[A]](
       collided: Collided[A],
       damage: Double
 ) extends Logging {
-  def applyEffects()(implicit tracker: PlayfieldTracker[A]): Unit = {
+  def applyEffects()(implicit ct: ClassTag[A], tracker: PlayfieldTracker[A]): Unit = {
     val obj = collided.item
     obj.health = obj.health - damage
     logger.trace(s"applyEffects on $obj  health:${obj.health}")

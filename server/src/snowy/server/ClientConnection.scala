@@ -1,8 +1,8 @@
 package snowy.server
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.stream.scaladsl._
-import akka.stream.{ClosedShape, OverflowStrategy}
+import akka.stream.scaladsl.*
+import akka.stream.{ActorMaterializer, ClosedShape, OverflowStrategy}
 import akka.util.ByteString
 import boopickle.DefaultBasic.Pickle
 //import com.typesafe.scalalogging.StrictLogging
@@ -14,6 +14,7 @@ import socketserve.ConnectionId
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
+
 
 object ClientConnection {
   val pingMessage = {
@@ -28,7 +29,7 @@ import snowy.server.ClientConnection._
 class ClientConnection(id: ConnectionId, messageIO: MessageIO)(implicit
                                                                system: ActorSystem)
     extends Logging {
-  private implicit val materializer = materializerWithLogging(logger)
+  private implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
   import system.dispatcher
 
   private val pingFrequency  = 10 seconds
@@ -53,34 +54,39 @@ class ClientConnection(id: ConnectionId, messageIO: MessageIO)(implicit
 
   /** setup a flow to watch for incoming Pongs */
   private def watchForPongs(): ActorRef = {
-    val pongSource = Source.actorRef[Long](100, OverflowStrategy.dropTail)
-
-    val graph = GraphDSL.create(pongSource) { implicit builder => pongs =>
-      import GraphDSL.Implicits._
-      val end = Sink.ignore
-      val firstSet = Flow[Long].take(pingWindowSize).map { time =>
-        sendPing()
-        time
-      }
-      val ongoing = Flow[Long].drop(pingWindowSize).map { time =>
-        system.scheduler.scheduleOnce(pingFrequency) { sendPing() }
-        time
-      }
-      val window = Flow[Long].sliding(pingWindowSize).map { seq =>
-        minRecentRtt = seq.min
-        logger.trace(s"min ping time for $id is $minRecentRtt")
-        minRecentRtt
-      }
-
-      val bcast = builder.add(Broadcast[Long](2))
-      val merge = builder.add(Merge[Long](2))
-      pongs ~> bcast ~> firstSet ~> merge
-      bcast ~> ongoing ~> merge ~> window ~> end
-      ClosedShape
-    }
-
-    val sourceRef: ActorRef = RunnableGraph.fromGraph(graph).run()
-    sourceRef
+//    val pongSource = Source.actorRef[Long](100, OverflowStrategy.dropTail)
+//
+//
+//    val graph = GraphDSL.create(pongSource) { implicit builder: GraphDSL.Builder[ActorRef] => (pongs: Source[Long, ActorRef]#Shape) =>
+//      import akka.stream.scaladsl.GraphDSL.Implicits._
+//
+//      val end = Sink.ignore
+//      val firstSet = Flow[Long].take(pingWindowSize).map { time =>
+//        sendPing()
+//        time
+//      }
+//      val ongoing = Flow[Long].drop(pingWindowSize).map { time =>
+//        system.scheduler.scheduleOnce(pingFrequency) { sendPing() }
+//        time
+//      }
+//      val window = Flow[Long].sliding(pingWindowSize).map { seq =>
+//        minRecentRtt = seq.min
+//        logger.trace(s"min ping time for $id is $minRecentRtt")
+//        minRecentRtt
+//      }
+//
+//      val bcast = builder.add(Broadcast[Long](2))
+//      val merge = builder.add(Merge[Long](2))
+//
+//      pongs ~> bcast ~> firstSet ~> merge
+//      bcast ~> ongoing ~> merge ~> window ~> end
+//
+//      ClosedShape
+//    }
+//
+//    val sourceRef: ActorRef = RunnableGraph.fromGraph(graph).run()
+//    sourceRef
+    ActorRef.noSender
   }
 
   /** send a ping message to the client */

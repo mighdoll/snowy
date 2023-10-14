@@ -31,8 +31,8 @@ class GameControl(
       val snowyConfig: Config = GlobalConfig.snowy,
       clock: Clock = StandardClock
 ) extends AppController with GameState with Logging {
-  implicit val theSystem    = system
-  implicit val theSpan      = parentSpan
+  implicit val theSystem: ActorSystem = system
+  implicit val theSpan: Span = parentSpan
   override val turnPeriod   = 20 milliseconds
   val playfieldSteps        = new PlayfieldSteps(this, turnPeriod, clock)
   private val messageIO     = new MessageIO(api)

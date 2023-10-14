@@ -11,7 +11,7 @@ import snowy.util.ActorTypes.Actors
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class BlindRobotPlayer[_: Actors](api: RobotApi, userName: String)
+class BlindRobotPlayer(using actors: ActorSystem)(api: RobotApi, userName: String)
     extends Robot with Logging {
 
   private val twoPi         = math.Pi * 2

@@ -3,6 +3,7 @@ package snowy.measures
 import java.io.File
 import scala.concurrent.Future
 import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import scopt.OptionParser
@@ -15,7 +16,7 @@ import snowy.util.FutureAwaiting._
 object MeasureLoader extends Logging {
   def main(args: Array[String]): Unit = {
     implicit val system       = ActorSystem()
-    implicit val materializer = materializerWithLogging(logger)
+    implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
     import system.dispatcher
 
     val results: Option[Future[Unit]] = {
@@ -26,7 +27,6 @@ object MeasureLoader extends Logging {
         ingestTsv(tsvFile.toPath).map { ingestResults =>
           import ingestResults.{gauges, spans}
           println(s"loaded: $spans spans  and $gauges gauges")
-          Unit
         }
       }
     }

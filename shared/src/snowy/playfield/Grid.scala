@@ -1,11 +1,12 @@
 package snowy.playfield
 
-import snowy.playfield.Intersect._
-import snowy.util.DoubleUtil._
+import snowy.playfield.Intersect.*
+import snowy.util.DoubleUtil.*
 import vector.Vec2d
 
 import scala.collection.mutable.HashSet
 import scala.math.{ceil, floor}
+import scala.reflect.ClassTag
 
 /** A rectangular grid of cells that contain PlayfieldItems.
   * Each cell contains the items whose bounding boxes overlap that cell.
@@ -46,7 +47,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     *
     * Note that the bounding box of the item must unchanged since insertion
     */
-  override def remove(item: A): Unit = {
+  override def remove(item: A)(implicit ct: ClassTag[A]): Unit = {
     for (cell <- coveredCells(item.boundingBox)) {
       val found =
         cell.remove(item)
@@ -75,7 +76,7 @@ class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     found.toSet
   }
 
-  def items: Iterable[A] = {
+  def items(implicit ct: ClassTag[A]): Iterable[A] = {
     val list =
       for {
         cell <- cells

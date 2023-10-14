@@ -2,17 +2,17 @@ package snowy.load
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.ws._
-import akka.stream.scaladsl._
+import akka.http.scaladsl.model.ws.*
+import akka.stream.scaladsl.*
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.util.ByteString
 import boopickle.DefaultBasic.{Pickle, Unpickle}
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
-import snowy.playfield.Picklers._
-import snowy.util.ActorTypes._
+import snowy.playfield.Picklers.*
+import snowy.util.ActorTypes.*
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object SnowyClientSocket {
   private val unpickleMessage: Flow[Message, GameClientMessage, _] = {
@@ -65,7 +65,7 @@ object SnowyClientSocket {
         messageConvert: Flow[Message, GameClientMessage, _],
         sink: Sink[GameClientMessage, M]
   ): Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
-    implicit val dispatcher = implicitly[ActorSystem].dispatcher
+    implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
     implicit val _          = ActorMaterializer()
     val outputBufferSize    = 100
 

@@ -1,5 +1,7 @@
 package snowy.server
 
+import snowy.measures.Span
+
 import scala.collection.mutable
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
@@ -32,7 +34,7 @@ class ClientReporting(
     }
   }
 
-  def reportTurnResults[_: ParentSpan](turnResults: TurnResults): Unit =
+  def reportTurnResults(using parentSpan: Span)(turnResults: TurnResults): Unit =
     time("reportTurnResults") {
       import turnResults._
       reportSledIcings(icings)

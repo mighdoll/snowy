@@ -2,6 +2,7 @@ package snowy.server
 
 import scala.collection.mutable
 import snowy.GameServerProtocol.GameServerMessage
+import snowy.measures.Span
 import snowy.measures.Span.time
 import snowy.playfield.PlayId.SledId
 import snowy.robot.{Robot, RobotApi, RobotGameState}
@@ -22,7 +23,7 @@ class RobotHost(gameControl: GameControl) {
   }
 
   /** let all the robots update state and send commands */
-  def robotsTurn[_: ParentSpan](): Unit = time("robotsTurn") {
+  def robotsTurn(using parentSpan: Span)(): Unit = time("robotsTurn") {
     for {
       (connectionId, robot) <- robots
       sledId                <- robotSleds.get(connectionId)

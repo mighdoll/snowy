@@ -52,7 +52,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
         state.motion.moveSleds(state.sleds.items, deltaSeconds, gameTime)
       }
 
-      val (usedPowerUpIds, powerUpAchievements) =
+      val (usedPowerUpIds, powerUpAchievements): (Iterable[PowerUpId], Iterable[PowerUpCollected]) =
         collidePowerUps(state.sleds, state.powerUps)
       val collided = checkCollisions()
       val achievements =
@@ -109,7 +109,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   /** For any sleds that hit a power up,
     * @return the power up and an achievement for the sled.
     */
-  private def collidePowerUps[_: ParentSpan](
+  private def collidePowerUps(using parentSpan: Span)(
         sleds: Sleds,
         powerUps: PowerUps
   ): (Iterable[PowerUpId], Iterable[PowerUpCollected]) =
@@ -215,7 +215,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     }
 
   /** reward the sleds and users for their achievements this round */
-  private def applyAchievements[_: ParentSpan](
+  private def applyAchievements(using parentSpan: Span)(
         achievements: Traversable[Achievement]
   ): Unit = time("applyAchievements") {
     for {
@@ -226,7 +226,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   /** Track icings, to identify revenge and icing streaks */
-  private def trackIcings[_: ParentSpan](
+  private def trackIcings(using parentSpan: Span)(
         icings: Traversable[SledIced]
   ): Traversable[Achievement] = time("trackIcings") {
     trackRevenge(icings) ++ trackIceStreaks(icings) ++ iceCountAchievements(icings)

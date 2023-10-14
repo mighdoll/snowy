@@ -21,7 +21,7 @@ object IngestTsvFile extends Logging {
 
   case class IngestResults(spans: Int, gauges: Int, edges: Int)
 
-  def ingestTsv[_: Execution: Materializer](path: Path): Future[IngestResults] = {
+  def ingestTsv(using Execution[_], Materializer[_])(path: Path): Future[IngestResults] = {
     val graphFactory = new OrientGraphFactory("plocal:/Users/lee/spans-db")
     val db           = graphFactory.getTx
     val graphDb      = db.getRawGraph
@@ -38,7 +38,7 @@ object IngestTsvFile extends Logging {
     }
   }
 
-  def storeMeasures[_: Execution: Materializer](
+  def storeMeasures(using Execution[_], Materializer[_])(
         db: OrientBaseGraph,
         source: Source[ReadMeasurement, Future[IOResult]]
   ): Future[IngestResults] = {

@@ -3,7 +3,7 @@ package snowy.measures
 import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
 import java.nio.file.{Files, Path, Paths}
 import akka.actor.ActorSystem
-import akka.stream.OverflowStrategy
+import akka.stream.{ActorMaterializer, OverflowStrategy}
 import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
 import akka.util.ByteString
 import com.typesafe.config.Config
@@ -39,7 +39,7 @@ object NullMeasurementRecorder extends MeasurementRecorder {
 class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
                                                                     system: ActorSystem)
     extends MeasurementRecorder with Logging {
-  implicit val materializer = materializerWithLogging(logger)
+  implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
   val path                  = Paths.get(directoryName)
   val records = startTsvFile(
     path.resolve(s"$baseName.tsv"),

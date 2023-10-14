@@ -12,11 +12,11 @@ object Picklers {
   implicit val vec2dPickler: Pickler[Vec2d] =
     generatePickler[Vec2d]
 
-  implicit val sledIdPickler    = playIdPickler[Sled]
-  implicit val ballIdPickler    = playIdPickler[Snowball]
-  implicit val TreeIdPickler    = playIdPickler[Tree]
-  implicit val powerUpIdPickler = playIdPickler[PowerUp]
-  implicit val anyPlayIdPickler = playIdPickler[Any]
+  implicit val sledIdPickler: Pickler[PlayId[Sled]] = playIdPickler[Sled]
+  implicit val ballIdPickler: Pickler[PlayId[Snowball]] = playIdPickler[Snowball]
+  implicit val TreeIdPickler: Pickler[PlayId[Tree]] = playIdPickler[Tree]
+  implicit val powerUpIdPickler: Pickler[PlayId[PowerUp]] = playIdPickler[PowerUp]
+  implicit val anyPlayIdPickler: Pickler[PlayId[Any]] = playIdPickler[Any]
 
   implicit val sledTypePickler: Pickler[SledType] =
     generatePickler[SledType]

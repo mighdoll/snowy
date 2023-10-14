@@ -1,6 +1,7 @@
 package snowy.server
 
 import java.util.concurrent.ThreadLocalRandom
+import scala.reflect.ClassTag
 
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
@@ -37,7 +38,7 @@ class PowerUps(protected val playfield: Playfield)
 
   def refresh(gameTime: Long): Traversable[PowerUp] = {
     val ready        = replaces.takeWhile(_.time < gameTime)
-    val replacements = ready.map(replace => newPowerUp(replace.old))
+    val replacements = ready.unsorted.map(replace => newPowerUp(replace.old))
     if (replacements.nonEmpty) {
       logger.info(s"new powerUps: $replacements")
     }
@@ -51,7 +52,7 @@ class PowerUps(protected val playfield: Playfield)
   case class IllegalCallException() extends RuntimeException
 
   /** don't call this directly, call removePowerUp instead */
-  override def remove(item: PowerUp): Unit = throw IllegalCallException()
+  override def remove(item: PowerUp)(implicit ct: ClassTag[PowerUp]): Unit = throw IllegalCallException()
 
   def removePowerUp(item: PowerUp, gameTime: Long): Unit = {
     logger.info(s"removing PowerUp: $item")

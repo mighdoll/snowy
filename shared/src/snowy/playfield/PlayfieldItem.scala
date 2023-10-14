@@ -1,6 +1,8 @@
 package snowy.playfield
 import vector.Vec2d
 
+import scala.reflect.ClassTag
+
 /** A playfield item in a mutable set mirrored to clients */
 trait SharedItem
 
@@ -16,7 +18,7 @@ trait PlayfieldItem[A <: PlayfieldItem[A]] extends Bounds { this: A =>
 
   def position: Vec2d = internalPosition
 
-  def position_=(pos: Vec2d)(implicit tracker: PlayfieldTracker[A]): Unit = {
+  def position_=(pos: Vec2d)(implicit ct: ClassTag[A], tracker: PlayfieldTracker[A]): Unit = {
     tracker.remove(this)
     internalPosition = pos
     tracker.add(this)

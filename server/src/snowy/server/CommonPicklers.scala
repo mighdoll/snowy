@@ -13,7 +13,7 @@ object CommonPicklers {
     */
   def withPickledClientMessage[T](message: GameClientMessage)(fn: ByteString => T): T = {
     // optimization for boopickle: don't track references, since we don't send any graphs
-    implicit def pickleState = new PickleState(new EncoderSize, false, false)
+    implicit def pickleState: PickleState = new PickleState(new EncoderSize, false, false)
 
     val bytes      = Pickle.intoBytes(message)
     val byteString = ByteString(bytes)

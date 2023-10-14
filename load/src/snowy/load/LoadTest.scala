@@ -19,12 +19,12 @@ object LoadTest {
   def run(basicArgs: BasicArgs): Unit = {
     basicArgs.conf.foreach(GlobalConfig.addConfigFiles(_))
 
-    implicit val actorSystem = ActorSystem()
+    implicit val actorSystem: ActorSystem = ActorSystem()
 
     val testDuration = 1 hour
 
     val config                       = GlobalConfig.config
-    implicit val measurementRecorder = MeasurementRecorder(config)
+    implicit val measurementRecorder: MeasurementRecorder = MeasurementRecorder(config)
     val port                         = config.getInt("snowy.server.port")
     val wsUrl                        = s"ws://localhost:${port}/game"
     val numClients                   = config.getInt("snowy.load.clients")

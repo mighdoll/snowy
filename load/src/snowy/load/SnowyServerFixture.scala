@@ -17,7 +17,7 @@ import snowy.measures.NullMeasurementRecorder
 import scala.language.postfixOps
 
 object SnowyServerFixture {
-  implicit val system = ActorSystem()
+  implicit val system: ActorSystem = ActorSystem()
 
   import system.dispatcher
 
@@ -87,7 +87,7 @@ object SnowyServerFixture {
     * @return a test api to send/receive messages against the snowy server
     */
   def connectToServer[M](wsUrl: String): Future[ServerTestApi] = {
-    implicit def recorder = NullMeasurementRecorder
+    implicit def recorder: NullMeasurementRecorder.type = NullMeasurementRecorder
     connectSinkToServer(wsUrl, TestSink.probe[GameClientMessage]).map {
       case ((sendQueue, testProbe)) =>
         ServerTestApi(sendQueue, testProbe)

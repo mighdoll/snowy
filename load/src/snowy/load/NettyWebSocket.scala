@@ -33,7 +33,7 @@ object NettyWebSocket extends Logging {
     new DefaultAsyncHttpClient(config)
   }
 
-  def connect[_: Execution](
+  def connect(using Execution[_])(
         wsUrl: String,
         receivedFn: ByteString => Unit
   ): SocketControl = {
@@ -63,7 +63,7 @@ object NettyWebSocket extends Logging {
             rsv: Int
       ): Unit = {
 
-        incomingBytes = incomingBytes ++ payload
+        incomingBytes = incomingBytes ++ ByteString.fromArray(payload)
         if (finalFragment) {
           val bytes = incomingBytes
           incomingBytes = ByteString.empty
