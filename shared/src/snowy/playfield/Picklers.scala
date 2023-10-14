@@ -7,6 +7,7 @@ import snowy.playfield.PlayId.{BallId, PowerUpId, SledId, TreeId}
 import vector.Vec2d
 
 object Picklers {
+  import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers._
 
   implicit val vec2dPickler: Pickler[Vec2d] =
     generatePickler[Vec2d]
