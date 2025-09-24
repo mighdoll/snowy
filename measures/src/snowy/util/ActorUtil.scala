@@ -11,7 +11,7 @@ object ActorUtil {
   /** return a actor materializer that logs errors on actor failure */
   def materializerWithLogging(
         logger: Logger
-  )(implicit system: ActorSystem): Materializer = {
+  )(implicit system: ActorSystem): ActorMaterializer = {
     val decider: Supervision.Decider = { e =>
       logger.error("Unhandled exception in actor", e)
       Supervision.Stop

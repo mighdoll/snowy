@@ -1,7 +1,7 @@
 package snowy.load
 
 import akka.actor.ActorSystem
-
+import snowy.measures.MeasurementRecorder
 import scala.concurrent.ExecutionContextExecutor
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
@@ -14,7 +14,7 @@ import vector.Vec2d
   * Provides the RobotApi to the robot logic. Internally sends and
   * receives messages from the game server.
   */
-class LoadTestRobot(using Actors[_], Measurement[_])(
+class LoadTestRobot(using ActorSystem, MeasurementRecorder)(
       url: String
 )(createRobot: (RobotApi => Robot))
     extends Logging {

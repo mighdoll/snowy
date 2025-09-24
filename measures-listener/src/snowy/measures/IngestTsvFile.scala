@@ -16,6 +16,7 @@ import snowy.measures.StreamToMeasurement.rowToMeasurement
 import snowy.util.ActorTypes.*
 
 import scala.collection.JavaConverters.*
+import snowy.util.FlowImplicits.*
 
 object IngestTsvFile extends Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal

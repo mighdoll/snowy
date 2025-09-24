@@ -14,6 +14,7 @@ import snowy.util.FutureAwaiting.*
 
 import scala.concurrent.duration.*
 import scala.util.Try
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object MeasureLoader extends Logging {
   def main(args: Array[String]): Unit = {
@@ -26,7 +27,8 @@ object MeasureLoader extends Logging {
         tsvFile <- cmdLine.tsvFile
       } yield {
         ingestTsv(tsvFile.toPath).map { ingestResults =>
-
+          val spans  = ingestResults.spans
+          val gauges = ingestResults.gauges
           println(s"loaded: $spans spans  and $gauges gauges")
         }
       }
