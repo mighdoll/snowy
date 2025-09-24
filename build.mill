@@ -1,0 +1,107 @@
+//| mvnDeps: 
+//| - com.lihaoyi::mill-contrib-scalapblib:$MILL_VERSION
+//| - com.goyeau::mill-scalafix::0.6.0
+package build
+import mill.*, scalalib.*
+
+import com.goyeau.mill.scalafix.ScalafixModule
+import mill.scalajslib._
+import mill.scalajslib.api._
+import contrib.scalapblib._
+
+object client extends ScalaJSModule with ScalafixModule {
+  def scalaVersion = "3.7.3"
+  def scalaJSVersion = "1.20.1"
+  def moduleDeps = Seq(shared)
+  def mvnDeps = Seq(
+    mvn"org.scalacheck::scalacheck::1.17.0",
+    mvn"org.scalactic::scalactic::3.2.16",
+    mvn"org.scalatest::scalatest::3.2.16",
+    mvn"org.scala-js::scalajs-dom::2.6.0",
+  )
+  def moduleKind = ModuleKind.ESModule
+
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
+
+object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
+  def scalaVersion = "3.7.3"
+  def scalaJSVersion = "1.20.1"
+  def mvnDeps = Seq(
+    mvn"org.scalacheck::scalacheck::1.17.0",
+    mvn"org.scalactic::scalactic::3.2.16",
+    mvn"org.scalatest::scalatest::3.2.16",
+    mvn"com.lihaoyi::upickle::3.3.1",
+    mvn"io.suzaku::boopickle::1.4.0",
+  )
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
+
+object server extends ScalaModule with ScalafixModule {
+  def moduleDeps = Seq(shared, measures)
+  def scalaVersion = "3.7.3"
+  def mvnDeps = Seq(
+    mvn"org.scalacheck::scalacheck::1.17.0",
+    mvn"org.scalactic::scalactic::3.2.16",
+    mvn"org.scalatest::scalatest::3.2.16",
+    mvn"io.suzaku::boopickle::1.4.0",
+    mvn"org.typelevel::squants::1.8.3",
+    mvn"com.typesafe.akka::akka-http::10.5.2",
+    mvn"org.typelevel::cats-core::2.9.0",
+    mvn"com.github.scopt::scopt::4.1.0",
+    mvn"com.outr::scribe::3.11.8",
+    mvn"com.typesafe.akka::akka-actor::2.8.5",
+    mvn"com.typesafe.akka::akka-stream::2.8.5"
+  )
+  def resources = Task {
+    os.makeDir(Task.dest / "web")
+
+    val jsPath = client.fastLinkJS().dest.path
+
+    os.copy(jsPath / "main.js", Task.dest / "web" / "main.js")
+    os.copy(jsPath / "main.js.map", Task.dest / "web" / "main.js.map")
+
+    super.resources() ++ Seq(PathRef(Task.dest))
+  }
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
+
+object load extends ScalaModule with ScalafixModule {
+  def moduleDeps = Seq(server, shared, measures)
+  def scalaVersion = "3.7.3"
+  def mvnDeps = Seq(
+    mvn"com.typesafe.akka::akka-testkit::2.8.5",
+    mvn"com.typesafe.akka::akka-stream-testkit::2.8.5",
+    mvn"org.asynchttpclient:async-http-client:2.12.3"
+  )
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
+object measures extends ScalaModule with ScalafixModule {
+  def moduleDeps = Seq(shared)
+  def scalaVersion = "3.7.3"
+  def mvnDeps = Seq(
+    mvn"org.scalacheck::scalacheck::1.17.0",
+    mvn"org.scalactic::scalactic::3.2.16",
+    mvn"org.scalatest::scalatest::3.2.16",
+    mvn"com.outr::scribe::3.11.8",
+    mvn"com.typesafe.akka::akka-actor::2.8.5",
+    mvn"com.typesafe.akka::akka-stream::2.8.5"
+  )
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
+
+object `measures-listener` extends ScalaModule with ScalafixModule {
+  def moduleDeps = Seq(measures)
+  def scalaVersion = "3.7.3"
+  def mvnDeps = Seq(
+    mvn"org.scalacheck::scalacheck::1.17.0",
+    mvn"org.scalactic::scalactic::3.2.16",
+    mvn"org.scalatest::scalatest::3.2.16",
+    mvn"com.orientechnologies:orientdb-graphdb:3.2.21",
+    mvn"com.github.scopt::scopt::4.1.0",
+    mvn"com.outr::scribe::3.11.8",
+    mvn"com.typesafe.akka::akka-actor::2.8.5",
+    mvn"com.typesafe.akka::akka-stream::2.8.5"
+  )
+  def scalacOptions = Seq("-feature", "-deprecation")
+}
