@@ -12,14 +12,14 @@ import scala.concurrent.duration.*
 import snowy.measures.MeasurementRecorder
 import scribe.Logging
 
-/** A game client that sends ClientPing messages to the server
-  * and measures how long it takes for the server to respond
+/** A game client that sends ClientPing messages to the server and measures how long it
+  * takes for the server to respond
   */
 class TimingRobot(using ActorSystem, MeasurementRecorder)(url: String) extends Logging {
   implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
-  val period              = 1.second
-  val gameSocket          = new GameSocket(url, messageReceived)
-  var span                = Span.root("loadTest.ClientPing")
+  val period                                        = 1.second
+  val gameSocket                                    = new GameSocket(url, messageReceived)
+  var span                                          = Span.root("loadTest.ClientPing")
 
   gameSocket.connect()
   timePing()

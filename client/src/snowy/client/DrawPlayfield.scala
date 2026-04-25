@@ -2,8 +2,7 @@ package snowy.client
 
 import minithree.THREE
 import minithree.THREE.*
-import org.scalajs.dom.raw.Event
-import org.scalajs.dom.{document, window}
+import org.scalajs.dom.{document, window, Event}
 import snowy.GameConstants.oldPlayfieldSize
 import snowy.client.ClientMain.{getHeight, getWidth}
 import snowy.draw.*
@@ -15,7 +14,7 @@ import scala.collection.mutable
 class UpdateGroup[A](val group: Object3D) {
   val map: mutable.HashMap[PlayId[A], Object3D] = {
     val items = group.children.map(item => new PlayId[A](item.name.toInt) -> item).toSeq
-    mutable.HashMap(items: _*)
+    mutable.HashMap(items*)
   }
 
   def add(item: Object3D): Unit = {
@@ -30,8 +29,7 @@ class UpdateGroup[A](val group: Object3D) {
 
 object DrawPlayfield {
 
-  /** if the object's position is closer to the wrapped side
-    * returns the position with
+  /** if the object's position is closer to the wrapped side returns the position with
     */
   def playfieldWrap(obj: Object3D, pos: Vec2d, mySled: Vector3): Unit = {
 
@@ -65,8 +63,8 @@ class DrawPlayfield(
   val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
 
-  val amb   = new THREE.AmbientLight(0xffffff, 0.5)
-  val light = new THREE.DirectionalLight(0xffffff, 0.5)
+  val amb   = new THREE.AmbientLight(0xffffff, 0.5 * math.Pi)
+  val light = new THREE.DirectionalLight(0xffffff, 0.5 * math.Pi)
 
   val stats = new Stats()
 
@@ -116,7 +114,8 @@ class DrawPlayfield(
   }
 
   window.addEventListener(
-    "resize", { (_: Event) =>
+    "resize",
+    { (_: Event) =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 

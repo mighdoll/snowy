@@ -21,7 +21,7 @@ class RobotPlayer(api: RobotApi, name: String) extends Robot {
   val mySkis =
     AllLists.allSkis(ThreadLocalRandom.current.nextInt(AllLists.allSkis.length))
   val myType = BasicSledType
-  //AllLists.allSleds(ThreadLocalRandom.current.nextInt(AllLists.allSleds.length))
+  // AllLists.allSleds(ThreadLocalRandom.current.nextInt(AllLists.allSleds.length))
 
   api.sendToServer(Join(name, myType, mySkis))
 
@@ -50,8 +50,8 @@ class RobotPlayer(api: RobotApi, name: String) extends Robot {
 
   def aimAtNearest(
         mySled: Sled,
-        sleds: Traversable[Sled],
-        snowballs: Traversable[Snowball]
+        sleds: Iterable[Sled],
+        snowballs: Iterable[Snowball]
   ): Double = {
     var closest = 1500.0
     var angle   = 0.0

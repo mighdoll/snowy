@@ -22,8 +22,8 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
   materializerWithLogging(logger)
   import system.dispatcher
 
-  /** A flow for each connection received over the /game WebSocket
-    * The flow is materialized by the WebServer
+  /** A flow for each connection received over the /game WebSocket The flow is
+    * materialized by the WebServer
     */
   def messages(): Flow[Message, Message, NotUsed] = {
     val connectionId = new ConnectionId // user for this connection
@@ -36,7 +36,12 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     // create an actor ref to accept and buffer messages sent to the client
     val (out, outRefFuture) =
       Source
-        .actorRef[Message](3, OverflowStrategy.dropBuffer)
+        .actorRef[Message](
+          completionMatcher = PartialFunction.empty,
+          failureMatcher = PartialFunction.empty,
+          bufferSize = 3,
+          overflowStrategy = OverflowStrategy.dropBuffer
+        )
         .fixedBuffer(outputBufferSize, warnOverflow())
         .foreach {
           case BinaryMessage.Strict(data) => gaugeOutputSize(data.size)
@@ -51,9 +56,10 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
 
   /** Setup the input stream.
     *
-    * @return a Sink for incoming web socket messages (for the WebSocket input flow)
-    * and a future actor ref for GameCommand messages (which the caller can use to
-    * inject GameCommand messages from outside the flow.)
+    * @return
+    *   a Sink for incoming web socket messages (for the WebSocket input flow) and a
+    *   future actor ref for GameCommand messages (which the caller can use to inject
+    *   GameCommand messages from outside the flow.)
     */
   private def setupInput(
         connectionId: ConnectionId
@@ -83,17 +89,21 @@ class SocketFlow(appHost: AppHost)(implicit system: ActorSystem, parentSpan: Spa
     // convert web socket messages into client controller messages
     val inputConverted: Flow[Message, AppMessage, NotUsed] =
       inputBuffered
-        .collect {
-          case BinaryMessage.Strict(data) =>
-            logger.trace(s"received data on $connectionId. data: $data")
-            ClientMessage(connectionId, data)
+        .collect { case BinaryMessage.Strict(data) =>
+          logger.trace(s"received data on $connectionId. data: $data")
+          ClientMessage(connectionId, data)
         }
         .named("inputConverted")
 
     // target for sending connection open/close messages to the controller
     val (internalMessages, internalRefFuture) =
       Source
-        .actorRef[AppMessage](internalMessagesSize, OverflowStrategy.fail)
+        .actorRef[AppMessage](
+          completionMatcher = PartialFunction.empty,
+          failureMatcher = PartialFunction.empty,
+          bufferSize = internalMessagesSize,
+          overflowStrategy = OverflowStrategy.fail
+        )
         .named("inputInternalMessages")
         .peekMat
 

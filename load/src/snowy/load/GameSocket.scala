@@ -1,17 +1,16 @@
 package snowy.load
 
 import akka.util.ByteString
-import boopickle.DefaultBasic.Pickle
+import upickle.default.writeBinary
 import io.netty.buffer.Unpooled
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.FastUnpickle.partialUnpickleClientMessage
-import snowy.playfield.Picklers.*
 
+import java.nio.ByteBuffer
 import scala.concurrent.ExecutionContext
 
-class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
-      implicit
+class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(implicit
       execution: ExecutionContext
 ) {
   val socket = NettyWebSocket.connect(wsUrl, receive)
@@ -23,7 +22,7 @@ class GameSocket(wsUrl: String, messageFn: GameClientMessage => Unit)(
   }
 
   def sendMessage(msg: GameServerMessage): Unit = {
-    val byteBuffer = Pickle.intoBytes[GameServerMessage](msg)
+    val byteBuffer = ByteBuffer.wrap(writeBinary[GameServerMessage](msg))
     val byteBuf    = Unpooled.wrappedBuffer(byteBuffer)
     socket.send(byteBuf)
   }

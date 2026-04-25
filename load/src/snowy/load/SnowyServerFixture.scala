@@ -35,11 +35,12 @@ object SnowyServerFixture {
       sendQueue.offer(message)
     }
 
-    /** skip over received messages until the first message matching a
-      * provided function is reached. Throws a timeout exception if the
-      * message isn't received in time
-      * @param pFn partial function to match messages
-      * @return result of partial function
+    /** skip over received messages until the first message matching a provided function
+      * is reached. Throws a timeout exception if the message isn't received in time
+      * @param pFn
+      *   partial function to match messages
+      * @return
+      *   result of partial function
       */
     def skipToMessage[A](
           pFn: PartialFunction[GameClientMessage, A],
@@ -52,16 +53,15 @@ object SnowyServerFixture {
 
   /** Start a new snowy server and run tests against it.
     *
-    * @param fn a test function that's provided with a send/receive api
-    *           the function should return a future that completes
-    *           when the test is done
+    * @param fn
+    *   a test function that's provided with a send/receive api the function should return
+    *   a future that completes when the test is done
     */
   def withServer(
         fn: ServerTestApi => Future[Unit],
         timeout: FiniteDuration = 3 seconds
   ): Unit = {
     testPort = testPort + 1
-    NullMeasurementRecorder
     val server =
       socketApplication(
         (api, system, parentSpan) =>
@@ -85,11 +85,12 @@ object SnowyServerFixture {
   /** Connect to the snowy server at the provided address
     *
     * @param wsUrl
-    * @return a test api to send/receive messages against the snowy server
+    * @return
+    *   a test api to send/receive messages against the snowy server
     */
   def connectToServer[M](wsUrl: String): Future[ServerTestApi] = {
     implicit def recorder: NullMeasurementRecorder.type = NullMeasurementRecorder
-    connectSinkToServer(wsUrl, TestSink.probe[GameClientMessage]).map {
+    connectSinkToServer(wsUrl, TestSink[GameClientMessage]()).map {
       case ((sendQueue, testProbe)) =>
         ServerTestApi(sendQueue, testProbe)
     }

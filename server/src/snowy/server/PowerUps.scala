@@ -5,7 +5,7 @@ import scala.reflect.ClassTag
 
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.playfield.{HealthPowerUp, Playfield, PowerUp, SpeedPowerUp}
+import snowy.playfield.{HealthPowerUp, PlayId, Playfield, PowerUp, SpeedPowerUp}
 
 import scala.collection.mutable
 
@@ -32,11 +32,11 @@ class PowerUps(protected val playfield: Playfield)
   private val areaPerPowerUp = 600 * 600
   private val area           = playfield.size.x.toInt * playfield.size.y.toInt
   private val targetCount    = area / areaPerPowerUp
-  private val replaces       = mutable.SortedSet[Replace]()(replaceOrdering)
+  private val replaces       = mutable.SortedSet[Replace]()(using replaceOrdering)
 
   items ++= initialPowerUps()
 
-  def refresh(gameTime: Long): Traversable[PowerUp] = {
+  def refresh(gameTime: Long): Iterable[PowerUp] = {
     val ready        = replaces.takeWhile(_.time < gameTime)
     val replacements = ready.unsorted.map(replace => newPowerUp(replace.old))
     if (replacements.nonEmpty) {
@@ -79,11 +79,12 @@ class PowerUps(protected val playfield: Playfield)
 
   private def initialPowerUps(): Set[PowerUp] = {
     (1 to targetCount).map { _ =>
-      val powerUp = math.random match {
-        case x if x < 0.5 => new HealthPowerUp()
-        case x if x < 1.0 => new SpeedPowerUp()
+      val initialPosition = playfield.randomSpot()
+      val powerUp = math.random() match {
+        case x if x < 0.5 => new HealthPowerUp(PlayId.nextId(), initialPosition)
+        case x if x < 1.0 => new SpeedPowerUp(PlayId.nextId(), initialPosition)
       }
-      powerUp.setInitialPosition(playfield.randomSpot())
+      powerUp.setInitialPosition(initialPosition)
     }.toSet
   }
 

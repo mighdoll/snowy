@@ -8,15 +8,16 @@ import scala.collection.mutable.HashSet
 import scala.math.{ceil, floor}
 import scala.reflect.ClassTag
 
-/** A rectangular grid of cells that contain PlayfieldItems.
-  * Each cell contains the items whose bounding boxes overlap that cell.
-  * The grid is intended to speed collision detection, by
-  * returning only the playfield items in a given area.
+/** A rectangular grid of cells that contain PlayfieldItems. Each cell contains the items
+  * whose bounding boxes overlap that cell. The grid is intended to speed collision
+  * detection, by returning only the playfield items in a given area.
   *
-  * Note that a playfield item can be stored in multiple cells if
-  * it overlaps multiple cells.
-  * @param size size in playfield pixels that the grid covers
-  * @param spacing grid cells are squares covering this number of pixels on a side
+  * Note that a playfield item can be stored in multiple cells if it overlaps multiple
+  * cells.
+  * @param size
+  *   size in playfield pixels that the grid covers
+  * @param spacing
+  *   grid cells are squares covering this number of pixels on a side
   */
 class Grid[A <: PlayfieldItem[A]](val size: Vec2d, val spacing: Double)
     extends PlayfieldTracker[A] {

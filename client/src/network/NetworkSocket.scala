@@ -8,9 +8,12 @@ import scala.concurrent.{Future, Promise}
 import scala.util.Success
 
 /** A wrapper around a web socket that supports simulated network delays
-  * @param url: connect the web socket to this address
-  * @param inDelay: delay message from the server by this amount of time
-  * @param outDelay: delay message to the server by this amount of time
+  * @param url:
+  *   connect the web socket to this address
+  * @param inDelay:
+  *   delay message from the server by this amount of time
+  * @param outDelay:
+  *   delay message to the server by this amount of time
   */
 class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDuration) {
   private val networkPromise    = Promise[WebSocket]()
@@ -20,7 +23,8 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
   socket.binaryType = "arraybuffer"
 
   socket.addEventListener(
-    "open", { (_: Event) =>
+    "open",
+    { (_: Event) =>
       networkPromise.complete(Success(socket))
     },
     false
@@ -55,7 +59,8 @@ class NetworkSocket(url: String, inDelay: FiniteDuration, outDelay: FiniteDurati
       socket.addEventListener("message", fn, false)
     } else {
       socket.addEventListener(
-        "message", { (message: MessageEvent) =>
+        "message",
+        { (message: MessageEvent) =>
           delay(inDelay) {
             fn(message)
           }

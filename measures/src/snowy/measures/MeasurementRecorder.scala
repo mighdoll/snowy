@@ -2,7 +2,7 @@ package snowy.measures
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
-import akka.stream.{ActorMaterializer, Materializer, OverflowStrategy}
+import akka.stream.{Materializer, OverflowStrategy}
 import akka.util.ByteString
 import com.typesafe.config.Config
 
@@ -26,22 +26,24 @@ object MeasurementRecorder {
   }
 }
 
-/** a measurement recording system, allows publishing duration Span measurements to various backends */
+/** a measurement recording system, allows publishing duration Span measurements to
+  * various backends
+  */
 trait MeasurementRecorder {
-  def publish(measurement: CompletedMeasurement[_]): Unit
+  def publish(measurement: CompletedMeasurement[?]): Unit
   def close(): Unit = {}
 }
 
 object NullMeasurementRecorder extends MeasurementRecorder {
-  override def publish(measurement: CompletedMeasurement[_]) = {}
+  override def publish(measurement: CompletedMeasurement[?]) = {}
 }
 
 /** a measurement system that sends measurements to a file */
 class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
-                                                                    system: ActorSystem)
-    extends MeasurementRecorder with Logging {
+      system: ActorSystem
+) extends MeasurementRecorder with Logging {
   implicit val materializer: Materializer = materializerWithLogging(logger)
-  val path                                     = Paths.get(directoryName)
+  val path                                = Paths.get(directoryName)
   val records = startTsvFile(
     path.resolve(s"$baseName.tsv"),
     "recordType\tname\tspanId\tparentId\tstartEpochMicros\tvalue\n"
@@ -51,7 +53,7 @@ class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
     records.complete()
   }
 
-  override def publish(measurement: CompletedMeasurement[_]): Unit = {
+  override def publish(measurement: CompletedMeasurement[?]): Unit = {
     measurementValue(measurement) match {
       case Some((recordType, value)) =>
         val name        = measurement.name
@@ -67,7 +69,7 @@ class MeasurementToTsvFile(directoryName: String, baseName: String)(implicit
   }
 
   private def measurementValue(
-        measurement: CompletedMeasurement[_]
+        measurement: CompletedMeasurement[?]
   ): Option[(RecordType, String)] = {
     measurement pmatch {
       case _: CompletedSpan            => DurationRecord -> measurement.value.toString

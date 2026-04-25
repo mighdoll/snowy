@@ -25,7 +25,8 @@ object GameConstants {
   /** size of the tree trunk in pixels */
   val treeSize = Vec2d(10, 10)
 
-  /** ice two sleds within this period of milliseconds to qualify for a streak achievement */
+  /** ice two sleds within this period of milliseconds to qualify for a streak achievement
+    */
   val iceStreakPeriod = 10000
 
   /** achievement for icing this many other sleds in one game */
@@ -59,13 +60,16 @@ object GameConstants {
 
   object Friction {
 
-    /** friction from ski angled away from direction of travel in pixels / second / second */
+    /** friction from ski angled away from direction of travel in pixels / second / second
+      */
     val maxFriction = 250.0
 
     /** friction from ski angled along direction of travel in pixels / second / second */
     val minFriction = 25.0
 
-    /** higher means ski friction is mostly when skis are perpendicular to current direction */
+    /** higher means ski friction is mostly when skis are perpendicular to current
+      * direction
+      */
     val brakeSteepness = .8
   }
 
@@ -80,7 +84,9 @@ object GameConstants {
     /** minimum health after a tree collision */
     val treeMinHealth = .1
 
-    /** at speeds less than this value (in pixels/sec), the sled takes no damage from hitting a tree. */
+    /** at speeds less than this value (in pixels/sec), the sled takes no damage from
+      * hitting a tree.
+      */
     val safeSpeed = 50
   }
 }

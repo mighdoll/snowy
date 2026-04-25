@@ -10,17 +10,18 @@ import snowy.GameServerProtocol.{GameServerMessage, Pong}
 import snowy.robot.{Robot, RobotApi, RobotGameState}
 import vector.Vec2d
 
-/** Host for a single robot in a client, e.g. for a load test via a WebSocket.
-  * Provides the RobotApi to the robot logic. Internally sends and
-  * receives messages from the game server.
+/** Host for a single robot in a client, e.g. for a load test via a WebSocket. Provides
+  * the RobotApi to the robot logic. Internally sends and receives messages from the game
+  * server.
   */
 class LoadTestRobot(using ActorSystem, MeasurementRecorder)(
       url: String
 )(createRobot: (RobotApi => Robot))
     extends Logging {
 
-  private implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
-  private var hostedState         = RobotGameState.emptyGameState
+  private implicit val dispatcher: ExecutionContextExecutor =
+    implicitly[ActorSystem].dispatcher
+  private var hostedState = RobotGameState.emptyGameState
 
   val connection = new GameSocket(url, receiveMessage)
   val api        = new HostedRobotApi(connection)

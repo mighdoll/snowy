@@ -3,18 +3,18 @@ import org.scalajs.dom.*
 
 import scala.collection.mutable
 
-/** Enable listening for pairs of keys simultaneously pressed,
-  * e.g. for pressing debug key and a second key
+/** Enable listening for pairs of keys simultaneously pressed, e.g. for pressing debug key
+  * and a second key
   */
 class KeyCombos {
   private val listeners = mutable.Map[Char, Char => Unit]()
   private val active    = mutable.Map[Char, Char => Unit]()
 
-  window.addEventListener("keydown", keyDown)
-  window.addEventListener("keyup", keyUp)
+  window.addEventListener("keydown", (e: KeyboardEvent) => keyDown(e))
+  window.addEventListener("keyup", (e: KeyboardEvent) => keyUp(e))
 
-  /** register a function to be called when a base key and a second key
-    * are held down simultaneously
+  /** register a function to be called when a base key and a second key are held down
+    * simultaneously
     */
   def listen(baseKey: Char)(fn: Char => Unit): Unit = {
     listeners(baseKey) = fn
@@ -49,8 +49,8 @@ class KeyCombos {
     }
   }
 
-  /** Optionally return the shifted or unshifted char for a keyboard event
-    * return None if the key isn't a normal character
+  /** Optionally return the shifted or unshifted char for a keyboard event return None if
+    * the key isn't a normal character
     */
   private def shiftedKey(e: KeyboardEvent): Option[Char] = {
     if (e.keyCode < ' ' || e.keyCode > '~') {

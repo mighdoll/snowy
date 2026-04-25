@@ -3,7 +3,6 @@ package snowy.measures
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Framing, Keep, Sink, Source}
 import akka.util.ByteString
-import com.orientechnologies.orient.core.intent.OIntentMassiveInsert
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.*
 
@@ -15,7 +14,7 @@ import scribe.Logging
 import snowy.measures.StreamToMeasurement.rowToMeasurement
 import snowy.util.ActorTypes.*
 
-import scala.collection.JavaConverters.*
+import scala.jdk.CollectionConverters.*
 import snowy.util.FlowImplicits.*
 
 object IngestTsvFile extends Logging {
@@ -23,24 +22,23 @@ object IngestTsvFile extends Logging {
 
   case class IngestResults(spans: Int, gauges: Int, edges: Int)
 
-  def ingestTsv(using Execution[_], Materializer[_])(path: Path): Future[IngestResults] = {
+  def ingestTsv(using Execution[?], Materializer[?])(
+        path: Path
+  ): Future[IngestResults] = {
     val graphFactory = new OrientGraphFactory("plocal:/Users/lee/spans-db")
     val db           = graphFactory.getTx
-    val graphDb      = db.getRawGraph
-    graphDb.declareIntent(new OIntentMassiveInsert())
 
     val measureStream = readTsv(path)
-    val span          = Span.root("storeMeasures")(NullMeasurementRecorder)
-    storeMeasures(db, measureStream).andThen {
-      case _ =>
-        val timeSpan       = span.finishNow()
-        val elapsedSeconds = timeSpan.value / (1000.0 * 1000)
-        println(s"elapsed time: $elapsedSeconds seconds")
-        db.shutdown()
+    val span          = Span.root("storeMeasures")(using NullMeasurementRecorder)
+    storeMeasures(db, measureStream).andThen { case _ =>
+      val timeSpan       = span.finishNow()
+      val elapsedSeconds = timeSpan.value / (1000.0 * 1000)
+      println(s"elapsed time: $elapsedSeconds seconds")
+      db.shutdown()
     }
   }
 
-  def storeMeasures(using Execution[_], Materializer[_])(
+  def storeMeasures(using Execution[?], Materializer[?])(
         db: OrientBaseGraph,
         source: Source[ReadMeasurement, Future[IOResult]]
   ): Future[IngestResults] = {

@@ -15,7 +15,7 @@ trait TableToReward {
 }
 
 case class SpeedTable(amounts: Int*) extends TableToReward with RewardTableEntry {
-  private val table = new ClosestTable[Int](0, amounts: _*)
+  private val table = new ClosestTable[Int](0, amounts*)
 
   override def toSingleReward(repeat: Int): Reward = {
     val speed = table.get(repeat)

@@ -1,29 +1,25 @@
 package snowy.server
 
 import akka.util.ByteString
-import boopickle.DefaultBasic.{Pickle, PickleState}
-import boopickle.{BufferPool, EncoderSize}
+import upickle.default.writeBinary
 //import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.*
-import snowy.playfield.Picklers.*
 import socketserve.{AppHostApi, ConnectionId}
 
 /** A GameClientMessage wrapper over the send/receive api */
 class MessageIO(api: AppHostApi) extends Logging {
   // optimization for boopickle: don't track references, since we don't send any graphs
-  implicit def pickleState: PickleState = new PickleState(new EncoderSize, false, false)
+  // implicit def pickleState: PickleState = new PickleState(new EncoderSize, false, false)
 
   /** Send a message to the client */
   def sendMessage(message: GameClientMessage, id: ConnectionId): Unit = {
     logInterestingMessages(message, id)
 
-    val bytes      = Pickle.intoBytes(message)
+    val bytes      = writeBinary[GameClientMessage](message)
     val byteString = ByteString(bytes)
 
     sendBinaryMessage(byteString, id)
-
-    BufferPool.release(bytes)
   }
 
   def sendBinaryMessage(byteString: ByteString, id: ConnectionId): Unit = {

@@ -1,8 +1,13 @@
 package snowy.draw
 
 import minithree.THREE
-import minithree.THREE.{MeshBasicMaterialParameters, MeshLambertMaterialParameters, Object3D, Vector3}
-import org.scalajs.dom.{CanvasRenderingContext2D, document, html}
+import minithree.THREE.{
+  MeshBasicMaterialParameters,
+  MeshLambertMaterialParameters,
+  Object3D,
+  Vector3
+}
+import org.scalajs.dom.{document, html, CanvasRenderingContext2D}
 import snowy.client.DrawPlayfield.*
 import snowy.client.{DrawPlayfield, UpdateGroup}
 import snowy.playfield.*
@@ -136,7 +141,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
 
     val detail: Double = 4
     val height         = scale * detail
-    ctx.font = height + "px Arial"
+    ctx.font = s"${height}px Arial"
     val width = ctx.measureText(text).width
 
     canvas.width = width.toInt
@@ -145,7 +150,7 @@ class ThreeSleds(bodyGeo: THREE.Geometry, skisGeo: THREE.Geometry) {
     ctx.clearRect(0, 0, width, height)
     ctx.textAlign = "center"
     ctx.textBaseline = "middle"
-    ctx.font = height + "px Arial"
+    ctx.font = s"${height}px Arial"
     ctx.fillStyle = "black"
     ctx.fillText(text, width / 2, height / 2)
 

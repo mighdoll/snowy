@@ -5,23 +5,21 @@ import com.typesafe.config.{Config, ConfigFactory}
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.{Files, Paths}
-import scala.collection.JavaConverters.*
+import scala.jdk.CollectionConverters.*
 
 object ConfigUtil {
 
-  /** Load configuration with an extended set of .conf files.
-    * In addition to the standard reference.conf/application.conf files,
-    * a set of explicitly named filesystem .conf files and resource path .conf files
-    * are loaded as well.
-    * Explicitly named filesystem .conf files take priority in case of conflict,
-    * with the first file named having the highest priority.
-    * Second priority goes to explicitly named resources.
-    * Third priority goes to standard typesafe.Config loaded files:
-    * (the application.conf and reference.conf files.)
+  /** Load configuration with an extended set of .conf files. In addition to the standard
+    * reference.conf/application.conf files, a set of explicitly named filesystem .conf
+    * files and resource path .conf files are loaded as well. Explicitly named filesystem
+    * .conf files take priority in case of conflict, with the first file named having the
+    * highest priority. Second priority goes to explicitly named resources. Third priority
+    * goes to standard typesafe.Config loaded files: (the application.conf and
+    * reference.conf files.)
     */
   def configFromFilesAndResources(
-        files: Traversable[File],
-        resources: Traversable[String] = Nil
+        files: Iterable[File],
+        resources: Iterable[String] = Nil
   ): Config = {
     val baseConfig = ConfigFactory.load()
     val fileConfigs = files.map { configFile =>

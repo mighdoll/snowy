@@ -1,5 +1,7 @@
 package snowy.playfield
 
+import upickle.default.ReadWriter
+
 case class Color(r: Int, g: Int, b: Int) {
   override def toString = s"rgb($r, $g, $b)"
 
@@ -8,7 +10,7 @@ case class Color(r: Int, g: Int, b: Int) {
   def to0x(): Int = (r << 16) + (g << 8) + b
 }
 
-sealed trait SkiColor {
+sealed trait SkiColor derives ReadWriter {
   def color = Color(100, 100, 100)
 }
 case object BasicSkis extends SkiColor

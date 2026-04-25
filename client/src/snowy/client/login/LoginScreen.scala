@@ -2,7 +2,6 @@ package snowy.client.login
 
 import minithree.THREE.WebGLRenderer
 import org.scalajs.dom.*
-import org.scalajs.dom.raw.Event
 import snowy.client.ClientMain
 import snowy.draw.ThreeSleds
 import snowy.playfield.*
@@ -73,9 +72,13 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
     }
   }
 
-  window.addEventListener("mousemove", loginGeometries.selectorHover)
   window.addEventListener(
-    "mousedown", { (_: Event) =>
+    "mousemove",
+    (e: MouseEvent) => loginGeometries.selectorHover(e)
+  )
+  window.addEventListener(
+    "mousedown",
+    { (_: Event) =>
       sledType = loginGeometries.updateSledSelector(sledType)
       loginGeometries.updateColors(skiColor).foreach(skiColor = _)
       loginGeometries.updateSelector(sledType, skiColor)
@@ -91,5 +94,5 @@ class LoginScreen(renderer: WebGLRenderer, threeSledsFuture: Future[ThreeSleds])
   }
   setup()
 
-  loginForm.addEventListener("submit", loginPressed)
+  loginForm.addEventListener("submit", (e: Event) => loginPressed(e))
 }

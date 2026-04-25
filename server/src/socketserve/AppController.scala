@@ -7,16 +7,16 @@ import scala.language.postfixOps
 
 /** An API for simple synchronous server apps that support multiple users over WebSockets.
   *
-  * The synchronous approach is designed to be analogous to the javascript
-  * concurrency model.
+  * The synchronous approach is designed to be analogous to the javascript concurrency
+  * model.
   *
-  * All functions (and any registered tick function) are called synchronously.
-  * For example, the framework will never deliver a message() until the previous
-  * message() has been processed.
+  * All functions (and any registered tick function) are called synchronously. For
+  * example, the framework will never deliver a message() until the previous message() has
+  * been processed.
   *
-  * The synchronous approach limits the parallelism available to the server
-  * application, which has latency and scalability disadvantages. The advantage
-  * is that applications are easier to write.
+  * The synchronous approach limits the parallelism available to the server application,
+  * which has latency and scalability disadvantages. The advantage is that applications
+  * are easier to write.
   */
 trait AppController {
 

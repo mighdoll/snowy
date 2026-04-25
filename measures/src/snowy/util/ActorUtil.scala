@@ -1,24 +1,22 @@
 package snowy.util
 
 import akka.actor.ActorSystem
-import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Materializer, Supervision}
-//import com.typesafe.scalalogging.Logger
+import akka.stream.{ActorAttributes, Attributes, Materializer, Supervision}
 import scribe.Logger
 
 /** Utility functions for working with akka */
 object ActorUtil {
 
-  /** return a actor materializer that logs errors on actor failure */
+  /** return a Materializer for the given actor system */
   def materializerWithLogging(
         logger: Logger
-  )(implicit system: ActorSystem): ActorMaterializer = {
+  )(implicit system: ActorSystem): Materializer = Materializer(system)
+
+  def loggingSupervision(logger: Logger): Attributes = {
     val decider: Supervision.Decider = { e =>
-      logger.error("Unhandled exception in actor", e)
+      logger.error("Unhandled exception in stream", e)
       Supervision.Stop
     }
-
-    val materializerSettings =
-      ActorMaterializerSettings(system).withSupervisionStrategy(decider)
-    ActorMaterializer(materializerSettings)(system)
+    ActorAttributes.supervisionStrategy(decider)
   }
 }

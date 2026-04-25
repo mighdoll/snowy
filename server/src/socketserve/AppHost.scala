@@ -18,8 +18,8 @@ import scala.language.postfixOps
 
 class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
   private implicit val materializer: Materializer = materializerWithLogging(logger)
-  private var app: Option[AppController]               = None
-  private val connections                              = mutable.Map[ClientId, ActorRef]()
+  private var app: Option[AppController]          = None
+  private val connections                         = mutable.Map[ClientId, ActorRef]()
   private val tickTime: FiniteDuration =
     20 milliseconds // LATER get this from GameControl
   private val internalMessagesQueue = 10
@@ -38,7 +38,12 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
 
   private val (internalMessages, messagesRefFuture) =
     Source
-      .actorRef[AppMessage](bufferSize = 2, OverflowStrategy.fail)
+      .actorRef[AppMessage](
+        completionMatcher = PartialFunction.empty,
+        failureMatcher = PartialFunction.empty,
+        bufferSize = 2,
+        overflowStrategy = OverflowStrategy.fail
+      )
       .fixedBuffer(internalMessagesQueue, logger.warn("internal message overflow"))
       .named("internalMessages")
       .peekMat
@@ -88,9 +93,8 @@ class AppHost(implicit system: ActorSystem) extends AppHostApi with Logging {
     }
   }
 
-  /** register a controller application for this host
-    * Called by the application setup to inject the app api that will
-    * accept messages.
+  /** register a controller application for this host Called by the application setup to
+    * inject the app api that will accept messages.
     */
   def registerApp(controller: AppController): Unit = {
     messagesRefFuture.foreach { messagesRef =>

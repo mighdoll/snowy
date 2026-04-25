@@ -11,8 +11,8 @@ case class ResourceNotFound(msg: String) extends RuntimeException(msg)
 /** utilities for working with resources on the classpath */
 object ResourceUtil {
 
-  /** return a list of the resources within a resource folder
-    * (works whether the resource is mapped to the file system or to .jar file
+  /** return a list of the resources within a resource folder (works whether the resource
+    * is mapped to the file system or to .jar file
     */
   def byDirectory(
         resourcePath: String,
@@ -28,8 +28,8 @@ object ResourceUtil {
     }
   }
 
-  /** (for testing) return a fileystem path to a given resource. Only works
-    *  on resources in the filesystem (jar resources will throw an exception)
+  /** (for testing) return a fileystem path to a given resource. Only works on resources
+    * in the filesystem (jar resources will throw an exception)
     */
   def filePath(resourcePath: String): Path = {
     val possibleResource =
@@ -47,9 +47,9 @@ object ResourceUtil {
     file.list()
   }
 
-  /** return children of a path from the .jar file. Since the .jar file records full paths of all
-    * files, we need to scan the jar table of contents to extract the child relationships for the
-    * path.
+  /** return children of a path from the .jar file. Since the .jar file records full paths
+    * of all files, we need to scan the jar table of contents to extract the child
+    * relationships for the path.
     */
   protected[util] def childrenFromJar(
         jarUrl: URL,
@@ -79,9 +79,8 @@ object ResourceUtil {
     val pathToJar   = jarUrl.getPath.stripPrefix("file:").stripSuffix(s"!/$resourcePath")
     val decodedPath = URLDecoder.decode(pathToJar, "UTF-8")
     val jar         = new JarFile(decodedPath)
-    val children = jar.entries().asScala.map(_.getName).collect {
-      case Child(child) =>
-        child
+    val children = jar.entries().asScala.map(_.getName).collect { case Child(child) =>
+      child
     }
     children.toSet
   }

@@ -1,7 +1,7 @@
 package snowy.measures
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 
 import java.io.File
 import scala.concurrent.Future
@@ -18,8 +18,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object MeasureLoader extends Logging {
   def main(args: Array[String]): Unit = {
-    implicit val system                          = ActorSystem()
-    implicit val materializer: ActorMaterializer = materializerWithLogging(logger)
+    implicit val system                     = ActorSystem()
+    implicit val materializer: Materializer = materializerWithLogging(logger)
 
     val results: Option[Future[Unit]] = {
       for {

@@ -24,7 +24,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   import gameStateImplicits.*
 
   /** advance to the next game time
-    * @return seconds since the last turn
+    * @return
+    *   seconds since the last turn
     */
   def nextStep()(implicit parentSpan: Span): Double = {
     val deltaSeconds = nextTimeSlice()
@@ -34,10 +35,12 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Advance the playfield objects to the next simulation state.
     *
-    * Moving objects move and collide with with each other. Sleds collect
-    * powerups and other achievements.
+    * Moving objects move and collide with with each other. Sleds collect powerups and
+    * other achievements.
     *
-    * @return results of the playfield turn: sleds iced, snowballs removed, powerups collected, etc.
+    * @return
+    *   results of the playfield turn: sleds iced, snowballs removed, powerups collected,
+    *   etc.
     */
   def step(deltaSeconds: Double)(implicit parentSpan: Span): TurnResults =
     timeSpan("Playfield.step") { implicit turnSpan =>
@@ -51,7 +54,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
         state.motion.moveSleds(state.sleds.items, deltaSeconds, gameTime)
       }
 
-      val (usedPowerUpIds, powerUpAchievements): (Iterable[PowerUpId], Iterable[PowerUpCollected]) =
+      val (usedPowerUpIds, powerUpAchievements)
+            : (Iterable[PowerUpId], Iterable[PowerUpCollected]) =
         collidePowerUps(state.sleds, state.powerUps)
       val collided = checkCollisions()
       val achievements =
@@ -101,12 +105,13 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   case class CollisionResult(
-        icings: Traversable[SledIced],
-        killedSnowballs: Traversable[BallId]
+        icings: Iterable[SledIced],
+        killedSnowballs: Iterable[BallId]
   )
 
   /** For any sleds that hit a power up,
-    * @return the power up and an achievement for the sled.
+    * @return
+    *   the power up and an achievement for the sled.
     */
   private def collidePowerUps(using parentSpan: Span)(
         sleds: Sleds,
@@ -137,9 +142,10 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Check for collisions between the sled and trees or snowballs */
   private def checkCollisions()(implicit
-                                snowballTracker: PlayfieldTracker[Snowball],
-                                sledTracker: PlayfieldTracker[Sled],
-                                parentSpan: Span): CollisionResult =
+        snowballTracker: PlayfieldTracker[Snowball],
+        sledTracker: PlayfieldTracker[Sled],
+        parentSpan: Span
+  ): CollisionResult =
     time("checkCollisions") {
       import snowy.collision.GameCollide.snowballTrees
       // collide snowballs with sleds
@@ -149,7 +155,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
           state.snowballs.grid
         )
 
-      val deadBalls: Traversable[Snowball] =
+      val deadBalls: Iterable[Snowball] =
         for { Death(snowball: Snowball, _) <- sledSnowballDeaths.b } yield { snowball }
       val uniqueDeadBalls = deadBalls.toSet
       uniqueDeadBalls.foreach(_.remove())
@@ -215,7 +221,7 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** reward the sleds and users for their achievements this round */
   private def applyAchievements(using parentSpan: Span)(
-        achievements: Traversable[Achievement]
+        achievements: Iterable[Achievement]
   ): Unit = time("applyAchievements") {
     for {
       achievement <- achievements
@@ -226,15 +232,15 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Track icings, to identify revenge and icing streaks */
   private def trackIcings(using parentSpan: Span)(
-        icings: Traversable[SledIced]
-  ): Traversable[Achievement] = time("trackIcings") {
+        icings: Iterable[SledIced]
+  ): Iterable[Achievement] = time("trackIcings") {
     trackRevenge(icings) ++ trackIceStreaks(icings) ++ iceCountAchievements(icings)
   }
 
   /** A reward when total icings hit thresholds */
   private def iceCountAchievements(
-        icings: Traversable[SledIced]
-  ): Traversable[Achievement] = {
+        icings: Iterable[SledIced]
+  ): Iterable[Achievement] = {
     for {
       SledIced(serverSled, _) <- icings
       total = serverSled.icingRecords.total
@@ -246,11 +252,12 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   /** track streaks of icing other sleds within a time period.
-    * @return achievements when 2 or more sleds are iced within a period
+    * @return
+    *   achievements when 2 or more sleds are iced within a period
     */
   private def trackIceStreaks(
-        icings: Traversable[SledIced]
-  ): Traversable[IcingStreak] = {
+        icings: Iterable[SledIced]
+  ): Iterable[IcingStreak] = {
     for {
       SledIced(serverSled, _) <- icings
       if updateIceStreak(serverSled.icingRecords)
@@ -260,9 +267,10 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
     }
   }
 
-  /** after an icing, update records to check for a spree of icings within a
-    * limited time period.
-    * @return true if the icing is in a spree
+  /** after an icing, update records to check for a spree of icings within a limited time
+    * period.
+    * @return
+    *   true if the icing is in a spree
     */
   private def updateIceStreak(icingRecords: IcingRecords): Boolean = {
     icingRecords.total += 1
@@ -278,11 +286,12 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
   }
 
   /** Track history of icings, to identify revenge
-    * @return revenge achievements
+    * @return
+    *   revenge achievements
     */
   private def trackRevenge(
-        icings: Traversable[SledIced]
-  ): Traversable[RevengeIcing] = {
+        icings: Iterable[SledIced]
+  ): Iterable[RevengeIcing] = {
     for {
       SledIced(winningSled, losingSled) <- icings
       winningUser = winningSled.user
@@ -301,7 +310,8 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
   /** Advance to the next game simulation state
     *
-    * @return the time since the last time slice, in seconds
+    * @return
+    *   the time since the last time slice, in seconds
     */
   private def nextTimeSlice(): Double = {
     val currentTime  = clock.currentMillis
@@ -321,11 +331,11 @@ class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)
 
 object PlayfieldSteps {
   case class TurnResults(
-        deadSleds: Traversable[SledOut],
-        deadSnowBalls: Traversable[BallId],
-        usedPowerUps: Traversable[PowerUpId],
-        newPowerUps: Traversable[PowerUp],
-        icings: Traversable[SledIced],
-        sledAchievements: Traversable[Achievement]
+        deadSleds: Iterable[SledOut],
+        deadSnowBalls: Iterable[BallId],
+        usedPowerUps: Iterable[PowerUpId],
+        newPowerUps: Iterable[PowerUp],
+        icings: Iterable[SledIced],
+        sledAchievements: Iterable[Achievement]
   )
 }

@@ -2,7 +2,7 @@ package snowy.server
 
 import akka.actor.ActorSystem
 import akka.util.ByteString
-import boopickle.DefaultBasic.{Pickle, Unpickle}
+import upickle.default.{readBinary, writeBinary}
 import com.typesafe.config.Config
 
 import scala.collection.mutable
@@ -13,7 +13,6 @@ import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.*
 import snowy.measures.Span
 import snowy.measures.Span.time
-import snowy.playfield.Picklers.*
 import snowy.playfield.*
 import snowy.robot.RobotPlayer
 import snowy.server.ClientReporting.optNetId
@@ -23,8 +22,8 @@ import vector.Vec2d
 
 import scala.language.postfixOps
 
-/** Central controller for the game. Delegates protocol messages from clients,
-  * and from the game framework.
+/** Central controller for the game. Delegates protocol messages from clients, and from
+  * the game framework.
   */
 class GameControl(
       api: AppHostApi,
@@ -47,7 +46,8 @@ class GameControl(
     new ClientReporting(messageIO, gameStateImplicits, connectionIds, robots)
   private lazy val pickledTrees = {
     val message: GameClientMessage = InitialTrees(trees.items.toSeq)
-    val bytes                      = Pickle.intoBytes(message)
+    println(upickle.default.write[GameClientMessage](message))
+    val bytes = writeBinary[GameClientMessage](message)
     ByteString(bytes)
   }
 
@@ -76,13 +76,13 @@ class GameControl(
       serverSled.sled.remove()
     }
     users.remove(connectionId)
-    commands.pendingControls.commands.remove(connectionId)
+    commands.pendingControls.removeAll(connectionId)
     connections.remove(connectionId)
   }
 
   /** decode received binary message then pass on to handler */
   override def message(id: ConnectionId, msg: ByteString): Unit = {
-    handleMessage(id, Unpickle[GameServerMessage].fromBytes(msg.asByteBuffer))
+    handleMessage(id, readBinary[GameServerMessage](msg.asByteBuffer))
   }
 
   /** Run the next game turn. (called on a periodic timer) */
@@ -94,7 +94,7 @@ class GameControl(
       val turnResults = playfieldSteps.step(deltaSeconds)
       clientReport.reportTurnResults(turnResults)
       reapDeadSleds(turnResults.deadSleds)
-      sendUpdates()(span)
+      sendUpdates()(using span)
     }
   }
 
@@ -150,7 +150,7 @@ class GameControl(
     time("sendUpdates") {
       sendState()
       clientReport.sendScores(users, gameTime)
-    }(span)
+    }(using span)
 
   /** Send the current playfield state to the clients */
   private def sendState(): Unit = {
@@ -171,11 +171,11 @@ class GameControl(
   }
 
   /** Remove dead sleds from the game */
-  private def reapDeadSleds(dead: Traversable[SledOut]): Unit = {
+  private def reapDeadSleds(dead: Iterable[SledOut]): Unit = {
     for (SledOut(serverSled) <- dead) {
       serverSled.sled.remove()
       serverSled.sled.connectionId.foreach { id =>
-        commands.pendingControls.commands.remove(id)
+        commands.pendingControls.removeAll(id)
       }
     }
   }
@@ -185,7 +185,7 @@ class GameControl(
     clientReport.sendDied(sled.id)
     sled.remove()
     sled.connectionId.foreach { id =>
-      commands.pendingControls.commands.remove(id)
+      commands.pendingControls.removeAll(id)
     }
   }
 

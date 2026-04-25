@@ -2,8 +2,7 @@ package snowy.client.login
 
 import minithree.THREE
 import minithree.THREE.*
-import org.scalajs.dom.raw.Event
-import org.scalajs.dom.{MouseEvent, window}
+import org.scalajs.dom.{window, Event, MouseEvent}
 import snowy.AllLists
 import snowy.client.ClientMain
 import snowy.client.ClientMain.{getHeight, getWidth}
@@ -26,8 +25,8 @@ class LoginGeometries(
   private val scene = new THREE.Scene()
   private val camera =
     new THREE.PerspectiveCamera(45, math.min(getWidth() / getHeight(), 3), 1, 5000)
-  private val amb                  = new THREE.AmbientLight(0xffffff, 0.7)
-  private val light                = new THREE.DirectionalLight(0xffffff, 0.3)
+  private val amb                  = new THREE.AmbientLight(0xffffff, 0.7 * math.Pi)
+  private val light                = new THREE.DirectionalLight(0xffffff, 0.3 * math.Pi)
   private val raycaster            = new THREE.Raycaster()
   private val mouse                = new THREE.Vector2()
   private var threeSled            = new THREE.Object3D()
@@ -130,7 +129,9 @@ class LoginGeometries(
       val mat2 = Mats.leave2.clone()
       mat.emissive.setHex(0x222222)
       mat2.emissive.setHex(0x222222)
-      if (intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2) {
+      if (
+        intersects(0).`object` == Meshes.leave1 || intersects(0).`object` == Meshes.leave2
+      ) {
         Meshes.leave1.material = mat
         Meshes.leave2.material = mat2
         hoverSled = Left
@@ -219,19 +220,18 @@ class LoginGeometries(
   }
 
   def addGroups(): Unit = {
-    AllLists.allSkis.zipWithIndex.foreach {
-      case (skiColor, index) =>
-        val colMat = new THREE.MeshLambertMaterial(
-          Dynamic
-            .literal(color = skiColor.color.to0x())
-            .asInstanceOf[MeshLambertMaterialParameters]
-        )
-        val colGeo = new THREE.BoxGeometry(2, 2, 2)
-        val mesh   = new THREE.Mesh(colGeo, colMat)
-        mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
-        mesh.name = index.toString
+    AllLists.allSkis.zipWithIndex.foreach { case (skiColor, index) =>
+      val colMat = new THREE.MeshLambertMaterial(
+        Dynamic
+          .literal(color = skiColor.color.to0x())
+          .asInstanceOf[MeshLambertMaterialParameters]
+      )
+      val colGeo = new THREE.BoxGeometry(2, 2, 2)
+      val mesh   = new THREE.Mesh(colGeo, colMat)
+      mesh.position.x = (index - AllLists.allSkis.size / 2) * 2 + 1
+      mesh.name = index.toString
 
-        Groups.colorSelector.add(mesh)
+      Groups.colorSelector.add(mesh)
     }
 
     Groups.tree.add(Meshes.trunk)
@@ -270,8 +270,9 @@ class LoginGeometries(
     val leave2 = new THREE.ConeGeometry(3, 4, 4, 1, false, 0.8, math.Pi * 2)
     val card   = new THREE.BoxGeometry(16, 8, 1)
 
-    // LATER use typed version
-    val geoParams = Dynamic.literal(steps = 1, amount = Shapes.s, bevelEnabled = false)
+    val geoParams = Dynamic
+      .literal(steps = 1, depth = Shapes.s, bevelEnabled = false)
+      .asInstanceOf[ExtrudeGeometryOptions]
 
     val geoS = new THREE.ExtrudeGeometry(Shapes.shapeS, geoParams)
     val geoN = new THREE.ExtrudeGeometry(Shapes.shapeN, geoParams)
@@ -418,7 +419,8 @@ class LoginGeometries(
   }
 
   window.addEventListener(
-    "resize", { (_: Event) =>
+    "resize",
+    { (_: Event) =>
       camera.aspect = math.min(getWidth() / getHeight(), 3)
       camera.updateProjectionMatrix()
 

@@ -21,7 +21,6 @@ object ClientMain {
   private val renderer           = createRenderer()
   private val loginScreen =
     new LoginScreen(renderer, loadedGeometry.threeGroupsFuture.map(_.threeSleds))
-  None
   private var gameStateOpt: Option[GameState]               = None
   private var updateScoreboardOpt: Option[UpdateScoreboard] = None
 
@@ -118,7 +117,9 @@ class Animation(frameFn: Double => Unit) {
     nextFrame()
   }
 
-  def nextFrame(): Unit = { frameId = Some(window.requestAnimationFrame(animate)) }
+  def nextFrame(): Unit = {
+    frameId = Some(window.requestAnimationFrame(t => animate(t)))
+  }
 
   def cancel(): Unit = {
     frameId.foreach(window.cancelAnimationFrame)

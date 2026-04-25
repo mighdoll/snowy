@@ -23,8 +23,7 @@ object GameMotion {
 class GameMotion(playfield: Playfield) {
 
   /** update sleds and snowballs speeds and positions */
-  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(
-        implicit
+  def moveSleds(sleds: Iterable[Sled], deltaSeconds: Double, gameTime: Long)(implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
 
@@ -34,11 +33,10 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move snowballs to their new location for this time period */
-  def moveSnowballs(snowballs: TraversableOnce[Snowball], deltaSeconds: Double)(
-        implicit
+  def moveSnowballs(snowballs: IterableOnce[Snowball], deltaSeconds: Double)(implicit
         tracker: PlayfieldTracker[Snowball]
   ): Unit = {
-    snowballs.foreach { snowball =>
+    snowballs.iterator.foreach { snowball =>
       val wrappedPos = {
         val deltaPosition = snowball.speed * deltaSeconds
         val newPosition   = snowball.position + deltaPosition
@@ -50,7 +48,8 @@ class GameMotion(playfield: Playfield) {
 
   /** Rotate a sled at a rate controlled by GameConstants.turnTime
     *
-    * @return a rotated sled instance
+    * @return
+    *   a rotated sled instance
     */
   def turnSled(sled: Sled, direction: Turn, deltaSeconds: Double): Unit = {
     // TODO limit turn rate to e.g. 1 turn / 50msec to prevent cheating by custom clients?
@@ -65,8 +64,8 @@ class GameMotion(playfield: Playfield) {
     sled.rotation = wrappedRotation
   }
 
-  /** apply any pending but not yet cancelled commands from user drive,
-    * e.g. braking or driving
+  /** apply any pending but not yet cancelled commands from user drive, e.g. braking or
+    * driving
     */
   private def driveSleds(
         sleds: Iterable[Sled],
@@ -97,8 +96,7 @@ class GameMotion(playfield: Playfield) {
   }
 
   /** move the sleds to their new location for this time period */
-  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(
-        implicit
+  private def repositionSleds(sleds: Iterable[Sled], deltaSeconds: Double)(implicit
         tracker: PlayfieldTracker[Sled]
   ): Unit = {
     for {

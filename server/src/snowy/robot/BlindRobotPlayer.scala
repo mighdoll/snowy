@@ -24,9 +24,9 @@ class BlindRobotPlayer(using ActorSystem)(api: RobotApi, userName: String)
   val actorSystem = implicitly[ActorSystem]
   import actorSystem.dispatcher
 
-  actorSystem.scheduler.schedule(100 milliseconds, 20 milliseconds) {
+  actorSystem.scheduler.scheduleAtFixedRate(100 milliseconds, 20 milliseconds)(() =>
     randomTurn()
-  }
+  )
 
   override def refresh(state: RobotGameState): Unit = {}
 

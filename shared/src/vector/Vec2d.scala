@@ -1,7 +1,8 @@
 package vector
 import scala.math.{cos, sin}
+import upickle.default.ReadWriter
 
-case class Vec2d(x: Double, y: Double) {
+case class Vec2d(x: Double, y: Double) derives ReadWriter {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)
 
   def -(other: Vec2d): Vec2d = Vec2d(x - other.x, y - other.y)
@@ -48,7 +49,8 @@ case class Vec2d(x: Double, y: Double) {
   def angle(other: Vec2d): Double =
     math.atan2(this cross other, this dot other)
 
-  /** @return the vector rotated clockwise. assuming math (not 2d screen) coordinates (y is up)
+  /** @return
+    *   the vector rotated clockwise. assuming math (not 2d screen) coordinates (y is up)
     */
   def rotate(radians: Double): Vec2d = {
     // project onto clockwise rotated x and y axes
@@ -62,9 +64,9 @@ case class Vec2d(x: Double, y: Double) {
     Vec2d(this dot rotatedX, this dot rotatedY)
   }
 
-  def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
+  infix def dot(other: Vec2d): Double = (x * other.x) + (y * other.y)
 
-  def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
+  infix def cross(other: Vec2d): Double = (x * other.y) - (y * other.x)
 
   /** Make sure vector.Vec2d is within max & min */
   def clamp(min: Vec2d, max: Vec2d): Vec2d = {
@@ -76,7 +78,8 @@ case class Vec2d(x: Double, y: Double) {
 
   /** Apply a partial function to transform this vector.
     *
-    * @return the result of the partial function, or this vector if the function is not defined
+    * @return
+    *   the result of the partial function, or this vector if the function is not defined
     */
   def transform(pFn: PartialFunction[Vec2d, Vec2d]): Vec2d = {
     if (pFn.isDefinedAt(this)) pFn(this)
@@ -86,8 +89,10 @@ case class Vec2d(x: Double, y: Double) {
 
 object Vec2d {
 
-  /** @return a vector rotated clockwise from straight up vector.Vec2d(0,1)
-    * @param angle in radians
+  /** @return
+    *   a vector rotated clockwise from straight up vector.Vec2d(0,1)
+    * @param angle
+    *   in radians
     */
   def fromRotation(angle: Double) = Vec2d(sin(angle), cos(angle))
 

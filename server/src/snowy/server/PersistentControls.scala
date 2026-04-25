@@ -37,8 +37,8 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
     }
   }
 
-  /** apply any pending but not yet cancelled commands from user actions,
-    * e.g. turning or slowing
+  /** apply any pending but not yet cancelled commands from user actions, e.g. turning or
+    * slowing
     */
   def applyCommands(
         motion: GameMotion,
@@ -57,8 +57,7 @@ class PersistentControls(gameStateImplicits: GameStateImplicits) {
     }
   }
 
-  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(
-        implicit
+  def shootSnowball(sled: Sled, snowballs: Snowballs, gameTime: Long)(implicit
         snowballTracker: PlayfieldTracker[Snowball]
   ): Unit = {
     if (sled.lastShotTime + sled.minRechargeTime < gameTime) {

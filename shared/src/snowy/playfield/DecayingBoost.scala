@@ -1,41 +1,43 @@
 package snowy.playfield
 
 import scala.concurrent.duration.FiniteDuration
+import upickle.default.ReadWriter
 
 /** A value (e.g. a maxSpeed boost) that decays over a period of game time */
-class DecayingBoost() {
-  private var start: Long  = 0
-  private var end: Long    = 0
-  private var boost: Long  = 0
-  private def length: Long = end - start
+case class DecayingBoost(
+      var boostStart: Long = 0,
+      var boostEnd: Long = 0,
+      var boostAmount: Int = 0
+) derives ReadWriter {
+  private def length: Long = boostEnd - boostStart
 
   /** set the boost value to maximum and define the decay time */
   def start(amount: Int, duration: FiniteDuration, startTime: Long): Unit = {
-    start = startTime
-    end = start + duration.toMillis
-    boost = amount
+    boostStart = startTime
+    boostEnd = boostStart + duration.toMillis
+    boostAmount = amount
   }
 
   /** set the boost value to zero */
-  def stop(): Unit = start = 0
+  def stop(): Unit = boostStart = 0
 
   /** @return the current value of the boost */
   def current(gameTime: Long): Int = {
-    if (gameTime > end) stop()
+    if (gameTime > boostEnd) stop()
 
-    if (start > 0 && gameTime < end && gameTime >= start) {
-      val progress: Double  = (gameTime - start) / length.toDouble
+    if (boostStart > 0 && gameTime < boostEnd && gameTime >= boostStart) {
+      val progress: Double  = (gameTime - boostStart) / length.toDouble
       val scale             = easeOutExpo(progress)
-      val interpolatedValue = math.round(boost * scale).toInt
+      val interpolatedValue = math.round(boostAmount * scale).toInt
       interpolatedValue
     } else {
       0
     }
   }
 
-  /** Steady then steeply decaying interpolation function.
-    * input from 0 to 1
-    * @return eased function
+  /** Steady then steeply decaying interpolation function. input from 0 to 1
+    * @return
+    *   eased function
     */
   private def easeOutExpo(x: Double): Double = {
     assert(x >= 0)

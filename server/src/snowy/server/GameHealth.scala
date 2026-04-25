@@ -19,7 +19,7 @@ class GameHealth(state: GameState) {
   }
 
   /** remove old snowballs */
-  def expireSnowballs(gameTime: Long): Traversable[BallId] = {
+  def expireSnowballs(gameTime: Long): Iterable[BallId] = {
     def expired(snowball: Snowball): Boolean =
       gameTime > snowball.spawned + snowball.lifetime * 1000
 
@@ -30,7 +30,7 @@ class GameHealth(state: GameState) {
   }
 
   /** @return the sleds with no health left */
-  def collectDead(): Traversable[SledOut] = {
+  def collectDead(): Iterable[SledOut] = {
     for {
       serverSled <- state.sledMap.values
       sled = serverSled.sled

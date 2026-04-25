@@ -33,7 +33,7 @@ object NettyWebSocket extends Logging {
     new DefaultAsyncHttpClient(config)
   }
 
-  def connect(using Execution[_])(
+  def connect(using Execution[?])(
         wsUrl: String,
         receivedFn: ByteString => Unit
   ): SocketControl = {

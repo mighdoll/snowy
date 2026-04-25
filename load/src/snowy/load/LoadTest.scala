@@ -26,9 +26,9 @@ object LoadTest {
 
     val config                                            = GlobalConfig.config
     implicit val measurementRecorder: MeasurementRecorder = MeasurementRecorder(config)
-    val port                                              = config.getInt("snowy.server.port")
-    val wsUrl                                             = s"ws://localhost:${port}/game"
-    val numClients                                        = config.getInt("snowy.load.clients")
+    val port       = config.getInt("snowy.server.port")
+    val wsUrl      = s"ws://localhost:${port}/game"
+    val numClients = config.getInt("snowy.load.clients")
     (1 to numClients).foreach { _ =>
       new SingleLoadTestClient(wsUrl)
     }

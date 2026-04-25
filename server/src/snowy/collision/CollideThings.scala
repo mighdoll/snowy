@@ -2,7 +2,7 @@ package snowy.collision
 
 import cats.*
 import snowy.GameConstants.absoluteMaxSpeed
-import snowy.collision.Collisions.{Collided, collideCircles}
+import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield.*
 import vector.Vec2d
 
@@ -13,21 +13,22 @@ import scribe.Logging
 
 object CollideThings {
 
-  /** Collide two sets of circular objects with each other
-    * The objects speeds, positions, and health are modified based on the collision.
+  /** Collide two sets of circular objects with each other The objects speeds, positions,
+    * and health are modified based on the collision.
     *
-    * @return a list of any killed objects
+    * @return
+    *   a list of any killed objects
     */
   def collideWithGrid[A <: MovableCircularItem[
     A
   ]: PlayfieldTracker, B <: MovableCircularItem[
     B
   ]: PlayfieldTracker](
-        aCollection: Traversable[A],
+        aCollection: Iterable[A],
         bGrid: Grid[B]
   )(implicit cta: ClassTag[A], ctb: ClassTag[B]): DeathList[A, B] = {
 
-    val itemPairs: Traversable[(A, B)] =
+    val itemPairs: Iterable[(A, B)] =
       for {
         a <- aCollection
         b <- bGrid.inside(a.boundingBox)
@@ -44,21 +45,22 @@ object CollideThings {
       }
 
     // apply the collisions to the items and return any killed items
-    val deaths: Traversable[DeathList[A, B]] =
+    val deaths: Iterable[DeathList[A, B]] =
       for { (effectA, effectB) <- effects } yield applyTwoEffects(effectA, effectB)
 
     Monoid.combineAll(deaths)
   }
 
-  /** Collide all elements in a collection of circular objects with each other
-    * The objects speeds, positions, and health are modified based on the collision.
+  /** Collide all elements in a collection of circular objects with each other The objects
+    * speeds, positions, and health are modified based on the collision.
     *
-    * @return a list of any killed objects
+    * @return
+    *   a list of any killed objects
     */
   def collideCollection[A <: MovableCircularItem[A]: PlayfieldTracker](
-        collection: Traversable[A],
+        collection: Iterable[A],
         grid: Grid[A]
-  )(implicit ct: ClassTag[A]): Traversable[Death[A, A]] = {
+  )(implicit ct: ClassTag[A]): Iterable[Death[A, A]] = {
     val pairs = for {
       item     <- collection
       neighbor <- grid.inside(item.boundingBox)
@@ -89,8 +91,8 @@ object CollideThings {
     deaths.toSeq
   }
 
-  /** Modify two objects with the effects of a collision.
-    * (the effects are deferred until all collisions are calculated)
+  /** Modify two objects with the effects of a collision. (the effects are deferred until
+    * all collisions are calculated)
     */
   private def applyTwoEffects[A <: MovableCircularItem[
     A
@@ -119,11 +121,10 @@ object CollideThings {
         objA: A,
         objB: B
   ): Option[(CollisionEffect[A], CollisionEffect[B])] = {
-    collideCircles(objA, objB) map {
-      case (aCollision, bCollision) =>
-        val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
-        val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
-        (aDamage, bDamage)
+    collideCircles(objA, objB) map { case (aCollision, bCollision) =>
+      val aDamage = CollisionEffect(aCollision, impactDamage(objA, objB))
+      val bDamage = CollisionEffect(bCollision, impactDamage(objB, objA))
+      (aDamage, bDamage)
     }
   }
 
@@ -157,15 +158,12 @@ case class CollisionEffect[A <: MovableCircularItem[A]](
     def vecToString(vec: Vec2d): String = {
       s"${vec.x.toInt}, ${vec.y.toInt}"
     }
-    collided.item match {
-      case item: PlayfieldItem[_] =>
-        val named  = item.getClass.getSimpleName
-        val pos    = vecToString(item.position)
-        val bboxTL = vecToString(item.boundingBox.pos)
-        val bboxBR = vecToString(item.boundingBox.pos + item.boundingBox.size)
-        s"CollisionEffect: $named[${item.id.id}]   pos: $pos   bbox: $bboxTL to $bboxBR"
-      case x => s"CollisionEffect on $x"
-    }
+    val item   = collided.item
+    val named  = item.getClass.getSimpleName
+    val pos    = vecToString(item.position)
+    val bboxTL = vecToString(item.boundingBox.pos)
+    val bboxBR = vecToString(item.boundingBox.pos + item.boundingBox.size)
+    s"CollisionEffect: $named[${item.id.id}]   pos: $pos   bbox: $bboxTL to $bboxBR"
   }
 }
 
@@ -177,13 +175,13 @@ case class Death[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
 
 /** a report of one or more objects that have been killed */
 case class DeathList[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
-      a: Traversable[Death[A, B]],
-      b: Traversable[Death[B, A]]
+      a: Iterable[Death[A, B]],
+      b: Iterable[Death[B, A]]
 )
 
 object DeathList {
   implicit def deathListMonoid[A <: MovableCircularItem[A], B <: MovableCircularItem[B]]
-    : Monoid[DeathList[A, B]] = {
+        : Monoid[DeathList[A, B]] = {
     new Monoid[DeathList[A, B]] {
       def empty = DeathList[A, B](Nil, Nil)
 

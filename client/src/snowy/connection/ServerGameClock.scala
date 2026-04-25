@@ -10,8 +10,7 @@ class ServerGameClock(sendMessage: GameServerMessage => Unit) {
   requestGameTime()
   window.setInterval(() => requestGameTime(), 5000)
 
-  /** Revise the estimate of the server game clock (based on a message
-    * from the server)
+  /** Revise the estimate of the server game clock (based on a message from the server)
     */
   def updateClock(serverTime: Long, oneWayDelay: Int): Unit = {
     val now    = System.currentTimeMillis()

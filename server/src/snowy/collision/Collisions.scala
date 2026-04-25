@@ -33,8 +33,9 @@ object Collisions {
 
   /** Collide two circular objects
     *
-    * @return A list containing speed and position adjustments for two collided objects,
-    *         or an empty list
+    * @return
+    *   A list containing speed and position adjustments for two collided objects, or an
+    *   empty list
     */
   def collideCircles[A <: MovableCircularItem[A], B <: MovableCircularItem[B]](
         a: A,
@@ -79,9 +80,9 @@ object Collisions {
 
   /** Adjustments to speed and position of a collided object.
     *
-    * (At first glance, it might seem simpler to apply the adjustments directly
-    * to the collided object, but this separation allows adjustments from multiple
-    * collisions to be accumulated.)
+    * (At first glance, it might seem simpler to apply the adjustments directly to the
+    * collided object, but this separation allows adjustments from multiple collisions to
+    * be accumulated.)
     */
   case class Collided[A <: MovableCircularItem[A]](
         item: A,

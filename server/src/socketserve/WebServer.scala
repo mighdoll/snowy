@@ -16,14 +16,13 @@ import snowy.util.FutureAwaiting.*
 
 import scala.util.Properties
 
-/** A web server that hosts static files from the web/ resource directory,
-  * scala js output files from the root resource directory,
-  * and a WebSocket for -connect json messages.
+/** A web server that hosts static files from the web/ resource directory, scala js output
+  * files from the root resource directory, and a WebSocket for -connect json messages.
   */
 class WebServer(forcePort: Option[Int] = None)(implicit
-                                               system: ActorSystem,
-                                               parentSpan: Span)
-    extends Logging {
+      system: ActorSystem,
+      parentSpan: Span
+) extends Logging {
   materializerWithLogging(logger)
   private implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
@@ -82,7 +81,7 @@ object WebServer {
   ): WebServer = {
     implicit val system: ActorSystem = ActorSystem()
     implicit val measurementRecorder: MeasurementRecorder =
-      MeasurementRecorder(GlobalConfig.config)(system)
+      MeasurementRecorder(GlobalConfig.config)(using system)
     implicit val rootSpan: CompletedSpan = Span.root("SocketApplication").finishNow()
     val server                           = new WebServer(forcePort)
     val appHost                          = server.appHost

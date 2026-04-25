@@ -12,10 +12,9 @@ object Nanoseconds {
 
 /** A microsecond clock aligned within 1msec of the system clock.
   *
-  * The jvm provides real time clock to milliseconds and an interval
-  * timer to nanoseconds. EpochMicroseconds synthesizes a microsecond
-  * real time clock by probing the alignment between the interval timer and
-  * the millisecond clock.
+  * The jvm provides real time clock to milliseconds and an interval timer to nanoseconds.
+  * EpochMicroseconds synthesizes a microsecond real time clock by probing the alignment
+  * between the interval timer and the millisecond clock.
   */
 object EpochMicroseconds {
 

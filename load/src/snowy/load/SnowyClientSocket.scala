@@ -4,28 +4,28 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.ws.*
 import akka.stream.scaladsl.*
-import akka.stream.{ActorMaterializer, OverflowStrategy}
+import akka.stream.{Materializer, OverflowStrategy}
 import akka.util.ByteString
-import boopickle.DefaultBasic.{Pickle, Unpickle}
+import upickle.default.writeBinary
+import upickle.default.readBinary
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
-import snowy.playfield.Picklers.*
 import snowy.util.ActorTypes.*
+import java.nio.ByteBuffer
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object SnowyClientSocket {
-  private val unpickleMessage: Flow[Message, GameClientMessage, _] = {
-    Flow[Message].collect {
-      case BinaryMessage.Strict(msg) =>
-        Unpickle[GameClientMessage].fromBytes(msg.asByteBuffer)
+  private val unpickleMessage: Flow[Message, GameClientMessage, ?] = {
+    Flow[Message].collect { case BinaryMessage.Strict(msg) =>
+      readBinary[GameClientMessage](msg.asByteBuffer)
     }
   }
 
   private val fastUnpickle = {
-    val diedBytes       = Pickle[GameClientMessage](Died).toByteBuffer
-    val pingBytes       = Pickle[GameClientMessage](Ping).toByteBuffer
-    val clientPongBytes = Pickle[GameClientMessage](ClientPong).toByteBuffer
+    val diedBytes       = ByteBuffer.wrap(writeBinary[GameClientMessage](Died))
+    val pingBytes       = ByteBuffer.wrap(writeBinary[GameClientMessage](Ping))
+    val clientPongBytes = ByteBuffer.wrap(writeBinary[GameClientMessage](ClientPong))
 
     Flow[Message]
       .collect { case BinaryMessage.Strict(msg) => msg.toByteBuffer }
@@ -37,8 +37,10 @@ object SnowyClientSocket {
   }
 
   /** Connect to a Game server WebSocket.
-    * @param sink Sink to be materialized to accept messages from the server
-    * @return a Future containing a SourceQueue for sending messages to the server
+    * @param sink
+    *   Sink to be materialized to accept messages from the server
+    * @return
+    *   a Future containing a SourceQueue for sending messages to the server
     */
   def connectSinkToServer[M: Actors: Measurement](
         wsUrl: String,
@@ -47,11 +49,13 @@ object SnowyClientSocket {
     connectToServer(wsUrl, unpickleMessage, sink)
   }
 
-  /** Connect to a Game server WebSocket. For efficiency when load testing
-    * with many clients, only three messages are decoded and passed to the
-    * sink: Died, Ping, and ClientPong.
-    * @param sink Sink to be materialized to accept messages from the server
-    * @return a Future containing a SourceQueue for sending messages to the server
+  /** Connect to a Game server WebSocket. For efficiency when load testing with many
+    * clients, only three messages are decoded and passed to the sink: Died, Ping, and
+    * ClientPong.
+    * @param sink
+    *   Sink to be materialized to accept messages from the server
+    * @return
+    *   a Future containing a SourceQueue for sending messages to the server
     */
   def connectBlindSinkToServer[M: Actors: Measurement](
         wsUrl: String,
@@ -62,11 +66,12 @@ object SnowyClientSocket {
 
   private def connectToServer[M: Actors: Measurement](
         wsUrl: String,
-        messageConvert: Flow[Message, GameClientMessage, _],
+        messageConvert: Flow[Message, GameClientMessage, ?],
         sink: Sink[GameClientMessage, M]
   ): Future[(SourceQueueWithComplete[GameServerMessage], M)] = {
-    implicit val dispatcher: ExecutionContextExecutor = implicitly[ActorSystem].dispatcher
-    implicit val _                                    = ActorMaterializer()
+    val system                                        = summon[ActorSystem]
+    implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
+    implicit val materializer: Materializer           = Materializer(system)
     val outputBufferSize                              = 100
 
     val conversionSink = messageConvert.toMat(sink)(Keep.right)
@@ -76,7 +81,7 @@ object SnowyClientSocket {
         Source.queue[GameServerMessage](outputBufferSize, OverflowStrategy.fail)
 
       val gameMessageToBinaryMessage = Flow[GameServerMessage].map { msg =>
-        val msgString = Pickle.intoBytes[GameServerMessage](msg)
+        val msgString = writeBinary[GameServerMessage](msg)
         BinaryMessage(ByteString(msgString)): Message
       }
       sourceQueue.via(gameMessageToBinaryMessage)

@@ -3,8 +3,10 @@ import vector.Vec2d
 
 /** a rectangle
   *
-  * @param pos location of top left
-  * @param size width and height
+  * @param pos
+  *   location of top left
+  * @param size
+  *   width and height
   */
 case class Rect(pos: Vec2d, size: Vec2d) {
   def left   = pos.x

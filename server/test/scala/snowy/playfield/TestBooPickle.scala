@@ -79,9 +79,8 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     compareSleds(sled, sled2)
   }
   property("pickle tree") {
-    val tree = Tree()
     import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullTreeTracker
-    tree.position = Vec2d.unitLeft
+    val tree = Tree(Vec2d.unitLeft)
     val tree2 = pickleUnpickle(tree)
     compareTrees(tree, tree2)
   }

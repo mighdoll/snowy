@@ -1,9 +1,9 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
+import upickle.default.ReadWriter
 
-/** id of a playfield item.
-  * All ids are unique
+/** id of a playfield item. All ids are unique
   */
 case class PlayId[A](val id: Int) extends AnyVal
 

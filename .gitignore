@@ -11,6 +11,7 @@ logs/
 *.hprof
 .bloop-config/
 .bloop/
+.bsp/
 out/
 .idea_modules/
 .metals/

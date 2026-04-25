@@ -9,10 +9,10 @@ class TestEqualsPlayfieldObject extends PropSpec {
     import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
     val one = Sled("one")
     val two = new BasicSled(
-      userName = "two"
-    ) {
-      override val id = one.id
-    }
+      id = one.id,
+      userName = "two",
+      internalPosition = one.internalPosition
+    )
     assert(one.hashCode == two.hashCode)
     assert(one == two)
   }
@@ -25,10 +25,14 @@ class TestEqualsPlayfieldObject extends PropSpec {
   }
 
   property("sleds with the same id but different types are !=") {
-    val one = new BasicSled("sled")
-    val two = new TankSled("sled") {
-      override val id = one.id
-    }
+    import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
+    import vector.Vec2d
+    val one = Sled("sled")
+    val two = new TankSled(
+      id = one.id,
+      userName = "sled",
+      internalPosition = Vec2d.zero
+    )
     assert(one != two)
   }
 

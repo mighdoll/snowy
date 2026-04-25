@@ -1,9 +1,10 @@
 package snowy.playfield
 import snowy.util.DoubleUtil.*
 import vector.Vec2d
+import upickle.default.ReadWriter
 
 object SledDrive {
-  sealed trait Drive
+  sealed trait Drive derives ReadWriter
   case object Driving extends Drive
   case object Braking extends Drive
 
@@ -28,9 +29,7 @@ object SledDrive {
 import snowy.playfield.SledDrive.*
 
 /** driving mode of the sled: coasting, driving, or braking */
-class SledDrive {
-
-  private var drive: Drive = Driving
+case class SledDrive(var drive: Drive = Driving) derives ReadWriter {
 
   /** accelerate or decelerate the sled based on the driving mode */
   def driveSled(sled: Sled, deltaSeconds: Double, gameTime: Long): Unit = {

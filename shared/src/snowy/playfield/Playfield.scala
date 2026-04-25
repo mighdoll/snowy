@@ -7,10 +7,11 @@ import java.util.concurrent.ThreadLocalRandom
 
 object Playfield {
 
-  /** Constrain a value between 0 and a max value.
-    * values past one border of the range are wrapped to the other side
+  /** Constrain a value between 0 and a max value. values past one border of the range are
+    * wrapped to the other side
     *
-    * @return the wrapped value
+    * @return
+    *   the wrapped value
     */
   def wrapBorder(value: Double, max: Double): Double = {
     val result =

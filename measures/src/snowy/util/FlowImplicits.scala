@@ -22,7 +22,7 @@ object FlowImplicits {
 
     /** @return a future that completes with the materialized value of the flow */
     def peekMat: (Flow[In, Out, Mat], Future[Mat]) = {
-      val promise = Promise[Mat]
+      val promise = Promise[Mat]()
       val newFlow = flow.mapMaterializedValue { mat =>
         promise.complete(Success(mat))
         mat
@@ -30,13 +30,16 @@ object FlowImplicits {
       (newFlow, promise.future)
     }
 
-    /** add a buffering stage to the flow with OverflowStrategy.DropBuffer
-      * semantics. Unlike the inbuilt buffer, provides a hook for logging if
-      * the buffer overflows and is dropped.
+    /** add a buffering stage to the flow with OverflowStrategy.DropBuffer semantics.
+      * Unlike the inbuilt buffer, provides a hook for logging if the buffer overflows and
+      * is dropped.
       *
-      * @param size number of elements in the buffer
-      * @param fn called if the buffer dropped due to overflow
-      * @return the flow with a buffering stage added
+      * @param size
+      *   number of elements in the buffer
+      * @param fn
+      *   called if the buffer dropped due to overflow
+      * @return
+      *   the flow with a buffering stage added
       */
     def fixedBuffer(size: Int, fn: => Unit): Flow[In, Out, Mat] = {
       val droppingFn = () => fn
@@ -45,9 +48,12 @@ object FlowImplicits {
     }
 
     /** a filtering stage buffers and optionally removes old elements
-      * @param window messages older than this are considered for filtering
-      * @param oldFn called on each old message to decide whether to filter it
-      * @param overflowFn called (e.g. for logging) if the internal buffer overflows
+      * @param window
+      *   messages older than this are considered for filtering
+      * @param oldFn
+      *   called on each old message to decide whether to filter it
+      * @param overflowFn
+      *   called (e.g. for logging) if the internal buffer overflows
       */
     def filterOld(
           window: FiniteDuration, // note untested
@@ -81,7 +87,7 @@ object FlowImplicits {
 
     /** @return a future that completes with the materialized value of the source */
     def peekMat: (Source[Out, Mat], Future[Mat]) = {
-      val promise = Promise[Mat]
+      val promise = Promise[Mat]()
       val newFlow = source.mapMaterializedValue { mat =>
         promise.complete(Success(mat))
         mat

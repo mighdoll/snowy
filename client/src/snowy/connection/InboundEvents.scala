@@ -1,14 +1,13 @@
 package snowy.connection
 
-import boopickle.DefaultBasic.Unpickle
+import upickle.default.readBinary
 import network.NetworkSocket
 import org.scalajs.dom.*
 import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.*
 import snowy.client.ClientMain
 import snowy.client.hud.{AchievementMessage, DeathMessage}
-import snowy.playfield.Picklers.*
-import snowy.playfield.PlayId
+import snowy.playfield.{PlayId, PowerUp, Sled, Snowball}
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import vector.Vec2d
 
@@ -25,7 +24,7 @@ class InboundEvents(
 
   def arrayBufferMessage(arrayBuffer: ArrayBuffer): Unit = {
     val byteBuffer = TypedArrayBuffer.wrap(arrayBuffer)
-    val message    = Unpickle[GameClientMessage].fromBytes(byteBuffer)
+    val message    = readBinary[GameClientMessage](byteBuffer)
     handleMessage(message)
   }
 
@@ -58,12 +57,12 @@ class InboundEvents(
       case trees: InitialTrees            => gameState.serverTrees = trees.trees.toSet
       case Died                           => ClientMain.death()
       case Ping                           => sendMessage(Pong)
-      case ClientPong                     => // currently used only by the load test client
-      case GameTime(time, oneWayDelay)    => updateClock(time, oneWayDelay)
-      case MySled(sledId)                 => gameState.mySledId = Some(sledId)
-      case newScoreboard: Scoreboard      => ClientMain.updateScoreboard(newScoreboard)
-      case AddItems(items)                => gameState.addPlayfieldItems(items)
-      case RemoveItems(itemType, items)   => removeItems(itemType, items)
+      case ClientPong                   => // currently used only by the load test client
+      case GameTime(time, oneWayDelay)  => updateClock(time, oneWayDelay)
+      case MySled(sledId)               => gameState.mySledId = Some(sledId)
+      case newScoreboard: Scoreboard    => ClientMain.updateScoreboard(newScoreboard)
+      case AddItems(items)              => gameState.addPlayfieldItems(items)
+      case RemoveItems(itemType, items) => removeItems(itemType, items)
       case AchievementMessage(bonus, title, desc) =>
         achievementMessage.display(bonus, title, desc)
       case KilledBy(sledId) => println(s"killed by: $sledId") // TODO display on screen
@@ -74,11 +73,11 @@ class InboundEvents(
     }
   }
 
-  private def removeItems(itemType: SharedItemType, items: Seq[PlayId[_]]): Unit = {
+  private def removeItems(itemType: SharedItemType, itemIds: Seq[Int]): Unit = {
     itemType match {
-      case SnowballItem => gameState.removeSnowballs(items.asInstanceOf[Seq[BallId]])
-      case PowerUpItem  => gameState.removePowerUps(items.asInstanceOf[Seq[PowerUpId]])
-      case SledItem     => gameState.removeSleds(items.asInstanceOf[Seq[SledId]])
+      case SnowballItem => gameState.removeSnowballs(itemIds.map(PlayId[Snowball](_)))
+      case PowerUpItem  => gameState.removePowerUps(itemIds.map(PlayId[PowerUp](_)))
+      case SledItem     => gameState.removeSleds(itemIds.map(PlayId[Sled](_)))
     }
   }
 

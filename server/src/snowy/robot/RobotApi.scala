@@ -13,8 +13,7 @@ trait RobotApi {
 /** API that the Robot should implement */
 trait Robot {
 
-  /** Called when the game state has been updated. The robot should respond
-    * with commands
+  /** Called when the game state has been updated. The robot should respond with commands
     * TODO: return a Seq[GameServerMessage]
     */
   def refresh(state: RobotGameState): Unit
@@ -26,19 +25,18 @@ trait Robot {
 /** Raw information delivered to the robot */
 trait RobotGameStateInfo {
 
-  /** Id of this robots sled.
-    * The id may change if the robot is killed and rejoins.
+  /** Id of this robots sled. The id may change if the robot is killed and rejoins.
     */
   def mySledId: SledId
 
   /** collection of all sleds in the game, including the robot's sled */
-  def sleds: Traversable[Sled]
+  def sleds: Iterable[Sled]
 
   /** collection of all snowballs in the game, including the ones thrown by this robot */
-  def snowballs: Traversable[Snowball]
+  def snowballs: Iterable[Snowball]
 
   /** collection of all trees in the game */
-  def trees: Traversable[Tree]
+  def trees: Iterable[Tree]
 
   /** size of the playfield in pixels */
   def playfield: Vec2d
@@ -48,12 +46,12 @@ trait RobotGameStateInfo {
 /** game state information packaged conveniently for the robot */
 case class RobotGameState(
       mySledId: SledId,
-      allSleds: Traversable[Sled],
-      snowballs: Traversable[Snowball],
-      trees: Traversable[Tree],
+      allSleds: Iterable[Sled],
+      snowballs: Iterable[Snowball],
+      trees: Iterable[Tree],
       playfield: Vec2d
 ) {
-  lazy val (mySled: Option[Sled], otherSleds: Traversable[Sled]) = {
+  lazy val (mySled: Option[Sled], otherSleds: Iterable[Sled]) = {
     val (mine, otherSleds) = allSleds.partition(_.id == mySledId)
     (mine.headOption, otherSleds)
   }

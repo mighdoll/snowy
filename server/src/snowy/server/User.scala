@@ -14,8 +14,8 @@ import snowy.server.User.*
 
 /** A current game player.
   *
-  * Note that the user might not currently have a sled in the game
-  * if they have been killed and not yet rejoined.
+  * Note that the user might not currently have a sled in the game if they have been
+  * killed and not yet rejoined.
   */
 class User(
       val name: String,
@@ -33,9 +33,10 @@ class User(
   /** track of users that iced this user */
   val icedBy = new FiniteQueue[User](trackIcers)
 
-  /** Scores are sent to users once per second (see scoreFrequency).
-    * Users receive scores at jittered times, to spread the network load.
-    * @return true if this user is overdue for a score update
+  /** Scores are sent to users once per second (see scoreFrequency). Users receive scores
+    * at jittered times, to spread the network load.
+    * @return
+    *   true if this user is overdue for a score update
     */
   def timeToSendScore(gameTime: Long): Boolean = {
     gameTime > nextScoreSend

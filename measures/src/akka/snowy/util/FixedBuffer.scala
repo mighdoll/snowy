@@ -7,7 +7,8 @@ import akka.stream.impl.fusing.GraphStages.SimpleLinearGraphStage
 import akka.stream.stage.{GraphStageLogic, InHandler, OutHandler}
 
 /** a custom buffering stage that drops the buffer on overflow.
-  * @param droppingFn is called if the buffer is dropped
+  * @param droppingFn
+  *   is called if the buffer is dropped
   */
 final case class FixedBuffer[T](size: Int, droppingFn: () => Unit = nullFn)
     extends SimpleLinearGraphStage[T] {

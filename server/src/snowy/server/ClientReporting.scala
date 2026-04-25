@@ -19,7 +19,7 @@ import socketserve.{ClientId, ConnectionId, RobotId}
 class ClientReporting(
       messageIO: MessageIO,
       gameStateImplicits: GameStateImplicits,
-      connections: Traversable[ConnectionId],
+      connections: Iterable[ConnectionId],
       robots: RobotHost
 ) extends Logging {
   import gameStateImplicits.*
@@ -33,8 +33,7 @@ class ClientReporting(
     }
   }
 
-  def reportTurnResults(using parentSpan: Span)(turnResults: TurnResults): Unit =
-  {
+  def reportTurnResults(using parentSpan: Span)(turnResults: TurnResults): Unit = {
     time("reportTurnResults") {
       reportSledIcings(turnResults.icings)
       reportDeadSleds(turnResults.deadSleds)
@@ -67,7 +66,7 @@ class ClientReporting(
     }
   }
 
-  private def reportSledIcings(sledKills: Traversable[SledIced]): Unit = {
+  private def reportSledIcings(sledKills: Iterable[SledIced]): Unit = {
     for {
       SledIced(serverSled, icedServerSled) <- sledKills
     } {
@@ -97,23 +96,22 @@ class ClientReporting(
   }
 
   /** Notify the client about notable achievements */
-  private def reportAchievements(achievements: Traversable[Achievement]): Unit = {
+  private def reportAchievements(achievements: Iterable[Achievement]): Unit = {
     individualReports(achievements)
     broadcastReports(achievements)
   }
 
-  private def broadcastReports(achievements: Traversable[Achievement]): Unit = {
+  private def broadcastReports(achievements: Iterable[Achievement]): Unit = {
     val reports =
-      achievements.collect {
-        case Kinged(sled, _) =>
-          NewKing(sled.id)
+      achievements.collect { case Kinged(sled, _) =>
+        NewKing(sled.id)
       }
 
     for (msg <- reports) sendToAllClients(msg)
   }
 
   private def individualReports(
-        achievementsCollection: Traversable[Achievement]
+        achievementsCollection: Iterable[Achievement]
   ): Unit = {
     val reports =
       achievementsCollection.collect {
@@ -136,42 +134,44 @@ class ClientReporting(
     }
   }
 
-  private def reportNewPowerUps(newPowerUps: Traversable[PowerUp]): Unit = {
+  private def reportNewPowerUps(newPowerUps: Iterable[PowerUp]): Unit = {
     if (newPowerUps.nonEmpty) {
       val newItems = AddItems(newPowerUps.toSeq)
       sendToAllClients(newItems)
     }
   }
 
-  private def reportUsedPowerUps(usedPowerUps: Traversable[PowerUpId]): Unit = {
+  private def reportUsedPowerUps(usedPowerUps: Iterable[PowerUpId]): Unit = {
     if (usedPowerUps.nonEmpty) {
-      val removeItems = RemoveItems(PowerUpItem, usedPowerUps.toSeq)
+      val removeItems = RemoveItems(PowerUpItem, usedPowerUps.map(_.id).toSeq)
       sendToAllClients(removeItems)
     }
   }
 
-  private def reportDeadSnowballs(expiredBalls: Traversable[BallId]): Unit = {
+  private def reportDeadSnowballs(expiredBalls: Iterable[BallId]): Unit = {
     if (expiredBalls.nonEmpty) {
-      val deaths = RemoveItems(SnowballItem, expiredBalls.toSeq)
+      val deaths = RemoveItems(SnowballItem, expiredBalls.map(_.id).toSeq)
       sendToAllClients(deaths)
     }
   }
 
   /** Notify clients about sleds that have been killed, remove sleds from the game */
-  private def reportDeadSleds(dead: Traversable[SledOut]): Unit = {
+  private def reportDeadSleds(dead: Iterable[SledOut]): Unit = {
     val deadSleds =
-      dead.map {
-        case SledOut(serverSled) =>
-          serverSled.id
+      dead.map { case SledOut(serverSled) =>
+        serverSled.id
       }.toSeq
 
     if (deadSleds.nonEmpty) {
-      val deaths = RemoveItems(SledItem, deadSleds)
+      val deaths = RemoveItems(SledItem, deadSleds.map(_.id))
       sendToAllClients(deaths)
 
-      for { sledId <- deadSleds; sled <- sledId.sled } {
+      for {
+        sledId <- deadSleds
+        sled   <- sledId.sled
+      } {
         sendDied(sledId)
-        //if (logger.underlying.isInfoEnabled) {
+        // if (logger.underlying.isInfoEnabled) {
         val connectIdStr =
           sledId.connectionId.map(id => s"(connection: $id) ").getOrElse("")
         logger.info(
@@ -179,7 +179,7 @@ class ClientReporting(
             + s"sled id:${sledId.id} user:${sledId.user.getOrElse("")}"
             + s"killed $connectIdStr"
         )
-        //}
+        // }
       }
     }
   }
@@ -248,7 +248,7 @@ class ClientReporting(
     val amountString = nth match {
       case 2 => "Double Icing"
       case 3 => "Triple Icing"
-      case n => n + " Icings"
+      case n => s"$n Icings"
     }
 
     AchievementMessage(
