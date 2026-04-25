@@ -1,14 +1,14 @@
 package snowy.load
 
 import akka.actor.ActorSystem
-import snowy.measures.MeasurementRecorder
-import scala.concurrent.ExecutionContextExecutor
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.{GameServerMessage, Pong}
+import snowy.measures.MeasurementRecorder
 import snowy.robot.{Robot, RobotApi, RobotGameState}
 import vector.Vec2d
+
+import scala.concurrent.ExecutionContextExecutor
 
 /** Host for a single robot in a client, e.g. for a load test via a WebSocket. Provides
   * the RobotApi to the robot logic. Internally sends and receives messages from the game

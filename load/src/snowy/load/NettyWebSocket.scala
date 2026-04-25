@@ -1,7 +1,6 @@
 package snowy.load
 
 import akka.util.ByteString
-//import com.typesafe.scalalogging.StrictLogging
 import io.netty.buffer.ByteBuf
 import org.asynchttpclient.ws.{WebSocket, WebSocketListener, WebSocketUpgradeHandler}
 import org.asynchttpclient.{DefaultAsyncHttpClient, DefaultAsyncHttpClientConfig}

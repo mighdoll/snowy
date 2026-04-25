@@ -1,11 +1,10 @@
 package snowy.server
 
 import akka.util.ByteString
-import upickle.default.writeBinary
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.*
 import socketserve.{AppHostApi, ConnectionId}
+import upickle.default.writeBinary
 
 /** A GameClientMessage wrapper over the send/receive api */
 class MessageIO(api: AppHostApi) extends Logging {

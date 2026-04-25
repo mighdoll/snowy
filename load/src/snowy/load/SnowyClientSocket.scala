@@ -6,13 +6,12 @@ import akka.http.scaladsl.model.ws.*
 import akka.stream.scaladsl.*
 import akka.stream.{Materializer, OverflowStrategy}
 import akka.util.ByteString
-import upickle.default.writeBinary
-import upickle.default.readBinary
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.util.ActorTypes.*
-import java.nio.ByteBuffer
+import upickle.default.{readBinary, writeBinary}
 
+import java.nio.ByteBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object SnowyClientSocket {

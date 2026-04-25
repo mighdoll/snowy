@@ -2,12 +2,7 @@ package snowy.server
 
 import akka.actor.ActorSystem
 import akka.util.ByteString
-import upickle.default.{readBinary, writeBinary}
 import com.typesafe.config.Config
-
-import scala.collection.mutable
-import scala.concurrent.duration.*
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.*
@@ -18,8 +13,11 @@ import snowy.robot.RobotPlayer
 import snowy.server.ClientReporting.optNetId
 import snowy.server.rewards.Achievements.*
 import socketserve.*
+import upickle.default.{readBinary, writeBinary}
 import vector.Vec2d
 
+import scala.collection.mutable
+import scala.concurrent.duration.*
 import scala.language.postfixOps
 
 /** Central controller for the game. Delegates protocol messages from clients, and from

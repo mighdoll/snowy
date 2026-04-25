@@ -1,19 +1,16 @@
 package snowy.client
 
-import upickle.default.writeBinary
-
 import network.NetworkSocket
 import org.scalajs.dom.*
 import snowy.GameServerProtocol.*
 import snowy.connection.{GameState, InboundEvents}
 import snowy.playfield.{SkiColor, SledType}
+import upickle.default.writeBinary
 
-import java.nio.ByteBuffer
 import scala.concurrent.duration.*
 import scala.language.postfixOps
-import scala.scalajs.js.typedarray.TypedArrayBufferOps.*
+import scala.scalajs.js.JSConverters.*
 import scala.scalajs.js.typedarray.{ArrayBuffer, Int8Array}
-import scala.scalajs.js.JSConverters._
 
 class Connection(gameState: GameState) {
   val socket: NetworkSocket = {

@@ -1,6 +1,5 @@
 package snowy.connection
 
-import upickle.default.readBinary
 import network.NetworkSocket
 import org.scalajs.dom.*
 import snowy.GameClientProtocol.*
@@ -8,7 +7,7 @@ import snowy.GameServerProtocol.*
 import snowy.client.ClientMain
 import snowy.client.hud.{AchievementMessage, DeathMessage}
 import snowy.playfield.{PlayId, PowerUp, Sled, Snowball}
-import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
+import upickle.default.readBinary
 import vector.Vec2d
 
 import scala.scalajs.js.typedarray.{ArrayBuffer, TypedArrayBuffer}

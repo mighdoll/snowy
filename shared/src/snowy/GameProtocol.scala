@@ -2,8 +2,8 @@ package snowy
 
 import snowy.playfield.*
 import snowy.playfield.PlayId.SledId
-import upickle.default.{macroRW, readwriter, ReadWriter}
 import upickle.default.ReadWriter.join
+import upickle.default.{readwriter, ReadWriter}
 
 import scala.reflect.ClassTag
 

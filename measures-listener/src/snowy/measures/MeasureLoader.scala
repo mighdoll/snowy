@@ -2,19 +2,17 @@ package snowy.measures
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-
-import java.io.File
-import scala.concurrent.Future
-//import com.typesafe.scalalogging.StrictLogging
 import scopt.OptionParser
 import scribe.Logging
 import snowy.measures.IngestTsvFile.ingestTsv
 import snowy.util.ActorUtil.materializerWithLogging
 import snowy.util.FutureAwaiting.*
 
+import java.io.File
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration.*
 import scala.util.Try
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object MeasureLoader extends Logging {
   def main(args: Array[String]): Unit = {

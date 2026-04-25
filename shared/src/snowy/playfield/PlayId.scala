@@ -1,7 +1,6 @@
 package snowy.playfield
 
 import java.util.concurrent.atomic.AtomicInteger
-import upickle.default.ReadWriter
 
 /** id of a playfield item. All ids are unique
   */

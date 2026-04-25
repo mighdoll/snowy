@@ -4,16 +4,13 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives.*
 import akka.stream.BindFailedException
-import snowy.measures.CompletedSpan
-
-import scala.concurrent.ExecutionContextExecutor
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
-import snowy.measures.{MeasurementRecorder, Span}
+import snowy.measures.{CompletedSpan, MeasurementRecorder, Span}
 import snowy.server.GlobalConfig
 import snowy.util.ActorUtil.materializerWithLogging
 import snowy.util.FutureAwaiting.*
 
+import scala.concurrent.ExecutionContextExecutor
 import scala.util.Properties
 
 /** A web server that hosts static files from the web/ resource directory, scala js output

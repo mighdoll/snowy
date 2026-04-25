@@ -1,12 +1,12 @@
 package snowy.server.rewards
 
-import scala.collection.mutable
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameConstants.Points
 import snowy.server.ServerSled
 import snowy.server.rewards.Achievements.*
 import snowy.server.rewards.IcingStreakRewards.rewardsForStreak
+
+import scala.collection.mutable
 
 /** Track achievements by a sled, and apply appropriate rewards to the sled/user */
 class Rewards extends Logging {

@@ -21,7 +21,7 @@ object client extends ScalaJSModule with ScalafixModule {
   )
   def moduleKind = ModuleKind.ESModule
 
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 }
 
 object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
@@ -34,7 +34,7 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
     mvn"com.lihaoyi::upickle::4.4.3",
     mvn"io.suzaku::boopickle::1.5.0",
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 
   object test extends ScalaJSTests with TestModule.ScalaTest {
     def sources = Task.Sources("scala")
@@ -72,7 +72,7 @@ object server extends ScalaModule with ScalafixModule {
 
     super.resources() ++ Seq(PathRef(Task.dest))
   }
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 
   object test extends ScalaTests with TestModule.ScalaTest {
     def sources = Task.Sources("scala")
@@ -92,7 +92,7 @@ object load extends ScalaModule with ScalafixModule {
     mvn"com.typesafe.akka::akka-stream-testkit::2.8.8",
     mvn"org.asynchttpclient:async-http-client:3.0.9"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 
   object it extends ScalaTests with TestModule.ScalaTest {
     def sources = Task.Sources(moduleDir / os.up / "it")
@@ -112,7 +112,7 @@ object measures extends ScalaModule with ScalafixModule {
     mvn"com.typesafe.akka::akka-actor::2.8.8",
     mvn"com.typesafe.akka::akka-stream::2.8.8"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 }
 
 object `measures-listener` extends ScalaModule with ScalafixModule {
@@ -128,7 +128,7 @@ object `measures-listener` extends ScalaModule with ScalafixModule {
     mvn"com.typesafe.akka::akka-actor::2.8.8",
     mvn"com.typesafe.akka::akka-stream::2.8.8"
   )
-  def scalacOptions = Seq("-feature", "-deprecation")
+  def scalacOptions = Seq("-feature", "-deprecation", "-Wunused:imports")
 
   object test extends ScalaTests with TestModule.ScalaTest {
     def sources = Task.Sources("scala")

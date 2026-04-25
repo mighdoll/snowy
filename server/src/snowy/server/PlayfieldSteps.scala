@@ -1,17 +1,17 @@
 package snowy.server
 
-import scala.concurrent.duration.*
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameConstants.*
 import snowy.collision.*
 import snowy.measures.Span.{time, timeSpan}
 import snowy.measures.{Gauged, Span}
-import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.playfield.*
+import snowy.playfield.PlayId.{BallId, PowerUpId}
 import snowy.server.PlayfieldSteps.*
 import snowy.server.rewards.Achievements.*
 import snowy.server.rewards.PowerUpRewards
+
+import scala.concurrent.duration.*
 
 /** Support for moving the playfield objects to the next game state */
 class PlayfieldSteps(state: GameState, tickDelta: FiniteDuration, clock: Clock)

@@ -1,7 +1,8 @@
 package snowy.playfield
 
-import scala.concurrent.duration.FiniteDuration
 import upickle.default.ReadWriter
+
+import scala.concurrent.duration.FiniteDuration
 
 /** A value (e.g. a maxSpeed boost) that decays over a period of game time */
 case class DecayingBoost(

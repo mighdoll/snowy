@@ -1,11 +1,8 @@
 package snowy.server
 
-import snowy.measures.Span
-
-import scala.collection.mutable
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.*
+import snowy.measures.Span
 import snowy.measures.Span.time
 import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
 import snowy.playfield.PowerUp
@@ -14,6 +11,8 @@ import snowy.server.CommonPicklers.withPickledClientMessage
 import snowy.server.PlayfieldSteps.TurnResults
 import snowy.server.rewards.Achievements.*
 import socketserve.{ClientId, ConnectionId, RobotId}
+
+import scala.collection.mutable
 
 /** Support for sending protocol messages about revised game state to the clients */
 class ClientReporting(

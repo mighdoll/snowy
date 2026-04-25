@@ -1,7 +1,7 @@
 package snowy.playfield
 import snowy.util.DoubleUtil.*
-import vector.Vec2d
 import upickle.default.ReadWriter
+import vector.Vec2d
 
 object SledDrive {
   sealed trait Drive derives ReadWriter

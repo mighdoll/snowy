@@ -1,9 +1,9 @@
 package snowy.load
 
 import akka.util.ByteString
-import upickle.default.writeBinary
 import snowy.GameClientProtocol.{ClientPong, Died, GameClientMessage, Ping}
 import snowy.util.PartialMatch.*
+import upickle.default.writeBinary
 
 object FastUnpickle {
   private def pickleToByteString(m: GameClientMessage): ByteString =

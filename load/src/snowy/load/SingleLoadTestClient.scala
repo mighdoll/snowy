@@ -1,10 +1,10 @@
 package snowy.load
 
-import java.util.concurrent.atomic.AtomicInteger
-import snowy.util.ActorTypes.*
-//import com.typesafe.scalalogging.StrictLogging
-import snowy.robot.*
 import scribe.Logging
+import snowy.robot.*
+import snowy.util.ActorTypes.*
+
+import java.util.concurrent.atomic.AtomicInteger
 
 object SingleLoadTestClient {
   val nextUserId = new AtomicInteger()

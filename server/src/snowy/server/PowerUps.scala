@@ -1,13 +1,11 @@
 package snowy.server
 
-import java.util.concurrent.ThreadLocalRandom
-import scala.reflect.ClassTag
-
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.playfield.{HealthPowerUp, PlayId, Playfield, PowerUp, SpeedPowerUp}
 
+import java.util.concurrent.ThreadLocalRandom
 import scala.collection.mutable
+import scala.reflect.ClassTag
 
 object PowerUps {
   case class Replace(old: PowerUp, time: Long)

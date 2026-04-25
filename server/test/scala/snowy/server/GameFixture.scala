@@ -30,7 +30,7 @@ object GameFixture {
   def withGameControl[T](
         fn: GameFixture => T
   )(implicit system: ActorSystem): T = {
-    val span = Span.root("game-fixture")(NullMeasurementRecorder)
+    val span = Span.root("game-fixture")(using NullMeasurementRecorder)
     val config =
       GlobalConfig.snowy
         .withValue("robot-sleds", ConfigValueFactory.fromAnyRef(0))
@@ -51,7 +51,7 @@ object GameFixture {
       withGameControl { gameFixture =>
         fn(gameFixture)
         gameFixture.gameControl
-      }(system)
+      }(using system)
     }
   }
 

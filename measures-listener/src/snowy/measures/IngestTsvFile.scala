@@ -5,17 +5,15 @@ import akka.stream.scaladsl.{FileIO, Framing, Keep, Sink, Source}
 import akka.util.ByteString
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.*
+import scribe.Logging
+import snowy.measures.StreamToMeasurement.rowToMeasurement
+import snowy.util.ActorTypes.*
+import snowy.util.FlowImplicits.*
 
 import java.nio.file.Path
 import scala.collection.mutable
 import scala.concurrent.Future
-//import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
-import snowy.measures.StreamToMeasurement.rowToMeasurement
-import snowy.util.ActorTypes.*
-
 import scala.jdk.CollectionConverters.*
-import snowy.util.FlowImplicits.*
 
 object IngestTsvFile extends Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal

@@ -5,14 +5,13 @@ import akka.stream.scaladsl.{FileIO, Source, SourceQueueWithComplete}
 import akka.stream.{Materializer, OverflowStrategy}
 import akka.util.ByteString
 import com.typesafe.config.Config
-
-import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
-import java.nio.file.{Files, Path, Paths}
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.util.ActorUtil.*
 import snowy.util.FlowImplicits.*
 import snowy.util.PartialMatch.*
+
+import java.nio.file.StandardOpenOption.{CREATE, TRUNCATE_EXISTING, WRITE}
+import java.nio.file.{Files, Path, Paths}
 
 object MeasurementRecorder {
   def apply(config: Config)(implicit system: ActorSystem): MeasurementRecorder = {

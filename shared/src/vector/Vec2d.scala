@@ -1,6 +1,7 @@
 package vector
-import scala.math.{cos, sin}
 import upickle.default.ReadWriter
+
+import scala.math.{cos, sin}
 
 case class Vec2d(x: Double, y: Double) derives ReadWriter {
   def +(other: Vec2d): Vec2d = Vec2d(x + other.x, y + other.y)

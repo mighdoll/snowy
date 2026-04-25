@@ -1,12 +1,12 @@
 package snowy.server.rewards
 
-import scala.concurrent.duration.FiniteDuration
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameConstants.Points.minPoints
 import snowy.GameConstants.{absoluteMaxHealth, absoluteMaxSpeed}
 import snowy.server.{ServerSled, User}
 import snowy.util.ClosestTable
+
+import scala.concurrent.duration.FiniteDuration
 
 sealed trait RewardTableEntry
 

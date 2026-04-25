@@ -2,16 +2,15 @@ package snowy.server
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.stream.scaladsl.*
-import akka.stream.{ClosedShape, CompletionStrategy, Materializer, OverflowStrategy}
+import akka.stream.{ClosedShape, Materializer, OverflowStrategy}
 import akka.util.ByteString
-import upickle.default.writeBinary
-import scala.concurrent.ExecutionContext.Implicits.global
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.GameClientProtocol.{GameClientMessage, Ping}
 import snowy.util.ActorUtil.materializerWithLogging
 import socketserve.ConnectionId
+import upickle.default.writeBinary
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.*
 import scala.language.postfixOps
 

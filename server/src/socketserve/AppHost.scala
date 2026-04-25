@@ -6,7 +6,6 @@ import akka.http.scaladsl.model.ws.{BinaryMessage, TextMessage}
 import akka.stream.*
 import akka.stream.scaladsl.*
 import akka.util.ByteString
-//import com.typesafe.scalalogging.StrictLogging
 import scribe.Logging
 import snowy.util.ActorUtil.materializerWithLogging
 import snowy.util.FlowImplicits.*

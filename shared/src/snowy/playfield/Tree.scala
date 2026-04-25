@@ -1,10 +1,9 @@
 package snowy.playfield
 
-import upickle.default.ReadWriter
-import snowy.GameConstants
-import vector.Vec2d
-import snowy.playIdRW
 import snowy.PlayIdTag.given
+import snowy.{playIdRW, GameConstants}
+import upickle.default.ReadWriter
+import vector.Vec2d
 
 object Tree {
   def apply(initialPosition: Vec2d)(implicit tracker: PlayfieldTracker[Tree]): Tree = {

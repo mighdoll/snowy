@@ -1,6 +1,7 @@
 package snowy.collision
 
 import cats.*
+import scribe.Logging
 import snowy.GameConstants.absoluteMaxSpeed
 import snowy.collision.Collisions.{collideCircles, Collided}
 import snowy.playfield.*
@@ -8,8 +9,6 @@ import vector.Vec2d
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
-//import com.typesafe.scalalogging.StrictLogging
-import scribe.Logging
 
 object CollideThings {
 

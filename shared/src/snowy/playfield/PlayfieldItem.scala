@@ -1,7 +1,6 @@
 package snowy.playfield
 import vector.Vec2d
 
-import upickle.default.ReadWriter
 import scala.reflect.ClassTag
 
 /** A mutable game object positionable on the playfield.

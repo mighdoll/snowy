@@ -1,11 +1,11 @@
 package snowy.load
 
 import akka.util.ByteString
-import upickle.default.writeBinary
 import io.netty.buffer.Unpooled
 import snowy.GameClientProtocol.GameClientMessage
 import snowy.GameServerProtocol.GameServerMessage
 import snowy.load.FastUnpickle.partialUnpickleClientMessage
+import upickle.default.writeBinary
 
 import java.nio.ByteBuffer
 import scala.concurrent.ExecutionContext

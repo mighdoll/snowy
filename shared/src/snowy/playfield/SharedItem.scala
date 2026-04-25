@@ -1,12 +1,11 @@
 package snowy.playfield
 
-import upickle.default.{macroRW, ReadWriter}
-import snowy.GameConstants
 import snowy.GameConstants.downhillRotation
-import vector.Vec2d
-import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
-import snowy.playIdRW
 import snowy.PlayIdTag.given
+import snowy.playfield.PlayId.{BallId, PowerUpId, SledId}
+import snowy.{playIdRW, GameConstants}
+import upickle.default.{macroRW, ReadWriter}
+import vector.Vec2d
 
 /** A playfield item in a mutable set mirrored to clients */
 sealed trait SharedItem
