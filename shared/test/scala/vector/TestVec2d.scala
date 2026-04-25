@@ -1,10 +1,10 @@
 package vector
 
-import org.scalacheck.Gen._
-import org.scalatest._
-import org.scalatest.prop._
+import org.scalacheck.Gen.*
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class TestVec2d extends PropSpec with PropertyChecks {
+class TestVec2d extends AnyPropSpec with ScalaCheckPropertyChecks {
   def angleZero(d: Double): Unit = {
     val a = Vec2d(d, d)
     val b = Vec2d(d, d)
@@ -12,9 +12,7 @@ class TestVec2d extends PropSpec with PropertyChecks {
   }
 
   property("angle between identical vectors is zero") {
-    forAll(chooseNum(-1e100, 1e100)) {
-      angleZero _
-    }
+    forAll(chooseNum(-1e100, 1e100))(angleZero)
   }
 
   property("unitUp.rotate is the same as fromRotation") {
@@ -22,5 +20,4 @@ class TestVec2d extends PropSpec with PropertyChecks {
       assert(Vec2d.fromRotation(radians) === Vec2d.unitUp.rotate(radians))
     }
   }
-
 }

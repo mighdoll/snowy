@@ -1,16 +1,16 @@
 package snowy.playfield
 
 import org.scalactic.Equality
-import org.scalactic.Tolerance._
-import org.scalatest.PropSpec
+import org.scalactic.Tolerance.*
+import org.scalatest.propspec.AnyPropSpec
 import snowy.GameConstants
 import snowy.playfield.Skid.skid
 import vector.Vec2d
 
 import scala.math.Pi
 
-class TestSkid extends PropSpec {
-  implicit val equals = new Equality[Vec2d] {
+class TestSkid extends AnyPropSpec {
+  implicit val equals: Equality[Vec2d] = new Equality[Vec2d] {
     val tolerance = .0001
     override def areEqual(a: Vec2d, b: Any): Boolean = {
       b match {

@@ -1,10 +1,10 @@
 package snowy.playfield
 
-import org.scalacheck._
-import org.scalatest._
-import org.scalatest.prop._
+import org.scalacheck.*
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class TestGameMotion extends PropSpec with PropertyChecks {
+class TestGameMotion extends AnyPropSpec with ScalaCheckPropertyChecks {
 
   val fixedValues = Table(
     ("value"),

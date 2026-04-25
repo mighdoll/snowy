@@ -1,10 +1,10 @@
 package snowy.playfield
 
-import org.scalatest.PropSpec
-import snowy.collision.Collisions._
+import org.scalatest.propspec.AnyPropSpec
+import snowy.collision.Collisions.*
 import vector.Vec2d
 
-class TestCircleRectCollision extends PropSpec {
+class TestCircleRectCollision extends AnyPropSpec {
   property("Encompassing circle") {
     assert(
       circleRectCollide(Circle(Vec2d(0, 0), 20), Rect(Vec2d(-10, -10), Vec2d(20, 20)))

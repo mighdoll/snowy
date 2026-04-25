@@ -23,9 +23,10 @@ object IngestTsvFile extends Logging {
   case class IngestResults(spans: Int, gauges: Int, edges: Int)
 
   def ingestTsv(using Execution[?], Materializer[?])(
-        path: Path
+        path: Path,
+        dbUrl: String = s"plocal:${System.getProperty("java.io.tmpdir")}/spans-db"
   ): Future[IngestResults] = {
-    val graphFactory = new OrientGraphFactory("plocal:/Users/lee/spans-db")
+    val graphFactory = new OrientGraphFactory(dbUrl)
     val db           = graphFactory.getTx
 
     val measureStream = readTsv(path)

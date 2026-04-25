@@ -14,8 +14,9 @@ import vector.Vec2d
 /** A fixture for running tests against a GameControl */
 object GameFixture {
 
-  /** Run a test function with a new actor system that's destroyed
-    * when the function completes  */
+  /** Run a test function with a new actor system that's destroyed when the function
+    * completes
+    */
   def withActorSystem(fn: ActorSystem => Unit): Unit = {
     val system = ActorSystem()
     try {
@@ -75,13 +76,12 @@ case class GameFixture(val gameControl: GameControl, clock: ManualClock) {
 
   /** move the game clock forward, and run the game's step function at least once. */
   def tickForward(forward: FiniteDuration): Unit = {
-    foreachTick(forward) { () =>
-      Unit
-    }
+    foreachTick(forward)(())
   }
 
-  /** Move the game clock forward, and run the game's step function at least once.
-    * Call a side effecting function after each game step */
+  /** Move the game clock forward, and run the game's step function at least once. Call a
+    * side effecting function after each game step
+    */
   def foreachTick(forward: FiniteDuration)(
         fn: => Unit
   ): Unit = {

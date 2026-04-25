@@ -1,10 +1,10 @@
 package snowy.playfield
 
-import org.scalatest.PropSpec
+import org.scalatest.propspec.AnyPropSpec
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.SnowballFixture.testSnowball
 
-class TestEqualsPlayfieldObject extends PropSpec {
+class TestEqualsPlayfieldObject extends AnyPropSpec {
   property("different sleds with same id are =") {
     import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullSledTracker
     val one = Sled("one")

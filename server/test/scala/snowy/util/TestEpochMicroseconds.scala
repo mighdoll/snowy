@@ -1,10 +1,9 @@
 package snowy.util
 
-import org.scalatest.PropSpec
-import org.scalatest.prop._
+import org.scalatest.propspec.AnyPropSpec
 import snowy.measures.EpochMicroseconds
 
-class TestEpochMicroseconds extends PropSpec with PropertyChecks {
+class TestEpochMicroseconds extends AnyPropSpec {
 
   property("epoch microsecond clock aligns to millisecond clock") {
     val differences =
@@ -17,10 +16,8 @@ class TestEpochMicroseconds extends PropSpec with PropertyChecks {
       differences.sorted.reverse
         .drop(10) // drop the first few clock probes while our test warms up
 
-    probes
-      .foreach { d =>
-        assert(d < 1000) // difference should be within a second
-      }
+    probes.foreach { d =>
+      assert(d < 1000) // difference should be within a second
+    }
   }
-
 }

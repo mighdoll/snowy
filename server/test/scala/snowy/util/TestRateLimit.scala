@@ -1,12 +1,11 @@
 package snowy.util
 
-import org.scalatest.PropSpec
-import org.scalatest.prop._
+import org.scalatest.propspec.AnyPropSpec
 import snowy.util.RateLimit.rateLimit
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 
-class TestRateLimit extends PropSpec with PropertyChecks {
+class TestRateLimit extends AnyPropSpec {
 
   property("rate limit limits calls") {
     var count = 0
@@ -16,5 +15,4 @@ class TestRateLimit extends PropSpec with PropertyChecks {
     (0 to 100).foreach(_ => limited())
     assert(count == 1)
   }
-
 }

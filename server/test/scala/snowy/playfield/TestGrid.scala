@@ -1,31 +1,38 @@
 package snowy.playfield
 
-import org.scalacheck._
-import org.scalatest._
-import org.scalatest.prop._
-import snowy.playfield.Intersect._
+import org.scalacheck.*
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import snowy.playfield.Intersect.*
 import vector.Vec2d
 
-case class Ball(x: Double, y: Double)(implicit playfieldTracker: PlayfieldTracker[Ball])
+class Ball(
+      override val id: PlayId[Ball],
+      var internalPosition: Vec2d
+)(implicit playfieldTracker: PlayfieldTracker[Ball])
     extends MovableCircularItem[Ball] {
-  override var health           = 1.0
+  var health                    = 1.0
   override val radius           = 5
-  override var speed            = Vec2d.zero
+  var speed                     = Vec2d.zero
   override val mass             = 1.0
   override def toString: String = s"Ball(${position.x}, ${position.y})"
 
-  position_=(Vec2d(x, y))(Ball.nullTracker)
   playfieldTracker.add(this)
 }
 
 object Ball {
-  def apply(pos: Vec2d)(implicit playfieldTracker: PlayfieldTracker[Ball]): Ball = {
+  def apply(x: Double, y: Double)(implicit
+        playfieldTracker: PlayfieldTracker[Ball]
+  ): Ball =
+    new Ball(PlayId.nextId[Ball](), Vec2d(x, y))
+
+  def apply(pos: Vec2d)(implicit playfieldTracker: PlayfieldTracker[Ball]): Ball =
     Ball(pos.x, pos.y)
-  }
+
   val nullTracker = PlayfieldTracker.nullTracker[Ball]
 }
 
-class TestGrid extends PropSpec with PropertyChecks {
+class TestGrid extends AnyPropSpec with ScalaCheckPropertyChecks {
   val sizeX = 400
   val sizeY = 400
   val size  = Vec2d(sizeX, sizeY)

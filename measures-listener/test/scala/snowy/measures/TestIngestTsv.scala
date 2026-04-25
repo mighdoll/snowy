@@ -1,29 +1,24 @@
 package snowy.measures
 
-import java.nio.file.{Files, Path, Paths}
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.Sink
+import akka.stream.Materializer
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
-import com.tinkerpop.blueprints.impls.orient.OrientGraph
-//import com.typesafe.scalalogging.StrictLogging
+import org.scalatest.propspec.AnyPropSpec
 import scribe.Logging
-import org.scalatest.PropSpec
 import snowy.util.ResourceUtil
-import snowy.util.FutureAwaiting._
-import snowy.util.ActorUtil.materializerWithLogging
+import snowy.util.FutureAwaiting.*
 
-class TestIngestTsv extends PropSpec with Logging {
+class TestIngestTsv extends AnyPropSpec with Logging {
   // otherwise fails with: java.lang.NoClassDefFoundError: Could not initialize class com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal
-  ODatabaseRecordThreadLocal.INSTANCE
+  ODatabaseRecordThreadLocal.instance()
 
   property("reading a tsv file of measurements") {
-    implicit val system   = ActorSystem("Test")
-    implicit val ignored2 = materializerWithLogging(logger)
+    implicit val system: ActorSystem        = ActorSystem("Test")
+    implicit val materializer: Materializer = Materializer(system)
     import system.dispatcher
 
-    val path = ResourceUtil.filePath("test-measures.tsv")
-    val measures =
-      IngestTsvFile.ingestTsv(path)
+    val path     = ResourceUtil.filePath("test-measures.tsv")
+    val measures = IngestTsvFile.ingestTsv(path)
 
     val result = measures.await()
     assert(result.spans === 21)

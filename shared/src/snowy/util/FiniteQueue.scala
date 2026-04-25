@@ -10,4 +10,9 @@ class FiniteQueue[A](maxSize: Int) extends mutable.Queue[A] {
     }
     super.addOne(elem)
   }
+
+  override def addAll(elems: IterableOnce[A]): this.type = {
+    elems.iterator.foreach(addOne)
+    this
+  }
 }

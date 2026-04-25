@@ -1,17 +1,19 @@
 package snowy.server.rewards
 
-import org.scalatest.PropSpec
+import org.scalatest.propspec.AnyPropSpec
 import snowy.playfield.{BasicSledType, RedSkis, Sled}
 import snowy.server.{ServerSled, User}
 import snowy.server.rewards.Achievements.{IcingStreak, RevengeIcing}
 
-class TestRewards extends PropSpec {
+class TestRewards extends AnyPropSpec {
   private def dummyServerSled(): ServerSled = {
     val testUser = new User("testUser", BasicSledType, RedSkis, 0)
     ServerSled(Sled.dummy, testUser, () => 0)
   }
 
-  property("An Icing Streak of 5 Icings in a row is achieved twice. It rewards correctly") {
+  property(
+    "An Icing Streak of 5 Icings in a row is achieved twice. It rewards correctly"
+  ) {
     val serverSled  = dummyServerSled()
     val achievement = IcingStreak(serverSled, 5)
     val rewards     = serverSled.rewards

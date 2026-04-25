@@ -35,6 +35,15 @@ object shared extends ScalaModule with ScalaJSModule with ScalafixModule {
     mvn"io.suzaku::boopickle::1.5.0",
   )
   def scalacOptions = Seq("-feature", "-deprecation")
+
+  object test extends ScalaJSTests with TestModule.ScalaTest {
+    def sources = Task.Sources("scala")
+    def mvnDeps = Seq(
+      mvn"org.scalatest::scalatest::3.2.20",
+      mvn"org.scalatestplus::scalacheck-1-18::3.2.19.0",
+      mvn"org.scalacheck::scalacheck::1.19.0"
+    )
+  }
 }
 
 object server extends ScalaModule with ScalafixModule {
@@ -64,6 +73,15 @@ object server extends ScalaModule with ScalafixModule {
     super.resources() ++ Seq(PathRef(Task.dest))
   }
   def scalacOptions = Seq("-feature", "-deprecation")
+
+  object test extends ScalaTests with TestModule.ScalaTest {
+    def sources = Task.Sources("scala")
+    def mvnDeps = Seq(
+      mvn"org.scalatest::scalatest::3.2.20",
+      mvn"org.scalatestplus::scalacheck-1-18::3.2.19.0",
+      mvn"org.scalacheck::scalacheck::1.19.0"
+    )
+  }
 }
 
 object load extends ScalaModule with ScalafixModule {
@@ -75,6 +93,13 @@ object load extends ScalaModule with ScalafixModule {
     mvn"org.asynchttpclient:async-http-client:3.0.9"
   )
   def scalacOptions = Seq("-feature", "-deprecation")
+
+  object it extends ScalaTests with TestModule.ScalaTest {
+    def sources = Task.Sources(moduleDir / os.up / "it")
+    def mvnDeps = Seq(
+      mvn"org.scalatest::scalatest::3.2.20"
+    )
+  }
 }
 object measures extends ScalaModule with ScalafixModule {
   def moduleDeps = Seq(shared)
@@ -104,4 +129,11 @@ object `measures-listener` extends ScalaModule with ScalafixModule {
     mvn"com.typesafe.akka::akka-stream::2.8.8"
   )
   def scalacOptions = Seq("-feature", "-deprecation")
+
+  object test extends ScalaTests with TestModule.ScalaTest {
+    def sources = Task.Sources("scala")
+    def mvnDeps = Seq(
+      mvn"org.scalatest::scalatest::3.2.20"
+    )
+  }
 }

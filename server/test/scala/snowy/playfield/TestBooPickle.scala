@@ -1,25 +1,22 @@
 package snowy.playfield
 
-import boopickle.DefaultBasic._
-import org.scalatest._
-import org.scalatest.prop._
-import snowy.GameClientProtocol._
+import org.scalatest.propspec.AnyPropSpec
+import upickle.default.{readBinary, writeBinary, ReadWriter}
+import snowy.{playIdRW, PlayIdTag}
+import snowy.PlayIdTag.given
+import snowy.GameClientProtocol.*
 import snowy.GameServerProtocol.{GameServerMessage, Join}
-import snowy.playfield.Picklers._
 import snowy.playfield.PlayId.BallId
 import snowy.playfield.SnowballFixture.testSnowball
 import vector.Vec2d
 
-class TestBooPickle extends PropSpec with PropertyChecks {
-  val sled = {
-    Sled.dummy
-  }
-
+class TestBooPickle extends AnyPropSpec {
+  val sled = Sled.dummy
   val ball = testSnowball()
 
-  def pickleUnpickle[T: Pickler](value: T): T = {
-    val bytes     = Pickle.intoBytes[T](value)
-    val unpickled = Unpickle[T](implicitly[Pickler[T]]).fromBytes(bytes)
+  def pickleUnpickle[T: ReadWriter](value: T): T = {
+    val bytes     = writeBinary[T](value)
+    val unpickled = readBinary[T](bytes)
     assert(unpickled === value)
     unpickled
   }
@@ -32,11 +29,9 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     assert(a.rotation === b.rotation)
     assert(a.health === b.health)
     assert(a.radius === b.radius)
-    assert(a.rotation === b.rotation)
     assert(a.lastShotTime === b.lastShotTime)
     assert(a.lastBoostTime === b.lastBoostTime)
     assert(a.mass === b.mass)
-    assert(a.position === b.position)
     assert(a.maxSpeed === b.maxSpeed)
     assert(a.maxHealth === b.maxHealth)
     assert(a === b)
@@ -53,7 +48,6 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     assert(a.health === b.health)
     assert(a.lifetime === b.lifetime)
     assert(a.impactDamage === b.impactDamage)
-    assert(a.position === b.position)
   }
 
   def compareTrees(a: Tree, b: Tree): Unit = {
@@ -80,7 +74,7 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
   property("pickle tree") {
     import snowy.playfield.PlayfieldTracker.ImplicitNullTrackers.nullTreeTracker
-    val tree = Tree(Vec2d.unitLeft)
+    val tree  = Tree(Vec2d.unitLeft)
     val tree2 = pickleUnpickle(tree)
     compareTrees(tree, tree2)
   }
@@ -96,29 +90,29 @@ class TestBooPickle extends PropSpec with PropertyChecks {
   }
 
   property("pickle game client message Ping") {
-    val bytes  = Pickle.intoBytes[GameClientMessage](Ping)
-    val result = Unpickle[GameClientMessage].fromBytes(bytes)
-    result === Ping
+    val bytes  = writeBinary[GameClientMessage](Ping)
+    val result = readBinary[GameClientMessage](bytes)
+    assert(result === Ping)
   }
 
   property("pickle game client message State and Ping") {
     val state      = State(1L, sleds = Seq(sled), snowballs = Seq(ball))
-    val stateBytes = Pickle.intoBytes[GameClientMessage](state)
+    val stateBytes = writeBinary[GameClientMessage](state)
     val unpickledState: GameClientMessage =
-      Unpickle[GameClientMessage].fromBytes(stateBytes)
+      readBinary[GameClientMessage](stateBytes)
 
-    val pingBytes = Pickle.intoBytes[GameClientMessage](Ping)
+    val pingBytes = writeBinary[GameClientMessage](Ping)
     val unpickledPing: GameClientMessage =
-      Unpickle[GameClientMessage].fromBytes(pingBytes)
+      readBinary[GameClientMessage](pingBytes)
 
     unpickledState match {
-      case s: State =>
-      case _        => fail
+      case _: State =>
+      case _        => fail()
     }
 
     unpickledPing match {
       case Ping =>
-      case _    => fail
+      case _    => fail()
     }
   }
 
@@ -130,5 +124,4 @@ class TestBooPickle extends PropSpec with PropertyChecks {
     val join = Join("d", TankSledType, RedSkis)
     pickleUnpickle[GameServerMessage](join)
   }
-
 }

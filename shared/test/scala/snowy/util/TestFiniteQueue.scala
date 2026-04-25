@@ -1,8 +1,8 @@
 package snowy.util
 
-import org.scalatest.PropSpec
+import org.scalatest.propspec.AnyPropSpec
 
-class TestFiniteQueue extends PropSpec {
+class TestFiniteQueue extends AnyPropSpec {
   property("adding 3 items to a length 2 queue drops one of them") {
     val fq = new FiniteQueue[Int](2)
     fq.enqueue(1, 2, 3)
